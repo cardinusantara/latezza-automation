@@ -29,6 +29,19 @@ fastify.register(require('@fastify/cors'), {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 });
 
+// Ensure public/uploads directory exists
+const fs = require('fs');
+const uploadsDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Register Static Files to serve uploads directory
+fastify.register(require('@fastify/static'), {
+  root: uploadsDir,
+  prefix: '/uploads/'
+});
+
 const PORT = process.env.WHATSAPP_PORT || 3001;
 
 // Register API and redirect routes

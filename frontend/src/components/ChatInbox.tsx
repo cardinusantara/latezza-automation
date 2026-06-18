@@ -392,6 +392,19 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
                   const timeStr = msg.timestamp 
                     ? new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) 
                     : '';
+                  
+                  // Parse image message
+                  let isImage = false;
+                  let imageUrl = '';
+                  let textContent = msg.content;
+                  
+                  const imgMatch = msg.content.match(/^\[Foto:\s*([^\]]+)\]\s*(.*)/s);
+                  if (imgMatch) {
+                    isImage = true;
+                    imageUrl = imgMatch[1];
+                    textContent = imgMatch[2] || '';
+                  }
+
                   return (
                     <div 
                       key={idx} 
@@ -402,7 +415,17 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
                           ? 'bg-[#202C33] text-foreground rounded-tl-none' 
                           : 'bg-[#056162] text-foreground rounded-tr-none'
                       }`}>
-                        <div>{msg.content}</div>
+                        <div className="flex flex-col gap-2">
+                          {isImage && (
+                            <img 
+                              src={`${API_BASE_URL}${imageUrl}`} 
+                              alt="Uploaded file" 
+                              className="max-w-xs max-h-60 rounded-lg object-cover border border-border/40 cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() => window.open(`${API_BASE_URL}${imageUrl}`, '_blank')}
+                            />
+                          )}
+                          {textContent && <div>{textContent}</div>}
+                        </div>
                         <div className="text-[9px] text-white/40 mt-1 text-right">{timeStr}</div>
                       </div>
                     </div>

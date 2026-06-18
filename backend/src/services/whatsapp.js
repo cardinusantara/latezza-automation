@@ -2,7 +2,8 @@ const qrcode = require('qrcode-terminal');
 const {
   default: makeWASocket,
   useMultiFileAuthState,
-  DisconnectReason
+  DisconnectReason,
+  downloadMediaMessage
 } = require('@whiskeysockets/baileys');
 const path = require('path');
 const db = require('../db');
@@ -90,13 +91,17 @@ async function connectToWhatsApp(log = console) {
           continue;
         }
 
-        const text = msg.message?.conversation || 
-                     msg.message?.extendedTextMessage?.text || 
-                     msg.message?.buttonsResponseMessage?.selectedButtonId || 
-                     msg.message?.listResponseMessage?.title || 
-                     '';
+        const imageMessage = msg.message?.imageMessage;
+        
+        let text = msg.message?.conversation || 
+                   msg.message?.extendedTextMessage?.text || 
+                   msg.message?.buttonsResponseMessage?.selectedButtonId || 
+                   msg.message?.listResponseMessage?.title || 
+                   imageMessage?.caption ||
+                   '';
 
-        if (!text.trim()) continue;
+        // Ignore commands or empty non-image messages
+        if (!text.trim() && !imageMessage) continue;
         if (text.startsWith('/')) continue;
 
         // Rate Limit check
@@ -106,16 +111,62 @@ async function connectToWhatsApp(log = console) {
         }
 
         const senderName = msg.pushName || 'Customer';
-        log.info(`📨 Received DM from ${senderName} (${jid}): "${text}"`);
+        
+        // Handle image downloading and local storage
+        let imagePart = null;
+        let imageUrl = null;
+
+        if (imageMessage) {
+          try {
+            log.info(`📸 Image message detected from ${senderName}. Downloading...`);
+            const buffer = await downloadMediaMessage(
+              msg,
+              'buffer',
+              {},
+              { 
+                logger: log,
+                reuploadRequest: sock.updateMediaMessage
+              }
+            );
+
+            // Generate filename based on timestamp
+            const filename = `img_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
+            const filepath = path.join(__dirname, '../../public/uploads', filename);
+
+            // Ensure uploads directory exists
+            const fs = require('fs');
+            const dir = path.dirname(filepath);
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir, { recursive: true });
+            }
+
+            fs.writeFileSync(filepath, buffer);
+            imageUrl = `/uploads/${filename}`;
+            log.info(`✅ Image downloaded and saved to: ${filepath}`);
+
+            imagePart = {
+              inlineData: {
+                data: buffer.toString('base64'),
+                mimeType: imageMessage.mimetype || 'image/jpeg'
+              }
+            };
+          } catch (dlErr) {
+            log.error(`❌ Failed to download image message: ${dlErr.message}`);
+          }
+        }
+
+        log.info(`📨 Received DM from ${senderName} (${jid}): "${text}" ${imageUrl ? '[Image Attached]' : ''}`);
 
         let customer = await db.getCustomer(jid);
         if (!customer) {
           customer = await db.createOrUpdateCustomer(jid, senderName, { status: 'lead' });
         }
 
+        const dbText = imageUrl ? `[Foto: ${imageUrl}] ${text}`.trim() : text;
+
         if (customer.ai_enabled === false) {
           log.info(`🤫 AI response is disabled for ${senderName} (${jid}). Message logged, skipping reply.`);
-          await db.saveChatMessage(jid, 'user', text);
+          await db.saveChatMessage(jid, 'user', dbText);
           continue;
         }
 
@@ -124,7 +175,7 @@ async function connectToWhatsApp(log = console) {
             await sock.sendPresenceUpdate('composing', jid);
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            const replyText = await agent.handleIncomingMessage(jid, text, senderName);
+            const replyText = await agent.handleIncomingMessage(jid, text, senderName, imagePart, imageUrl);
 
             await sock.sendPresenceUpdate('paused', jid);
             await sock.sendMessage(jid, { text: replyText });
