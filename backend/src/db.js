@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Initialize database configuration
 const dbConfig = {
@@ -48,6 +49,9 @@ async function initDb() {
     await client.query(`
       ALTER TABLE customers ADD COLUMN IF NOT EXISTS needs_admin BOOLEAN DEFAULT FALSE;
     `);
+    await client.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS embedding JSONB;
+    `);
 
     // 2. Chat Histories Table
     await client.query(`
@@ -90,6 +94,9 @@ async function initDb() {
     
     // Load settings from database
     await loadAllSettings();
+
+    // Backfill missing embeddings
+    await backfillProductEmbeddings();
   } catch (err) {
     console.error('❌ Failed to initialize database tables:', err.message);
     throw err;
@@ -258,9 +265,9 @@ async function getChatHistory(phoneNumber, limit = 10) {
 }
 
 /**
- * Search products by keyword
+ * Search products by keyword (fallback)
  */
-async function searchProducts(queryStr) {
+async function searchProductsFallback(queryStr) {
   const formattedQuery = `%${queryStr}%`;
   const res = await pool.query(
     `SELECT product_name, price, description, image_url, shopee_link 
@@ -270,6 +277,89 @@ async function searchProducts(queryStr) {
     [formattedQuery]
   );
   return res.rows;
+}
+
+/**
+ * Search products by semantic similarity, falling back to ILIKE if key/model fails
+ */
+async function searchProducts(queryStr) {
+  const apiKey = await getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn('⚠️ Gemini API key is missing. Falling back to ILIKE search.');
+    return await searchProductsFallback(queryStr);
+  }
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const embeddingModel = genAI.getGenerativeModel({ model: 'gemini-embedding-2' });
+    const embedResult = await embeddingModel.embedContent(queryStr);
+    const queryVector = embedResult.embedding?.values;
+
+    if (!queryVector || !Array.isArray(queryVector)) {
+      throw new Error('Invalid query embedding structure returned from Gemini.');
+    }
+
+    const res = await pool.query(
+      'SELECT product_name, price, description, image_url, shopee_link, embedding FROM products'
+    );
+    const products = res.rows;
+    const scoredProducts = [];
+
+    // Cosine similarity helper
+    function cosineSimilarity(vecA, vecB) {
+      let dotProduct = 0.0;
+      let normA = 0.0;
+      let normB = 0.0;
+      for (let i = 0; i < vecA.length; i++) {
+        dotProduct += vecA[i] * vecB[i];
+        normA += vecA[i] * vecA[i];
+        normB += vecB[i] * vecB[i];
+      }
+      if (normA === 0 || normB === 0) return 0;
+      return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+    for (const product of products) {
+      let productVector = product.embedding;
+      if (typeof productVector === 'string') {
+        try {
+          productVector = JSON.parse(productVector);
+        } catch (e) {}
+      }
+
+      if (!productVector || !Array.isArray(productVector)) {
+        continue;
+      }
+
+      const similarity = cosineSimilarity(queryVector, productVector);
+      scoredProducts.push({
+        product_name: product.product_name,
+        price: product.price,
+        description: product.description,
+        image_url: product.image_url,
+        shopee_link: product.shopee_link,
+        similarity
+      });
+    }
+
+    // Sort by similarity descending
+    scoredProducts.sort((a, b) => b.similarity - a.similarity);
+
+    // Apply a similarity threshold and slice to top 5
+    const threshold = 0.35;
+    const matches = scoredProducts.filter(p => p.similarity >= threshold).slice(0, 5);
+
+    if (matches.length === 0) {
+      console.log(`Semantic search found 0 results above threshold ${threshold} for: "${queryStr}". Falling back to ILIKE.`);
+      return await searchProductsFallback(queryStr);
+    }
+
+    console.log(`Semantic search found ${matches.length} matches for: "${queryStr}". Best: ${matches[0].product_name} (${matches[0].similarity.toFixed(4)})`);
+    return matches;
+  } catch (err) {
+    console.error('❌ Semantic search failed:', err.message);
+    return await searchProductsFallback(queryStr);
+  }
 }
 
 /**
@@ -309,6 +399,55 @@ async function getCustomersForFollowUp(hoursAgo = 24, ignoreThreshold = false) {
   return res.rows;
 }
 
+/**
+ * Utility to generate embedding using text-embedding-004 model
+ */
+async function generateEmbedding(apiKey, name, description) {
+  const text = `${name}. ${description || ''}`.trim();
+  if (!text) return null;
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-embedding-2' });
+    const result = await model.embedContent(text);
+    return result.embedding?.values || null;
+  } catch (err) {
+    console.error(`Failed to generate embedding for "${name}":`, err.message);
+    return null;
+  }
+}
+
+/**
+ * Automatically generates embeddings for products that do not have them
+ */
+async function backfillProductEmbeddings() {
+  const apiKey = await getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.warn('⚠️ Gemini API key is missing. Skipping product embeddings backfill.');
+    return;
+  }
+
+  try {
+    const res = await pool.query('SELECT id, product_name, description FROM products WHERE embedding IS NULL');
+    const products = res.rows;
+    if (products.length === 0) {
+      console.log('✅ All products have precompiled embeddings. No backfill needed.');
+      return;
+    }
+
+    console.log(`⏳ Backfilling embeddings for ${products.length} products...`);
+    for (const product of products) {
+      const embedding = await generateEmbedding(apiKey, product.product_name, product.description);
+      if (embedding) {
+        await pool.query('UPDATE products SET embedding = $1 WHERE id = $2', [JSON.stringify(embedding), product.id]);
+        console.log(`  - Embed compiled for product: ${product.product_name}`);
+      }
+    }
+    console.log('✅ Embeddings backfill completed.');
+  } catch (err) {
+    console.error('❌ Failed to run product embeddings backfill:', err.message);
+  }
+}
+
 module.exports = {
   pool,
   initDb,
@@ -322,4 +461,6 @@ module.exports = {
   searchProducts,
   upsertProduct,
   getCustomersForFollowUp,
+  generateEmbedding,
+  backfillProductEmbeddings
 };

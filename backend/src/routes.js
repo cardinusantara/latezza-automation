@@ -131,7 +131,24 @@ function registerRoutes(fastify) {
            RETURNING *`,
           [product_name, price, description || '', image_url || '', shopee_link || '']
         );
-        return res.rows[0];
+        const product = res.rows[0];
+
+        // Generate and save embedding in background
+        const apiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
+        if (apiKey) {
+          db.generateEmbedding(apiKey, product_name, description || '')
+            .then(async (embedding) => {
+              if (embedding) {
+                await db.pool.query('UPDATE products SET embedding = $1 WHERE id = $2', [JSON.stringify(embedding), product.id]);
+                fastify.log.info(`✅ Generated embedding for new product: ${product_name}`);
+              }
+            })
+            .catch(err => {
+              fastify.log.error(`Failed to generate embedding for new product "${product_name}": ${err.message}`);
+            });
+        }
+
+        return product;
       } catch (err) {
         fastify.log.error(`API create product error: ${err.message}`);
         reply.status(500);
@@ -171,7 +188,24 @@ function registerRoutes(fastify) {
           reply.status(404);
           return { status: 'error', message: 'Product not found.' };
         }
-        return res.rows[0];
+        const product = res.rows[0];
+
+        // Regenerate embedding in background
+        const apiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
+        if (apiKey) {
+          db.generateEmbedding(apiKey, product_name, description || '')
+            .then(async (embedding) => {
+              if (embedding) {
+                await db.pool.query('UPDATE products SET embedding = $1 WHERE id = $2', [JSON.stringify(embedding), product.id]);
+                fastify.log.info(`✅ Updated embedding for product: ${product_name}`);
+              }
+            })
+            .catch(err => {
+              fastify.log.error(`Failed to update embedding for product "${product_name}": ${err.message}`);
+            });
+        }
+
+        return product;
       } catch (err) {
         fastify.log.error(`API update product error: ${err.message}`);
         reply.status(500);

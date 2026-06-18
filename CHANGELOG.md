@@ -7,6 +7,47 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-18
 
+### RAG semantic product search — AI-powered catalog matching
+- added `embedding` JSONB column to the `products` table for storing generated vectors
+- implemented automatic startup database migration and `backfillProductEmbeddings()` backfilling utility using the `gemini-embedding-2` model
+- updated product creation (`POST /api/products`) and edit (`PUT /api/products/:id`) handlers to compute/update embeddings in the background
+- implemented `searchProducts` semantic similarity matching in `backend/src/db.js` using in-memory cosine similarity calculation
+- added a fallback mechanism to traditional SQL `ILIKE` keyword search if the Gemini API key is missing or calls fail
+- added command-line verification script `backend/scripts/test-semantic-search.js` to test search query relevance
+
+### backend layered refactoring — architecture overhaul
+- reorganized backend code into separate concerns:
+  - `src/db.js` — Data Access Layer (PostgreSQL pool & settings cache)
+  - `src/agent.js` — AI Agent & tool definitions
+  - `src/routes.js` — Presentation layer containing all Fastify endpoint definitions
+  - `src/services/whatsapp.js` — Baileys WA connection, messages.upsert, rate limiting
+  - `src/services/followup.js` — Proactive customer follow-up scanning and LLM logic
+  - `src/services/ads.js` — Meta Ads script execution and WA broadcast reporting
+- moved duplicate root files to their respective src/ paths
+- moved all local developer utility scripts to `scripts/` folder
+- updated utility scripts to import from `../src/db` and resolve database connections from environment configuration dynamically
+- verified server starts, DB initializes, and WA gateway connects perfectly
+
+### environment separation — independent backend & frontend
+- created `backend/.env` for backend port, DB connection, and API credentials
+- created `frontend/.env` with `VITE_API_URL=http://localhost:3001`
+- deleted root `.env` to avoid configuration overlap
+- registered `@fastify/cors@8` on backend to support standalone cross-origin REST calls from frontend
+
+### follow-up time safeguard — manual trigger bypass & hourly cron
+- added optional `ignoreThreshold` flag to `db.getCustomersForFollowUp()`
+- manual API triggers (`POST /api/trigger-followups` and `/run-followup`) now pass `ignoreThreshold = true`, allowing immediate follow-ups of flagged leads regardless of the time elapsed since their last interaction
+- converted static daily 14:00 cron check into an hourly schedule (`0 * * * *`) to dynamically process customers exactly when their setting-configured delay (`followup_hours`) expires
+
+### AI response formatting — natural plaintext guardrails
+- updated system instructions builder in `agent.js` to forbid markdown formatting (`**`, `*`, `#`, and blockquotes) in AI agent replies
+- ensures responses look like a natural human-typed message
+- allowed lists (strip or numbers) strictly for displaying multiple products in search results
+
+### obsolete product sync — removal
+- deleted "Sync Catalog Now" button, props, and callbacks from frontend `Actions.tsx` and `App.tsx`
+- removed obsolete `product-sync.js` script
+
 ### follow-up system — prompt quality fix
 - problem: Gemini was outputting multiple options + tips instead of one clean WA message
 - root cause 1: old `followup_instruction` stored in settings DB was a bad generic string ("Follow up user {name} regarding their interest...")
