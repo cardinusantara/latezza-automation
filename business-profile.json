@@ -1,0 +1,687 @@
+{
+  "latezza_cake_hampers_profile": {
+    "business_name": "Latezza Cake Hampers",
+    "business_name_citation": "https://latezzacakehampers.com/",
+    "short_description": "Latezza Cake & Hampers adalah toko kue yang berlokasi di Jakarta, yang telah berdiri sejak tahun 2019. Toko ini berfokus pada produk kue bertema Korean cake yang cenderung bergaya cantik dan minimalis, serta menyediakan berbagai pilihan custom cake dan hampers untuk berbagai acara.",
+    "contact_info": {
+      "phone": "+6281188027702",
+      "phone_citation": "https://latezzacakehampers.com/kontak-kami/",
+      "address": "Jl. Tebet Barat Dalam Raya No.94a Jaksel, Ruko Cleon Park No.5 JGC, Cakung, Jaktim",
+      "address_citation": "https://latezzacakehampers.com/kontak-kami/",
+      "social_media": [
+        {
+          "value": "https://www.instagram.com/latezza_cake/",
+          "value_citation": "https://latezzacakehampers.com/kontak-kami/"
+        },
+        {
+          "value": "https://www.tiktok.com/@latezza.cake",
+          "value_citation": "https://latezzacakehampers.com/kontak-kami/"
+        },
+        {
+          "value": "https://www.youtube.com/@LATEZZACAKEHAMPERS",
+          "value_citation": "https://latezzacakehampers.com/kontak-kami/"
+        },
+        {
+          "value": "http://wa.me/6281188027702",
+          "value_citation": "https://latezzacakehampers.com/"
+        }
+      ]
+    },
+    "product_catalog": [
+      {
+        "product_name": "CUSTOM/PRINTING CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 1450000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Toko kue korean kekinian",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.42-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BALLOON CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 395000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.43-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BRIDE TO BE CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 99000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.44-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BIRTHDAY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.46-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BIRTHDAY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.48-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CUP CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 35000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Harga per pcs",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.56-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BUTTERFLY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 195000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.58-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE JADOEL",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.58-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CUP CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 35000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.44-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE JADOEL MIX 4 RASA",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.48-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MARMER CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 145000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.48-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE BOGEL",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 99000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.51-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "PREMIUM COOKIES",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 15000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.51-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "KOREAN DESSERT",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 99500,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.51-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MILK BUN",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 95000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.52-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE PAPAN BUNGA",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.59-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "ROTI (Satuan)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 10000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Harga satuan",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.59-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "ROTI (6pcs)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 55000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Harga untuk 6 pcs",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.59-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "ROTI (12pcs)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 100000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Harga untuk 12 pcs",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.59-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "DESSERT BOX",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 69500,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.03-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BOLU GULUNG",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 145000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.03-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "PREMIUM COOKIES",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 95000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.04-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "DEKOR YOUR CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 79000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.04-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "KOPNIES TRAY",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 65000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.04-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "SIFON CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 95000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.07-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "SIFON PANDAN CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 35000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.08-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BOUCAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 545000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.41-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MINI GARDEN CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.41-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MINI LAPIS LEGIT",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 75000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Harga untuk 10 pcs",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.42-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "SLICD CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 49500,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.43-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MABOX",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 125000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.43-4-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BOUNIES & BUTTERFLY",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.44-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BOU CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.46-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BOUQUET CUPCAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.47-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CHOCOLATE BY LATEZZA CAKE (min)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 19500,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Range harga Rp 19.500 - 49.500",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.47-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CHOCOLATE BY LATEZZA CAKE (max)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 49500,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Range harga Rp 19.500 - 49.500",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.47-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MINI FRUIT PUDDING",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 245000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.50-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MIX FRUIT PUDDING",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 245000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.51-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "SLEEPING TEDDY PUDDING CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 99000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.51-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BABY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 125000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.52-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BROWNIES STRAWBERRY",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 195000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.53-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MANIES",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 125000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.54-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "KOREAN BOUCAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.57-3-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BROWNIES (min)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 95000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Range harga Rp 95.000 - 145.000",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.01-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BROWNIES (max)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 145000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Range harga Rp 95.000 - 145.000",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.01-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "SILKY PUDDING",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 12500,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Harga per pcs",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.02-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "PARCEL CHEONG SAM 209",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 9950000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.06-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MAWCAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 249000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.08-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "LUNCH BOX CAKE PRINTING",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 195000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.45-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "KOREAN CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 99000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.50-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "LUNCH BOX CAKE (min)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 79000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Range harga Rp 79.000 - 99.000",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.53-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "LUNCH BOX CAKE (max)",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 99000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Range harga Rp 79.000 - 99.000",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.53-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "KOREAN BIRTHDAY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.00-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE 2 TIER MIX FONDANT",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 1950000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.45-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MONEY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.50-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE 2 TIER",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 1450000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.53-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "WEDDING CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 2450000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.54-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE 3 TIER",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 1950000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.57-4-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "DONUT BOMBOLONI",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 49000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Harga per pcs",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.59-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE TOPPER",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.02-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "DONUT BOMBOLONI TOWER",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.05-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE FONDANT",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 995000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.06-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "TULIP CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 995000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.41-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BOSQUE BURST CHEESE CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.42-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "ITALIAN STRAWBERRY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 1950000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.45-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "LAPIS SURABAYA",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 495000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.46-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "FLOWERS CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.49-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "LAPIS LEGIT",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 195000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.49-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BURNT CHEESE CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 125000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.54-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CHOCO CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 395000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.55-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "CAKE LABUBU",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 395000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "description": "Ukuran 12cm",
+        "description_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.55-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BABY BREATH CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 195000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.57-1-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "TULIP CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 195000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.39.57-2-1-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "STRAWBERRY VANILLA CHEESE CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 195000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.00-3-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "NASTAR CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 395000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.01-2-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "STRAWBERRY VANILLA CHEESE CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 395000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.05-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "BIRTHDAY CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 295000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.07-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      },
+      {
+        "product_name": "MATCHA CAKE",
+        "product_name_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "price": 395000,
+        "price_citation": "https://latezzacakehampers.com/katalog-kue/",
+        "image_url": "https://latezzacakehampers.com/wp-content/uploads/2026/05/WhatsApp-Image-2026-05-12-at-10.40.09-724x1024.jpeg",
+        "image_url_citation": "https://latezzacakehampers.com/katalog-kue/"
+      }
+    ]
+  }
+}

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Performa Iklan Digital</title>
+  <!-- Plus Jakarta Sans Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tabler Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  
+  <style>
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      
+      /* Light mode palette - Warm Slate Tech style */
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f8fafc;
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #475569;
+      --color-text-tertiary: #94a3b8;
+      --color-border-secondary: #e2e8f0;
+      --color-border-tertiary: #f1f5f9;
+      
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      
+      --color-background-success: #dcfce7;
+      --color-text-success: #15803d;
+      --color-background-warning: #fef9c3;
+      --color-text-warning: #a16207;
+      --color-background-danger: #fee2e2;
+      --color-text-danger: #b91c1c;
+      --color-background-info: #e0f2fe;
+      --color-text-info: #0369a1;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        /* Dark mode palette - Sleek Dark slate */
+        --color-background-primary: #0f172a;
+        --color-background-secondary: #1e293b;
+        --color-text-primary: #f8fafc;
+        --color-text-secondary: #94a3b8;
+        --color-text-tertiary: #64748b;
+        --color-border-secondary: #334155;
+        --color-border-tertiary: #334155;
+        
+        --color-background-success: #064e3b;
+        --color-text-success: #4ade80;
+        --color-background-warning: #78350f;
+        --color-text-warning: #fde047;
+        --color-background-danger: #7f1d1d;
+        --color-text-danger: #fca5a5;
+        --color-background-info: #0c4a6e;
+        --color-text-info: #38bdf8;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--color-background-primary); color: var(--color-text-primary); padding: 0 1.5rem 2rem 1.5rem; transition: background-color 0.2s, color 0.2s; }
+    
+    .header-section { padding: 1.5rem 0 1rem 0; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--color-border-secondary); margin-bottom: 1.5rem; }
+    .header-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.02em; }
+    .header-subtitle { font-size: 13px; color: var(--color-text-secondary); margin-top: 3px; }
+
+    .tab-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab-btn { font-size: 12px; padding: 7px 16px; border-radius: var(--border-radius-md); background: transparent; border: 1px solid var(--color-border-secondary); color: var(--color-text-secondary); cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .tab-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+    .tab-btn.active { background: var(--color-background-info); color: var(--color-text-info); border-color: transparent; }
+    
+    /* Responsive Grid Layout */
+    .dashboard-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; width: 100%; }
+    
+    .grid-item { background: var(--color-background-primary); border: 1px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 18px; display: flex; flex-direction: column; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    
+    .chart-title { font-size: 13px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .chart-sub { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 16px; }
+    
+    /* KPI Grid sub-elements */
+    .kpi-sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; width: 100%; }
+    .kpi-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; border: 1px solid var(--color-border-tertiary); display: flex; flex-direction: column; justify-content: space-between; }
+    .kpi-label { font-size: 10px; color: var(--color-text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .kpi-value { font-size: 24px; font-weight: 700; color: var(--color-text-primary); line-height: 1.1; }
+    .kpi-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    
+    /* Badges & Pills */
+    .badge { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+    .badge-good { background: var(--color-background-success); color: var(--color-text-success); }
+    .badge-warn { background: var(--color-background-warning); color: var(--color-text-warning); }
+    .badge-danger { background: var(--color-background-danger); color: var(--color-text-danger); }
+    .badge-neutral { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+    
+    .pill { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
+    .pill-active { background: var(--color-background-success); color: var(--color-text-success); }
+    .pill-inactive { background: var(--color-background-danger); color: var(--color-text-danger); }
+    
+    .rating-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+    .r-above { background: var(--color-background-success); color: var(--color-text-success); }
+    .r-avg { background: var(--color-background-warning); color: var(--color-text-warning); }
+    .r-low { background: var(--color-background-danger); color: var(--color-text-danger); }
+    .r-na { background: var(--color-background-secondary); color: var(--color-text-tertiary); }
+    
+    .brand-tag { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; border: 1px solid transparent; }
+    
+    /* Table Elements */
+    .table-container { width: 100%; overflow-x: auto; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    th { font-size: 10px; font-weight: 700; color: var(--color-text-secondary); padding: 10px 8px; border-bottom: 2px solid var(--color-border-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 10px 8px; border-bottom: 1px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--color-background-secondary); }
+    
+    /* Insights Layout */
+    .insights-sub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; width: 100%; }
+    .insight-item-card { background: var(--color-background-secondary); border: 1px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+    .insight-item-header { display: flex; align-items: center; gap: 8px; }
+    .insight-item-icon { font-size: 18px; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-background-primary); }
+    .insight-item-headline { font-size: 13px; font-weight: 700; color: var(--color-text-primary); }
+    .insight-item-body { font-size: 11.5px; color: var(--color-text-secondary); line-height: 1.5; }
+    
+    /* Progress Bar list style */
+    .bar-list-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+    .bar-list-row { display: flex; align-items: center; gap: 12px; }
+    .bar-list-label { width: 140px; font-size: 11px; color: var(--color-text-secondary); text-align: right; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    .bar-list-track { flex: 1; background: var(--color-background-secondary); border-radius: 4px; height: 8px; overflow: hidden; border: 0.5px solid var(--color-border-tertiary); }
+    .bar-list-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease-out; }
+    .bar-list-value { width: 85px; font-size: 11px; font-weight: 700; flex-shrink: 0; text-align: left; }
+    
+    /* Screen reader helper */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Accessible Screen Reader Summary -->
+  <h2 id="srSummary" class="sr-only">Laporan Performa Iklan Digital (AI Generated)</h2>
+
+  <!-- Header -->
+  <div class="header-section">
+    <div>
+      <div id="reportTitle" class="header-title">Laporan Performa Iklan</div>
+      <div id="reportSubtext" class="header-subtitle">Memuat data analisis...</div>
+    </div>
+    <div id="brandBadges" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+  </div>
+
+  <!-- Dynamic Timeframe Tabs -->
+  <div id="tabRow" class="tab-row"></div>
+
+  <!-- Dynamic Dashboard Container -->
+  <div id="dashboardContainer" class="dashboard-grid"></div>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  
+  <script>
+    // Global data injected by compilation engine
+    const aiData = {DAILY_WEEKLY_MONTHLY_DATA_PLACEHOLDER};
+
+    let chartInstances = [];
+
+    // Apply dashboard theme if defined
+    if (aiData.theme) {
+      if (aiData.theme.primary) {
+        document.documentElement.style.setProperty('--color-background-info', aiData.theme.primary + '22');
+        document.documentElement.style.setProperty('--color-text-info', aiData.theme.primary);
+      }
+    }
+
+    function createWidgetElement(widget) {
+      const wrapper = document.createElement('div');
+      wrapper.className = `grid-item`;
+      wrapper.style.gridColumn = `span ${widget.gridSpan || 12}`;
+      
+      if (widget.title) {
+        const titleEl = document.createElement('div');
+        titleEl.className = 'chart-title';
+        titleEl.innerText = widget.title;
+        wrapper.appendChild(titleEl);
+      }
+      
+      if (widget.subtitle) {
+        const subEl = document.createElement('div');
+        subEl.className = 'chart-sub';
+        subEl.innerText = widget.subtitle;
+        wrapper.appendChild(subEl);
+      }
+      
+      switch (widget.type) {
+        case 'kpi_grid':
+          const kpiGrid = document.createElement('div');
+          kpiGrid.className = 'kpi-sub-grid';
+          widget.items.forEach(kpi => {
+            const card = document.createElement('div');
+            card.className = 'kpi-card';
+            
+            const label = document.createElement('div');
+            label.className = 'kpi-label';
+            label.innerText = kpi.label;
+            card.appendChild(label);
+            
+            const value = document.createElement('div');
+            value.className = 'kpi-value';
+            value.innerText = kpi.value;
+            card.appendChild(value);
+            
+            const sub = document.createElement('div');
+            sub.className = 'kpi-sub';
+            
+            if (kpi.status && kpi.status !== 'normal') {
+              const statusBadge = document.createElement('span');
+              statusBadge.className = `badge badge-${kpi.status}`;
+              statusBadge.innerText = kpi.status === 'good' ? 'Bagus' : kpi.status === 'warn' ? 'Perhatian' : 'Kritis';
+              statusBadge.style.marginRight = '6px';
+              sub.appendChild(statusBadge);
+            }
+            
+            if (kpi.subtext) {
+              const textSpan = document.createElement('span');
+              textSpan.innerText = kpi.subtext;
+              sub.appendChild(textSpan);
+            }
+            card.appendChild(sub);
+            kpiGrid.appendChild(card);
+          });
+          wrapper.appendChild(kpiGrid);
+          break;
+          
+        case 'chart':
+          const canvasContainer = document.createElement('div');
+          canvasContainer.style.position = 'relative';
+          canvasContainer.style.width = '100%';
+          canvasContainer.style.height = widget.height || '200px';
+          
+          const canvas = document.createElement('canvas');
+          canvas.id = widget.chartId;
+          canvas.setAttribute('role', 'img');
+          canvas.setAttribute('aria-label', widget.title || 'Grafik');
+          
+          canvasContainer.appendChild(canvas);
+          wrapper.appendChild(canvasContainer);
+          break;
+          
+        case 'table':
+          const tableContainer = document.createElement('div');
+          tableContainer.className = 'table-container';
+          
+          const table = document.createElement('table');
+          const thead = document.createElement('thead');
+          const headerRow = document.createElement('tr');
+          widget.headers.forEach(h => {
+            const th = document.createElement('th');
+            th.innerText = h;
+            headerRow.appendChild(th);
+          });
+          thead.appendChild(headerRow);
+          table.appendChild(thead);
+          
+          const tbody = document.createElement('tbody');
+          widget.rows.forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach((cell, idx) => {
+              const td = document.createElement('td');
+              
+              if (cell && typeof cell === 'object') {
+                if (cell.type === 'badge' || cell.type === 'pill' || cell.type === 'brand') {
+                  const span = document.createElement('span');
+                  span.className = cell.styleClass || 'badge';
+                  span.innerText = cell.text;
+                  if (cell.color) {
+                    span.style.color = cell.color;
+                    span.style.background = cell.color + '1a';
+                    span.style.borderColor = cell.color + '44';
+                  }
+                  td.appendChild(span);
+                } else {
+                  td.innerText = cell.text || '';
+                }
+              } else {
+                td.innerText = cell !== undefined && cell !== null ? cell : '';
+                // Auto align numeric/currency cell formats
+                const cellStr = String(cell).trim();
+                if (/^[\d,.\-\s]+$/.test(cellStr) || cellStr.startsWith('Rp') || cellStr.endsWith('%') || cellStr.endsWith('×') || cellStr.endsWith('Jt') || cellStr.endsWith('K') || cellStr.endsWith('M')) {
+                  td.style.textAlign = 'right';
+                  // Check if header exists and contains alignment keywords, or align right default
+                }
+              }
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          tableContainer.appendChild(table);
+          wrapper.appendChild(tableContainer);
+          break;
+          
+        case 'insights':
+          const insightsGrid = document.createElement('div');
+          insightsGrid.className = 'insights-sub-grid';
+          widget.items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'insight-item-card';
+            
+            const header = document.createElement('div');
+            header.className = 'insight-item-header';
+            
+            const iconWrap = document.createElement('div');
+            iconWrap.className = 'insight-item-icon';
+            const icon = document.createElement('i');
+            icon.className = item.icon || 'ti ti-bulb';
+            icon.style.color = item.color || 'var(--color-text-info)';
+            iconWrap.appendChild(icon);
+            header.appendChild(iconWrap);
+            
+            const headline = document.createElement('div');
+            headline.className = 'insight-item-headline';
+            headline.innerText = item.headline;
+            header.appendChild(headline);
+            
+            card.appendChild(header);
+            
+            const body = document.createElement('div');
+            body.className = 'insight-item-body';
+            body.innerText = item.body;
+            card.appendChild(body);
+            
+            insightsGrid.appendChild(card);
+          });
+          wrapper.appendChild(insightsGrid);
+          break;
+          
+        case 'bar_list':
+          const barList = document.createElement('div');
+          barList.className = 'bar-list-container';
+          widget.items.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'bar-list-row';
+            
+            const label = document.createElement('div');
+            label.className = 'bar-list-label';
+            label.innerText = item.label;
+            row.appendChild(label);
+            
+            const track = document.createElement('div');
+            track.className = 'bar-list-track';
+            const fill = document.createElement('div');
+            fill.className = 'bar-list-fill';
+            fill.style.width = `${item.pct}%`;
+            fill.style.backgroundColor = item.color || 'var(--color-text-info)';
+            track.appendChild(fill);
+            row.appendChild(track);
+            
+            const val = document.createElement('div');
+            val.className = 'bar-list-value';
+            val.style.color = item.color || 'var(--color-text-primary)';
+            val.innerText = item.value;
+            row.appendChild(val);
+            
+            if (item.badge) {
+              const badge = document.createElement('span');
+              badge.className = item.badgeClass || 'badge badge-neutral';
+              badge.innerText = item.badge;
+              row.appendChild(badge);
+            }
+            
+            barList.appendChild(row);
+          });
+          wrapper.appendChild(barList);
+          break;
+          
+        case 'text_card':
+          const textBody = document.createElement('div');
+          textBody.className = 'insight-item-body';
+          textBody.style.fontSize = '12px';
+          textBody.innerText = widget.body;
+          wrapper.appendChild(textBody);
+          break;
+      }
+      
+      return wrapper;
+    }
+
+    function initChartWidget(widget) {
+      const ctx = document.getElementById(widget.chartId);
+      if (!ctx) return;
+      
+      const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+      const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
+      const textColor = isDark ? '#94a3b8' : '#475569';
+      
+      Chart.defaults.color = textColor;
+      Chart.defaults.font.family = 'var(--font-sans)';
+      Chart.defaults.font.size = 10;
+      
+      const defaultOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: widget.showLegend !== false,
+            position: 'top',
+            labels: { boxWidth: 10, padding: 8, font: { size: 9 } }
+          }
+        },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { font: { size: 9 } } },
+          y: { grid: { color: gridColor }, ticks: { font: { size: 9 } } }
+        }
+      };
+      
+      // Deep merge option overlays
+      const mergedOptions = JSON.parse(JSON.stringify(defaultOptions));
+      if (widget.options) {
+        Object.keys(widget.options).forEach(k => {
+          if (typeof widget.options[k] === 'object' && widget.options[k] !== null) {
+            mergedOptions[k] = Object.assign(mergedOptions[k] || {}, widget.options[k]);
+          } else {
+            mergedOptions[k] = widget.options[k];
+          }
+        });
+      }
+      
+      // Restore callback function definitions if they were simplified in JSON options
+      // (Like custom currency tick labels)
+      if (mergedOptions.scales && mergedOptions.scales.x && mergedOptions.scales.x.ticks) {
+        if (widget.options?.scales?.x?.ticks?.callbackType === 'currency') {
+          mergedOptions.scales.x.ticks.callback = function(value) {
+            if (value >= 1000000) return 'Rp' + (value/1000000).toFixed(0) + 'Jt';
+            if (value >= 1000) return 'Rp' + (value/1000).toFixed(0) + 'K';
+            return 'Rp' + value;
+          };
+        }
+      }
+      if (mergedOptions.scales && mergedOptions.scales.y && mergedOptions.scales.y.ticks) {
+        if (widget.options?.scales?.y?.ticks?.callbackType === 'currency') {
+          mergedOptions.scales.y.ticks.callback = function(value) {
+            if (value >= 1000000) return 'Rp' + (value/1000000).toFixed(0) + 'Jt';
+            if (value >= 1000) return 'Rp' + (value/1000).toFixed(0) + 'K';
+            return 'Rp' + value;
+          };
+        }
+      }
+      
+      const chart = new Chart(ctx, {
+        type: widget.chartType,
+        data: widget.data,
+        options: mergedOptions
+      });
+      
+      chartInstances.push(chart);
+    }
+
+    function switchTab(tabKey) {
+      chartInstances.forEach(chart => chart.destroy());
+      chartInstances = [];
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`tab-${tabKey}`);
+      if (activeBtn) activeBtn.classList.add('active');
+      
+      const timeframe = aiData.timeframes[tabKey];
+      document.getElementById('reportSubtext').innerText = timeframe.dateRange;
+      
+      // Update screen reader text
+      document.getElementById('srSummary').innerText = `Dashboard analitik periode ${timeframe.dateRange} untuk ${aiData.title}`;
+      
+      const container = document.getElementById('dashboardContainer');
+      container.innerHTML = '';
+      
+      timeframe.widgets.forEach(widget => {
+        const el = createWidgetElement(widget);
+        container.appendChild(el);
+        if (widget.type === 'chart') {
+          initChartWidget(widget);
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Set global labels
+      document.getElementById('reportTitle').innerText = aiData.title || 'Laporan Performa Iklan';
+      
+      // 2. Render dynamic brand badges at the top if defined
+      const badgesDiv = document.getElementById("brandBadges");
+      badgesDiv.innerHTML = "";
+      if (aiData.brands) {
+        Object.keys(aiData.brands).forEach(k => {
+          const brand = aiData.brands[k];
+          const badge = document.createElement('span');
+          badge.className = 'brand-tag';
+          badge.style.color = brand.color;
+          badge.style.background = brand.color + '1a';
+          badge.style.borderColor = brand.color + '33';
+          badge.innerText = brand.name;
+          badgesDiv.appendChild(badge);
+        });
+      }
+      
+      // 3. Render tabs
+      const tabRow = document.getElementById('tabRow');
+      tabRow.innerHTML = '';
+      const tabKeys = Object.keys(aiData.timeframes);
+      tabKeys.forEach((key, index) => {
+        const tf = aiData.timeframes[key];
+        const btn = document.createElement('button');
+        btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+        btn.id = `tab-${key}`;
+        btn.innerText = tf.label;
+        btn.onclick = () => switchTab(key);
+        tabRow.appendChild(btn);
+      });
+      
+      // 4. Default to first tab or query parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramTab = urlParams.get('tab');
+      const initialTab = tabKeys.includes(paramTab) ? paramTab : tabKeys[0];
+      switchTab(initialTab);
+    });
+  </script>
+</body>
+</html>

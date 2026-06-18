@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: whatsapp_ai_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: fardhan123
+      POSTGRES_DB: latezzacake
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  whatsapp-gateway:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: whatsapp_ai_gateway
+    restart: always
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=fardhan123
+      - DB_NAME=latezzacake
+      - GEMINI_API_KEY=AIzaSyCUKLn3x4iCAF943e_R4E5o2rF_JP-nJEM
+      - BUSINESS_PROFILE_PATH=/usr/src/app/business-profile.json
+      - BUSINESS_PROFILE_KEY=latezza_cake_hampers_profile
+      - SHOPEE_DEFAULT_SEARCH_URL=https://shopee.co.id/search?keyword=
+      - MAX_HISTORY_MESSAGES=10
+      - GEMINI_MODEL=gemini-1.5-flash
+      - WHATSAPP_PORT=3001
+      - RATE_LIMIT_MAX_MSG=5
+      - RATE_LIMIT_WINDOW_MS=60000
+    volumes:
+      # Mount the parent business-profile.json inside the app folder
+      - ./business-profile.json:/usr/src/app/business-profile.json
+      # Mount the compiled frontend dist folder inside the container
+      - ./frontend/dist:/usr/src/frontend/dist
+      # Persist the authenticated WhatsApp session across container restarts
+      - ./backend/whatsapp-session:/usr/src/app/whatsapp-session
+      # Bind local .env as optional overrides
+      - ./.env:/usr/src/app/.env
+
+volumes:
+  postgres_data:

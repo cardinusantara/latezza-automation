@@ -1,0 +1,489 @@
+import { useState, useEffect } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import { 
+  IconDeviceFloppy, 
+  IconRefresh, 
+  IconKey, 
+  IconBrandWhatsapp, 
+  IconShieldLock, 
+  IconMessageCode,
+  IconLoader,
+  IconClockHour4,
+  IconSparkles,
+  IconInfoCircle
+} from '@tabler/icons-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { API_BASE_URL } from '@/config';
+
+interface SettingsState {
+  gemini_api_key: string;
+  whatsapp_group_jid: string;
+  rate_limit_max: string;
+  rate_limit_window: string;
+  followup_hours: string;
+  system_instruction: string;
+  followup_instruction: string;
+  meta_access_token: string;
+  meta_ad_account_id: string;
+}
+
+interface SettingsProps {
+  showToast: (message: string) => void;
+}
+
+export default function Settings({ showToast }: SettingsProps) {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [groups, setGroups] = useState<{ jid: string; subject: string }[]>([]);
+  const [isManualGroup, setIsManualGroup] = useState(false);
+  const [settings, setSettings] = useState<SettingsState>({
+    gemini_api_key: '',
+    whatsapp_group_jid: '',
+    rate_limit_max: '5',
+    rate_limit_window: '60000',
+    followup_hours: '24',
+    system_instruction: '',
+    followup_instruction: '',
+    meta_access_token: '',
+    meta_ad_account_id: ''
+  });
+
+  // Fetch connected groups list
+  const fetchGroups = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/whatsapp/groups`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setGroups(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch WhatsApp groups:', err);
+    }
+  };
+
+  // Fetch current settings from backend
+  const fetchSettings = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/settings`);
+      const data = await res.json();
+      if (data && !data.status) {
+        setSettings(data);
+      } else {
+        showToast('Gagal memuat pengaturan.');
+      }
+    } catch (err) {
+      showToast('Koneksi gagal saat memuat pengaturan.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSettings();
+    fetchGroups();
+  }, []);
+
+  // Auto detect if current saved JID should be manual
+  useEffect(() => {
+    if (settings.whatsapp_group_jid && groups.length > 0) {
+      const found = groups.some(g => g.jid === settings.whatsapp_group_jid);
+      if (!found) {
+        setIsManualGroup(true);
+      }
+    }
+  }, [settings.whatsapp_group_jid, groups]);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setSettings(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Save settings
+  const handleSave = async (e: FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        showToast('Pengaturan berhasil disimpan!');
+        // Re-fetch to get masked key again if updated
+        fetchSettings();
+      } else {
+        showToast('Gagal menyimpan: ' + data.message);
+      }
+    } catch (err) {
+      showToast('Koneksi gagal saat menyimpan.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Restore Default System Prompt
+  const handleRestoreDefaultPrompt = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/settings/default-system-prompt`);
+      const data = await res.json();
+      if (data && data.default_system_prompt) {
+        setSettings(prev => ({
+          ...prev,
+          system_instruction: data.default_system_prompt
+        }));
+        showToast('Prompt default dimuat. Klik "Simpan" untuk menerapkan.');
+      } else {
+        showToast('Gagal mengambil prompt default.');
+      }
+    } catch (err) {
+      showToast('Koneksi gagal saat memuat prompt default.');
+    }
+  };
+
+  // Reset follow-up instruction to default (empty = use system default)
+  const handleResetFollowupInstruction = () => {
+    setSettings(prev => ({ ...prev, followup_instruction: '' }));
+    showToast('Instruksi follow-up dikosongkan. Sistem akan pakai template default. Klik "Simpan" untuk menerapkan.');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24 text-muted-foreground gap-3">
+        <IconLoader size={36} className="animate-spin" />
+        <span className="text-sm">Loading settings...</span>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSave} className="flex flex-col gap-6 max-w-[1000px] mx-auto pb-10">
+      {/* Row 1: API Keys & Security + Rate Limits */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Card: API Keys */}
+        <Card className="bg-card border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+              <IconKey size={18} /> 
+              <span>API & Integration Keys</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-foreground/80">Gemini API Key</label>
+              <Input 
+                type="password" 
+                name="gemini_api_key"
+                placeholder="Masukkan Gemini API Key..."
+                value={settings.gemini_api_key}
+                onChange={handleChange}
+                className="bg-card/30 border-border text-foreground"
+              />
+              <span className="text-[10px] text-muted-foreground">
+                Digunakan untuk memproses AI Agent chat & otomatisasi follow-up.
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-foreground/80">Meta Graph API Access Token</label>
+              <Input 
+                type="password" 
+                name="meta_access_token"
+                placeholder="Masukkan Meta Access Token..."
+                value={settings.meta_access_token || ''}
+                onChange={handleChange}
+                className="bg-card/30 border-border text-foreground"
+              />
+              <span className="text-[10px] text-muted-foreground">
+                Akses token Graph API untuk menarik wawasan performa Meta Ads.
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-foreground/80">Meta Ad Account ID</label>
+              <Input 
+                type="text" 
+                name="meta_ad_account_id"
+                placeholder="act_1234567890"
+                value={settings.meta_ad_account_id || ''}
+                onChange={handleChange}
+                className="bg-card/30 border-border text-foreground"
+              />
+              <span className="text-[10px] text-muted-foreground">
+                ID Akun Iklan Meta Ads (bisa diawali dengan 'act_').
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-foreground/80">WhatsApp Target Group for Reports</label>
+              {!isManualGroup && groups.length > 0 ? (
+                <div className="flex gap-2">
+                  <select 
+                    className="flex h-9 flex-grow rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    value={settings.whatsapp_group_jid}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === 'manual') {
+                        setIsManualGroup(true);
+                      } else {
+                        setSettings(prev => ({ ...prev, whatsapp_group_jid: val }));
+                      }
+                    }}
+                  >
+                    <option value="" className="bg-[#111827]">-- Pilih WhatsApp Group --</option>
+                    {groups.map(g => (
+                      <option key={g.jid} value={g.jid} className="bg-[#111827]">
+                        {g.subject} ({g.jid.split('@')[0]})
+                      </option>
+                    ))}
+                    <option value="manual" className="bg-[#111827]">✍️ Ketik JID Manual...</option>
+                  </select>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsManualGroup(true)}
+                    className="h-9 text-xs"
+                  >
+                    Ketik JID
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input 
+                    type="text" 
+                    name="whatsapp_group_jid"
+                    placeholder="120363427625298309@g.us"
+                    value={settings.whatsapp_group_jid}
+                    onChange={handleChange}
+                    className="bg-card/30 border-border text-foreground flex-grow"
+                  />
+                  {groups.length > 0 && (
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setIsManualGroup(false)}
+                      className="h-9 text-xs"
+                    >
+                      Pilih Group
+                    </Button>
+                  )}
+                </div>
+              )}
+              <span className="text-[10px] text-muted-foreground">
+                Target grup tujuan pengiriman laporan analitik Ads harian otomatis.
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card: Security & Rate Limits */}
+        <Card className="bg-card border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+              <IconShieldLock size={18} /> 
+              <span>Security & Abuse Prevention</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-foreground/80">Rate Limit: Max Messages</label>
+              <Input 
+                type="number" 
+                name="rate_limit_max"
+                value={settings.rate_limit_max}
+                onChange={handleChange}
+                min="1"
+                className="bg-card/30 border-border text-foreground"
+              />
+              <span className="text-[10px] text-muted-foreground">
+                Jumlah pesan maksimum yang diijinkan dari satu pengirim sebelum diblokir/diabaikan.
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-foreground/80">Rate Limit: Window Size (ms)</label>
+              <Input 
+                type="number" 
+                name="rate_limit_window"
+                value={settings.rate_limit_window}
+                onChange={handleChange}
+                min="1000"
+                step="1000"
+                className="bg-card/30 border-border text-foreground"
+              />
+              <span className="text-[10px] text-muted-foreground">
+                Jangka waktu pembatasan pesan (contoh: 60000ms = 1 menit).
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Row 2: Follow-up configs */}
+      <Card className="bg-card border-border shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+            <IconBrandWhatsapp size={18} /> 
+            <span>Automated Follow-up Settings</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-6">
+
+          {/* Follow-up Interval */}
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+              <IconClockHour4 size={14} className="text-emerald-400" />
+              Interval Follow-up (jam setelah tidak ada respons)
+            </label>
+            <div className="flex items-center gap-2">
+              <Input 
+                type="number" 
+                name="followup_hours"
+                value={settings.followup_hours}
+                onChange={handleChange}
+                min="1"
+                max="168"
+                className="bg-card/30 border-border text-foreground w-24"
+              />
+              <span className="text-xs text-muted-foreground">jam</span>
+              <div className="flex gap-1.5 ml-2">
+                {[1, 4, 6, 12, 24, 48].map(h => (
+                  <button
+                    key={h}
+                    type="button"
+                    onClick={() => setSettings(prev => ({ ...prev, followup_hours: String(h) }))}
+                    className={`px-2.5 py-1 rounded text-xs font-medium border transition-colors ${
+                      settings.followup_hours === String(h)
+                        ? 'bg-emerald-500 text-white border-emerald-500'
+                        : 'bg-card/30 border-border text-muted-foreground hover:border-emerald-500/50 hover:text-foreground'
+                    }`}
+                  >
+                    {h}j
+                  </button>
+                ))}
+              </div>
+            </div>
+            <span className="text-[10px] text-muted-foreground">
+              Follow-up otomatis dikirim ke kustomer yang tidak merespon selama lebih dari interval ini. Sistem cek setiap hari pukul 14:00 WIB.
+            </span>
+          </div>
+
+          {/* Follow-up Instruction */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                <IconSparkles size={14} className="text-emerald-400" />
+                Instruksi Gaya Follow-up (opsional)
+              </label>
+              <button
+                type="button"
+                onClick={handleResetFollowupInstruction}
+                className="text-[10px] text-muted-foreground hover:text-emerald-400 flex items-center gap-1 transition-colors"
+              >
+                <IconRefresh size={11} />
+                Reset ke Default
+              </button>
+            </div>
+
+            {/* Mode info banner */}
+            <div className="flex items-start gap-2 bg-emerald-500/5 border border-emerald-500/20 rounded-md px-3 py-2">
+              <IconInfoCircle size={14} className="text-emerald-400 mt-0.5 shrink-0" />
+              <p className="text-[10px] text-emerald-300/80 leading-relaxed">
+                <strong>Mode Natural Language:</strong> Cukup tulis instruksi dalam bahasa sehari-hari — sistem otomatis membungkusnya dengan format yang benar untuk AI. Contoh: <em>"Follow up dengan mengingatkan promo akhir bulan dan tanyakan kapan tanggal acaranya"</em>.
+                Kosongkan field ini untuk menggunakan template bawaan sistem.
+              </p>
+            </div>
+
+            <Textarea 
+              name="followup_instruction"
+              placeholder={`Contoh:\n"Ingatkan kustomer soal custom cake yang mereka tanyakan. Sebutkan bahwa slot produksi kami terbatas jadi lebih baik pesan sekarang. Tanyakan apakah mereka sudah siap untuk konfirmasi DP."
+
+Atau jika ingin full template dengan variabel:\n"Anda adalah CS Latezza. Kustomer {name} sebelumnya bertanya tentang {reason}. Riwayat: {history}. Buat pesan follow-up singkat."`}
+              value={settings.followup_instruction}
+              onChange={handleChange}
+              rows={6}
+              className="font-mono text-xs bg-card/30 border-border text-foreground leading-relaxed resize-y"
+            />
+            <div className="flex flex-wrap gap-2 text-[10px] text-muted-foreground">
+              <span>Variabel opsional yang bisa dipakai:</span>
+              <code className="bg-muted px-1.5 py-0.5 rounded text-foreground font-semibold">{'{name}'}</code>
+              <code className="bg-muted px-1.5 py-0.5 rounded text-foreground font-semibold">{'{reason}'}</code>
+              <code className="bg-muted px-1.5 py-0.5 rounded text-foreground font-semibold">{'{history}'}</code>
+              <span className="text-emerald-400/70">(pakai {'{history}'} hanya jika nulis full template)</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Row 3: AI Core System Instructions */}
+      <Card className="bg-card border-border shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between pb-3">
+          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+            <IconMessageCode size={18} /> 
+            <span>AI Agent System Instructions</span>
+          </CardTitle>
+          <Button 
+            type="button" 
+            variant="outline"
+            onClick={handleRestoreDefaultPrompt}
+            className="text-xs gap-1 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-400 h-8 px-3"
+          >
+            <IconRefresh size={12} /> 
+            <span>Load Default Prompt</span>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-1.5">
+            <Textarea 
+              name="system_instruction"
+              placeholder="Tulis kepribadian AI Agent, info toko kue, dan guardrails di sini..."
+              value={settings.system_instruction}
+              onChange={handleChange}
+              className="min-h-[250px] font-mono text-xs bg-card/30 border-border text-foreground leading-relaxed"
+            />
+            <span className="text-[10px] text-muted-foreground mt-1">
+              Petunjuk sistem utama yang mendefinisikan persona bot, detail harga custom cake, rules handoff admin, link Shopee catalog, dan parameter anti-jailbreak.
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-4 pt-4 border-t border-border">
+        <Button 
+          type="button" 
+          variant="ghost"
+          onClick={fetchSettings}
+          disabled={saving}
+        >
+          Reset Changes
+        </Button>
+        <Button 
+          type="submit" 
+          className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold gap-2"
+          disabled={saving}
+        >
+          {saving ? (
+            <>
+              <IconLoader size={16} className="animate-spin" /> 
+              <span>Menyimpan...</span>
+            </>
+          ) : (
+            <>
+              <IconDeviceFloppy size={16} /> 
+              <span>Save Settings</span>
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+}
