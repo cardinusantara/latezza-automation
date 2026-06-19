@@ -362,7 +362,11 @@ function registerRoutes(fastify) {
         system_instruction: await db.getSetting('system_instruction') || '',
         followup_instruction: await db.getSetting('followup_instruction') || '',
         meta_access_token: maskedMetaToken,
-        meta_ad_account_id: await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID || ''
+        meta_ad_account_id: await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID || '',
+        ads_analysis_frequency: await db.getSetting('ads_analysis_frequency') || '1',
+        ads_analysis_time: await db.getSetting('ads_analysis_time') || '09:00',
+        creative_analysis_frequency: await db.getSetting('creative_analysis_frequency') || '7',
+        creative_analysis_time: await db.getSetting('creative_analysis_time') || '09:00'
       };
     } catch (err) {
       fastify.log.error(`GET settings error: ${err.message}`);
@@ -385,7 +389,11 @@ function registerRoutes(fastify) {
           system_instruction: { type: 'string' },
           followup_instruction: { type: 'string' },
           meta_access_token: { type: 'string' },
-          meta_ad_account_id: { type: 'string' }
+          meta_ad_account_id: { type: 'string' },
+          ads_analysis_frequency: { type: 'string' },
+          ads_analysis_time: { type: 'string' },
+          creative_analysis_frequency: { type: 'string' },
+          creative_analysis_time: { type: 'string' }
         }
       }
     },
@@ -410,7 +418,17 @@ function registerRoutes(fastify) {
         if (settings.followup_hours !== undefined) await db.setSetting('followup_hours', settings.followup_hours);
         if (settings.system_instruction !== undefined) await db.setSetting('system_instruction', settings.system_instruction);
         if (settings.followup_instruction !== undefined) await db.setSetting('followup_instruction', settings.followup_instruction);
+        if (settings.ads_analysis_frequency !== undefined) await db.setSetting('ads_analysis_frequency', settings.ads_analysis_frequency);
+        if (settings.ads_analysis_time !== undefined) await db.setSetting('ads_analysis_time', settings.ads_analysis_time);
+        if (settings.creative_analysis_frequency !== undefined) await db.setSetting('creative_analysis_frequency', settings.creative_analysis_frequency);
+        if (settings.creative_analysis_time !== undefined) await db.setSetting('creative_analysis_time', settings.creative_analysis_time);
         
+        // Dynamically reload background schedules to reflect changes immediately
+        const scheduler = require('./services/scheduler');
+        scheduler.reloadSchedules(fastify.log).catch(err => {
+          fastify.log.error(`Failed to reload background schedules: ${err.message}`);
+        });
+
         return { status: 'success' };
       } catch (err) {
         fastify.log.error(`POST settings error: ${err.message}`);
@@ -508,6 +526,64 @@ function registerRoutes(fastify) {
         fastify.log.error(`Manual follow-up failed: ${err.message}`);
       });
     return { status: 'success', message: 'Follow-up scan triggered in background. Check server logs.' };
+  });
+
+  // API: Get latest AI creative report
+  fastify.get('/api/creative-report', async (request, reply) => {
+    try {
+      const reportJson = await db.getSetting('creative_analysis_report');
+      if (!reportJson) {
+        reply.status(404);
+        return { status: 'error', message: 'Laporan kreatif belum pernah digenerate. Silakan trigger regenerasi.' };
+      }
+      return JSON.parse(reportJson);
+    } catch (err) {
+      fastify.log.error(`GET creative report error: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // API: Run manual creative content analysis
+  fastify.post('/api/trigger-creative-analysis', async (request, reply) => {
+    try {
+      const creativeService = require('./services/creative');
+      const report = await creativeService.runCreativeAnalysis(fastify.log);
+      return { status: 'success', data: report };
+    } catch (err) {
+      fastify.log.error(`Manual creative analysis trigger error: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // API: Run manual creative content analysis via Server-Sent Events (SSE) Stream
+  fastify.get('/api/trigger-creative-analysis-stream', async (request, reply) => {
+    // Set headers for Server-Sent Events (SSE)
+    reply.raw.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*'
+    });
+
+    const sendEvent = (eventObj) => {
+      reply.raw.write(`data: ${JSON.stringify(eventObj)}\n\n`);
+    };
+
+    try {
+      fastify.log.info('Starting SSE Stream for creative analysis manual trigger...');
+      const creativeService = require('./services/creative');
+      const report = await creativeService.runCreativeAnalysis(fastify.log, (progress) => {
+        sendEvent(progress);
+      });
+      sendEvent({ type: 'done', data: report });
+    } catch (err) {
+      fastify.log.error(`Creative analysis stream error: ${err.message}`);
+      sendEvent({ type: 'error', message: err.message });
+    } finally {
+      reply.raw.end();
+    }
   });
 }
 

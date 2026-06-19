@@ -3,7 +3,7 @@
 project: WhatsApp AI Agent + Admin Dashboard
 client: Latezza Cake
 stack: Fastify (Node.js) + React (Vite + Tailwind CSS v4 + shadcn/ui) + PostgreSQL + Baileys + Gemini API
-last_updated: 2026-06-18
+last_updated: 2026-06-19
 
 ---
 
@@ -23,7 +23,9 @@ latezza-automation/
 │   │   └── services/
 │   │       ├── whatsapp.js       # WhatsApp Socket service (Baileys auth, events, rate limiting)
 │   │       ├── followup.js       # Proactive customer follow-up scanning and LLM logic
-│   │       └── ads.js            # Meta Ads script execution and group broadcast reporting
+│   │       ├── ads.js            # Meta Ads script execution and group broadcast reporting
+│   │       ├── creative.js       # AI creative ad content analysis (copywriting audit & ideation)
+│   │       └── scheduler.js      # Dynamic background scheduler (node-cron wrapper with database-driven reload)
 │   ├── scripts/                  # Developer tools and test utilities (e.g., debug-followup.js, seed-test-followup.js)
 │   ├── ads-analysis/
 │   │   ├── automation.js         # Meta Ads fetcher + Gemini NLP summarizer + report.html generator
@@ -161,6 +163,11 @@ known keys in settings table:
 - followup_hours              -- hours of inactivity before proactive follow-up fires (default 24)
 - system_instruction          -- full system prompt for the AI agent
 - followup_instruction        -- custom instruction for follow-up message generation (see FOLLOW-UP section)
+- ads_analysis_frequency      -- frequency of ads report execution in days (default: 1)
+- ads_analysis_time           -- hour and minute to trigger ads report (default: '09:00')
+- creative_analysis_frequency -- frequency of creative analysis in days (default: 7)
+- creative_analysis_time      -- hour and minute to trigger creative analysis (default: '09:00')
+- creative_analysis_report    -- JSON string of the latest generated AI creative ad content ideas report
 
 ---
 
@@ -272,9 +279,23 @@ in all 3 modes, a "INSTRUKSI OUTPUT (WAJIB DIIKUTI)" block is always appended:
 
 ---
 
+## BACKGROUND SCHEDULER SYSTEM (scheduler.js)
+
+All background cron jobs (excluding Personal Followups which remains hourly) are managed by `backend/src/services/scheduler.js`, which wraps `node-cron`.
+
+Schedules are loaded dynamically from PostgreSQL settings:
+- **Meta Ads Report**: triggered every `ads_analysis_frequency` days at `ads_analysis_time`.
+- **AI Creative Ideas**: triggered every `creative_analysis_frequency` days at `creative_analysis_time`.
+- **Followups check**: hourly (`0 * * * *`)
+
+### Dynamic Reloading:
+Whenever settings are saved via `POST /api/settings`, `scheduler.reloadSchedules()` is triggered. It stops all running cron jobs and reschedules them using the newly saved values immediately, with no server restart needed.
+
+---
+
 ## META ADS ANALYSIS (src/services/ads.js)
 
-cron: `0 9 * * *` (09:00 WIB daily)
+cron: dynamic scheduler (default: every 1 day at 09:00 WIB)
 manual trigger: `POST /run-analysis` or `POST /trigger-analysis` (background execution)
 report viewer: `GET /report-html` (serves report.html), viewable in dashboard under Ads Report tab
 
@@ -286,6 +307,23 @@ flow:
 5. Gemini generates Indonesian qualitative summary + optimization insights
 6. fills template.html tokens → writes report.html
 7. broadcasts formatted summary + report link to whatsapp_group_jid
+
+---
+
+## AI CREATIVE AD CONTENT IDEAS (src/services/creative.js)
+
+cron: dynamic scheduler (default: every 7 days at 09:00 WIB)
+manual trigger: `POST /api/trigger-creative-analysis` (background execution) or `GET /api/trigger-creative-analysis-stream` (Server-Sent Events progress stream)
+report viewer: viewable in dashboard under Creative Ideas tab (calls `GET /api/creative-report`)
+
+flow:
+1. read META_ACCESS_TOKEN and META_AD_ACCOUNT_ID from DB settings (fallback to process.env)
+2. query Meta Graph API for active ads (`/ads` endpoint) to fetch copywriting caption (body), headline, and media
+3. query Meta Graph API for performance insights (`/insights`) to match conversions (messaging actions), spend, and CPR
+4. categorize ads into "Winners" (high conversions, low CPR) and "Losers" (high spend, low/zero conversions)
+5. invoke Gemini API (`gemini-2.5-flash` or similar fallback) using `generateContentStream` to perform a creative audit and generate 3-5 brand-new Indonesian ad copy concepts + visual briefs
+6. save structured JSON report in settings cache/database table under `creative_analysis_report`
+7. broadcast report summary to `whatsapp_group_jid`
 
 ---
 
@@ -343,9 +381,12 @@ implemented in: `backend/src/routes.js`
 ### stats
 - GET  `/api/stats`                      → dashboard metrics (counts, recent leads, connection status)
 
-### ads
-- POST `/run-analysis`                   → triggers raw automation.js script and returns output
-- POST `/trigger-analysis`               → triggers analysis and broadcasts report to WA group in background
+### ads & creative ideas
+- POST `/run-analysis`                          → triggers raw ads automation.js script and returns output
+- POST `/trigger-analysis`                      → triggers ads analysis and broadcasts report in background
+- GET  `/api/creative-report`                   → returns the latest AI creative ad content ideas report
+- POST `/api/trigger-creative-analysis`         → manually triggers creative analysis in the background
+- GET  `/api/trigger-creative-analysis-stream`  → manually triggers creative analysis via Server-Sent Events (SSE) progress stream
 
 ### follow-up (internal/testing)
 - POST `/api/trigger-followups`          → manually trigger follow-ups (bypasses hour threshold check)

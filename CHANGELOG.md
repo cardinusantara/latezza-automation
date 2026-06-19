@@ -5,6 +5,32 @@ entries: plain text, AI-readable, no markdown fluff
 
 ---
 
+## 2026-06-19
+
+### AI Creative Ad Ideas & Copywriting Audit
+- created `backend/src/services/creative.js` to inspect active ads (captions, headlines, media URLs) and performance insights (conversions, spend, cost per messaging conversation)
+- implemented metric-based classification dividing ads into "Winners" (high conversions, low cost) and "Losers" (high budget spent with minimal conversions)
+- integrated Gemini API `generateContentStream` to analyze ad copywriting/media and generate 3-5 new Indonesian ad copy variations and matching visual briefs
+- implemented 3-attempt exponential backoff retry logic (starting at 2s delay) to bypass transient `503 Service Unavailable` API demand spikes
+- saved generated creative analysis reports directly to the `creative_analysis_report` settings table/cache
+
+### Dynamic Background Scheduler & Reloading
+- created `backend/src/services/scheduler.js` to manage all automated cron tasks (excluding hourly follow-up scans) using `node-cron`
+- supported database-configured settings: `ads_analysis_frequency`/`time` and `creative_analysis_frequency`/`time`
+- implemented `scheduler.reloadSchedules()` to dynamically stop and restart background crons with new settings immediately on configuration update without restarting the server
+
+### SSE Progress Streaming & Dashboard UI
+- created `GET /api/trigger-creative-analysis-stream` endpoint in `backend/src/routes.js` to broadcast live server-sent event (SSE) chunks during AI creative analysis runs
+- created frontend `CreativeReport.tsx` component to view, trigger, and read real-time typewriter logs and streaming AI text chunks
+- added "Automation Schedules" configuration card in frontend `Settings.tsx` to control frequencies and trigger times for all automated tasks
+- added visual indicator and disabled state tracking on manual trigger buttons in dashboard components
+
+### Best-Practice Error Propagation
+- disabled simulated/mock data fallbacks when Meta Graph or Gemini API keys are missing or calls fail
+- propagated explicit error messages to the frontend UI for clear system state visibility
+
+---
+
 ## 2026-06-18
 
 ### RAG semantic product search — AI-powered catalog matching

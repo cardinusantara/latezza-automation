@@ -28,6 +28,10 @@ interface SettingsState {
   followup_instruction: string;
   meta_access_token: string;
   meta_ad_account_id: string;
+  ads_analysis_frequency: string;
+  ads_analysis_time: string;
+  creative_analysis_frequency: string;
+  creative_analysis_time: string;
 }
 
 interface SettingsProps {
@@ -48,7 +52,11 @@ export default function Settings({ showToast }: SettingsProps) {
     system_instruction: '',
     followup_instruction: '',
     meta_access_token: '',
-    meta_ad_account_id: ''
+    meta_ad_account_id: '',
+    ads_analysis_frequency: '1',
+    ads_analysis_time: '09:00',
+    creative_analysis_frequency: '7',
+    creative_analysis_time: '09:00'
   });
 
   // Fetch connected groups list
@@ -97,7 +105,7 @@ export default function Settings({ showToast }: SettingsProps) {
     }
   }, [settings.whatsapp_group_jid, groups]);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setSettings(prev => ({
       ...prev,
@@ -326,6 +334,85 @@ export default function Settings({ showToast }: SettingsProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Automation Scheduling Card */}
+      <Card className="bg-card border-border shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+            <IconClockHour4 size={18} />
+            <span>Automation Schedules</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Ads Report Scheduling */}
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-semibold text-foreground/80">Ads Analysis Schedule</label>
+            <div className="flex gap-3">
+              <div className="flex flex-col gap-1 flex-grow">
+                <label className="text-[10px] text-muted-foreground">Frekuensi</label>
+                <select
+                  name="ads_analysis_frequency"
+                  value={settings.ads_analysis_frequency}
+                  onChange={handleChange}
+                  className="flex h-9 rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+                >
+                  <option value="1" className="bg-[#111827]">Setiap Hari</option>
+                  <option value="2" className="bg-[#111827]">Setiap 2 Hari</option>
+                  <option value="3" className="bg-[#111827]">Setiap 3 Hari</option>
+                  <option value="7" className="bg-[#111827]">Setiap Minggu (7 Hari)</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1 w-28">
+                <label className="text-[10px] text-muted-foreground">Waktu (WIB)</label>
+                <Input
+                  type="time"
+                  name="ads_analysis_time"
+                  value={settings.ads_analysis_time}
+                  onChange={handleChange}
+                  className="bg-card/30 border-border text-foreground h-9"
+                />
+              </div>
+            </div>
+            <span className="text-[10px] text-muted-foreground">
+              Jadwal penarikan data performa Meta Ads & broadcast ringkasan ke grup WA.
+            </span>
+          </div>
+
+          {/* Creative Ideas Scheduling */}
+          <div className="flex flex-col gap-3">
+            <label className="text-xs font-semibold text-foreground/80">AI Creative Ideas Schedule</label>
+            <div className="flex gap-3">
+              <div className="flex flex-col gap-1 flex-grow">
+                <label className="text-[10px] text-muted-foreground">Frekuensi</label>
+                <select
+                  name="creative_analysis_frequency"
+                  value={settings.creative_analysis_frequency}
+                  onChange={handleChange}
+                  className="flex h-9 rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+                >
+                  <option value="1" className="bg-[#111827]">Setiap Hari</option>
+                  <option value="3" className="bg-[#111827]">Setiap 3 Hari</option>
+                  <option value="7" className="bg-[#111827]">Setiap Minggu (7 Hari)</option>
+                  <option value="14" className="bg-[#111827]">Setiap 2 Minggu (14 Hari)</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-1 w-28">
+                <label className="text-[10px] text-muted-foreground">Waktu (WIB)</label>
+                <Input
+                  type="time"
+                  name="creative_analysis_time"
+                  value={settings.creative_analysis_time}
+                  onChange={handleChange}
+                  className="bg-card/30 border-border text-foreground h-9"
+                />
+              </div>
+            </div>
+            <span className="text-[10px] text-muted-foreground">
+              Jadwal audit copywriting & pembuatan ide iklan baru oleh Gemini AI.
+            </span>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Row 2: Follow-up configs */}
       <Card className="bg-card border-border shadow-sm">

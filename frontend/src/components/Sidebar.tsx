@@ -4,7 +4,8 @@ import {
   IconCookie, 
   IconAdjustments,
   IconSettings,
-  IconChartLine
+  IconChartLine,
+  IconSparkles
 } from '@tabler/icons-react';
 
 interface SidebarProps {
@@ -18,6 +19,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     { id: 'inbox', label: 'Chat Inbox', icon: <IconMessageDots size={18} /> },
     { id: 'products', label: 'Product Catalog', icon: <IconCookie size={18} /> },
     { id: 'ads-report', label: 'Ads Report', icon: <IconChartLine size={18} /> },
+    { id: 'creative-ideas', label: 'Creative Ideas', icon: <IconSparkles size={18} /> },
     { id: 'actions', label: 'Actions & Controls', icon: <IconAdjustments size={18} /> },
     { id: 'settings', label: 'Settings Panel', icon: <IconSettings size={18} /> }
   ];

@@ -59,23 +59,9 @@ async function start() {
     // Connect to WhatsApp
     await whatsappService.connectToWhatsApp(fastify.log);
 
-    // Schedule Daily Ads Report at 9:00 AM (Asia/Jakarta)
-    cron.schedule('0 9 * * *', () => {
-      fastify.log.info('Running scheduled daily Meta Ads report at 9:00 AM...');
-      adsService.runAnalysisAndSendReport(fastify.log)
-        .catch(err => fastify.log.error(`Scheduled execution failed: ${err.message}`));
-    }, {
-      timezone: "Asia/Jakarta"
-    });
-
-    // Schedule Hourly Follow-ups (dynamic checks based on settings delay)
-    cron.schedule('0 * * * *', () => {
-      fastify.log.info('Running scheduled hourly customer follow-up check...');
-      followupService.runProactiveFollowUps(fastify.log)
-        .catch(err => fastify.log.error(`Scheduled follow-up failed: ${err.message}`));
-    }, {
-      timezone: "Asia/Jakarta"
-    });
+    // Initialize dynamic scheduler (Ads report, Creative analysis, Hourly followups)
+    const scheduler = require('./src/services/scheduler');
+    await scheduler.setupScheduledJobs(fastify.log);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
