@@ -41,7 +41,7 @@ export default function Overview({ stats, onSelectCustomer }: OverviewProps) {
       iconClass: 'bg-purple-500/10 text-purple-400'
     },
     {
-      title: 'Synced Products',
+      title: 'Products',
       value: stats.totalProducts !== undefined ? stats.totalProducts : '-',
       icon: <IconCookie size={20} />,
       iconClass: 'bg-blue-500/10 text-blue-400'

@@ -156,7 +156,7 @@ export default function App() {
       case 'inbox':
         return { title: 'Conversations Inbox', subtitle: 'WhatsApp Live Chat console and lead updates' };
       case 'products':
-        return { title: 'Product Catalog', subtitle: 'List of synced items from PostgreSQL products table' };
+        return { title: 'Product Catalog', subtitle: 'List of items from PostgreSQL products table' };
       case 'actions':
         return { title: 'System Actions', subtitle: 'Manual overrides and database triggers' };
       case 'settings':
