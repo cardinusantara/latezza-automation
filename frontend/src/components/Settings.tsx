@@ -491,7 +491,7 @@ export default function Settings({ showToast }: SettingsProps) {
               </div>
             </div>
             <span className="text-[10px] text-muted-foreground">
-              Follow-up otomatis dikirim ke kustomer yang tidak merespon selama lebih dari interval ini. Sistem cek setiap hari pukul 14:00 WIB.
+              Follow-up otomatis dikirim ke kustomer yang tidak merespon selama lebih dari interval ini. Sistem melakukan pengecekan otomatis setiap jam.
             </span>
           </div>
 
