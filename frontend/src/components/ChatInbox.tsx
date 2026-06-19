@@ -8,7 +8,8 @@ import {
   IconRobotOff,
   IconDeviceFloppy,
   IconNotebook,
-  IconCopy
+  IconCopy,
+  IconArrowLeft
 } from '@tabler/icons-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -67,6 +68,9 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
   
   // Product Search inside CRM Sidebar
   const [prodQuery, setProdQuery] = useState('');
+
+  // Mobile responsive views pane sub-state ('list', 'chat', 'crm')
+  const [mobileView, setMobileView] = useState<'list' | 'chat' | 'crm'>('list');
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -134,6 +138,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
   const handleSelectCustomer = (jid: string, name: string) => {
     setSelectedJid(jid);
     setSelectedCustName(name);
+    setMobileView('chat');
   };
 
   // Toggle AI agent
@@ -251,7 +256,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
   return (
     <div className="flex h-[calc(100vh-120px)] border border-border rounded-2xl overflow-hidden bg-card">
       {/* Pane 1: Conversations List */}
-      <div className="w-80 shrink-0 border-r border-border flex flex-col bg-card/50">
+      <div className={`${mobileView === 'list' ? 'flex' : 'hidden md:flex'} w-full md:w-80 shrink-0 border-r border-border flex flex-col bg-card/50`}>
         <div className="p-4 border-b border-border">
           <div className="relative">
             <IconSearch size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -325,7 +330,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
       </div>
 
       {/* Pane 2: Conversation Box */}
-      <div className="flex-1 min-w-0 flex flex-col bg-slate-950/40 relative">
+      <div className={`${mobileView === 'chat' ? 'flex' : 'hidden md:flex'} flex-1 min-w-0 flex flex-col bg-[#0f172a]/20 dark:bg-slate-950/40 relative`}>
         {!selectedJid ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
             <IconMessageOff size={48} className="text-muted-foreground/50" />
@@ -335,40 +340,65 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
           <>
             {/* Header */}
             <div className="p-4 border-b border-border bg-card flex justify-between items-center z-10">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                {/* Mobile Back Button */}
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setMobileView('list')}
+                  className="md:hidden flex items-center gap-1 text-muted-foreground mr-1 px-1 h-8 text-xs border border-border"
+                >
+                  <IconArrowLeft size={16} />
+                </Button>
+
                 <div 
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-xs" 
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-xs shrink-0" 
                   style={{ backgroundColor: getAvatarColor(selectedCustName) }}
                 >
                   {getInitials(selectedCustName)}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-foreground leading-none">{selectedCustName}</h3>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-sm font-semibold text-foreground leading-none truncate">{selectedCustName}</h3>
                     {needsAdmin && (
-                      <Badge variant="destructive" className="text-[10px] py-0.5 px-2 animate-pulse gap-1">
-                        <IconAlertCircle size={11} /> Butuh Admin
+                      <Badge variant="destructive" className="text-[9px] py-0.5 px-1.5 animate-pulse gap-0.5 whitespace-nowrap">
+                        <IconAlertCircle size={9} /> Admin
                       </Badge>
                     )}
                   </div>
-                  <p className="font-mono text-[9px] text-muted-foreground mt-1.5">
+                  <p className="font-mono text-[9px] text-muted-foreground mt-1 truncate">
                     {selectedJid}
                   </p>
                 </div>
               </div>
 
-              {/* AI response toggle */}
-              <div className="flex items-center gap-2.5 bg-accent/40 border border-border px-3 py-1.5 rounded-lg">
-                <span className="text-xs font-semibold text-muted-foreground">AI Respon</span>
-                <Switch 
-                  checked={aiEnabled} 
-                  onCheckedChange={handleToggleAi} 
-                />
+              {/* Header Actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                {/* Mobile CRM details toggle */}
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setMobileView('crm')}
+                  className="lg:hidden flex h-9 w-9 rounded-lg border border-border bg-card/30 text-foreground"
+                  title="Customer CRM"
+                >
+                  <IconNotebook size={16} />
+                </Button>
+
+                {/* AI response toggle */}
+                <div className="flex items-center gap-2 bg-accent/40 border border-border px-2.5 py-1.5 rounded-lg h-9">
+                  <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground">AI</span>
+                  <Switch 
+                    checked={aiEnabled} 
+                    onCheckedChange={handleToggleAi} 
+                    className="scale-90"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Feed Message Body */}
-            <div className="flex-grow overflow-y-auto p-6 flex flex-col gap-4 bg-[#0B0F19]/90">
+             {/* Feed Message Body */}
+            <div className="flex-grow overflow-y-auto p-6 flex flex-col gap-4 bg-[#fcf8f2] dark:bg-[#0b0c10] border-y border-border/40">
               {needsAdmin && (
                 <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-3 flex items-center gap-2.5 text-destructive text-xs">
                   <IconAlertCircle size={18} className="flex-shrink-0" />
@@ -410,10 +440,10 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
                       key={idx} 
                       className={`flex flex-col w-full ${isUser ? 'items-start' : 'items-end'}`}
                     >
-                      <div className={`max-w-[65%] p-3 rounded-xl text-sm leading-relaxed ${
+                       <div className={`max-w-[85%] md:max-w-[65%] p-3.5 rounded-xl text-sm leading-relaxed ${
                         isUser 
-                          ? 'bg-[#202C33] text-foreground rounded-tl-none' 
-                          : 'bg-[#056162] text-foreground rounded-tr-none'
+                          ? 'bg-card text-foreground border border-border/80 dark:border-0 dark:bg-[#202C33] rounded-tl-none shadow-sm' 
+                          : 'bg-primary text-primary-foreground dark:bg-[#056162] dark:text-foreground rounded-tr-none shadow-sm'
                       }`}>
                         <div className="flex flex-col gap-2">
                           {isImage && (
@@ -426,7 +456,11 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
                           )}
                           {textContent && <div>{textContent}</div>}
                         </div>
-                        <div className="text-[9px] text-white/40 mt-1 text-right">{timeStr}</div>
+                         <div className={`text-[9px] mt-1.5 text-right font-medium ${
+                          isUser 
+                            ? 'text-muted-foreground/60 dark:text-white/40' 
+                            : 'text-primary-foreground/75 dark:text-white/40'
+                        }`}>{timeStr}</div>
                       </div>
                     </div>
                   );
@@ -445,7 +479,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 className="flex-grow bg-card/30 border-border"
               />
-              <Button onClick={handleSendMessage} className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 p-0 rounded-xl flex items-center justify-center flex-shrink-0">
+               <Button onClick={handleSendMessage} className="bg-primary hover:bg-primary/90 text-primary-foreground w-10 h-10 p-0 rounded-xl flex items-center justify-center flex-shrink-0">
                 <IconSend size={18} />
               </Button>
             </div>
@@ -455,10 +489,22 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
 
       {/* Pane 3: CRM Details Sidebar */}
       {selectedJid && (
-        <div className="w-80 shrink-0 border-l border-border bg-card/50 flex flex-col p-6 gap-6 overflow-y-auto box-border">
-          <div className="border-b border-border pb-3 flex items-center gap-2">
-            <IconNotebook size={16} className="text-emerald-500" /> 
-            <h4 className="text-sm font-semibold text-foreground">Customer CRM</h4>
+        <div className={`${mobileView === 'crm' ? 'flex' : 'hidden lg:flex'} w-full lg:w-80 shrink-0 border-l border-sidebar-border bg-card/50 flex flex-col p-4 sm:p-6 gap-6 overflow-y-auto box-border`}>
+          <div className="border-b border-border pb-3 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <IconNotebook size={16} className="text-primary" /> 
+              <h4 className="text-sm font-semibold text-foreground">Customer CRM</h4>
+            </div>
+            {/* Back to Chat button on Mobile */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileView('chat')}
+              className="lg:hidden flex items-center gap-1 text-muted-foreground px-2 h-8 text-xs border border-border"
+            >
+              <IconArrowLeft size={14} />
+              <span>Kembali</span>
+            </Button>
           </div>
 
           {/* Actual Phone */}

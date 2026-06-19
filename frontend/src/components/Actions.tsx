@@ -20,7 +20,7 @@ export default function Actions({ onTriggerFollowUps, onTriggerCreativeAnalysis 
         <div className="flex gap-4 flex-wrap">
           <Button 
             onClick={onTriggerFollowUps}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold gap-2"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2"
           >
             <IconAlarm size={16} /> 
             <span>Run Follow-up Checks</span>
@@ -28,7 +28,7 @@ export default function Actions({ onTriggerFollowUps, onTriggerCreativeAnalysis 
 
           <Button 
             onClick={onTriggerCreativeAnalysis}
-            className="bg-purple-500 hover:bg-purple-600 hover:shadow-[0_0_12px_rgba(168,85,247,0.3)] text-white font-semibold gap-2 transition-all duration-200"
+            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold gap-2 transition-all duration-200"
           >
             <IconSparkles size={16} /> 
             <span>Run AI Creative Analysis</span>

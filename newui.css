@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -38,7 +35,7 @@
   --sidebar-accent-foreground: rgb(168, 67, 107);
   --sidebar-border: rgb(241, 225, 209);
   --sidebar-ring: rgb(179, 139, 29);
-  --font-sans: 'Playfair Display', Playfair Display, serif;
+  --font-sans: Playfair Display, serif;
   --font-serif: Georgia, serif;
   --font-mono: monospace;
   --radius: 1rem;
@@ -93,7 +90,7 @@
   --sidebar-accent-foreground: rgb(252, 236, 227);
   --sidebar-border: rgb(61, 52, 45);
   --sidebar-ring: rgb(212, 175, 55);
-  --font-sans: 'Playfair Display', Playfair Display, serif;
+  --font-sans: Playfair Display, serif;
   --font-serif: Georgia, serif;
   --font-mono: monospace;
   --radius: 1rem;

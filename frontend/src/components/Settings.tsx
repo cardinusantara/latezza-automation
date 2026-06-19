@@ -41,6 +41,7 @@ interface SettingsProps {
 export default function Settings({ showToast }: SettingsProps) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<'api' | 'security' | 'schedules' | 'followup' | 'persona'>('api');
   const [groups, setGroups] = useState<{ jid: string; subject: string }[]>([]);
   const [isManualGroup, setIsManualGroup] = useState(false);
   const [settings, setSettings] = useState<SettingsState>({
@@ -174,12 +175,37 @@ export default function Settings({ showToast }: SettingsProps) {
 
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-6 max-w-[1000px] mx-auto pb-10">
+      {/* Mobile Tab Selector */}
+      <div className="flex md:hidden overflow-x-auto gap-2 pb-2 -mx-4 px-4 scrollbar-none snap-x shrink-0">
+        {[
+          { id: 'api', label: 'API Keys' },
+          { id: 'security', label: 'Security' },
+          { id: 'schedules', label: 'Schedules' },
+          { id: 'followup', label: 'Follow-ups' },
+          { id: 'persona', label: 'AI Prompt' }
+        ].map(cat => (
+          <button
+            key={cat.id}
+            type="button"
+            onClick={() => setActiveCategory(cat.id as any)}
+            className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border shrink-0 transition-colors snap-center ${
+              activeCategory === cat.id
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-card border-border text-muted-foreground'
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
       {/* Row 1: API Keys & Security + Rate Limits */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Card: API Keys */}
-        <Card className="bg-card border-border shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+        <div className={`${activeCategory === 'api' ? 'block' : 'hidden md:block'} w-full`}>
+          <Card className="bg-card border-border shadow-sm h-full">
+            <CardHeader>
+              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
               <IconKey size={18} /> 
               <span>API & Integration Keys</span>
             </CardTitle>
@@ -291,11 +317,13 @@ export default function Settings({ showToast }: SettingsProps) {
             </div>
           </CardContent>
         </Card>
+        </div>
 
         {/* Card: Security & Rate Limits */}
-        <Card className="bg-card border-border shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+        <div className={`${activeCategory === 'security' ? 'block' : 'hidden md:block'} w-full`}>
+          <Card className="bg-card border-border shadow-sm h-full">
+            <CardHeader>
+              <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
               <IconShieldLock size={18} /> 
               <span>Security & Abuse Prevention</span>
             </CardTitle>
@@ -333,12 +361,14 @@ export default function Settings({ showToast }: SettingsProps) {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
 
       {/* Automation Scheduling Card */}
-      <Card className="bg-card border-border shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+      <div className={`${activeCategory === 'schedules' ? 'block' : 'hidden md:block'} w-full`}>
+        <Card className="bg-card border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
             <IconClockHour4 size={18} />
             <span>Automation Schedules</span>
           </CardTitle>
@@ -413,11 +443,13 @@ export default function Settings({ showToast }: SettingsProps) {
           </div>
         </CardContent>
       </Card>
+      </div>
 
       {/* Row 2: Follow-up configs */}
-      <Card className="bg-card border-border shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+      <div className={`${activeCategory === 'followup' ? 'block' : 'hidden md:block'} w-full`}>
+        <Card className="bg-card border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
             <IconBrandWhatsapp size={18} /> 
             <span>Automated Follow-up Settings</span>
           </CardTitle>
@@ -449,8 +481,8 @@ export default function Settings({ showToast }: SettingsProps) {
                     onClick={() => setSettings(prev => ({ ...prev, followup_hours: String(h) }))}
                     className={`px-2.5 py-1 rounded text-xs font-medium border transition-colors ${
                       settings.followup_hours === String(h)
-                        ? 'bg-emerald-500 text-white border-emerald-500'
-                        : 'bg-card/30 border-border text-muted-foreground hover:border-emerald-500/50 hover:text-foreground'
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'bg-card/30 border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
                     }`}
                   >
                     {h}j
@@ -509,11 +541,13 @@ Atau jika ingin full template dengan variabel:\n"Anda adalah CS Latezza. Kustome
           </div>
         </CardContent>
       </Card>
+      </div>
 
       {/* Row 3: AI Core System Instructions */}
-      <Card className="bg-card border-border shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-emerald-500 flex items-center gap-2">
+      <div className={`${activeCategory === 'persona' ? 'block' : 'hidden md:block'} w-full`}>
+        <Card className="bg-card border-border shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
             <IconMessageCode size={18} /> 
             <span>AI Agent System Instructions</span>
           </CardTitle>
@@ -521,7 +555,7 @@ Atau jika ingin full template dengan variabel:\n"Anda adalah CS Latezza. Kustome
             type="button" 
             variant="outline"
             onClick={handleRestoreDefaultPrompt}
-            className="text-xs gap-1 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-400 h-8 px-3"
+            className="text-xs gap-1 border-primary/20 text-primary hover:bg-primary/10 h-8 px-3"
           >
             <IconRefresh size={12} /> 
             <span>Load Default Prompt</span>
@@ -542,6 +576,7 @@ Atau jika ingin full template dengan variabel:\n"Anda adalah CS Latezza. Kustome
           </div>
         </CardContent>
       </Card>
+      </div>
 
       {/* Action Buttons */}
       <div className="flex justify-end gap-4 pt-4 border-t border-border">
@@ -555,7 +590,7 @@ Atau jika ingin full template dengan variabel:\n"Anda adalah CS Latezza. Kustome
         </Button>
         <Button 
           type="submit" 
-          className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold gap-2"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2"
           disabled={saving}
         >
           {saving ? (

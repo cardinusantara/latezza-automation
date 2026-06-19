@@ -211,7 +211,7 @@ export default function CreativeReport() {
             <Button
               onClick={handleRegenerate}
               disabled={loading}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold gap-1.5 h-9 px-4 transition-all duration-200 hover:shadow-[0_0_12px_rgba(16,185,129,0.3)]"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold gap-1.5 h-9 px-4 transition-all duration-200"
             >
               {loading ? <IconLoader size={16} className="animate-spin" /> : <IconRefresh size={16} />}
               <span>{loading ? 'Menganalisis...' : 'Regenerate Ideas'}</span>
@@ -235,7 +235,7 @@ export default function CreativeReport() {
           <Button
             onClick={handleRegenerate}
             disabled={loading}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs gap-1.5 h-9 px-5 mt-2 transition-all duration-200"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs gap-1.5 h-9 px-5 mt-2 transition-all duration-200"
           >
             {loading ? <IconLoader size={16} className="animate-spin" /> : <IconRefresh size={16} />}
             <span>Jalankan Analisis Kreatif Pertama</span>
@@ -259,15 +259,15 @@ export default function CreativeReport() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Winners Card */}
-            <Card className="bg-gradient-to-br from-[#0c1f1a] to-[#0c131a] border-emerald-500/10 hover:border-emerald-500/20 transition-all duration-300 shadow-lg group">
-              <CardHeader className="pb-3 border-b border-emerald-500/10">
-                <CardTitle className="text-sm font-bold tracking-wide text-emerald-400 flex items-center gap-2">
-                  <div className="p-1 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
+            <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-[#0c1f1a] dark:to-[#0c131a] border border-emerald-200 dark:border-emerald-500/10 hover:border-emerald-300 dark:hover:border-emerald-500/20 transition-all duration-300 shadow-sm dark:shadow-lg group">
+              <CardHeader className="pb-3 border-b border-emerald-200 dark:border-emerald-500/10">
+                <CardTitle className="text-sm font-bold tracking-wide text-emerald-800 dark:text-emerald-400 flex items-center gap-2">
+                  <div className="p-1 rounded-lg bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 shrink-0">
                     <IconTrophy size={16} />
                   </div>
                   <span>ELEMEN IKLAN PEMENANG (WINNERS)</span>
                 </CardTitle>
-                <CardDescription className="text-[10px] text-emerald-400/60">
+                <CardDescription className="text-[10px] text-emerald-700/80 dark:text-emerald-400/60">
                   Formula kalimat dan elemen penawaran yang terbukti memberikan CPR termurah & klik terbanyak.
                 </CardDescription>
               </CardHeader>
@@ -284,15 +284,15 @@ export default function CreativeReport() {
             </Card>
 
             {/* Losers Card */}
-            <Card className="bg-gradient-to-br from-[#241315] to-[#120a0b] border-destructive/10 hover:border-destructive/20 transition-all duration-300 shadow-lg group">
-              <CardHeader className="pb-3 border-b border-destructive/10">
-                <CardTitle className="text-sm font-bold tracking-wide text-rose-400 flex items-center gap-2">
-                  <div className="p-1 rounded-lg bg-destructive/10 text-rose-400 shrink-0">
+            <Card className="bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-[#241315] dark:to-[#120a0b] border border-rose-200 dark:border-destructive/10 hover:border-rose-300 dark:hover:border-destructive/20 transition-all duration-300 shadow-sm dark:shadow-lg group">
+              <CardHeader className="pb-3 border-b border-rose-200 dark:border-destructive/10">
+                <CardTitle className="text-sm font-bold tracking-wide text-rose-800 dark:text-rose-400 flex items-center gap-2">
+                  <div className="p-1 rounded-lg bg-rose-100 dark:bg-destructive/10 text-rose-800 dark:text-rose-400 shrink-0">
                     <IconAlertTriangle size={16} />
                   </div>
                   <span>CELAH & PENYEBAB BONCOS (LOSERS)</span>
                 </CardTitle>
-                <CardDescription className="text-[10px] text-rose-400/60">
+                <CardDescription className="text-[10px] text-rose-700/80 dark:text-rose-400/60">
                   Kesalahan copywriting atau struktur penawaran yang membuat konversi nol meskipun impresi tinggi.
                 </CardDescription>
               </CardHeader>
@@ -332,7 +332,7 @@ export default function CreativeReport() {
                         <CardTitle className="text-md font-bold text-foreground">{idea.title}</CardTitle>
                       </div>
                       
-                      <div className="bg-purple-500/10 border border-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-[10px] font-semibold">
+                      <div className="bg-purple-100 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full text-[10px] font-semibold">
                         Angle: {idea.angle}
                       </div>
                     </div>
@@ -364,11 +364,11 @@ export default function CreativeReport() {
 
                     {/* Visual Guideline */}
                     <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 flex gap-3 items-start mt-1">
-                      <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 shrink-0">
+                      <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 text-blue-800 dark:text-blue-400 shrink-0">
                         <IconPhoto size={16} />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">Visual & Videografi Brief</span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-blue-700 dark:text-blue-400">Visual & Videografi Brief</span>
                         <p className="text-xs text-foreground/90 leading-relaxed font-normal">
                           {idea.visualGuide}
                         </p>
