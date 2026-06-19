@@ -41,6 +41,71 @@ export default function App() {
     return 'dark'; // default
   });
 
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const saved = localStorage.getItem('sidebarWidth');
+    return saved ? parseInt(saved, 10) : 256;
+  });
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('isSidebarCollapsed') === 'true';
+  });
+  const [lastExpandedWidth, setLastExpandedWidth] = useState(() => {
+    const saved = localStorage.getItem('lastExpandedWidth');
+    return saved ? parseInt(saved, 10) : 256;
+  });
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleToggleCollapse = () => {
+    if (isSidebarCollapsed) {
+      const newWidth = lastExpandedWidth < 180 ? 256 : lastExpandedWidth;
+      setSidebarWidth(newWidth);
+      setIsSidebarCollapsed(false);
+      localStorage.setItem('isSidebarCollapsed', 'false');
+      localStorage.setItem('sidebarWidth', String(newWidth));
+    } else {
+      setLastExpandedWidth(sidebarWidth);
+      setSidebarWidth(72);
+      setIsSidebarCollapsed(true);
+      localStorage.setItem('isSidebarCollapsed', 'true');
+      localStorage.setItem('lastExpandedWidth', String(sidebarWidth));
+      localStorage.setItem('sidebarWidth', '72');
+    }
+  };
+
+  const startResizing = (mouseDownEvent: React.MouseEvent) => {
+    mouseDownEvent.preventDefault();
+    const startWidth = sidebarWidth;
+    const startX = mouseDownEvent.clientX;
+    
+    const doDrag = (mouseMoveEvent: MouseEvent) => {
+      const newWidth = startWidth + (mouseMoveEvent.clientX - startX);
+      if (newWidth > 180 && newWidth < 450) {
+        setSidebarWidth(newWidth);
+        setIsSidebarCollapsed(false);
+        localStorage.setItem('isSidebarCollapsed', 'false');
+        localStorage.setItem('sidebarWidth', String(newWidth));
+      } else if (newWidth <= 120) {
+        setSidebarWidth(72);
+        setIsSidebarCollapsed(true);
+        localStorage.setItem('isSidebarCollapsed', 'true');
+        localStorage.setItem('sidebarWidth', '72');
+      }
+    };
+    
+    const stopDrag = () => {
+      document.removeEventListener('mousemove', doDrag);
+      document.removeEventListener('mouseup', stopDrag);
+    };
+    
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', stopDrag);
+  };
+
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -206,10 +271,17 @@ export default function App() {
         setActiveTab={setActiveTab} 
         isMobileOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
+        sidebarWidth={sidebarWidth}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={handleToggleCollapse}
+        startResizing={startResizing}
       />
 
       {/* Main Content Pane */}
-      <div className="flex-grow md:pl-64 flex flex-col w-full min-h-screen pt-16 md:pt-0">
+      <div 
+        className="flex-grow flex flex-col w-full min-h-screen pt-16 md:pt-0"
+        style={{ paddingLeft: isDesktop ? `${sidebarWidth}px` : undefined }}
+      >
         <div className="p-4 md:p-8 max-w-[1400px] w-full mx-auto flex flex-col flex-grow">
           {/* Header */}
           <header className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 md:mb-8">

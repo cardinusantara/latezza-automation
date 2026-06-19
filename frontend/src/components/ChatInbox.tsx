@@ -9,7 +9,8 @@ import {
   IconDeviceFloppy,
   IconNotebook,
   IconCopy,
-  IconArrowLeft
+  IconArrowLeft,
+  IconX
 } from '@tabler/icons-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,6 +72,67 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
 
   // Mobile responsive views pane sub-state ('list', 'chat', 'crm')
   const [mobileView, setMobileView] = useState<'list' | 'chat' | 'crm'>('list');
+
+  // Resizable Panes States & Handlers
+  const [listWidth, setListWidth] = useState(() => {
+    const saved = localStorage.getItem('chatListWidth');
+    return saved ? parseInt(saved, 10) : 320;
+  });
+  const [crmWidth, setCrmWidth] = useState(() => {
+    const saved = localStorage.getItem('chatCrmWidth');
+    return saved ? parseInt(saved, 10) : 320;
+  });
+  const [showCrmPanel, setShowCrmPanel] = useState(() => {
+    return localStorage.getItem('showChatCrmPanel') !== 'false';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('showChatCrmPanel', String(showCrmPanel));
+  }, [showCrmPanel]);
+
+  const startResizingList = (mouseDownEvent: React.MouseEvent) => {
+    mouseDownEvent.preventDefault();
+    const startWidth = listWidth;
+    const startX = mouseDownEvent.clientX;
+    
+    const doDrag = (mouseMoveEvent: MouseEvent) => {
+      const newWidth = startWidth + (mouseMoveEvent.clientX - startX);
+      if (newWidth > 200 && newWidth < 500) {
+        setListWidth(newWidth);
+        localStorage.setItem('chatListWidth', String(newWidth));
+      }
+    };
+    
+    const stopDrag = () => {
+      document.removeEventListener('mousemove', doDrag);
+      document.removeEventListener('mouseup', stopDrag);
+    };
+    
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', stopDrag);
+  };
+
+  const startResizingCrm = (mouseDownEvent: React.MouseEvent) => {
+    mouseDownEvent.preventDefault();
+    const startWidth = crmWidth;
+    const startX = mouseDownEvent.clientX;
+    
+    const doDrag = (mouseMoveEvent: MouseEvent) => {
+      const newWidth = startWidth - (mouseMoveEvent.clientX - startX);
+      if (newWidth > 220 && newWidth < 500) {
+        setCrmWidth(newWidth);
+        localStorage.setItem('chatCrmWidth', String(newWidth));
+      }
+    };
+    
+    const stopDrag = () => {
+      document.removeEventListener('mousemove', doDrag);
+      document.removeEventListener('mouseup', stopDrag);
+    };
+    
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', stopDrag);
+  };
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -256,7 +318,10 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
   return (
     <div className="flex h-[calc(100vh-120px)] border border-border rounded-2xl overflow-hidden bg-card">
       {/* Pane 1: Conversations List */}
-      <div className={`${mobileView === 'list' ? 'flex' : 'hidden md:flex'} w-full md:w-80 shrink-0 border-r border-border flex flex-col bg-card/50`}>
+      <div 
+        className={`${mobileView === 'list' ? 'flex' : 'hidden md:flex'} w-full shrink-0 border-r border-border flex flex-col bg-card/50 relative`}
+        style={{ width: window.innerWidth >= 768 ? `${listWidth}px` : undefined }}
+      >
         <div className="p-4 border-b border-border">
           <div className="relative">
             <IconSearch size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -327,6 +392,15 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
             })
           )}
         </div>
+
+        {/* Resize Handle */}
+        <div 
+          onMouseDown={startResizingList}
+          className="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-primary/40 active:bg-primary transition-all z-20 group"
+          title="Drag to resize customer list"
+        >
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-8 bg-border/40 rounded-full group-hover:bg-primary/70 transition-colors" />
+        </div>
       </div>
 
       {/* Pane 2: Conversation Box */}
@@ -374,13 +448,19 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
 
               {/* Header Actions */}
               <div className="flex items-center gap-2 shrink-0">
-                {/* Mobile CRM details toggle */}
+                {/* CRM details toggle */}
                 <Button
-                  variant="outline"
+                  variant={showCrmPanel ? "default" : "outline"}
                   size="icon"
-                  onClick={() => setMobileView('crm')}
-                  className="lg:hidden flex h-9 w-9 rounded-lg border border-border bg-card/30 text-foreground"
-                  title="Customer CRM"
+                  onClick={() => {
+                    if (window.innerWidth >= 1024) {
+                      setShowCrmPanel(prev => !prev);
+                    } else {
+                      setMobileView('crm');
+                    }
+                  }}
+                  className="flex h-9 w-9 rounded-lg border border-border text-foreground"
+                  title="Toggle Customer CRM Panel"
                 >
                   <IconNotebook size={16} />
                 </Button>
@@ -488,22 +568,31 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
       </div>
 
       {/* Pane 3: CRM Details Sidebar */}
-      {selectedJid && (
-        <div className={`${mobileView === 'crm' ? 'flex' : 'hidden lg:flex'} w-full lg:w-80 shrink-0 border-l border-sidebar-border bg-card/50 flex flex-col p-4 sm:p-6 gap-6 overflow-y-auto box-border`}>
+      {selectedJid && (showCrmPanel || mobileView === 'crm') && (
+        <div 
+          className={`${mobileView === 'crm' ? 'flex' : 'hidden lg:flex'} w-full shrink-0 border-l border-sidebar-border bg-card/50 flex flex-col p-4 sm:p-6 gap-6 overflow-y-auto box-border relative`}
+          style={{ width: window.innerWidth >= 1024 ? `${crmWidth}px` : undefined }}
+        >
           <div className="border-b border-border pb-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <IconNotebook size={16} className="text-primary" /> 
               <h4 className="text-sm font-semibold text-foreground">Customer CRM</h4>
             </div>
-            {/* Back to Chat button on Mobile */}
+            {/* Close button on Desktop / Back on Mobile */}
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setMobileView('chat')}
-              className="lg:hidden flex items-center gap-1 text-muted-foreground px-2 h-8 text-xs border border-border"
+              onClick={() => {
+                if (window.innerWidth >= 1024) {
+                  setShowCrmPanel(false);
+                } else {
+                  setMobileView('chat');
+                }
+              }}
+              className="flex items-center gap-1 text-muted-foreground hover:text-foreground px-2 h-8 text-xs border border-border"
             >
-              <IconArrowLeft size={14} />
-              <span>Kembali</span>
+              {window.innerWidth >= 1024 ? <IconX size={14} /> : <IconArrowLeft size={14} />}
+              <span>{window.innerWidth >= 1024 ? 'Tutup' : 'Kembali'}</span>
             </Button>
           </div>
 
@@ -594,6 +683,15 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Resize Handle (Left edge) */}
+          <div 
+            onMouseDown={startResizingCrm}
+            className="hidden lg:block absolute top-0 left-0 w-1.5 h-full cursor-col-resize hover:bg-primary/40 active:bg-primary transition-all z-20 group"
+            title="Drag to resize CRM panel"
+          >
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-8 bg-border/40 rounded-full group-hover:bg-primary/70 transition-colors" />
           </div>
         </div>
       )}
