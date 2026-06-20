@@ -224,54 +224,58 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
     // Check if Gemini wants to call a tool
     let functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;
     
-    // We allow up to 3 sequential tool executions in a single turn if needed (e.g. search product then update profile)
+    // We allow up to 3 sequential tool execution steps in a single turn if needed
     let loopCount = 0;
     while (functionCalls && functionCalls.length > 0 && loopCount < 3) {
       loopCount++;
-      const call = functionCalls[0];
-      const { name, args } = call;
-      console.log(`🤖 AI Agent JID[${jid}] requested tool: ${name} with args:`, args);
+      console.log(`🤖 AI Agent JID[${jid}] requested ${functionCalls.length} tool(s) in parallel.`);
+      
+      const functionResponseParts = [];
 
-      let toolResult = {};
+      for (const call of functionCalls) {
+        const { name, args } = call;
+        console.log(`  - Executing tool: ${name} with args:`, args);
+        let toolResult = {};
 
-      try {
-        if (name === 'search_products') {
-          const products = await db.searchProducts(args.query);
-          toolResult = { products };
-        } else if (name === 'update_customer_profile') {
-          // Update profile name, notes, or contact phone in Postgres
-          await db.createOrUpdateCustomer(jid, args.customer_name || null, { 
-            notes: args.notes,
-            contact_phone: args.contact_phone
-          });
-          toolResult = { status: 'success', message: 'Profil kustomer berhasil diperbarui.' };
-        } else if (name === 'request_follow_up') {
-          // Flag needs_follow_up in Postgres
-          await db.createOrUpdateCustomer(jid, null, { needs_follow_up: true, follow_up_reason: args.reason });
-          toolResult = { status: 'success', message: 'Follow up dijadwalkan.' };
-        } else if (name === 'request_human_handoff') {
-          // Disable AI responding and flag needs_admin in Postgres
-          await db.createOrUpdateCustomer(jid, null, { 
-            ai_enabled: false,
-            needs_admin: true,
-            notes: `Handoff requested: ${args.reason}`
-          });
-          toolResult = { status: 'success', message: 'Chat berhasil ditransfer ke admin.' };
+        try {
+          if (name === 'search_products') {
+            const products = await db.searchProducts(args.query);
+            toolResult = { products };
+          } else if (name === 'update_customer_profile') {
+            // Update profile name, notes, or contact phone in Postgres
+            await db.createOrUpdateCustomer(jid, args.customer_name || null, { 
+              notes: args.notes,
+              contact_phone: args.contact_phone
+            });
+            toolResult = { status: 'success', message: 'Profil kustomer berhasil diperbarui.' };
+          } else if (name === 'request_follow_up') {
+            // Flag needs_follow_up in Postgres
+            await db.createOrUpdateCustomer(jid, null, { needs_follow_up: true, follow_up_reason: args.reason });
+            toolResult = { status: 'success', message: 'Follow up dijadwalkan.' };
+          } else if (name === 'request_human_handoff') {
+            // Disable AI responding and flag needs_admin in Postgres
+            await db.createOrUpdateCustomer(jid, null, { 
+              ai_enabled: false,
+              needs_admin: true,
+              notes: `Handoff requested: ${args.reason}`
+            });
+            toolResult = { status: 'success', message: 'Chat berhasil ditransfer ke admin.' };
+          }
+        } catch (toolErr) {
+          console.error(`Error executing tool ${name}:`, toolErr.message);
+          toolResult = { status: 'error', error: toolErr.message };
         }
-      } catch (toolErr) {
-        console.error(`Error executing tool ${name}:`, toolErr.message);
-        toolResult = { status: 'error', error: toolErr.message };
-      }
 
-      // Feed function response back to Gemini
-      result = await chat.sendMessage([
-        {
+        functionResponseParts.push({
           functionResponse: {
             name: name,
             response: toolResult
           }
-        }
-      ]);
+        });
+      }
+
+      // Feed all function responses back to Gemini in one turn
+      result = await chat.sendMessage(functionResponseParts);
       
       response = result.response;
       functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;

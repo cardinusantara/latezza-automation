@@ -9,18 +9,15 @@ let creativeJob = null;
 let followupJob = null;
 
 /**
- * Helper to build standard cron expression for a day interval and specific time.
+ * Helper to build standard cron expression for a daily check at a specific time.
  **/
-function buildCronExpression(frequencyDays, timeStr) {
+function buildDailyCronExpression(timeStr) {
   const cleanTime = timeStr && timeStr.includes(':') ? timeStr : '09:00';
   const [hourStr, minuteStr] = cleanTime.split(':');
   const hour = parseInt(hourStr, 10) || 0;
   const minute = parseInt(minuteStr, 10) || 0;
   
-  const freq = parseInt(frequencyDays, 10) || 1;
-  
-  // E.g. every day at 09:00: '0 9 */1 * *' (same as every day)
-  return `${minute} ${hour} */${freq} * *`;
+  return `${minute} ${hour} * * *`;
 }
 
 /**
@@ -43,10 +40,20 @@ async function setupScheduledJobs(log = console) {
   const creativeService = require('./creative');
 
   // 2. Schedule Meta Ads Report Job
-  const adsCronExpr = buildCronExpression(adsFreq, adsTime);
-  log.info(`Scheduling Ads Analysis: "${adsCronExpr}" (Every ${adsFreq} days at ${adsTime})`);
+  const adsCronExpr = buildDailyCronExpression(adsTime);
+  log.info(`Scheduling Ads Analysis (daily check at ${adsTime}, freq = ${adsFreq} days): "${adsCronExpr}"`);
   
-  adsJob = cron.schedule(adsCronExpr, () => {
+  adsJob = cron.schedule(adsCronExpr, async () => {
+    const lastRunStr = await db.getSetting('ads_analysis_last_run');
+    if (lastRunStr) {
+      const lastRun = new Date(lastRunStr);
+      const diffMs = Date.now() - lastRun.getTime();
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      if (diffDays < parseInt(adsFreq, 10) - 0.1) {
+        log.info(`Skipping scheduled Ads Analysis: last run was ${diffDays.toFixed(1)} days ago, frequency is ${adsFreq} days.`);
+        return;
+      }
+    }
     log.info('Triggering scheduled Ads Analysis runner...');
     adsService.runAnalysisAndSendReport(log)
       .catch(err => log.error(`Scheduled Ads Analysis failed: ${err.message}`));
@@ -55,10 +62,27 @@ async function setupScheduledJobs(log = console) {
   });
 
   // 3. Schedule AI Creative / Content Ideation Job
-  const creativeCronExpr = buildCronExpression(creativeFreq, creativeTime);
-  log.info(`Scheduling AI Creative Analysis: "${creativeCronExpr}" (Every ${creativeFreq} days at ${creativeTime})`);
+  const creativeCronExpr = buildDailyCronExpression(creativeTime);
+  log.info(`Scheduling AI Creative Analysis (daily check at ${creativeTime}, freq = ${creativeFreq} days): "${creativeCronExpr}"`);
   
-  creativeJob = cron.schedule(creativeCronExpr, () => {
+  creativeJob = cron.schedule(creativeCronExpr, async () => {
+    const reportStr = await db.getSetting('creative_analysis_report');
+    if (reportStr) {
+      try {
+        const report = JSON.parse(reportStr);
+        if (report.generatedAt) {
+          const lastRun = new Date(report.generatedAt);
+          const diffMs = Date.now() - lastRun.getTime();
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          if (diffDays < parseInt(creativeFreq, 10) - 0.1) {
+            log.info(`Skipping scheduled AI Creative Analysis: last run was ${diffDays.toFixed(1)} days ago, frequency is ${creativeFreq} days.`);
+            return;
+          }
+        }
+      } catch (e) {
+        log.error(`Failed to parse creative report for schedule check: ${e.message}`);
+      }
+    }
     log.info('Triggering scheduled AI Creative Analysis runner...');
     creativeService.runCreativeAnalysis(log)
       .catch(err => log.error(`Scheduled AI Creative Analysis failed: ${err.message}`));

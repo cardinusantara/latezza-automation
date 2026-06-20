@@ -39,32 +39,7 @@ async function initDb() {
       );
     `);
 
-    // Perform database migrations (add columns if they don't exist)
-    await client.query(`
-      ALTER TABLE customers ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(20);
-    `);
-    await client.query(`
-      ALTER TABLE customers ADD COLUMN IF NOT EXISTS ai_enabled BOOLEAN DEFAULT TRUE;
-    `);
-    await client.query(`
-      ALTER TABLE customers ADD COLUMN IF NOT EXISTS needs_admin BOOLEAN DEFAULT FALSE;
-    `);
-    await client.query(`
-      ALTER TABLE products ADD COLUMN IF NOT EXISTS embedding JSONB;
-    `);
-
-    // 2. Chat Histories Table
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS chat_histories (
-        id SERIAL PRIMARY KEY,
-        phone_number VARCHAR(50) REFERENCES customers(phone_number) ON DELETE CASCADE,
-        role VARCHAR(20) NOT NULL, -- 'user' or 'model'
-        content TEXT NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    // 3. Products Table
+    // 2. Products Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS products (
         id SERIAL PRIMARY KEY,
@@ -77,6 +52,17 @@ async function initDb() {
       );
     `);
 
+    // 3. Chat Histories Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS chat_histories (
+        id SERIAL PRIMARY KEY,
+        phone_number VARCHAR(50) REFERENCES customers(phone_number) ON DELETE CASCADE,
+        role VARCHAR(20) NOT NULL, -- 'user' or 'model'
+        content TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // 4. Settings Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS settings (
@@ -84,6 +70,20 @@ async function initDb() {
         value TEXT,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+    `);
+
+    // Perform database migrations (add columns if they don't exist)
+    await client.query(`
+      ALTER TABLE customers ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(20);
+    `);
+    await client.query(`
+      ALTER TABLE customers ADD COLUMN IF NOT EXISTS ai_enabled BOOLEAN DEFAULT TRUE;
+    `);
+    await client.query(`
+      ALTER TABLE customers ADD COLUMN IF NOT EXISTS needs_admin BOOLEAN DEFAULT FALSE;
+    `);
+    await client.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS embedding JSONB;
     `);
 
     // Create indexes for optimization
