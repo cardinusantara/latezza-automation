@@ -57,6 +57,7 @@ async function runAnalysisAndSendReport(log = console) {
         if (whatsappService.isReady()) {
           log.info(`Sending report message to group ${targetJid}...`);
           const response = await whatsappService.sendMessage(targetJid, { text });
+          await db.setSetting('ads_analysis_last_run', new Date().toISOString());
           resolve({ status: 'success', messageId: response.key.id, data });
         } else {
           log.warn('WhatsApp connection is not ready. Skipping message broadcast.');

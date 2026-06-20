@@ -20,6 +20,7 @@ import { API_BASE_URL } from '@/config';
 
 interface SettingsState {
   gemini_api_key: string;
+  gemini_model: string;
   whatsapp_group_jid: string;
   rate_limit_max: string;
   rate_limit_window: string;
@@ -44,8 +45,11 @@ export default function Settings({ showToast }: SettingsProps) {
   const [activeCategory, setActiveCategory] = useState<'api' | 'security' | 'schedules' | 'followup' | 'persona'>('api');
   const [groups, setGroups] = useState<{ jid: string; subject: string }[]>([]);
   const [isManualGroup, setIsManualGroup] = useState(false);
+  const [availableModels, setAvailableModels] = useState<{ name: string; displayName: string }[]>([]);
+  const [loadingModels, setLoadingModels] = useState(false);
   const [settings, setSettings] = useState<SettingsState>({
     gemini_api_key: '',
+    gemini_model: 'gemini-2.5-flash',
     whatsapp_group_jid: '',
     rate_limit_max: '5',
     rate_limit_window: '60000',
@@ -73,6 +77,22 @@ export default function Settings({ showToast }: SettingsProps) {
     }
   };
 
+  // Fetch available Gemini models
+  const fetchModels = async () => {
+    setLoadingModels(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/settings/gemini-models`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setAvailableModels(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch available Gemini models:', err);
+    } finally {
+      setLoadingModels(false);
+    }
+  };
+
   // Fetch current settings from backend
   const fetchSettings = async () => {
     setLoading(true);
@@ -94,6 +114,7 @@ export default function Settings({ showToast }: SettingsProps) {
   useEffect(() => {
     fetchSettings();
     fetchGroups();
+    fetchModels();
   }, []);
 
   // Auto detect if current saved JID should be manual
@@ -129,6 +150,7 @@ export default function Settings({ showToast }: SettingsProps) {
         showToast('Pengaturan berhasil disimpan!');
         // Re-fetch to get masked key again if updated
         fetchSettings();
+        fetchModels();
       } else {
         showToast('Gagal menyimpan: ' + data.message);
       }
@@ -223,6 +245,41 @@ export default function Settings({ showToast }: SettingsProps) {
               />
               <span className="text-[10px] text-muted-foreground">
                 Digunakan untuk memproses AI Agent chat & otomatisasi follow-up.
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-foreground/80">Gemini Model</label>
+              <div className="flex gap-2">
+                <select
+                  name="gemini_model"
+                  value={settings.gemini_model || 'gemini-2.5-flash'}
+                  onChange={handleChange}
+                  disabled={loadingModels}
+                  className="flex h-9 flex-grow rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+                >
+                  {availableModels.length > 0 ? (
+                    availableModels.map(m => (
+                      <option key={m.name} value={m.name} className="bg-[#111827]">
+                        {m.displayName} ({m.name})
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="gemini-3.5-flash" className="bg-[#111827]">Gemini 3.5 Flash (Recommended)</option>
+                      <option value="gemini-2.5-flash" className="bg-[#111827]">Gemini 2.5 Flash</option>
+                      <option value="gemini-2.5-pro" className="bg-[#111827]">Gemini 2.5 Pro</option>
+                    </>
+                  )}
+                </select>
+                {loadingModels && (
+                  <div className="flex items-center text-muted-foreground animate-spin">
+                    <IconLoader size={16} />
+                  </div>
+                )}
+              </div>
+              <span className="text-[10px] text-muted-foreground">
+                Model Gemini dinamis yang diambil langsung dari Google Gemini API.
               </span>
             </div>
 
