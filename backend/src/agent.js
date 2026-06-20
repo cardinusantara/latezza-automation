@@ -143,7 +143,7 @@ const agentTools = [
 /**
  * Core AI Agent processing logic
  */
-async function handleIncomingMessage(jid, text, profileName = 'Customer', imagePart = null, imageUrl = null, sessionId = 'default') {
+async function handleIncomingMessage(jid, text, profileName = 'Customer', imagePart = null, imageUrl = null, sessionId = 'default', voiceUrl = null) {
   // Dynamically load API Key and system prompts from database
   const activeApiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
   if (!activeApiKey) {
@@ -206,8 +206,10 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
   });
 
   try {
-    // Save user's incoming message to DB first, including the photo metadata if present
-    const dbText = imageUrl ? `[Foto: ${imageUrl}] ${text}`.trim() : text;
+    // Save user's incoming message to DB first, including the photo or voice note metadata if present
+    const dbText = imageUrl 
+      ? `[Foto: ${imageUrl}] ${text}`.trim() 
+      : (voiceUrl ? `[Voice Note: ${voiceUrl}] ${text}`.trim() : text);
     await db.saveChatMessage(jid, 'user', dbText, sessionId);
 
     // Send the user message (including image if present) to Gemini

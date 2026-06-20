@@ -5,7 +5,33 @@ entries: plain text, AI-readable, no markdown fluff
 
 ---
 
+## 2026-06-21
+
+### Audio Playback, Transcoding, and Database Metadata Fixes
+- corrected relative directory resolution paths in `routes.js` to ensure recorded voice messages are saved directly to `backend/public/uploads` (resolving 404 audio player loading issues in the dashboard)
+- integrated WebM-to-Ogg transcoding via FFmpeg in `routes.js` using the `convertWebmToOgg` utility helper
+- updated manual voice message sending to transcode recorded webm files, read the mono Ogg Opus output, and transmit it via Baileys with `mimetype: 'audio/ogg; codecs=opus'` (enabling native playbacks on iOS and Android WhatsApp applications)
+- fixed incoming customer voice note database logging to preserve the `[Voice Note: <url>] <transcription>` metadata structure when the AI responds in `agent.js`
+
+### Dashboard Outgoing Voice Message Recording & Transcribing
+- exported `transcribeAudio` utility from `whatsapp.js` to expose audio transcription service
+- updated `/api/customers/:phone/send-message` API route in `routes.js` to accept `audioBase64` and `mimetype` properties
+- implemented backend decoding, local storage, and transcribing of outgoing audio via Gemini API
+- implemented Baileys WhatsApp delivery of outgoing voice notes with `mimetype: 'audio/mp4'` and `ptt: true` (rendering as native Push-to-Talk messages)
+- implemented frontend audio recording using browser `MediaRecorder` API in `ChatInbox.tsx`
+- added microphone button to Chat Inbox message input footer and integrated custom recording panel with pulsing indicator, timer, Cancel (Batal), and Send (Kirim) buttons
+- implemented base64 conversion and optimistic UI chat bubble updates for outgoing voice notes
+
 ## 2026-06-20
+
+### Voice Message Comprehension & Audio Player
+- integrated `GoogleGenerativeAI` into `whatsapp.js` to enable native audio message transcription
+- enhanced `messages.upsert` socket listener to capture `audioMessage` events from `@whiskeysockets/baileys`
+- downloaded and stored WhatsApp voice notes locally as `.ogg` files in `backend/public/uploads/`
+- implemented `transcribeAudio` helper in `whatsapp.js` using the configured Gemini model (with `gemini-3.5-flash` fallback) to convert audio to literal Indonesian text
+- saved incoming voice notes to the chat history database with the format `[Voice Note: <url>] <transcription>`
+- updated frontend `ChatInbox.tsx` message bubble parsing to detect the `[Voice Note: ...]` pattern
+- rendered browser-native HTML5 `<audio>` players in the message bubbles next to italicized transcriptions
 
 ### WhatsApp Multi-Session & QR Scanner Dashboard
 - created `whatsapp_sessions` table in database to track session credentials, names, connection statuses, and active QR codes

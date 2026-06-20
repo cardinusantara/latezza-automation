@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>latezza-automation — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 773 nodes, 1020 edges, 55 communities. Commit: 67520b7</p>
+<p class="subtitle">Generated from graphify knowledge graph: 787 nodes, 1032 edges, 59 communities. Commit: c51ab92</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -70,8 +70,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#ingest-cache-update">Ingestion &amp; Updates</a>
     <a href="#serve-api">Serving API</a>
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
-    <a href="#mobile-hook">Mobile Hook</a>
     <a href="#ui-actions-component">UI Actions Component</a>
+    <a href="#mobile-hook">Mobile Hook</a>
     <a href="#community-13">Community 13</a>
     <a href="#community-19">Community 19</a>
     <a href="#community-20">Community 20</a>
@@ -88,22 +88,22 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>170 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>169 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
-    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>56 nodes</small>")
+    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>60 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
-    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>150 nodes</small>")
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>156 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
     INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>9 nodes</small>")
     class INGEST_CACHE_UPDATE_FF457338 module;
     SERVE_API_35EC8E86("Serving API<br/><small>83 nodes</small>")
     class SERVE_API_35EC8E86 module;
-    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>9 nodes</small>")
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>11 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
-    MOBILE_HOOK_B9E08E1E("Mobile Hook<br/><small>73 nodes</small>")
-    class MOBILE_HOOK_B9E08E1E module;
-    UI_ACTIONS_COMPONENT_D63BE646("UI Actions Component<br/><small>65 nodes</small>")
+    UI_ACTIONS_COMPONENT_D63BE646("UI Actions Component<br/><small>72 nodes</small>")
     class UI_ACTIONS_COMPONENT_D63BE646 module;
+    MOBILE_HOOK_B9E08E1E("Mobile Hook<br/><small>63 nodes</small>")
+    class MOBILE_HOOK_B9E08E1E module;
     COMMUNITY_13_E329587C("Community 13<br/><small>19 nodes</small>")
     class COMMUNITY_13_E329587C module;
     COMMUNITY_19_9462A0B9("Community 19<br/><small>14 nodes</small>")
@@ -116,12 +116,11 @@ flowchart LR
     class COMMUNITY_23_58D9DE5D module;
     COMMUNITY_26_029F571A("Community 26<br/><small>9 nodes</small>")
     class COMMUNITY_26_029F571A module;
-    OTHER_D0941E68("Other<br/><small>79 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>85 nodes</small>")
     class OTHER_D0941E68 module;
     UI_ACTIONS_COMPONENT_D63BE646 -->|calls x47| MOBILE_HOOK_B9E08E1E
     COMMUNITY_13_E329587C -->|contains x10| OTHER_D0941E68
     OTHER_D0941E68 -->|imports x6| COMMUNITY_13_E329587C
-    MOBILE_HOOK_B9E08E1E -->|imports x4| UI_ACTIONS_COMPONENT_D63BE646
     ANALYSIS_CLUSTERING_C79796DA -->|imports x3| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|imports x3| COMMUNITY_13_E329587C
     COMMUNITY_13_E329587C -->|imports x3| ANALYSIS_CLUSTERING_C79796DA
@@ -129,7 +128,8 @@ flowchart LR
     CLI_SKILLS_9964CBB8 -->|imports x2| COMMUNITY_13_E329587C
     CLI_SKILLS_9964CBB8 -->|imports x2| ANALYSIS_CLUSTERING_C79796DA
     OTHER_D0941E68 -->|imports x2| ANALYSIS_CLUSTERING_C79796DA
-    CLI_SKILLS_9964CBB8 -->|references x2| BUILD_GRAPH_321CBB04
+    CLI_SKILLS_9964CBB8 -->|references x2| OTHER_D0941E68
+    CLI_SKILLS_9964CBB8 -->|contains x2| BUILD_GRAPH_321CBB04
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -146,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Graph Build</td><td>170</td><td><code>2, 6, 10, 11, 12, 14, 25, 34</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>56</td><td><code>16, 21, 24, 28, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>150</td><td><code>4, 5, 15, 8, 17, 18, 35</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>9</td><td><code>33, 49</code></td></tr><tr><td>Serving API</td><td>83</td><td><code>3, 0</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>9</td><td><code>43, 45, 46</code></td></tr><tr><td>Mobile Hook</td><td>73</td><td><code>9</code></td></tr><tr><td>UI Actions Component</td><td>65</td><td><code>7</code></td></tr><tr><td>Community 13</td><td>19</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 22</td><td>12</td><td><code>22</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 26</td><td>9</td><td><code>26</code></td></tr><tr><td>Other</td><td>79</td><td><code>27, 29, 31, 32, 1, 36, 37, 38, 39, 40, 41, 42, 44, 47, 48, 50, 51, 52, 53, 54</code></td></tr>
+      <tr><td>Graph Build</td><td>169</td><td><code>2, 10, 11, 12, 14, 6, 25, 55, 34</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>60</td><td><code>16, 21, 24, 28, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>156</td><td><code>5, 4, 15, 8, 17, 18, 35</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>9</td><td><code>33, 49</code></td></tr><tr><td>Serving API</td><td>83</td><td><code>3, 0</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>11</td><td><code>43, 45, 46, 58</code></td></tr><tr><td>UI Actions Component</td><td>72</td><td><code>7</code></td></tr><tr><td>Mobile Hook</td><td>63</td><td><code>9</code></td></tr><tr><td>Community 13</td><td>19</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 22</td><td>12</td><td><code>22</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 26</td><td>9</td><td><code>26</code></td></tr><tr><td>Other</td><td>85</td><td><code>27, 29, 31, 32, 1, 36, 37, 38, 39, 40, 41, 42, 44, 47, 56, 57, 48, 50, 51, 52, 53, 54</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -158,7 +158,7 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>773 nodes · 1020 edges · 55 communities (43 shown, 12 thin omitted)</li>
+      <li>787 nodes · 1032 edges · 59 communities (44 shown, 15 thin omitted)</li>
       <li>Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.84)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `cn()` - 77 edges</li>
@@ -170,12 +170,12 @@ flowchart LR
 <hr>
 <!-- ====== 2. Graph Build ====== -->
 <h2 id="build-graph">2. Graph Build</h2>
-<p>Graph Build groups implementation around frontend, packagejson, shadcn, backend, mostly in frontend/package.json, frontend/components.json, frontend/tsconfig.app.json. This section covers 170 nodes and 162 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around frontend, packagejson, backend, shadcn, mostly in frontend/package.json, frontend/components.json, frontend/tsconfig.app.json. This section covers 169 nodes and 160 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (170 nodes, 162 edges)
+    %% Section: Graph Build (169 nodes, 160 edges)
     subgraph build_graph_backend_ads_analysis_package_json_f82296f3["backend/ads-analysis/package.json"]
         ads_analysis_package_7172d55f("package.json")
         ads_analysis_package_dependencies_a25d46f9("dependencies<br/><small>backend/ads-analysis/package.json</small>")
@@ -211,7 +211,7 @@ flowchart LR
     ads_analysis_package_dependencies_a25d46f9 -->|contains| ads_analysis_package_dependencies_google_generat_dea7cdf6
     backend_package_9f875cb0 -->|contains| backend_package_dependencies_4ff26931
     backend_package_9f875cb0 -->|contains| backend_package_description_fadbf070
-    %% Omitted for readability: 152 nodes, 0 edges
+    %% Omitted for readability: 151 nodes, 0 edges
     class ads_analysis_package_7172d55f function;
     class ads_analysis_package_dependencies_a25d46f9 function;
     class ads_analysis_package_description_10696e3c function;
@@ -501,28 +501,28 @@ flowchart LR
       <tr><td><code>frontend/package.json</code></td><td>45 nodes</td></tr>
 <tr><td><code>frontend/components.json</code></td><td>22 nodes</td></tr>
 <tr><td><code>frontend/tsconfig.app.json</code></td><td>22 nodes</td></tr>
-<tr><td><code>backend/package.json</code></td><td>19 nodes</td></tr>
-<tr><td><code>skills/shadcn/cli.md</code></td><td>18 nodes</td></tr>
+<tr><td><code>backend/package.json</code></td><td>20 nodes</td></tr>
 <tr><td><code>frontend/tsconfig.node.json</code></td><td>18 nodes</td></tr>
-<tr><td><code>skills/shadcn/registry.md</code></td><td>10 nodes</td></tr>
+<tr><td><code>skills/shadcn/cli.md</code></td><td>17 nodes</td></tr>
 <tr><td><code>backend/ads-analysis/package.json</code></td><td>10 nodes</td></tr>
+<tr><td><code>skills/shadcn/registry.md</code></td><td>9 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x161, references x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x160. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 3. Analysis & Clustering ====== -->
 <h2 id="analysis-clustering">3. Analysis &amp; Clustering</h2>
-<p>Analysis &amp; Clustering groups implementation around backend, services, whatsappjs, gatewayjs, mostly in src/services/whatsapp.js, backend/gateway.js, backend/ads-analysis/automation.js. This section covers 56 nodes and 64 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Analysis &amp; Clustering groups implementation around backend, services, whatsappjs, gatewayjs, mostly in src/services/whatsapp.js, backend/gateway.js, backend/ads-analysis/automation.js. This section covers 60 nodes and 68 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Analysis &amp; Clustering (56 nodes, 64 edges)
+    %% Section: Analysis &amp; Clustering (60 nodes, 68 edges)
     subgraph analysis_clustering_backend_ads_analysis_automat_9256d852["backend/ads-analysis/automation.js"]
         ads_analysis_automation_builddashboardlayout_c93c238d("buildDashboardLayout()<br/><small>backend/ads-analysis/automation.js</small>")
         ads_analysis_automation_fetchmetainsights_ac21d174("fetchMetaInsights()<br/><small>backend/ads-analysis/automation.js</small>")
@@ -560,7 +560,7 @@ flowchart LR
     src_routes_29c1622e -->|imports| services_ads_037a1ad6
     src_routes_29c1622e -->|imports| services_whatsapp_8f0859a2
     services_ads_037a1ad6 -->|imports| services_whatsapp_8f0859a2
-    %% Omitted for readability: 38 nodes, 0 edges
+    %% Omitted for readability: 42 nodes, 0 edges
     class ads_analysis_automation_builddashboardlayout_c93c238d function;
     class ads_analysis_automation_fetchmetainsights_ac21d174 function;
     class ads_analysis_automation_groupbrands_5c19c177 function;
@@ -660,6 +660,14 @@ flowchart LR
 </tr>
 <tr>
   <td>7</td>
+  <td><code>{ GoogleGenerativeAI }</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>{ GoogleGenerativeAI } node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>8</td>
   <td><code>SESSION_BASE_DIR</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -667,7 +675,7 @@ flowchart LR
   <td>SESSION_BASE_DIR node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>8</td>
+  <td>9</td>
   <td><code>sessions</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -675,7 +683,7 @@ flowchart LR
   <td>sessions node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>9</td>
+  <td>10</td>
   <td><code>rateLimitCache</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -683,7 +691,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>10</td>
+  <td>11</td>
   <td><code>isRateLimited()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -691,7 +699,15 @@ flowchart LR
   <td>isRateLimited() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>11</td>
+  <td>12</td>
+  <td><code>transcribeAudio()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>transcribeAudio() node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>13</td>
   <td><code>connectSession()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -699,7 +715,7 @@ flowchart LR
   <td>connectSession() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>14</td>
   <td><code>disconnectSession()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -707,7 +723,7 @@ flowchart LR
   <td>disconnectSession() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>15</td>
   <td><code>connectToWhatsApp()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>connectSession()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
@@ -715,7 +731,7 @@ flowchart LR
   <td>connectToWhatsApp() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>14</td>
+  <td>16</td>
   <td><code>isReady()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -723,7 +739,7 @@ flowchart LR
   <td>isReady() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>15</td>
+  <td>17</td>
   <td><code>sendMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -731,7 +747,7 @@ flowchart LR
   <td>sendMessage() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>16</td>
+  <td>18</td>
   <td><code>getGroups()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -739,7 +755,7 @@ flowchart LR
   <td>getGroups() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>19</td>
   <td><code>gateway.js</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td>External entry / no inbound edge</td>
@@ -747,7 +763,7 @@ flowchart LR
   <td>gateway.js node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>18</td>
+  <td>20</td>
   <td><code>path</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -755,7 +771,7 @@ flowchart LR
   <td>path node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>19</td>
+  <td>21</td>
   <td><code>Fastify</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -763,7 +779,7 @@ flowchart LR
   <td>Fastify node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>22</td>
   <td><code>cron</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -771,7 +787,7 @@ flowchart LR
   <td>cron node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>23</td>
   <td><code>db</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -779,7 +795,7 @@ flowchart LR
   <td>db node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>24</td>
   <td><code>whatsappService</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -787,7 +803,7 @@ flowchart LR
   <td>whatsappService node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>25</td>
   <td><code>followupService</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -795,7 +811,7 @@ flowchart LR
   <td>followupService node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>26</td>
   <td><code>adsService</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-async">Async</span></td>
   <td>External entry / no inbound edge</td>
@@ -803,7 +819,7 @@ flowchart LR
   <td>adsService node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>25</td>
+  <td>27</td>
   <td><code>registerRoutes</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-endpoint">API</span></td>
   <td>External entry / no inbound edge</td>
@@ -811,7 +827,7 @@ flowchart LR
   <td>registerRoutes node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>28</td>
   <td><code>fs</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -819,7 +835,7 @@ flowchart LR
   <td>fs node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>27</td>
+  <td>29</td>
   <td><code>uploadsDir</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -827,28 +843,12 @@ flowchart LR
   <td>uploadsDir node in backend/gateway.js.</td>
 </tr>
 <tr>
-  <td>28</td>
+  <td>30</td>
   <td><code>start()</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
   <td>start() node in backend/gateway.js.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>automation.js</code><br><small style="color:var(--muted)">backend/ads-analysis/automation.js</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>automation.js node in backend/ads-analysis/automation.js.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>fs</code><br><small style="color:var(--muted)">backend/ads-analysis/automation.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>fs node in backend/ads-analysis/automation.js.</td>
 </tr>
 </table>
 
@@ -857,28 +857,28 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>src/services/whatsapp.js</code></td><td>16 nodes</td></tr>
+      <tr><td><code>src/services/whatsapp.js</code></td><td>18 nodes</td></tr>
 <tr><td><code>backend/gateway.js</code></td><td>12 nodes</td></tr>
 <tr><td><code>backend/ads-analysis/automation.js</code></td><td>11 nodes</td></tr>
-<tr><td><code>backend/src/routes.js</code></td><td>9 nodes</td></tr>
+<tr><td><code>backend/src/routes.js</code></td><td>11 nodes</td></tr>
 <tr><td><code>src/services/ads.js</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x51, calls x7, imports x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x55, calls x7, imports x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 4. CLI & Skill Installers ====== -->
 <h2 id="cli-skills">4. CLI &amp; Skill Installers</h2>
-<p>CLI &amp; Skill Installers groups implementation around developermd, changelogmd, agents, skills, mostly in DEVELOPER.md, CHANGELOG.md, skills/shadcn/SKILL.md. This section covers 150 nodes and 148 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>CLI &amp; Skill Installers groups implementation around developermd, changelogmd, agents, skills, mostly in CHANGELOG.md, DEVELOPER.md, skills/shadcn/SKILL.md. This section covers 156 nodes and 155 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: CLI &amp; Skill Installers (150 nodes, 148 edges)
+    %% Section: CLI &amp; Skill Installers (156 nodes, 155 edges)
     subgraph cli_skills_backend_src_agent_js_28948e97["backend/src/agent.js"]
         src_agent_buildsysteminstructions_4114873a("buildSystemInstructions()<br/><small>backend/src/agent.js</small>")
         src_agent_handleincomingmessage_285dad45("handleIncomingMessage()<br/><small>backend/src/agent.js</small>")
@@ -907,7 +907,7 @@ flowchart LR
     scripts_test_multimodal_search_f70b7261 -->|imports| src_agent_1337b576
     components_theme_provider_17ac69f2 -->|imports| src_main_3231ff52
     components_theme_provider_themeprovider_c1783996 -->|imports| src_main_3231ff52
-    %% Omitted for readability: 132 nodes, 0 edges
+    %% Omitted for readability: 138 nodes, 0 edges
     class src_agent_buildsysteminstructions_4114873a function;
     class src_agent_handleincomingmessage_285dad45 function;
     class src_agent_1337b576 module;
@@ -949,243 +949,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>DEVELOPER.md</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>CHANGELOG.md</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DEVELOPER.md.</td>
+  <td>Documentation node describing CHANGELOG.md.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>DEVELOPER.md — Latezza Cake WhatsApp AI Agent</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>CHANGELOG — Latezza Cake WhatsApp AI Agent</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DEVELOPER.md — Latezza Cake WhatsApp AI Agent.</td>
+  <td>Documentation node describing CHANGELOG — Latezza Cake WhatsApp AI Agent.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>DIRECTORY STRUCTURE</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>2026-06-21</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DIRECTORY STRUCTURE.</td>
+  <td>Documentation node describing 2026-06-21.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>HOW TO RUN</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Audio Playback, Transcoding, and Database Metadata Fixes</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing HOW TO RUN.</td>
+  <td>Documentation node describing Audio Playback, Transcoding, and Database Metadata Fixes.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>local dev (two terminals)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Dashboard Outgoing Voice Message Recording &amp; Transcribing</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing local dev (two terminals).</td>
+  <td>Documentation node describing Dashboard Outgoing Voice Message Recording &amp; Transcribing.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>production</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>2026-06-20</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing production.</td>
+  <td>Documentation node describing 2026-06-20.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>env files</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Voice Message Comprehension &amp; Audio Player</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing env files.</td>
+  <td>Documentation node describing Voice Message Comprehension &amp; Audio Player.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>Backend Env (`backend/.env`)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>WhatsApp Multi-Session &amp; QR Scanner Dashboard</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Backend Env (`backend/.env`).</td>
+  <td>Documentation node describing WhatsApp Multi-Session &amp; QR Scanner Dashboard.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>Frontend Env (`frontend/.env`)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>2026-06-19</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Frontend Env (`frontend/.env`).</td>
+  <td>Documentation node describing 2026-06-19.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>DATABASE SCHEMA</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Latezza Agent branding, Warm UI theme, Light/Dark Mode &amp; Mobile responsiveness</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DATABASE SCHEMA.</td>
+  <td>Documentation node describing Latezza Agent branding, Warm UI theme, Light/Dark Mode &amp; Mobile responsiveness.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>whatsapp_sessions</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>AI Creative Ad Ideas &amp; Copywriting Audit</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing whatsapp_sessions.</td>
+  <td>Documentation node describing AI Creative Ad Ideas &amp; Copywriting Audit.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>customers</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Dynamic Background Scheduler &amp; Reloading</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing customers.</td>
+  <td>Documentation node describing Dynamic Background Scheduler &amp; Reloading.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>chat_histories</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>SSE Progress Streaming &amp; Dashboard UI</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing chat_histories.</td>
+  <td>Documentation node describing SSE Progress Streaming &amp; Dashboard UI.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>products</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Best-Practice Error Propagation</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing products.</td>
+  <td>Documentation node describing Best-Practice Error Propagation.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>settings (key-value store)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>2026-06-18</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing settings (key-value store).</td>
+  <td>Documentation node describing 2026-06-18.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>SETTINGS SYSTEM</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>RAG semantic product search — AI-powered catalog matching</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing SETTINGS SYSTEM.</td>
+  <td>Documentation node describing RAG semantic product search — AI-powered catalog matching.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>WHATSAPP GATEWAY (whatsapp.js + Baileys - Multi-Session Support)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>backend layered refactoring — architecture overhaul</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing WHATSAPP GATEWAY (whatsapp.js + Baileys - Multi-Session Support).</td>
+  <td>Documentation node describing backend layered refactoring — architecture overhaul.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>AI AGENT (src/agent.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>environment separation — independent backend &amp; frontend</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing AI AGENT (src/agent.js).</td>
+  <td>Documentation node describing environment separation — independent backend &amp; frontend.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>PROACTIVE FOLLOW-UP SYSTEM</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>follow-up time safeguard — manual trigger bypass &amp; hourly cron</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing PROACTIVE FOLLOW-UP SYSTEM.</td>
+  <td>Documentation node describing follow-up time safeguard — manual trigger bypass &amp; hourly cron.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>prompt building logic (3 modes)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>AI response formatting — natural plaintext guardrails</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing prompt building logic (3 modes).</td>
+  <td>Documentation node describing AI response formatting — natural plaintext guardrails.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>important behavior</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>obsolete product sync — removal</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing important behavior.</td>
+  <td>Documentation node describing obsolete product sync — removal.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>BACKGROUND SCHEDULER SYSTEM (scheduler.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>follow-up system — prompt quality fix</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing BACKGROUND SCHEDULER SYSTEM (scheduler.js).</td>
+  <td>Documentation node describing follow-up system — prompt quality fix.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>Dynamic Reloading:</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>follow-up instruction — smart prompt wrapping (3 modes)</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Dynamic Reloading:.</td>
+  <td>Documentation node describing follow-up instruction — smart prompt wrapping (3 modes).</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>META ADS ANALYSIS (src/services/ads.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Settings UI — follow-up section improvement</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing META ADS ANALYSIS (src/services/ads.js).</td>
+  <td>Documentation node describing Settings UI — follow-up section improvement.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>AI CREATIVE AD CONTENT IDEAS (src/services/creative.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>settings cache — clarification</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing AI CREATIVE AD CONTENT IDEAS (src/services/creative.js).</td>
+  <td>Documentation node describing settings cache — clarification.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>RAG SEMANTIC PRODUCT SEARCH</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>follow-up system — confirmed working end-to-end</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing RAG SEMANTIC PRODUCT SEARCH.</td>
+  <td>Documentation node describing follow-up system — confirmed working end-to-end.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>How it works:</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>2026-06-17 (evening)</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing How it works:.</td>
+  <td>Documentation node describing 2026-06-17 (evening).</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>API ROUTES REFERENCE</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Ads Report — dashboard tab</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing API ROUTES REFERENCE.</td>
+  <td>Documentation node describing Ads Report — dashboard tab.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>general</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Meta Ads config — dashboard settings</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing general.</td>
+  <td>Documentation node describing Meta Ads config — dashboard settings.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>settings</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>WhatsApp groups — dynamic dropdown</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing settings.</td>
+  <td>Documentation node describing WhatsApp groups — dynamic dropdown.</td>
 </tr>
 </table>
 
@@ -1194,8 +1194,8 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>DEVELOPER.md</code></td><td>42 nodes</td></tr>
-<tr><td><code>CHANGELOG.md</code></td><td>39 nodes</td></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>43 nodes</td></tr>
+<tr><td><code>DEVELOPER.md</code></td><td>42 nodes</td></tr>
 <tr><td><code>skills/shadcn/SKILL.md</code></td><td>19 nodes</td></tr>
 <tr><td><code>skills/gemini-api-dev/SKILL.md</code></td><td>14 nodes</td></tr>
 <tr><td><code>src/components/theme-provider.tsx</code></td><td>13 nodes</td></tr>
@@ -1206,7 +1206,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x136, references x7, imports x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x140, references x10, imports x2, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1712,12 +1712,12 @@ flowchart LR
 
 <!-- ====== 7. Tests & Fixtures ====== -->
 <h2 id="tests-fixtures">7. Tests &amp; Fixtures</h2>
-<p>Tests &amp; Fixtures groups implementation around test, backend, scripts, seed, mostly in backend/scripts/seed-test-followup.js, backend/scripts/test-natural-instruction.js, backend/scripts/test-semantic-search.js. This section covers 9 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Tests &amp; Fixtures groups implementation around test, backend, scripts, seed, mostly in backend/scripts/seed-test-followup.js, backend/scripts/test-natural-instruction.js, backend/scripts/test-semantic-search.js. This section covers 11 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Tests &amp; Fixtures (9 nodes, 6 edges)
+    %% Section: Tests &amp; Fixtures (11 nodes, 7 edges)
     subgraph tests_fixtures_backend_scripts_seed_test_followu_21fd7bd3["backend/scripts/seed-test-followup.js"]
         scripts_seed_test_followup_a5ff3e7b("seed-test-followup.js")
         scripts_seed_test_followup_db_d27c953b("db<br/><small>backend/scripts/seed-test-followup.js</small>")
@@ -1733,6 +1733,11 @@ flowchart LR
         scripts_test_semantic_search_db_614c1672("db<br/><small>backend/scripts/test-semantic-search.js</small>")
         scripts_test_semantic_search_test_1ac3cb72("test()<br/><small>backend/scripts/test-semantic-search.js</small>")
     end
+    subgraph tests_fixtures_backend_scratch_test_ffmpeg_js_6960727e["backend/scratch/test_ffmpeg.js"]
+        scratch_test_ffmpeg_e5c48672("test_ffmpeg.js")
+        scratch_test_ffmpeg_execfile_36d66a8d("execFile<br/><small>backend/scratch/test_ffmpeg.js</small>")
+    end
+    scratch_test_ffmpeg_e5c48672 -->|contains| scratch_test_ffmpeg_execfile_36d66a8d
     scripts_seed_test_followup_a5ff3e7b -->|contains| scripts_seed_test_followup_db_d27c953b
     scripts_seed_test_followup_a5ff3e7b -->|contains| scripts_seed_test_followup_seed_f215ba98
     scripts_test_natural_instruction_b1793482 -->|contains| scripts_test_natural_instruction_db_670549b0
@@ -1748,6 +1753,8 @@ flowchart LR
     class scripts_test_semantic_search_c3fe1e0f test;
     class scripts_test_semantic_search_db_614c1672 test;
     class scripts_test_semantic_search_test_1ac3cb72 test;
+    class scratch_test_ffmpeg_e5c48672 test;
+    class scratch_test_ffmpeg_execfile_36d66a8d test;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -1841,6 +1848,22 @@ flowchart LR
   <td>No direct outbound edge</td>
   <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
+<tr>
+  <td>10</td>
+  <td><code>test_ffmpeg.js</code><br><small style="color:var(--muted)">backend/scratch/test_ffmpeg.js</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>{ execFile }</code><br><small style="color:var(--muted)">backend/scratch/test_ffmpeg.js</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>{ execFile } node in backend/scratch/test_ffmpeg.js.</td>
+</tr>
 </table>
 
 <div class="grid">
@@ -1851,392 +1874,32 @@ flowchart LR
       <tr><td><code>backend/scripts/seed-test-followup.js</code></td><td>3 nodes</td></tr>
 <tr><td><code>backend/scripts/test-natural-instruction.js</code></td><td>3 nodes</td></tr>
 <tr><td><code>backend/scripts/test-semantic-search.js</code></td><td>3 nodes</td></tr>
+<tr><td><code>backend/scratch/test_ffmpeg.js</code></td><td>2 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x7. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
-<!-- ====== 8. Mobile Hook ====== -->
-<h2 id="mobile-hook">8. Mobile Hook</h2>
-<p>Mobile Hook groups implementation around frontend, components, sidebartsx, sheettsx, mostly in components/ui/sidebar.tsx, components/ui/sheet.tsx, src/components/ChatInbox.tsx. This section covers 73 nodes and 154 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<!-- ====== 8. UI Actions Component ====== -->
+<h2 id="ui-actions-component">8. UI Actions Component</h2>
+<p>UI Actions Component groups implementation around frontend, components, dialogtsx, tabletsx, mostly in components/ui/dialog.tsx, components/ui/table.tsx, src/components/ChatInbox.tsx. This section covers 72 nodes and 183 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Mobile Hook (73 nodes, 154 edges)
-    subgraph mobile_hook_components_ui_sheet_tsx_af6159fe["components/ui/sheet.tsx"]
-        ui_sheet_bb143d16("sheet.tsx")
-        ui_sheet_sheetoverlay_b2e0255d("SheetOverlay()<br/><small>components/ui/sheet.tsx</small>")
-        ui_sheet_sheetcontent_136f5088("SheetContent()<br/><small>components/ui/sheet.tsx</small>")
-        ui_sheet_sheetheader_60dd2d86("SheetHeader()<br/><small>components/ui/sheet.tsx</small>")
-        ui_sheet_sheetfooter_97631de4("SheetFooter()<br/><small>components/ui/sheet.tsx</small>")
-        ui_sheet_sheettitle_a57691d0("SheetTitle()<br/><small>components/ui/sheet.tsx</small>")
-        ui_sheet_sheetdescription_02be43d5("SheetDescription()<br/><small>components/ui/sheet.tsx</small>")
-    end
-    subgraph mobile_hook_components_ui_sidebar_tsx_ecd61058["components/ui/sidebar.tsx"]
-        ui_sidebar_usesidebar_c25bf679("useSidebar()<br/><small>components/ui/sidebar.tsx</small>")
-        ui_sidebar_sidebar_8ae41338("Sidebar()<br/><small>components/ui/sidebar.tsx</small>")
-        ui_sidebar_sidebarmenubutton_6e311fd0("SidebarMenuButton()<br/><small>components/ui/sidebar.tsx</small>")
-    end
-    subgraph mobile_hook_components_ui_badge_tsx_5d5dfa6c["components/ui/badge.tsx"]
-        ui_badge_badgevariants_0cd644a0("badgeVariants<br/><small>components/ui/badge.tsx</small>")
-        ui_badge_badge_62fe1c0e("Badge()<br/><small>components/ui/badge.tsx</small>")
-    end
-    subgraph mobile_hook_components_ui_input_tsx_b415d093["components/ui/input.tsx"]
-        ui_input_8b6927e7("input.tsx")
-        ui_input_input_54fb3925("Input()<br/><small>components/ui/input.tsx</small>")
-    end
-    subgraph mobile_hook_components_ui_separator_tsx_36abafa8["components/ui/separator.tsx"]
-        ui_separator_4121e9b3("separator.tsx")
-        ui_separator_separator_84857038("Separator()<br/><small>components/ui/separator.tsx</small>")
-    end
-    components_chatinbox_c91dfeb6("ChatInbox.tsx")
-    lib_utils_cn_b8743bb6("cn()<br/><small>src/lib/utils.ts</small>")
-    ui_badge_badgevariants_0cd644a0 -->|calls| ui_badge_badge_62fe1c0e
-    ui_badge_badge_62fe1c0e -->|calls| lib_utils_cn_b8743bb6
-    ui_input_input_54fb3925 -->|calls| lib_utils_cn_b8743bb6
-    ui_separator_separator_84857038 -->|calls| lib_utils_cn_b8743bb6
-    ui_sheet_sheetoverlay_b2e0255d -->|calls| lib_utils_cn_b8743bb6
-    ui_sheet_sheetcontent_136f5088 -->|calls| lib_utils_cn_b8743bb6
-    ui_sheet_sheetheader_60dd2d86 -->|calls| lib_utils_cn_b8743bb6
-    ui_sheet_sheetfooter_97631de4 -->|calls| lib_utils_cn_b8743bb6
-    ui_sheet_sheettitle_a57691d0 -->|calls| lib_utils_cn_b8743bb6
-    ui_sheet_sheetdescription_02be43d5 -->|calls| lib_utils_cn_b8743bb6
-    ui_sidebar_usesidebar_c25bf679 -->|calls| ui_sidebar_sidebar_8ae41338
-    ui_sidebar_usesidebar_c25bf679 -->|calls| ui_sidebar_sidebarmenubutton_6e311fd0
-    ui_sidebar_sidebar_8ae41338 -->|calls| lib_utils_cn_b8743bb6
-    ui_sidebar_sidebarmenubutton_6e311fd0 -->|calls| lib_utils_cn_b8743bb6
-    components_chatinbox_c91dfeb6 -->|imports| ui_badge_badge_62fe1c0e
-    components_chatinbox_c91dfeb6 -->|imports| ui_input_8b6927e7
-    components_chatinbox_c91dfeb6 -->|imports| ui_input_input_54fb3925
-    ui_input_8b6927e7 -->|imports| lib_utils_cn_b8743bb6
-    ui_separator_4121e9b3 -->|imports| lib_utils_cn_b8743bb6
-    ui_sheet_bb143d16 -->|imports| lib_utils_cn_b8743bb6
-    %% Omitted for readability: 55 nodes, 0 edges
-    class ui_sheet_bb143d16 ui;
-    class ui_sheet_sheetoverlay_b2e0255d ui;
-    class ui_sheet_sheetcontent_136f5088 ui;
-    class ui_sheet_sheetheader_60dd2d86 ui;
-    class ui_sheet_sheetfooter_97631de4 ui;
-    class ui_sheet_sheettitle_a57691d0 ui;
-    class ui_sheet_sheetdescription_02be43d5 ui;
-    class ui_sidebar_usesidebar_c25bf679 ui;
-    class ui_sidebar_sidebar_8ae41338 ui;
-    class ui_sidebar_sidebarmenubutton_6e311fd0 ui;
-    class ui_badge_badgevariants_0cd644a0 ui;
-    class ui_badge_badge_62fe1c0e ui;
-    class ui_input_8b6927e7 ui;
-    class ui_input_input_54fb3925 ui;
-    class ui_separator_4121e9b3 ui;
-    class ui_separator_separator_84857038 ui;
-    class components_chatinbox_c91dfeb6 ui;
-    class lib_utils_cn_b8743bb6 function;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>ChatInbox.tsx</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>Badge()</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small><br><code>badge.tsx</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small><br><code>Input()</code><br><small style="color:var(--muted)">components/ui/input.tsx</small><br>+5 more</td>
-  <td>Module file in src/components/ChatInbox.tsx.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>Customer</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Customer node in src/components/ChatInbox.tsx.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>Product</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Product node in src/components/ChatInbox.tsx.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>ChatMessage</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>ChatInboxProps</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>ChatInbox()</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>badge.tsx</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>ChatInbox.tsx</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>utils.ts</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>Module file in components/ui/badge.tsx.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>badgeVariants</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>Badge()</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small></td>
-  <td>badgeVariants node in components/ui/badge.tsx.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>Badge()</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>badgeVariants</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small><br><code>ChatInbox.tsx</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>Badge() node in components/ui/badge.tsx.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>input.tsx</code><br><small style="color:var(--muted)">components/ui/input.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>ChatInbox.tsx</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>utils.ts</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>Module file in components/ui/input.tsx.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>Input()</code><br><small style="color:var(--muted)">components/ui/input.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>ChatInbox.tsx</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td>Input() node in components/ui/input.tsx.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>separator.tsx</code><br><small style="color:var(--muted)">components/ui/separator.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>utils.ts</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>Module file in components/ui/separator.tsx.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>Separator()</code><br><small style="color:var(--muted)">components/ui/separator.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td>Separator() node in components/ui/separator.tsx.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>sheet.tsx</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>utils.ts</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>Module file in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>Sheet()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td>Sheet() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>SheetTrigger()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>SheetTrigger() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>SheetClose()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>SheetClose() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>SheetPortal()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>SheetPortal() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>SheetOverlay()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>SheetOverlay() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><code>SheetContent()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td>SheetContent() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>21</td>
-  <td><code>SheetHeader()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td>SheetHeader() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>22</td>
-  <td><code>SheetFooter()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>SheetFooter() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>23</td>
-  <td><code>SheetTitle()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td>SheetTitle() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>24</td>
-  <td><code>SheetDescription()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td>SheetDescription() node in components/ui/sheet.tsx.</td>
-</tr>
-<tr>
-  <td>25</td>
-  <td><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>Input()</code><br><small style="color:var(--muted)">components/ui/input.tsx</small><br><code>input.tsx</code><br><small style="color:var(--muted)">components/ui/input.tsx</small><br><code>Separator()</code><br><small style="color:var(--muted)">components/ui/separator.tsx</small><br>+7 more</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>Skeleton()</code><br><small style="color:var(--muted)">components/ui/skeleton.tsx</small><br><code>skeleton.tsx</code><br><small style="color:var(--muted)">components/ui/skeleton.tsx</small><br>+7 more</td>
-  <td>Module file in components/ui/sidebar.tsx.</td>
-</tr>
-<tr>
-  <td>26</td>
-  <td><code>SidebarContextProps</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>27</td>
-  <td><code>SidebarContext</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>useSidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>Sidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>SidebarMenuButton()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>SidebarRail()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br>+1 more</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>SidebarProvider()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>useIsMobile()</code><br><small style="color:var(--muted)">src/hooks/use-mobile.ts</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>Sidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>useSidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
-  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>components/ui/sidebar.tsx</code></td><td>28 nodes</td></tr>
-<tr><td><code>components/ui/sheet.tsx</code></td><td>11 nodes</td></tr>
-<tr><td><code>src/components/ChatInbox.tsx</code></td><td>6 nodes</td></tr>
-<tr><td><code>components/ui/tabs.tsx</code></td><td>6 nodes</td></tr>
-<tr><td><code>components/ui/tooltip.tsx</code></td><td>5 nodes</td></tr>
-<tr><td><code>components/ui/badge.tsx</code></td><td>3 nodes</td></tr>
-<tr><td><code>components/ui/input.tsx</code></td><td>2 nodes</td></tr>
-<tr><td><code>components/ui/separator.tsx</code></td><td>2 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x60, calls x48, imports x26, imports x20. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 9. UI Actions Component ====== -->
-<h2 id="ui-actions-component">9. UI Actions Component</h2>
-<p>UI Actions Component groups implementation around frontend, components, dialogtsx, tabletsx, mostly in components/ui/dialog.tsx, components/ui/table.tsx, components/ui/card.tsx. This section covers 65 nodes and 156 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: UI Actions Component (65 nodes, 156 edges)
+    %% Section: UI Actions Component (72 nodes, 183 edges)
     subgraph ui_actions_component_components_ui_button_tsx_c69b39cb["components/ui/button.tsx"]
         ui_button_buttonvariants_a1d3986d("buttonVariants<br/><small>components/ui/button.tsx</small>")
         ui_button_button_e9ca2d52("Button()<br/><small>components/ui/button.tsx</small>")
         ui_button_fad8ac47("button.tsx")
     end
-    subgraph ui_actions_component_components_ui_card_tsx_cc03f2af["components/ui/card.tsx"]
-        ui_card_67c22e52("card.tsx")
-        ui_card_card_7890a788("Card()<br/><small>components/ui/card.tsx</small>")
-        ui_card_cardcontent_ed1cd563("CardContent()<br/><small>components/ui/card.tsx</small>")
+    subgraph ui_actions_component_components_ui_badge_tsx_cf97b0c4["components/ui/badge.tsx"]
+        ui_badge_badgevariants_0cd644a0("badgeVariants<br/><small>components/ui/badge.tsx</small>")
+        ui_badge_badge_62fe1c0e("Badge()<br/><small>components/ui/badge.tsx</small>")
     end
     subgraph ui_actions_component_frontend_src_config_ts_9d58a306["frontend/src/config.ts"]
         src_config_f55793b8("config.ts")
@@ -2246,23 +1909,25 @@ flowchart LR
         components_actions_cb93495d("Actions.tsx")
         components_actions_actions_f5d88197("Actions()<br/><small>src/components/Actions.tsx</small>")
     end
+    ui_card_67c22e52("card.tsx")
     src_app_46efd68e("App.tsx")
     components_adsreport_d72a8c4c("AdsReport.tsx")
+    components_chatinbox_c91dfeb6("ChatInbox.tsx")
     components_creativereport_c7e42ce9("CreativeReport.tsx")
     components_overview_4aa35b24("Overview.tsx")
     components_products_8a62dc64("Products.tsx")
     components_settings_d2cd85a2("Settings.tsx")
-    components_sidebar_566d09f7("Sidebar.tsx")
     components_whatsappsessions_c49ec77f("WhatsappSessions.tsx")
+    ui_badge_badgevariants_0cd644a0 -->|calls| ui_badge_badge_62fe1c0e
     ui_button_buttonvariants_a1d3986d -->|calls| ui_button_button_e9ca2d52
     src_app_46efd68e -->|imports| components_actions_cb93495d
     src_app_46efd68e -->|imports| components_actions_actions_f5d88197
     src_app_46efd68e -->|imports| components_adsreport_d72a8c4c
+    src_app_46efd68e -->|imports| components_chatinbox_c91dfeb6
     src_app_46efd68e -->|imports| components_creativereport_c7e42ce9
     src_app_46efd68e -->|imports| components_overview_4aa35b24
     src_app_46efd68e -->|imports| components_products_8a62dc64
     src_app_46efd68e -->|imports| components_settings_d2cd85a2
-    src_app_46efd68e -->|imports| components_sidebar_566d09f7
     src_app_46efd68e -->|imports| components_whatsappsessions_c49ec77f
     src_app_46efd68e -->|imports| src_config_f55793b8
     src_app_46efd68e -->|imports| src_config_api_base_url_5de47e35
@@ -2271,31 +1936,30 @@ flowchart LR
     components_actions_cb93495d -->|imports| ui_button_fad8ac47
     components_actions_cb93495d -->|imports| ui_button_button_e9ca2d52
     components_actions_cb93495d -->|imports| ui_card_67c22e52
-    components_actions_cb93495d -->|imports| ui_card_card_7890a788
-    components_actions_cb93495d -->|imports| ui_card_cardcontent_ed1cd563
     components_adsreport_d72a8c4c -->|imports| src_config_f55793b8
     components_adsreport_d72a8c4c -->|imports| src_config_api_base_url_5de47e35
     components_adsreport_d72a8c4c -->|imports| ui_button_fad8ac47
     components_adsreport_d72a8c4c -->|imports| ui_button_button_e9ca2d52
     components_adsreport_d72a8c4c -->|imports| ui_card_67c22e52
-    %% Omitted for readability: 47 nodes, 32 edges
+    components_chatinbox_c91dfeb6 -->|imports| src_config_f55793b8
+    %% Omitted for readability: 54 nodes, 26 edges
     class ui_button_buttonvariants_a1d3986d ui;
     class ui_button_button_e9ca2d52 ui;
     class ui_button_fad8ac47 ui;
-    class ui_card_67c22e52 ui;
-    class ui_card_card_7890a788 ui;
-    class ui_card_cardcontent_ed1cd563 ui;
+    class ui_badge_badgevariants_0cd644a0 ui;
+    class ui_badge_badge_62fe1c0e ui;
     class src_config_f55793b8 module;
     class src_config_api_base_url_5de47e35 api;
     class components_actions_cb93495d ui;
     class components_actions_actions_f5d88197 ui;
+    class ui_card_67c22e52 ui;
     class src_app_46efd68e ui;
     class components_adsreport_d72a8c4c ui;
+    class components_chatinbox_c91dfeb6 ui;
     class components_creativereport_c7e42ce9 ui;
     class components_overview_4aa35b24 ui;
     class components_products_8a62dc64 ui;
     class components_settings_d2cd85a2 ui;
-    class components_sidebar_566d09f7 ui;
     class components_whatsappsessions_c49ec77f ui;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -2392,6 +2056,54 @@ flowchart LR
 </tr>
 <tr>
   <td>10</td>
+  <td><code>ChatInbox.tsx</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
+  <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Badge()</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small><br><code>badge.tsx</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small><br>+7 more</td>
+  <td>Module file in src/components/ChatInbox.tsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Customer</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Customer node in src/components/ChatInbox.tsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Product</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Product node in src/components/ChatInbox.tsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>ChatMessage</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>ChatInboxProps</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>ChatInbox()</code><br><small style="color:var(--muted)">src/components/ChatInbox.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>16</td>
   <td><code>CreativeReport.tsx</code><br><small style="color:var(--muted)">src/components/CreativeReport.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
@@ -2399,7 +2111,7 @@ flowchart LR
   <td>Module file in src/components/CreativeReport.tsx.</td>
 </tr>
 <tr>
-  <td>11</td>
+  <td>17</td>
   <td><code>CreativeIdea</code><br><small style="color:var(--muted)">src/components/CreativeReport.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2407,7 +2119,7 @@ flowchart LR
   <td>CreativeIdea node in src/components/CreativeReport.tsx.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>18</td>
   <td><code>CreativeReportData</code><br><small style="color:var(--muted)">src/components/CreativeReport.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2415,7 +2127,7 @@ flowchart LR
   <td>CreativeReportData node in src/components/CreativeReport.tsx.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>19</td>
   <td><code>CreativeReport()</code><br><small style="color:var(--muted)">src/components/CreativeReport.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2423,15 +2135,15 @@ flowchart LR
   <td>CreativeReport() node in src/components/CreativeReport.tsx.</td>
 </tr>
 <tr>
-  <td>14</td>
+  <td>20</td>
   <td><code>Overview.tsx</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
-  <td><code>Card()</code><br><small style="color:var(--muted)">components/ui/card.tsx</small><br><code>card.tsx</code><br><small style="color:var(--muted)">components/ui/card.tsx</small><br><code>CardContent()</code><br><small style="color:var(--muted)">components/ui/card.tsx</small><br>+9 more</td>
+  <td><code>Badge()</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small><br><code>badge.tsx</code><br><small style="color:var(--muted)">components/ui/badge.tsx</small><br><code>Card()</code><br><small style="color:var(--muted)">components/ui/card.tsx</small><br>+11 more</td>
   <td>Module file in src/components/Overview.tsx.</td>
 </tr>
 <tr>
-  <td>15</td>
+  <td>21</td>
   <td><code>Lead</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2439,7 +2151,7 @@ flowchart LR
   <td>Lead node in src/components/Overview.tsx.</td>
 </tr>
 <tr>
-  <td>16</td>
+  <td>22</td>
   <td><code>Stats</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2447,7 +2159,7 @@ flowchart LR
   <td>Stats node in src/components/Overview.tsx.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>23</td>
   <td><code>OverviewProps</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2455,7 +2167,7 @@ flowchart LR
   <td>OverviewProps node in src/components/Overview.tsx.</td>
 </tr>
 <tr>
-  <td>18</td>
+  <td>24</td>
   <td><code>Overview()</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2463,15 +2175,15 @@ flowchart LR
   <td>Overview() node in src/components/Overview.tsx.</td>
 </tr>
 <tr>
-  <td>19</td>
+  <td>25</td>
   <td><code>Products.tsx</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
-  <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Button()</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br><code>button.tsx</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br>+21 more</td>
+  <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Button()</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br><code>button.tsx</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br>+25 more</td>
   <td>Module file in src/components/Products.tsx.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>26</td>
   <td><code>Product</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2479,7 +2191,7 @@ flowchart LR
   <td>Product node in src/components/Products.tsx.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>27</td>
   <td><code>ProductsProps</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2487,7 +2199,7 @@ flowchart LR
   <td>ProductsProps node in src/components/Products.tsx.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>28</td>
   <td><code>Products()</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -2495,68 +2207,20 @@ flowchart LR
   <td>Products() node in src/components/Products.tsx.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>29</td>
   <td><code>Settings.tsx</code><br><small style="color:var(--muted)">src/components/Settings.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
-  <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Button()</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br><code>button.tsx</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br>+6 more</td>
+  <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Button()</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br><code>button.tsx</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br>+10 more</td>
   <td>Module file in src/components/Settings.tsx.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>30</td>
   <td><code>SettingsState</code><br><small style="color:var(--muted)">src/components/Settings.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
   <td>SettingsState node in src/components/Settings.tsx.</td>
-</tr>
-<tr>
-  <td>25</td>
-  <td><code>SettingsProps</code><br><small style="color:var(--muted)">src/components/Settings.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>SettingsProps node in src/components/Settings.tsx.</td>
-</tr>
-<tr>
-  <td>26</td>
-  <td><code>Settings()</code><br><small style="color:var(--muted)">src/components/Settings.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Settings() node in src/components/Settings.tsx.</td>
-</tr>
-<tr>
-  <td>27</td>
-  <td><code>Sidebar.tsx</code><br><small style="color:var(--muted)">src/components/Sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
-  <td>No direct outbound edge</td>
-  <td>Module file in src/components/Sidebar.tsx.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>SidebarProps</code><br><small style="color:var(--muted)">src/components/Sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>Sidebar()</code><br><small style="color:var(--muted)">src/components/Sidebar.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>WhatsappSessions.tsx</code><br><small style="color:var(--muted)">src/components/WhatsappSessions.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
-  <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Button()</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br><code>button.tsx</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br>+14 more</td>
-  <td>Module file in src/components/WhatsappSessions.tsx.</td>
 </tr>
 </table>
 
@@ -2565,19 +2229,381 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>components/ui/dialog.tsx</code></td><td>11 nodes</td></tr>
+      <tr><td><code>components/ui/dialog.tsx</code></td><td>10 nodes</td></tr>
 <tr><td><code>components/ui/table.tsx</code></td><td>9 nodes</td></tr>
-<tr><td><code>components/ui/card.tsx</code></td><td>8 nodes</td></tr>
+<tr><td><code>src/components/ChatInbox.tsx</code></td><td>6 nodes</td></tr>
+<tr><td><code>components/ui/card.tsx</code></td><td>6 nodes</td></tr>
 <tr><td><code>src/components/Overview.tsx</code></td><td>5 nodes</td></tr>
 <tr><td><code>frontend/src/App.tsx</code></td><td>4 nodes</td></tr>
 <tr><td><code>src/components/CreativeReport.tsx</code></td><td>4 nodes</td></tr>
 <tr><td><code>src/components/Products.tsx</code></td><td>4 nodes</td></tr>
-<tr><td><code>src/components/Settings.tsx</code></td><td>4 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: imports x71, contains x51, imports x33, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: imports x82, contains x55, imports x44, calls x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Mobile Hook ====== -->
+<h2 id="mobile-hook">9. Mobile Hook</h2>
+<p>Mobile Hook groups implementation around frontend, components, sidebartsx, sheettsx, mostly in components/ui/sidebar.tsx, components/ui/sheet.tsx, components/ui/tabs.tsx. This section covers 63 nodes and 128 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Mobile Hook (63 nodes, 128 edges)
+    subgraph mobile_hook_components_ui_sheet_tsx_af6159fe["components/ui/sheet.tsx"]
+        ui_sheet_bb143d16("sheet.tsx")
+        ui_sheet_sheetcontent_136f5088("SheetContent()<br/><small>components/ui/sheet.tsx</small>")
+        ui_sheet_sheetoverlay_b2e0255d("SheetOverlay()<br/><small>components/ui/sheet.tsx</small>")
+        ui_sheet_sheetheader_60dd2d86("SheetHeader()<br/><small>components/ui/sheet.tsx</small>")
+        ui_sheet_sheetfooter_97631de4("SheetFooter()<br/><small>components/ui/sheet.tsx</small>")
+        ui_sheet_sheettitle_a57691d0("SheetTitle()<br/><small>components/ui/sheet.tsx</small>")
+        ui_sheet_sheetdescription_02be43d5("SheetDescription()<br/><small>components/ui/sheet.tsx</small>")
+    end
+    subgraph mobile_hook_components_ui_sidebar_tsx_ecd61058["components/ui/sidebar.tsx"]
+        ui_sidebar_usesidebar_c25bf679("useSidebar()<br/><small>components/ui/sidebar.tsx</small>")
+        ui_sidebar_c9f1d094("sidebar.tsx")
+        ui_sidebar_sidebar_8ae41338("Sidebar()<br/><small>components/ui/sidebar.tsx</small>")
+        ui_sidebar_sidebarmenubutton_6e311fd0("SidebarMenuButton()<br/><small>components/ui/sidebar.tsx</small>")
+        ui_sidebar_sidebarrail_9d1fba18("SidebarRail()<br/><small>components/ui/sidebar.tsx</small>")
+    end
+    subgraph mobile_hook_components_ui_card_tsx_18a0d534["components/ui/card.tsx"]
+        ui_card_cardaction_a1a717ff("CardAction()<br/><small>components/ui/card.tsx</small>")
+        ui_card_cardfooter_2f80e30f("CardFooter()<br/><small>components/ui/card.tsx</small>")
+    end
+    subgraph mobile_hook_components_ui_separator_tsx_36abafa8["components/ui/separator.tsx"]
+        ui_separator_4121e9b3("separator.tsx")
+        ui_separator_separator_84857038("Separator()<br/><small>components/ui/separator.tsx</small>")
+    end
+    ui_dialog_dialogoverlay_175e18e0("DialogOverlay()<br/><small>components/ui/dialog.tsx</small>")
+    lib_utils_cn_b8743bb6("cn()<br/><small>src/lib/utils.ts</small>")
+    ui_card_cardaction_a1a717ff -->|calls| lib_utils_cn_b8743bb6
+    ui_card_cardfooter_2f80e30f -->|calls| lib_utils_cn_b8743bb6
+    ui_dialog_dialogoverlay_175e18e0 -->|calls| lib_utils_cn_b8743bb6
+    ui_separator_separator_84857038 -->|calls| lib_utils_cn_b8743bb6
+    ui_sheet_sheetoverlay_b2e0255d -->|calls| lib_utils_cn_b8743bb6
+    ui_sheet_sheetcontent_136f5088 -->|calls| lib_utils_cn_b8743bb6
+    ui_sheet_sheetheader_60dd2d86 -->|calls| lib_utils_cn_b8743bb6
+    ui_sheet_sheetfooter_97631de4 -->|calls| lib_utils_cn_b8743bb6
+    ui_sheet_sheettitle_a57691d0 -->|calls| lib_utils_cn_b8743bb6
+    ui_sheet_sheetdescription_02be43d5 -->|calls| lib_utils_cn_b8743bb6
+    ui_sidebar_usesidebar_c25bf679 -->|calls| ui_sidebar_sidebar_8ae41338
+    ui_sidebar_usesidebar_c25bf679 -->|calls| ui_sidebar_sidebarmenubutton_6e311fd0
+    ui_sidebar_usesidebar_c25bf679 -->|calls| ui_sidebar_sidebarrail_9d1fba18
+    ui_sidebar_sidebar_8ae41338 -->|calls| lib_utils_cn_b8743bb6
+    ui_sidebar_sidebarrail_9d1fba18 -->|calls| lib_utils_cn_b8743bb6
+    ui_sidebar_sidebarmenubutton_6e311fd0 -->|calls| lib_utils_cn_b8743bb6
+    ui_separator_4121e9b3 -->|imports| lib_utils_cn_b8743bb6
+    ui_separator_4121e9b3 -->|imports| ui_sidebar_c9f1d094
+    ui_separator_separator_84857038 -->|imports| ui_sidebar_c9f1d094
+    ui_sheet_bb143d16 -->|imports| lib_utils_cn_b8743bb6
+    ui_sheet_bb143d16 -->|imports| ui_sidebar_c9f1d094
+    ui_sheet_sheetcontent_136f5088 -->|imports| ui_sidebar_c9f1d094
+    ui_sheet_sheetheader_60dd2d86 -->|imports| ui_sidebar_c9f1d094
+    ui_sheet_sheettitle_a57691d0 -->|imports| ui_sidebar_c9f1d094
+    %% Omitted for readability: 45 nodes, 2 edges
+    class ui_sheet_bb143d16 ui;
+    class ui_sheet_sheetcontent_136f5088 ui;
+    class ui_sheet_sheetoverlay_b2e0255d ui;
+    class ui_sheet_sheetheader_60dd2d86 ui;
+    class ui_sheet_sheetfooter_97631de4 ui;
+    class ui_sheet_sheettitle_a57691d0 ui;
+    class ui_sheet_sheetdescription_02be43d5 ui;
+    class ui_sidebar_usesidebar_c25bf679 ui;
+    class ui_sidebar_c9f1d094 ui;
+    class ui_sidebar_sidebar_8ae41338 ui;
+    class ui_sidebar_sidebarmenubutton_6e311fd0 ui;
+    class ui_sidebar_sidebarrail_9d1fba18 ui;
+    class ui_card_cardaction_a1a717ff ui;
+    class ui_card_cardfooter_2f80e30f ui;
+    class ui_separator_4121e9b3 ui;
+    class ui_separator_separator_84857038 ui;
+    class ui_dialog_dialogoverlay_175e18e0 ui;
+    class lib_utils_cn_b8743bb6 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>CardAction()</code><br><small style="color:var(--muted)">components/ui/card.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>CardAction() node in components/ui/card.tsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>CardFooter()</code><br><small style="color:var(--muted)">components/ui/card.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>CardFooter() node in components/ui/card.tsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>DialogOverlay()</code><br><small style="color:var(--muted)">components/ui/dialog.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>DialogOverlay() node in components/ui/dialog.tsx.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>separator.tsx</code><br><small style="color:var(--muted)">components/ui/separator.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>utils.ts</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Module file in components/ui/separator.tsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>Separator()</code><br><small style="color:var(--muted)">components/ui/separator.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td>Separator() node in components/ui/separator.tsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>sheet.tsx</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>utils.ts</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Module file in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Sheet()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td>Sheet() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>SheetTrigger()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>SheetTrigger() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>SheetClose()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>SheetClose() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>SheetPortal()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>SheetPortal() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>SheetOverlay()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>SheetOverlay() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>SheetContent()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td>SheetContent() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>SheetHeader()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td>SheetHeader() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>SheetFooter()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>SheetFooter() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>SheetTitle()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td>SheetTitle() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>SheetDescription()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td>SheetDescription() node in components/ui/sheet.tsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>sidebar.tsx</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>Separator()</code><br><small style="color:var(--muted)">components/ui/separator.tsx</small><br><code>separator.tsx</code><br><small style="color:var(--muted)">components/ui/separator.tsx</small><br><code>Sheet()</code><br><small style="color:var(--muted)">components/ui/sheet.tsx</small><br>+5 more</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>Skeleton()</code><br><small style="color:var(--muted)">components/ui/skeleton.tsx</small><br><code>skeleton.tsx</code><br><small style="color:var(--muted)">components/ui/skeleton.tsx</small><br>+7 more</td>
+  <td>Module file in components/ui/sidebar.tsx.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>SidebarContextProps</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>SidebarContext</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>useSidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Sidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>SidebarMenuButton()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br><code>SidebarRail()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small><br>+1 more</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>SidebarProvider()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small><br><code>useIsMobile()</code><br><small style="color:var(--muted)">src/hooks/use-mobile.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Sidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>useSidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>SidebarTrigger()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>useSidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>SidebarRail()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>useSidebar()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>SidebarInset()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>SidebarInput()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>SidebarHeader()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>SidebarFooter()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>SidebarSeparator()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>SidebarContent()</code><br><small style="color:var(--muted)">components/ui/sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cn()</code><br><small style="color:var(--muted)">src/lib/utils.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>components/ui/sidebar.tsx</code></td><td>28 nodes</td></tr>
+<tr><td><code>components/ui/sheet.tsx</code></td><td>11 nodes</td></tr>
+<tr><td><code>components/ui/tabs.tsx</code></td><td>6 nodes</td></tr>
+<tr><td><code>components/ui/tooltip.tsx</code></td><td>5 nodes</td></tr>
+<tr><td><code>components/ui/card.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>components/ui/separator.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>components/ui/skeleton.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>components/ui/switch.tsx</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x51, calls x47, imports x18, imports x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -3705,12 +3731,12 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around backend, services, agents, shadcn, mostly in src/services/scheduler.js, shadcn/rules/forms.md, src/services/creative.js. This section covers 79 nodes and 66 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around backend, services, agents, shadcn, mostly in src/services/scheduler.js, shadcn/rules/forms.md, src/services/creative.js. This section covers 85 nodes and 70 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (79 nodes, 66 edges)
+    %% Section: Other (85 nodes, 70 edges)
     subgraph other_backend_src_db_js_e9c82801["backend/src/db.js"]
         src_db_getsetting_16db62de("getSetting()<br/><small>backend/src/db.js</small>")
         src_db_initdb_23909900("initDb()<br/><small>backend/src/db.js</small>")
@@ -3749,7 +3775,7 @@ flowchart LR
     services_scheduler_setupscheduledjobs_0bc1a7a3 -->|calls| services_scheduler_reloadschedules_8201352f
     services_scheduler_setupscheduledjobs_0bc1a7a3 -->|calls| services_scheduler_stopalljobs_b16f673c
     services_followup_96686713 -->|imports| services_scheduler_60494f56
-    %% Omitted for readability: 61 nodes, 0 edges
+    %% Omitted for readability: 67 nodes, 0 edges
     class src_db_getsetting_16db62de function;
     class src_db_initdb_23909900 function;
     class src_db_backfillproductembeddings_8246a303 function;
@@ -4048,7 +4074,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x48, calls x11, references x2, shares data with x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x52, calls x11, references x2, shares data with x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4095,17 +4121,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>773</td></tr>
-      <tr><td>Edges</td><td>1020</td></tr>
+      <tr><td>Nodes</td><td>787</td></tr>
+      <tr><td>Edges</td><td>1032</td></tr>
       <tr><td>Hyperedges</td><td>3</td></tr>
-      <tr><td>Communities</td><td>55</td></tr>
+      <tr><td>Communities</td><td>59</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>1015</td></tr>
+      <tr><td>EXTRACTED</td><td>1027</td></tr>
       <tr><td>INFERRED</td><td>5</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -4114,7 +4140,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>latezza-automation — Architecture Documentation</p>
-  <p>Generated: 2026-06-20 16:46 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-06-20 17:22 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

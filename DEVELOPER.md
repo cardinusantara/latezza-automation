@@ -3,7 +3,7 @@
 project: WhatsApp AI Agent + Admin Dashboard
 client: Latezza Cake
 stack: Fastify (Node.js) + React (Vite + Tailwind CSS v4 + shadcn/ui) + PostgreSQL + Baileys + Gemini API
-last_updated: 2026-06-19
+last_updated: 2026-06-21
 
 ---
 
@@ -221,15 +221,28 @@ startup flow:
 5. On `connection.update` with `connection: 'open'` → status is updated to `connected` in DB → messages and webhooks can be processed for that session.
 
 message handling flow (`messages.upsert`):
-1. Skip: group messages, broadcast, status, self-sent, non-text
+1. Skip: group messages, broadcast, status, self-sent, and messages that do not contain text, image, or audio
 2. Extract `jid` and `text`
-3. Rate limit check (in-memory Map, per JID)
-4. `createOrUpdateCustomer(jid, pushName)` — upsert customer record
-5. Check `customer.ai_enabled` → if false, skip AI, just log message
-6. Check `customer.needs_admin` → if true, skip AI (requires manual response)
-7. Call `agent.js` → Gemini generates reply
-8. Send typing indicator (`composing`) → delay → send reply
-9. Save both user message and AI reply to `chat_histories`
+3. If audio/voice message (`audioMessage`):
+   - Download the audio media payload using Baileys `downloadMediaMessage`
+   - Save the binary buffer to `public/uploads/` as `voice_{timestamp}_{random}.ogg`
+   - Transcribe the audio using the `transcribeAudio` service helper, which uploads the audio to Gemini API using inlineData and prompts for a literal transcription in Indonesian (falling back to `gemini-3.5-flash` if the user-configured model fails)
+   - Assign the returned transcription to `text`
+4. Rate limit check (in-memory Map, per JID)
+5. `createOrUpdateCustomer(jid, pushName)` — upsert customer record
+6. Check `customer.ai_enabled` → if false, skip AI response, but save message in history
+7. Check `customer.needs_admin` → if true, skip AI (requires manual response)
+8. Call `agent.js` → Gemini generates reply
+9. Send typing indicator (`composing`) → delay → send reply
+10. Save both user message and AI reply to `chat_histories` (user message is formatted as `[Voice Note: <url>] <transcription>` if it was a voice message)
+
+outgoing message handling flow (manual send from dashboard):
+- Dashboard admin can type text or record audio using the browser's MediaRecorder API.
+- If audio is recorded, it is converted to a base64 string and POSTed to `/api/customers/:phone/send-message`.
+- The backend decodes it, saves the file as `voice_out_{timestamp}_{random}.ogg` in `public/uploads/`, and transcribing it using `transcribeAudio`.
+- The backend sends the voice note via Baileys by setting `audio: fileBuffer`, `mimetype: 'audio/mp4'`, and `ptt: true` to display as a native WhatsApp recording.
+- The outgoing voice note is recorded in the database `chat_histories` as `[Voice Note: <url>] <transcription>` with the role `model` so it displays as an audio player in the dashboard.
+
 
 ---
 
@@ -431,6 +444,8 @@ implemented in: `backend/src/routes.js`
 7. The AI's `request_human_handoff` tool mutes the AI for that customer. Admin must update status or toggle AI back on from the CRM dashboard to re-enable.
 
 8. Rate limit state is in-memory only — clears on restart.
+
+9. Audio Transcoding for WhatsApp: Browsers record audio in WebM format (using the MediaRecorder API), which is not natively playable as a voice note/PTT message on mobile WhatsApp clients (iOS/Android). The backend relies on `@ffmpeg-installer/ffmpeg` and FFmpeg to transcode incoming manual webm recordings to Ogg Opus mono audio (`audio/ogg; codecs=opus`) before transmitting them. The static files are saved at `backend/public/uploads` and mapped to `/uploads` prefix. Ensure any backend file upload directories resolve to `backend/public/uploads` using path helper relative to `backend/src/` (e.g. `../public/uploads`).
 
 ---
 

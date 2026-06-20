@@ -10,7 +10,8 @@ import {
   IconNotebook,
   IconCopy,
   IconArrowLeft,
-  IconX
+  IconX,
+  IconMicrophone
 } from '@tabler/icons-react';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -83,6 +84,14 @@ export default function ChatInbox({
   const [custNotes, setCustNotes] = useState('');
   const [custPhone, setCustPhone] = useState('');
   const [savingDetails, setSavingDetails] = useState(false);
+  
+  // Recording states
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<any>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   
   // Product Search inside CRM Sidebar
   const [prodQuery, setProdQuery] = useState('');
@@ -238,7 +247,124 @@ export default function ChatInbox({
     return () => clearInterval(interval);
   }, [selectedJid]);
 
+  // Cleanup recording resources on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  const startRecording = async () => {
+    audioChunksRef.current = [];
+    setRecordingDuration(0);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        await sendAudioBlob(audioBlob);
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+
+      timerRef.current = setInterval(() => {
+        setRecordingDuration(prev => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error('Error starting audio recording:', err);
+      showToast('Gagal mengakses mikrofon. Pastikan izin mikrofon telah diberikan.');
+    }
+  };
+
+  const cancelRecording = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.onstop = null;
+      mediaRecorderRef.current.stop();
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+    }
+    setIsRecording(false);
+    setRecordingDuration(0);
+  };
+
+  const stopAndSendRecording = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+    }
+    setIsRecording(false);
+    setRecordingDuration(0);
+  };
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const sendAudioBlob = async (blob: Blob) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = async () => {
+      const base64data = reader.result as string;
+      const base64Content = base64data.split(',')[1];
+      
+      try {
+        showToast('Mengirim & mentranskripsi pesan suara...');
+        const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/send-message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            audioBase64: base64Content, 
+            mimetype: blob.type || 'audio/webm',
+            session_id: selectedSessionId 
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          showToast('Pesan suara berhasil terkirim!');
+          
+          shouldScrollRef.current = true;
+          setChatHistory(prev => [...prev, {
+            role: 'model',
+            content: `[Voice Note: ${data.voiceUrl}] ${data.transcription}`,
+            timestamp: new Date().toISOString()
+          }]);
+          setAiEnabled(false);
+          setNeedsAdmin(false);
+          onRefreshData();
+        } else {
+          showToast('Gagal mengirim pesan suara: ' + data.message);
+        }
+      } catch (err) {
+        showToast('Koneksi gagal saat mengirim pesan suara');
+      }
+    };
+  };
+
   const handleSelectCustomer = (jid: string, name: string) => {
+    if (isRecording) {
+      cancelRecording();
+    }
     setSelectedJid(jid);
     setSelectedCustName(name);
     setMobileView('chat');
@@ -568,6 +694,8 @@ export default function ChatInbox({
                   // Parse image message
                   let isImage = false;
                   let imageUrl = '';
+                  let isVoice = false;
+                  let voiceUrl = '';
                   let textContent = msg.content;
                   
                   const imgMatch = msg.content.match(/^\[Foto:\s*([^\]]+)\]\s*(.*)/s);
@@ -575,6 +703,13 @@ export default function ChatInbox({
                     isImage = true;
                     imageUrl = imgMatch[1];
                     textContent = imgMatch[2] || '';
+                  } else {
+                    const voiceMatch = msg.content.match(/^\[Voice Note:\s*([^\]]+)\]\s*(.*)/s);
+                    if (voiceMatch) {
+                      isVoice = true;
+                      voiceUrl = voiceMatch[1];
+                      textContent = voiceMatch[2] || '';
+                    }
                   }
 
                   return (
@@ -596,7 +731,20 @@ export default function ChatInbox({
                               onClick={() => window.open(`${API_BASE_URL}${imageUrl}`, '_blank')}
                             />
                           )}
-                          {textContent && <div>{textContent}</div>}
+                          {isVoice && (
+                            <div className="flex flex-col gap-2 min-w-[240px] max-w-full">
+                              <audio 
+                                src={`${API_BASE_URL}${voiceUrl}`} 
+                                controls 
+                                className="w-full h-10 filter dark:brightness-90"
+                              />
+                            </div>
+                          )}
+                          {textContent && (
+                            <div className={isVoice ? "text-xs italic opacity-90 pl-2 border-l-2 border-slate-400 dark:border-slate-500" : ""}>
+                              {isVoice ? `🎙️ "${textContent}"` : textContent}
+                            </div>
+                          )}
                         </div>
                          <div className={`text-[9px] mt-1.5 text-right font-medium ${
                           isUser 
@@ -613,17 +761,55 @@ export default function ChatInbox({
 
             {/* Input Footer */}
             <div className="p-4 border-t border-border bg-card flex gap-3 items-center">
-              <Input 
-                type="text" 
-                placeholder="Tulis pesan ke kustomer..." 
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="flex-grow bg-card/30 border-border"
-              />
-               <Button onClick={handleSendMessage} className="bg-primary hover:bg-primary/90 text-primary-foreground w-10 h-10 p-0 rounded-xl flex items-center justify-center flex-shrink-0">
-                <IconSend size={18} />
-              </Button>
+              {isRecording ? (
+                <div className="flex-grow flex items-center justify-between bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-2 text-xs">
+                  <div className="flex items-center gap-2.5 text-destructive font-semibold">
+                    <span className="w-2.5 h-2.5 bg-destructive rounded-full animate-pulse" />
+                    <span>Merekam pesan suara... ({formatDuration(recordingDuration)})</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={cancelRecording} 
+                      className="text-destructive hover:bg-destructive/10 h-8 px-3 rounded-lg font-medium text-[11px]"
+                    >
+                      Batal
+                    </Button>
+                    <Button 
+                      onClick={stopAndSendRecording} 
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-3 rounded-lg font-semibold text-[11px] flex items-center gap-1"
+                    >
+                      Kirim Pesan
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <Input 
+                    type="text" 
+                    placeholder="Tulis pesan ke kustomer..." 
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                    className="flex-grow bg-card/30 border-border"
+                  />
+                  <Button 
+                    variant="outline" 
+                    onClick={startRecording}
+                    className="border-border text-muted-foreground hover:text-foreground w-10 h-10 p-0 rounded-xl flex items-center justify-center flex-shrink-0"
+                    title="Rekam Pesan Suara"
+                  >
+                    <IconMicrophone size={18} />
+                  </Button>
+                  <Button 
+                    onClick={handleSendMessage} 
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground w-10 h-10 p-0 rounded-xl flex items-center justify-center flex-shrink-0"
+                  >
+                    <IconSend size={18} />
+                  </Button>
+                </>
+              )}
             </div>
           </>
         )}

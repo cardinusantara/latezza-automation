@@ -1,5 +1,6 @@
 node_modules/
-whatsapp-session/
+whatsapp-sessions/
+graphify-out/cache/
 report.html
 .env
 dist/

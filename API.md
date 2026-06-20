@@ -204,6 +204,11 @@ Mengambil semua riwayat pesan WhatsApp antara bot agen AI dan pelanggan tersebut
   [
     {
       "role": "user",
+      "content": "[Voice Note: /uploads/voice_1718873212873.ogg] Halo, mau tanya marmer cakenya ready?",
+      "timestamp": "2026-06-20T14:55:00.000Z"
+    },
+    {
+      "role": "user",
       "content": "Halo, saya mau tanya harga cake ultah ukuran 15cm berapa ya?",
       "timestamp": "2026-06-20T14:58:00.000Z"
     },
@@ -214,6 +219,7 @@ Mengambil semua riwayat pesan WhatsApp antara bot agen AI dan pelanggan tersebut
     }
   ]
   ```
+  *(Catatan: Pesan media yang dikirim oleh pelanggan disimpan dengan format khusus di database: foto menggunakan awalan `[Foto: <url>] <caption_or_empty>`, dan pesan suara/voice note menggunakan awalan `[Voice Note: <url>] <transcription>` untuk mendukung pemutaran audio player langsung di dashboard.)*
 
 ---
 
@@ -263,26 +269,45 @@ Memperbarui kolom status CRM dan kolom catatan internal (`notes`) untuk pelangga
 ---
 
 ### POST `/api/customers/:phone/send-message`
-Mengirimkan pesan WhatsApp manual kepada pelanggan melalui bot dari halaman dashboard menggunakan sesi tertentu. 
+Mengirimkan pesan WhatsApp manual kepada pelanggan melalui bot dari halaman dashboard menggunakan sesi tertentu. Endpoint ini mendukung pengiriman pesan teks maupun rekaman suara (voice note).
 > [!IMPORTANT]
 > Pemanggilan endpoint ini secara otomatis akan **menonaktifkan respon otomatis AI** (`ai_enabled` diubah menjadi `false`) dan **mereset status handoff admin** (`needs_admin` diubah menjadi `false`) untuk nomor tersebut agar admin dapat mengontrol percakapan secara penuh tanpa interupsi bot.
 
 - **Path Parameters**:
   - `phone`: Nomor telepon JID pelanggan.
 - **Request Body (JSON)**:
-  ```json
-  {
-    "text": "Halo Kak, pesanannya sudah kami catat ya. Nanti akan dikirim via kurir jam 10 pagi.",
-    "session_id": "default"
-  }
-  ```
+  - Mengirim pesan teks:
+    ```json
+    {
+      "text": "Halo Kak, pesanannya sudah kami catat ya. Nanti akan dikirim via kurir jam 10 pagi.",
+      "session_id": "default"
+    }
+    ```
+  - Mengirim pesan suara (voice note):
+    ```json
+    {
+      "audioBase64": "GkXfo69ChoEBQveBAULygQRC84EIQoKEd...",
+      "mimetype": "audio/webm",
+      "session_id": "default"
+    }
+    ```
 - **Response (200 OK)**:
-  ```json
-  {
-    "status": "success",
-    "messageId": "BAE582C7E9C850FA"
-  }
-  ```
+  - Untuk pesan teks:
+    ```json
+    {
+      "status": "success",
+      "messageId": "BAE582C7E9C850FA"
+    }
+    ```
+  - Untuk pesan suara (mengembalikan URL audio dan transkripsi Gemini):
+    ```json
+    {
+      "status": "success",
+      "messageId": "BAE582C7E9C850FA",
+      "voiceUrl": "/uploads/voice_out_1718873212873.ogg",
+      "transcription": "Halo, pesanan custom cake-nya sudah kami terima ya."
+    }
+    ```
 - **Response (503 Service Unavailable)**:
   ```json
   {

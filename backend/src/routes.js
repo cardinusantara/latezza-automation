@@ -1,10 +1,32 @@
 const fs = require('fs');
 const path = require('path');
+const { execFile } = require('child_process');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const db = require('./db');
 const agent = require('./agent');
 const whatsappService = require('./services/whatsapp');
 const followupService = require('./services/followup');
 const adsService = require('./services/ads');
+
+function convertWebmToOgg(inputPath, outputPath) {
+  return new Promise((resolve, reject) => {
+    execFile(ffmpegPath, [
+      '-i', inputPath,
+      '-c:a', 'libopus',
+      '-b:a', '16k',
+      '-ar', '48000',
+      '-ac', '1',
+      '-y',
+      outputPath
+    ], (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
 
 function registerRoutes(fastify) {
   // Routes
@@ -265,34 +287,114 @@ function registerRoutes(fastify) {
     }
   });
 
-  // API: Send manual message from Dashboard
+  // API: Send manual message from Dashboard (supports text and voice note)
   fastify.post('/api/customers/:phone/send-message', {
     schema: {
       body: {
         type: 'object',
-        required: ['text'],
         properties: {
           text: { type: 'string' },
+          audioBase64: { type: 'string' },
+          mimetype: { type: 'string' },
           session_id: { type: 'string' }
         }
       }
     },
     handler: async (request, reply) => {
       const { phone } = request.params;
-      const { text, session_id } = request.body;
+      const { text, audioBase64, mimetype, session_id } = request.body;
       const targetSessionId = session_id || 'default';
 
       try {
-        fastify.log.info(`Sending manual dashboard message to ${phone} on session ${targetSessionId}...`);
-        const response = await whatsappService.sendMessage(phone, { text }, targetSessionId);
-        
-        await db.saveChatMessage(phone, 'model', text, targetSessionId);
-        await db.createOrUpdateCustomer(phone, null, {
-          ai_enabled: false,
-          needs_admin: false
-        }, targetSessionId);
+        let finalReplyText = text || '';
+        let voiceUrl = null;
 
-        return { status: 'success', messageId: response.key.id };
+        if (audioBase64) {
+          fastify.log.info(`🎙️ Received manual voice message for ${phone} on session ${targetSessionId}...`);
+          const buffer = Buffer.from(audioBase64, 'base64');
+          
+          // Ensure uploads directory exists (resolving to backend/public/uploads)
+          const uploadsDir = path.join(__dirname, '../public/uploads');
+          if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+          }
+
+          // Temporary file for original webm audio
+          const tempFilename = `voice_out_temp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.webm`;
+          const tempFilepath = path.join(uploadsDir, tempFilename);
+          fs.writeFileSync(tempFilepath, buffer);
+
+          // Output converted .ogg file path
+          const outputFilename = `voice_out_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.ogg`;
+          const outputFilepath = path.join(uploadsDir, outputFilename);
+
+          try {
+            fastify.log.info(`🔄 Transcoding audio from ${tempFilepath} to ${outputFilepath}...`);
+            await convertWebmToOgg(tempFilepath, outputFilepath);
+            fastify.log.info(`✅ Audio transcoded successfully to Ogg Opus.`);
+          } catch (transcodeErr) {
+            fastify.log.error(`❌ Transcoding failed: ${transcodeErr.message}. Falling back to original audio.`);
+            // Fallback: copy temp file as the output file if transcoding fails
+            fs.copyFileSync(tempFilepath, outputFilepath);
+          } finally {
+            // Clean up the temporary webm file
+            if (fs.existsSync(tempFilepath)) {
+              try {
+                fs.unlinkSync(tempFilepath);
+              } catch (unlinkErr) {
+                fastify.log.error(`Failed to delete temp file: ${unlinkErr.message}`);
+              }
+            }
+          }
+
+          voiceUrl = `/uploads/${outputFilename}`;
+          const oggBuffer = fs.readFileSync(outputFilepath);
+
+          // Transcribe the outgoing audio using the transcoded ogg buffer so it is saved in history
+          try {
+            fastify.log.info(`🧠 Transcribing outgoing audio...`);
+            const transcription = await whatsappService.transcribeAudio(oggBuffer, 'audio/ogg', fastify.log);
+            finalReplyText = transcription;
+            fastify.log.info(`📝 Outgoing audio transcription: "${finalReplyText}"`);
+          } catch (tErr) {
+            fastify.log.error(`Failed to transcribe outgoing audio: ${tErr.message}`);
+            finalReplyText = '[Pesan Suara Kiriman]';
+          }
+
+          // Send voice message via WhatsApp
+          fastify.log.info(`📤 Sending WhatsApp voice note to ${phone}...`);
+          const response = await whatsappService.sendMessage(phone, { 
+            audio: oggBuffer, 
+            mimetype: 'audio/ogg; codecs=opus', // standard voice note mimetype for Baileys/WhatsApp
+            ptt: true // ptt: true makes it appear as a recording (Push To Talk)
+          }, targetSessionId);
+
+          const dbText = `[Voice Note: ${voiceUrl}] ${finalReplyText}`.trim();
+          await db.saveChatMessage(phone, 'model', dbText, targetSessionId);
+          await db.createOrUpdateCustomer(phone, null, {
+            ai_enabled: false,
+            needs_admin: false
+          }, targetSessionId);
+
+          return { 
+            status: 'success', 
+            messageId: response.key.id, 
+            voiceUrl, 
+            transcription: finalReplyText 
+          };
+        } else {
+          // Standard text message send
+          fastify.log.info(`Sending manual dashboard message to ${phone} on session ${targetSessionId}...`);
+          const response = await whatsappService.sendMessage(phone, { text: finalReplyText }, targetSessionId);
+          
+          await db.saveChatMessage(phone, 'model', finalReplyText, targetSessionId);
+          await db.createOrUpdateCustomer(phone, null, {
+            ai_enabled: false,
+            needs_admin: false
+          }, targetSessionId);
+
+          return { status: 'success', messageId: response.key.id };
+        }
       } catch (err) {
         fastify.log.error(`Failed to send manual message: ${err.message}`);
         reply.status(err.message.includes('ready') ? 503 : 500);

@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../db');
 const agent = require('../agent');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const SESSION_BASE_DIR = path.join(__dirname, '../../whatsapp-sessions');
 
@@ -34,6 +35,47 @@ async function isRateLimited(jid, sessionId) {
   timestamps.push(now);
   rateLimitCache.set(cacheKey, timestamps);
   return false;
+}
+
+/**
+ * Transcribe audio buffer using Gemini API
+ */
+async function transcribeAudio(audioBuffer, mimeType, log = console) {
+  const activeApiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
+  if (!activeApiKey) {
+    throw new Error('Active Gemini API Key is missing for audio transcription.');
+  }
+
+  const genAI = new GoogleGenerativeAI(activeApiKey);
+  const cleanMime = mimeType.split(';')[0].trim();
+
+  const audioPart = {
+    inlineData: {
+      data: audioBuffer.toString('base64'),
+      mimeType: cleanMime
+    }
+  };
+
+  const prompt = 'Tuliskan transkripsi lengkap dari audio berikut dalam bahasa Indonesia. Tuliskan hanya hasil transkripsinya saja secara harfiah, tanpa penjelasan, komentar, pembukaan, atau tanda kutip tambahan.';
+
+  const configuredModel = await db.getSetting('gemini_model') || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+  
+  try {
+    log.info(`🤖 Attempting transcription with configured model: ${configuredModel}...`);
+    const model = genAI.getGenerativeModel({ model: configuredModel });
+    const result = await model.generateContent([audioPart, prompt]);
+    return result.response.text().trim();
+  } catch (err) {
+    log.warn(`⚠️ Transcription failed with ${configuredModel}: ${err.message}. Retrying with gemini-3.5-flash fallback...`);
+    try {
+      const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+      const result = await fallbackModel.generateContent([audioPart, prompt]);
+      return result.response.text().trim();
+    } catch (fallbackErr) {
+      log.error(`❌ Fallback transcription failed: ${fallbackErr.message}`);
+      throw fallbackErr;
+    }
+  }
 }
 
 /**
@@ -120,6 +162,7 @@ async function connectSession(sessionId, name, log = console) {
         }
 
         const imageMessage = msg.message?.imageMessage;
+        const audioMessage = msg.message?.audioMessage;
         
         let text = msg.message?.conversation || 
                    msg.message?.extendedTextMessage?.text || 
@@ -128,8 +171,8 @@ async function connectSession(sessionId, name, log = console) {
                    imageMessage?.caption ||
                    '';
 
-        // Ignore commands or empty non-image messages
-        if (!text.trim() && !imageMessage) continue;
+        // Ignore commands or empty non-image/non-audio messages
+        if (!text.trim() && !imageMessage && !audioMessage) continue;
         if (text.startsWith('/')) continue;
 
         // Rate Limit check
@@ -182,14 +225,57 @@ async function connectSession(sessionId, name, log = console) {
           }
         }
 
-        log.info(`📨 [Session: ${sessionId}] Received DM from ${senderName} (${jid}): "${text}" ${imageUrl ? '[Image Attached]' : ''}`);
+        // Handle audio downloading, saving, and transcription
+        let voiceUrl = null;
+
+        if (audioMessage) {
+          try {
+            log.info(`🎙️ Audio message detected from ${senderName}. Downloading...`);
+            const buffer = await downloadMediaMessage(
+              msg,
+              'buffer',
+              {},
+              { 
+                logger: log,
+                reuploadRequest: sock.updateMediaMessage
+              }
+            );
+
+            // Determine extension from mimetype (default to ogg)
+            const ext = audioMessage.mimetype?.split('/')[1]?.split(';')[0] || 'ogg';
+            const filename = `voice_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+            const filepath = path.join(__dirname, '../../public/uploads', filename);
+
+            // Ensure uploads directory exists
+            const dir = path.dirname(filepath);
+            if (!fs.existsSync(dir)) {
+              fs.mkdirSync(dir, { recursive: true });
+            }
+
+            fs.writeFileSync(filepath, buffer);
+            voiceUrl = `/uploads/${filename}`;
+            log.info(`✅ Audio downloaded and saved to: ${filepath}`);
+
+            log.info(`🧠 Transcribing audio with Gemini...`);
+            const transcription = await transcribeAudio(buffer, audioMessage.mimetype || 'audio/ogg', log);
+            log.info(`📝 Transcription result: "${transcription}"`);
+            text = transcription;
+          } catch (dlErr) {
+            log.error(`❌ Failed to download or transcribe audio message: ${dlErr.message}`);
+            text = '[Pesan Suara tidak dapat ditranskripsi]';
+          }
+        }
+
+        log.info(`📨 [Session: ${sessionId}] Received DM from ${senderName} (${jid}): "${text}" ${imageUrl ? '[Image Attached]' : ''} ${voiceUrl ? '[Voice Note Attached]' : ''}`);
 
         let customer = await db.getCustomer(jid, sessionId);
         if (!customer) {
           customer = await db.createOrUpdateCustomer(jid, senderName, { status: 'lead' }, sessionId);
         }
 
-        const dbText = imageUrl ? `[Foto: ${imageUrl}] ${text}`.trim() : text;
+        const dbText = imageUrl 
+          ? `[Foto: ${imageUrl}] ${text}`.trim() 
+          : (voiceUrl ? `[Voice Note: ${voiceUrl}] ${text}`.trim() : text);
 
         if (customer.ai_enabled === false) {
           log.info(`🤫 AI response is disabled for ${senderName} (${jid}) on session ${sessionId}. Message logged, skipping reply.`);
@@ -202,7 +288,7 @@ async function connectSession(sessionId, name, log = console) {
             await sock.sendPresenceUpdate('composing', jid);
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            const replyText = await agent.handleIncomingMessage(jid, text, senderName, imagePart, imageUrl, sessionId);
+            const replyText = await agent.handleIncomingMessage(jid, text, senderName, imagePart, imageUrl, sessionId, voiceUrl);
 
             await sock.sendPresenceUpdate('paused', jid);
             await sock.sendMessage(jid, { text: replyText });
@@ -324,5 +410,6 @@ module.exports = {
   isReady,
   sendMessage,
   getGroups,
-  sessions
+  sessions,
+  transcribeAudio
 };

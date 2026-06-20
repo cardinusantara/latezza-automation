@@ -1,11 +1,11 @@
 # Graph Report - latezza-automation  (2026-06-21)
 
 ## Corpus Check
-- 86 files · ~58,475 words
+- 1347 files · ~59,287 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 787 nodes · 1032 edges · 59 communities (44 shown, 15 thin omitted)
+- 778 nodes · 1025 edges · 55 communities (43 shown, 12 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
@@ -65,10 +65,6 @@
 - [[_COMMUNITY_Community 48|Community 48]]
 - [[_COMMUNITY_Community 49|Community 49]]
 - [[_COMMUNITY_Community 50|Community 50]]
-- [[_COMMUNITY_Community 55|Community 55]]
-- [[_COMMUNITY_Community 56|Community 56]]
-- [[_COMMUNITY_Community 57|Community 57]]
-- [[_COMMUNITY_Community 58|Community 58]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 77 edges
@@ -102,7 +98,7 @@
 - **Meta Ads Automation Pipeline** — latezza_automation_meta_ads_reporting, latezza_automation_creative_ad_analysis, latezza_automation_meta_graph_api, latezza_automation_dynamic_scheduler [EXTRACTED 0.95]
 - **RAG Product Search Pipeline** — latezza_automation_rag_semantic_search, latezza_automation_gemini_embedding_2, latezza_automation_cosine_similarity, latezza_automation_products_table [EXTRACTED 0.95]
 
-## Communities (59 total, 15 thin omitted)
+## Communities (55 total, 12 thin omitted)
 
 ### Community 0 - "WhatsApp CRM & Follow-up"
 Cohesion: 0.06
@@ -126,23 +122,23 @@ Nodes (41): adding a new AI tool, adding a new API route, adding a new frontend 
 
 ### Community 5 - "AI Agent Core"
 Cohesion: 0.05
-Nodes (42): 2026-06-17 (afternoon), 2026-06-17 (evening), 2026-06-17 (morning — initial build), 2026-06-18, 2026-06-19, 2026-06-20, 2026-06-21, Ads Report — dashboard tab (+34 more)
+Nodes (41): 2026-06-17 (afternoon), 2026-06-17 (evening), 2026-06-17 (morning — initial build), 2026-06-18, 2026-06-19, 2026-06-20, 2026-06-21, Ads Report — dashboard tab (+33 more)
 
 ### Community 6 - "SSE Streaming API"
-Cohesion: 0.12
-Nodes (17): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+9 more)
+Cohesion: 0.07
+Nodes (26): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+18 more)
 
 ### Community 7 - "UI Actions Component"
 Cohesion: 0.07
-Nodes (44): Actions(), ActionsProps, ChatInboxProps, ChatMessage, Customer, Product, CreativeIdea, CreativeReportData (+36 more)
+Nodes (40): Actions(), ActionsProps, CreativeIdea, CreativeReportData, Lead, OverviewProps, Stats, Product (+32 more)
 
 ### Community 8 - "Theme Provider"
 Cohesion: 0.13
 Nodes (9): ResolvedTheme, Theme, THEME_VALUES, ThemeProvider(), ThemeProviderContext, ThemeProviderProps, ThemeProviderState, useTheme() (+1 more)
 
 ### Community 9 - "Mobile Hook"
-Cohesion: 0.07
-Nodes (50): useIsMobile(), cn(), CardAction(), CardFooter(), DialogOverlay(), Separator(), Sheet(), SheetContent() (+42 more)
+Cohesion: 0.06
+Nodes (55): ChatInboxProps, ChatMessage, Customer, Product, useIsMobile(), cn(), Badge(), badgeVariants (+47 more)
 
 ### Community 10 - "Utility Functions"
 Cohesion: 0.09
@@ -153,8 +149,8 @@ Cohesion: 0.09
 Nodes (21): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection, moduleResolution (+13 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.10
-Nodes (19): dependencies, dotenv, fastify, @fastify/cors, @fastify/static, @ffmpeg-installer/ffmpeg, @google/generative-ai, node-cron (+11 more)
+Cohesion: 0.11
+Nodes (18): dependencies, dotenv, fastify, @fastify/cors, @fastify/static, @google/generative-ai, node-cron, pg (+10 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.11
@@ -222,8 +218,8 @@ Cohesion: 0.31
 Nodes (8): adsService, buildDailyCronExpression(), cron, db, followupService, reloadSchedules(), setupScheduledJobs(), stopAllJobs()
 
 ### Community 28 - "Community 28"
-Cohesion: 0.18
-Nodes (8): adsService, agent, db, { execFile }, followupService, fs, path, whatsappService
+Cohesion: 0.22
+Nodes (7): adsService, agent, db, followupService, fs, path, whatsappService
 
 ### Community 29 - "Community 29"
 Cohesion: 0.25
@@ -261,29 +257,25 @@ Nodes (3): db, { GoogleGenerativeAI }, whatsappService
 Cohesion: 0.50
 Nodes (3): Adding components, React + TypeScript + Vite + shadcn/ui, Using components
 
-### Community 55 - "Community 55"
-Cohesion: 0.22
-Nodes (9): Address Schemes, Build and Verify, GitHub Registries, Include, Item Definitions, Mental Model, Registry Authoring and Addresses, Registry Dependencies (+1 more)
-
 ## Knowledge Gaps
-- **452 isolated node(s):** `fs`, `path`, `{ GoogleGenerativeAI }`, `name`, `version` (+447 more)
+- **447 isolated node(s):** `fs`, `path`, `{ GoogleGenerativeAI }`, `name`, `version` (+442 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `cn()` connect `Mobile Hook` to `UI Actions Component`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+  _High betweenness centrality (0.017) - this node is a cross-community bridge._
 - **Why does `shadcn/ui` connect `Community 15` to `Community 35`?**
   _High betweenness centrality (0.006) - this node is a cross-community bridge._
-- **Why does `shadcn CLI Reference` connect `SSE Streaming API` to `Community 35`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **What connects `fs`, `path`, `{ GoogleGenerativeAI }` to the rest of the system?**
-  _456 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _451 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Meta Ads Analysis` be split into smaller, more focused modules?**
   _Cohesion score 0.046511627906976744 - nodes in this community are weakly interconnected._
+- **Should `Scheduler & Settings` be split into smaller, more focused modules?**
+  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
