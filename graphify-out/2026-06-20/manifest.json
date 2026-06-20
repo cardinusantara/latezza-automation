@@ -1,0 +1,442 @@
+{
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\evals\\evals.json": {
+    "mtime": 1781715219.816235,
+    "ast_hash": "39548690bb4e71065df0b7fa69903082",
+    "semantic_hash": "39548690bb4e71065df0b7fa69903082"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\ads-analysis\\automation.js": {
+    "mtime": 1781772359.1935973,
+    "ast_hash": "8ea3580fbcf7c960ec7696f67a1ef7a8",
+    "semantic_hash": "8ea3580fbcf7c960ec7696f67a1ef7a8"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\ads-analysis\\package.json": {
+    "mtime": 1781708155.4875712,
+    "ast_hash": "a1038a7472b72ed4323dd40861ccde91",
+    "semantic_hash": "a1038a7472b72ed4323dd40861ccde91"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\gateway.js": {
+    "mtime": 1781798379.046989,
+    "ast_hash": "6875f68f5ba5d3da14d1796001564afc",
+    "semantic_hash": "6875f68f5ba5d3da14d1796001564afc"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\package.json": {
+    "mtime": 1781772645.6066334,
+    "ast_hash": "b6175e9650933ba7417057c6c52dbe9b",
+    "semantic_hash": "b6175e9650933ba7417057c6c52dbe9b"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scratch\\list-models.js": {
+    "mtime": 1781777833.3949256,
+    "ast_hash": "5ce7ebeece803093906d6be7f1d3951f",
+    "semantic_hash": "5ce7ebeece803093906d6be7f1d3951f"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\check-history.js": {
+    "mtime": 1781772996.537419,
+    "ast_hash": "14708e9b84decb20448b08568f6cfc59",
+    "semantic_hash": "14708e9b84decb20448b08568f6cfc59"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\clear-followup-prompt.js": {
+    "mtime": 1781773000.6723337,
+    "ast_hash": "0cf4910a8713e45600e08bab682a2cea",
+    "semantic_hash": "0cf4910a8713e45600e08bab682a2cea"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\debug-followup.js": {
+    "mtime": 1781773004.8071523,
+    "ast_hash": "8b11aeaf3e3cd2da550703413a82ef6f",
+    "semantic_hash": "8b11aeaf3e3cd2da550703413a82ef6f"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\seed-test-followup.js": {
+    "mtime": 1781773016.7530313,
+    "ast_hash": "9f6381021fa6a6a439d3b6e4e4977c06",
+    "semantic_hash": "9f6381021fa6a6a439d3b6e4e4977c06"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\set-followup-hours.js": {
+    "mtime": 1781773020.203794,
+    "ast_hash": "66259e548a1389934198a3a8c5201e7c",
+    "semantic_hash": "66259e548a1389934198a3a8c5201e7c"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\test-multimodal-search.js": {
+    "mtime": 1781779943.3272011,
+    "ast_hash": "e09dc683b37ebd91f80293758b8a8a18",
+    "semantic_hash": "e09dc683b37ebd91f80293758b8a8a18"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\test-natural-instruction.js": {
+    "mtime": 1781773024.9115672,
+    "ast_hash": "2b39ab91927ff80f44c3b942d70a9d35",
+    "semantic_hash": "2b39ab91927ff80f44c3b942d70a9d35"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\test-semantic-search.js": {
+    "mtime": 1781777807.5339794,
+    "ast_hash": "7032320e7d2e2094f1565a044f48f0a6",
+    "semantic_hash": "7032320e7d2e2094f1565a044f48f0a6"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\scripts\\verify-followup.js": {
+    "mtime": 1781773028.8647132,
+    "ast_hash": "13b94b3128eb04c356606c7c7db44907",
+    "semantic_hash": "13b94b3128eb04c356606c7c7db44907"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\agent.js": {
+    "mtime": 1781971562.5747125,
+    "ast_hash": "8a7b752bb52188d249aca7bd1c7deb8c",
+    "semantic_hash": "8a7b752bb52188d249aca7bd1c7deb8c"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\db.js": {
+    "mtime": 1781971494.1014073,
+    "ast_hash": "dd456bf4c38bca2698a2e5c37c783aee",
+    "semantic_hash": "dd456bf4c38bca2698a2e5c37c783aee"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\routes.js": {
+    "mtime": 1781971542.1992571,
+    "ast_hash": "0ebb1d8dd8e1ccacd94de25b0a2b68bd",
+    "semantic_hash": "0ebb1d8dd8e1ccacd94de25b0a2b68bd"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\services\\ads.js": {
+    "mtime": 1781969980.5561109,
+    "ast_hash": "c2dff4cde0d6a7518fbb4e083c7d8832",
+    "semantic_hash": "c2dff4cde0d6a7518fbb4e083c7d8832"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\services\\creative.js": {
+    "mtime": 1781970784.9265323,
+    "ast_hash": "10c0a50ac9ff2cb1fe51af41b6aec32e",
+    "semantic_hash": "10c0a50ac9ff2cb1fe51af41b6aec32e"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\services\\followup.js": {
+    "mtime": 1781971567.481032,
+    "ast_hash": "c67e6c95ca6420e1af5df9a0d98e3e16",
+    "semantic_hash": "c67e6c95ca6420e1af5df9a0d98e3e16"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\services\\scheduler.js": {
+    "mtime": 1781969980.5570276,
+    "ast_hash": "6f63b702bdd931c76f78db0442e92a41",
+    "semantic_hash": "6f63b702bdd931c76f78db0442e92a41"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\src\\services\\whatsapp.js": {
+    "mtime": 1781971509.3007896,
+    "ast_hash": "61dd16003bb575767066bd75b8f77080",
+    "semantic_hash": "61dd16003bb575767066bd75b8f77080"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\business-profile.json": {
+    "mtime": 1781709317.614224,
+    "ast_hash": "bd8cc14f9bac42ea378c49e3269c79a2",
+    "semantic_hash": "bd8cc14f9bac42ea378c49e3269c79a2"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\components.json": {
+    "mtime": 1781717007.628533,
+    "ast_hash": "f0178441c8a98024adbf0deb884a5376",
+    "semantic_hash": "f0178441c8a98024adbf0deb884a5376"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\eslint.config.js": {
+    "mtime": 1781716981.0314634,
+    "ast_hash": "75a0286de267d5393020e4439ed72f6a",
+    "semantic_hash": "75a0286de267d5393020e4439ed72f6a"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\package.json": {
+    "mtime": 1781717193.858662,
+    "ast_hash": "e4362f5717cc5b2c577a474bea8acc5a",
+    "semantic_hash": "e4362f5717cc5b2c577a474bea8acc5a"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\App.tsx": {
+    "mtime": 1781971625.0764456,
+    "ast_hash": "2bde03f2935065d08fc096b1e4b16e5b",
+    "semantic_hash": "2bde03f2935065d08fc096b1e4b16e5b"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\Actions.tsx": {
+    "mtime": 1781839203.2663908,
+    "ast_hash": "0abdc683d32edc409637760553d18ac6",
+    "semantic_hash": "0abdc683d32edc409637760553d18ac6"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\AdsReport.tsx": {
+    "mtime": 1781772610.6138313,
+    "ast_hash": "84e1491ed2d5678f5fbc546f54c146ad",
+    "semantic_hash": "84e1491ed2d5678f5fbc546f54c146ad"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ChatInbox.tsx": {
+    "mtime": 1781971650.6278014,
+    "ast_hash": "ec0ced6261659a9cb9ffa9ddc7fb9e83",
+    "semantic_hash": "ec0ced6261659a9cb9ffa9ddc7fb9e83"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\CreativeReport.tsx": {
+    "mtime": 1781839741.817684,
+    "ast_hash": "221684f1edec510cf6d2ecff74e491cb",
+    "semantic_hash": "221684f1edec510cf6d2ecff74e491cb"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\Overview.tsx": {
+    "mtime": 1781839983.1606379,
+    "ast_hash": "c7c7a4906980bfaaf24c75ec05dbe069",
+    "semantic_hash": "c7c7a4906980bfaaf24c75ec05dbe069"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\Products.tsx": {
+    "mtime": 1781772583.769402,
+    "ast_hash": "658824769dfedda0d2c4763f0cc9f699",
+    "semantic_hash": "658824769dfedda0d2c4763f0cc9f699"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\Settings.tsx": {
+    "mtime": 1781969980.5580733,
+    "ast_hash": "07df8dc91f31fe5992ac1a3d85439f63",
+    "semantic_hash": "07df8dc91f31fe5992ac1a3d85439f63"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\Sidebar.tsx": {
+    "mtime": 1781971587.3846626,
+    "ast_hash": "d0436559a0064bb38f1c00e19ad3892f",
+    "semantic_hash": "d0436559a0064bb38f1c00e19ad3892f"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\WhatsappSessions.tsx": {
+    "mtime": 1781971581.0153842,
+    "ast_hash": "c75923479cb29c2878b4212201d39daa",
+    "semantic_hash": "c75923479cb29c2878b4212201d39daa"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\theme-provider.tsx": {
+    "mtime": 1781716981.0371902,
+    "ast_hash": "bb764a9e2cdc12b435aa85ccee797580",
+    "semantic_hash": "bb764a9e2cdc12b435aa85ccee797580"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\badge.tsx": {
+    "mtime": 1781717072.328252,
+    "ast_hash": "cceb5c2faafe4dc29900abedf914053d",
+    "semantic_hash": "cceb5c2faafe4dc29900abedf914053d"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\button.tsx": {
+    "mtime": 1781717042.0063515,
+    "ast_hash": "1c3778f3a991ef45b979a3b6856cf28a",
+    "semantic_hash": "1c3778f3a991ef45b979a3b6856cf28a"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\card.tsx": {
+    "mtime": 1781717071.7045124,
+    "ast_hash": "0936c44e966e76e8ae30ed7ba28cfc33",
+    "semantic_hash": "0936c44e966e76e8ae30ed7ba28cfc33"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\dialog.tsx": {
+    "mtime": 1781717073.531266,
+    "ast_hash": "8cea66313e4d546f2b9002ec7912254e",
+    "semantic_hash": "8cea66313e4d546f2b9002ec7912254e"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\input.tsx": {
+    "mtime": 1781717071.8846464,
+    "ast_hash": "448f4465abdd9f3d8ee69fb62c4ba77b",
+    "semantic_hash": "448f4465abdd9f3d8ee69fb62c4ba77b"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\separator.tsx": {
+    "mtime": 1781717072.7493646,
+    "ast_hash": "f57449eae78fbd87d99e4edc45ab3c1e",
+    "semantic_hash": "f57449eae78fbd87d99e4edc45ab3c1e"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\sheet.tsx": {
+    "mtime": 1781717073.7001882,
+    "ast_hash": "f0c72fc70004a3f3746eccb7a557b511",
+    "semantic_hash": "f0c72fc70004a3f3746eccb7a557b511"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\sidebar.tsx": {
+    "mtime": 1781717073.9495907,
+    "ast_hash": "62c163cfc4db8952ec0d2e9e6d3ea456",
+    "semantic_hash": "62c163cfc4db8952ec0d2e9e6d3ea456"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\skeleton.tsx": {
+    "mtime": 1781717073.3475647,
+    "ast_hash": "9443153ca97dad43d604c6d8a7684902",
+    "semantic_hash": "9443153ca97dad43d604c6d8a7684902"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\sonner.tsx": {
+    "mtime": 1781717081.6094158,
+    "ast_hash": "e24dace695cc7f064ea67301f8a9704c",
+    "semantic_hash": "e24dace695cc7f064ea67301f8a9704c"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\switch.tsx": {
+    "mtime": 1781717072.1830409,
+    "ast_hash": "db9f67ceb0bc25cc09bbf6f3a33f131a",
+    "semantic_hash": "db9f67ceb0bc25cc09bbf6f3a33f131a"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\table.tsx": {
+    "mtime": 1781717072.6220038,
+    "ast_hash": "d6fbfaf84b014286542cc9a6b64a2c7d",
+    "semantic_hash": "d6fbfaf84b014286542cc9a6b64a2c7d"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\tabs.tsx": {
+    "mtime": 1781717072.4794116,
+    "ast_hash": "32cf43e8c7366d1a67ea19d6f6aab62b",
+    "semantic_hash": "32cf43e8c7366d1a67ea19d6f6aab62b"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\textarea.tsx": {
+    "mtime": 1781717072.0415893,
+    "ast_hash": "f2ef163c1dff0f18bae6ed595ea712c1",
+    "semantic_hash": "f2ef163c1dff0f18bae6ed595ea712c1"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\components\\ui\\tooltip.tsx": {
+    "mtime": 1781717073.053558,
+    "ast_hash": "0b460216ec5a571c4fe548b99d089e32",
+    "semantic_hash": "0b460216ec5a571c4fe548b99d089e32"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\config.ts": {
+    "mtime": 1781772545.9310424,
+    "ast_hash": "f9d0effc5ffdaf51923f4e3d87ef81c4",
+    "semantic_hash": "f9d0effc5ffdaf51923f4e3d87ef81c4"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\hooks\\use-mobile.ts": {
+    "mtime": 1781717073.1961665,
+    "ast_hash": "209b5193af16624cdd89d3591480dd48",
+    "semantic_hash": "209b5193af16624cdd89d3591480dd48"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\lib\\utils.ts": {
+    "mtime": 1781717042.0416343,
+    "ast_hash": "5a6fd53fdcf2be529e9cc0b718fde352",
+    "semantic_hash": "5a6fd53fdcf2be529e9cc0b718fde352"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\main.tsx": {
+    "mtime": 1781717187.332403,
+    "ast_hash": "bdbefbfd95d954105bf21af0b11bac87",
+    "semantic_hash": "bdbefbfd95d954105bf21af0b11bac87"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\tsconfig.app.json": {
+    "mtime": 1781716981.0371902,
+    "ast_hash": "30f69dfd8d129381ee28d4ccc45370d8",
+    "semantic_hash": "30f69dfd8d129381ee28d4ccc45370d8"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\tsconfig.json": {
+    "mtime": 1781716981.0371902,
+    "ast_hash": "8f8d299e26b59b553cd694eb06cbea80",
+    "semantic_hash": "8f8d299e26b59b553cd694eb06cbea80"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\tsconfig.node.json": {
+    "mtime": 1781716981.0371902,
+    "ast_hash": "1cd4c6b260b0dccbad5bc0a25029f390",
+    "semantic_hash": "1cd4c6b260b0dccbad5bc0a25029f390"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\vite.config.ts": {
+    "mtime": 1781772425.8248222,
+    "ast_hash": "ea61d2340b8b64efba3cb45c48d84584",
+    "semantic_hash": "ea61d2340b8b64efba3cb45c48d84584"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\skills-lock.json": {
+    "mtime": 1781715229.7687416,
+    "ast_hash": "227f663e132b6a876ea1c36bf12584e2",
+    "semantic_hash": "227f663e132b6a876ea1c36bf12584e2"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\gemini-api-dev\\SKILL.md": {
+    "mtime": 1781711407.1090646,
+    "ast_hash": "73c985dc4256caf2935953d8429bc7dc",
+    "semantic_hash": "73c985dc4256caf2935953d8429bc7dc"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\SKILL.md": {
+    "mtime": 1781715219.8069885,
+    "ast_hash": "3d7080823dcfb1bcd1008b5b5c80ed81",
+    "semantic_hash": "3d7080823dcfb1bcd1008b5b5c80ed81"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\agents\\openai.yml": {
+    "mtime": 1781715219.8085322,
+    "ast_hash": "a93201a1b378a868c0795edbf1ae751c",
+    "semantic_hash": "a93201a1b378a868c0795edbf1ae751c"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\cli.md": {
+    "mtime": 1781715219.8126197,
+    "ast_hash": "06dc1478b5449f2a3c60f4bf4e043687",
+    "semantic_hash": "06dc1478b5449f2a3c60f4bf4e043687"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\customization.md": {
+    "mtime": 1781715219.8134372,
+    "ast_hash": "7454b40655ce6bcbbfa8fa3804b66fbe",
+    "semantic_hash": "7454b40655ce6bcbbfa8fa3804b66fbe"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\mcp.md": {
+    "mtime": 1781715219.817299,
+    "ast_hash": "aa876f97643326a64e99b86d5ac41bc5",
+    "semantic_hash": "aa876f97643326a64e99b86d5ac41bc5"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\registry.md": {
+    "mtime": 1781715219.8178363,
+    "ast_hash": "f7e28f2e510e8ec5847619641ddfeea4",
+    "semantic_hash": "f7e28f2e510e8ec5847619641ddfeea4"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\rules\\base-vs-radix.md": {
+    "mtime": 1781715219.819677,
+    "ast_hash": "582481904d3c35aae4125153db97fc37",
+    "semantic_hash": "582481904d3c35aae4125153db97fc37"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\rules\\composition.md": {
+    "mtime": 1781715219.821297,
+    "ast_hash": "3e1ca9394ace05ebe5a7e90fe4608e98",
+    "semantic_hash": "3e1ca9394ace05ebe5a7e90fe4608e98"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\rules\\forms.md": {
+    "mtime": 1781715219.8228426,
+    "ast_hash": "41155ed5a844952613e717a5add76606",
+    "semantic_hash": "41155ed5a844952613e717a5add76606"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\rules\\icons.md": {
+    "mtime": 1781715219.8243444,
+    "ast_hash": "56b5a01599f8c03c90f248c5e5e01f67",
+    "semantic_hash": "56b5a01599f8c03c90f248c5e5e01f67"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\rules\\styling.md": {
+    "mtime": 1781715219.8260207,
+    "ast_hash": "1873b34282624ef89b08d3d9263bf98d",
+    "semantic_hash": "1873b34282624ef89b08d3d9263bf98d"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\API.md": {
+    "mtime": 1781969956.1083915,
+    "ast_hash": "dd19b47cdc47126804e8334f0953268c",
+    "semantic_hash": "dd19b47cdc47126804e8334f0953268c"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\CHANGELOG.md": {
+    "mtime": 1781839799.6718743,
+    "ast_hash": "c25f138042acc73e2d4284727269ace5",
+    "semantic_hash": "c25f138042acc73e2d4284727269ace5"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\DEVELOPER.md": {
+    "mtime": 1781969956.1121418,
+    "ast_hash": "d3c0cf1e036d3bb1d578fb8784fc35f9",
+    "semantic_hash": "d3c0cf1e036d3bb1d578fb8784fc35f9"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\ISSUES.md": {
+    "mtime": 1781796567.4394925,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\README.md": {
+    "mtime": 1781969956.1131933,
+    "ast_hash": "53744a0de98260adccc69b366f6bc210",
+    "semantic_hash": "53744a0de98260adccc69b366f6bc210"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\ROADMAP.md": {
+    "mtime": 1781837129.4188046,
+    "ast_hash": "377f39a1aba405c03daceed92457930e",
+    "semantic_hash": "377f39a1aba405c03daceed92457930e"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\backend\\ads-analysis\\template.html": {
+    "mtime": 1781350677.223672,
+    "ast_hash": "e72ff06efa9964c23c80ac8f83726696",
+    "semantic_hash": "e72ff06efa9964c23c80ac8f83726696"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\docker-compose.yml": {
+    "mtime": 1781715078.2366667,
+    "ast_hash": "f98a0947e5b988bf76beff331a6554cb",
+    "semantic_hash": "f98a0947e5b988bf76beff331a6554cb"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\README.md": {
+    "mtime": 1781716981.0314634,
+    "ast_hash": "e82eb266e7be0e4dce9f19ab6f3f77f0",
+    "semantic_hash": "e82eb266e7be0e4dce9f19ab6f3f77f0"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\index.html": {
+    "mtime": 1781970324.4719486,
+    "ast_hash": "8bec2da1b94a870b3616755cbb52a2cc",
+    "semantic_hash": "8bec2da1b94a870b3616755cbb52a2cc"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\assets\\shadcn-small.png": {
+    "mtime": 1781715219.8099904,
+    "ast_hash": "72349c6b7f303e6be598a2196391291b",
+    "semantic_hash": "72349c6b7f303e6be598a2196391291b"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\.agents\\skills\\shadcn\\assets\\shadcn.png": {
+    "mtime": 1781715219.8111076,
+    "ast_hash": "cb56bf002d36bb860c3d320a23bd871a",
+    "semantic_hash": "cb56bf002d36bb860c3d320a23bd871a"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\public\\vite.svg": {
+    "mtime": 1781716981.0339625,
+    "ast_hash": "8e3a10e157f75ada21ab742c022d5430",
+    "semantic_hash": "8e3a10e157f75ada21ab742c022d5430"
+  },
+  "C:\\Users\\Fardhan Rasya\\Documents\\kerja\\inhands\\cardi-automation\\latezza-automation\\frontend\\src\\assets\\react.svg": {
+    "mtime": 1781716981.035555,
+    "ast_hash": "f0402b67b6ce880f65666bb49e841696",
+    "semantic_hash": "f0402b67b6ce880f65666bb49e841696"
+  }
+}
