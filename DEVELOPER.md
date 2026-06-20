@@ -439,8 +439,6 @@ implemented in: `backend/src/routes.js`
 
 5. Meta Ads automation.js runs as a child process. Environment variables must be explicitly passed via exec() env option.
 
-6. frontend/dist/ must be rebuilt after any frontend code change for production. In dev mode, use Vite dev server on 5173 with proxy.
-
 7. The AI's `request_human_handoff` tool mutes the AI for that customer. Admin must update status or toggle AI back on from the CRM dashboard to re-enable.
 
 8. Rate limit state is in-memory only — clears on restart.
