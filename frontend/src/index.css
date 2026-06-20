@@ -37,8 +37,8 @@
   --sidebar-accent-foreground: rgb(168, 67, 107);
   --sidebar-border: rgb(241, 225, 209);
   --sidebar-ring: rgb(179, 139, 29);
-  --font-sans: 'Playfair Display', Playfair Display, serif;
-  --font-serif: Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: monospace;
   --radius: 1rem;
   --shadow-x: 0px;
@@ -92,8 +92,8 @@
   --sidebar-accent-foreground: rgb(252, 236, 227);
   --sidebar-border: rgb(61, 52, 45);
   --sidebar-ring: rgb(212, 175, 55);
-  --font-sans: 'Playfair Display', Playfair Display, serif;
-  --font-serif: Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: monospace;
   --radius: 1rem;
   --shadow-x: 0px;

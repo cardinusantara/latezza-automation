@@ -135,6 +135,10 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
   };
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const lastJidRef = useRef<string>('');
+  const lastHistoryLengthRef = useRef<number>(0);
+  const shouldScrollRef = useRef<boolean>(false);
 
   // Filter customers based on search query
   const filteredCustomers = customers.filter(c => 
@@ -180,12 +184,31 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
     }
   }, [selectedJid]);
 
-  // Scroll to bottom when history changes
+  // Scroll to bottom when history changes under correct UX conditions
   useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    
+    const isJidChanged = selectedJid !== lastJidRef.current;
+    const isLengthChanged = chatHistory.length !== lastHistoryLengthRef.current;
+    
+    // Check if the user is already near the bottom (threshold of 250px)
+    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 250;
+    
+    const shouldScroll = 
+      isJidChanged || 
+      shouldScrollRef.current || 
+      (isLengthChanged && (lastHistoryLengthRef.current === 0 || isNearBottom));
+
+    if (shouldScroll && chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: isJidChanged ? 'auto' : 'smooth' });
     }
-  }, [chatHistory]);
+    
+    // Reset flags and update refs
+    shouldScrollRef.current = false;
+    lastJidRef.current = selectedJid;
+    lastHistoryLengthRef.current = chatHistory.length;
+  }, [chatHistory, selectedJid]);
 
   // Polling for selected chat history refresh (every 4 seconds)
   useEffect(() => {
@@ -242,6 +265,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
         showToast('Pesan terkirim!');
         
         // Optimistic update
+        shouldScrollRef.current = true;
         setChatHistory(prev => [...prev, {
           role: 'model',
           content: textToSend,
@@ -478,7 +502,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
             </div>
 
              {/* Feed Message Body */}
-            <div className="flex-grow overflow-y-auto p-6 flex flex-col gap-4 bg-[#fcf8f2] dark:bg-[#0b0c10] border-y border-border/40">
+            <div ref={scrollContainerRef} className="flex-grow overflow-y-auto p-6 flex flex-col gap-4 bg-[#fcf8f2] dark:bg-[#0b0c10] border-y border-border/40">
               {needsAdmin && (
                 <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-3 flex items-center gap-2.5 text-destructive text-xs">
                   <IconAlertCircle size={18} className="flex-shrink-0" />
