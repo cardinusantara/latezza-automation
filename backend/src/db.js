@@ -22,10 +22,31 @@ const settingsCache = new Map();
 async function initDb() {
   const client = await pool.connect();
   try {
-    // 1. Customers Table
+    // 1. WhatsApp Sessions Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS whatsapp_sessions (
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        phone_number VARCHAR(50),
+        status VARCHAR(20) DEFAULT 'disconnected', -- 'disconnected', 'connecting', 'connected', 'qr_received'
+        qr_code TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // Insert default session if it doesn't exist
+    await client.query(`
+      INSERT INTO whatsapp_sessions (id, name, status)
+      VALUES ('default', 'Default Agent', 'disconnected')
+      ON CONFLICT (id) DO NOTHING;
+    `);
+
+    // 2. Customers Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS customers (
-        phone_number VARCHAR(50) PRIMARY KEY,
+        phone_number VARCHAR(50),
+        session_id VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE CASCADE,
         name VARCHAR(100),
         status VARCHAR(20) DEFAULT 'lead',
         notes TEXT,
@@ -35,11 +56,12 @@ async function initDb() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         contact_phone VARCHAR(20),
         ai_enabled BOOLEAN DEFAULT TRUE,
-        needs_admin BOOLEAN DEFAULT FALSE
+        needs_admin BOOLEAN DEFAULT FALSE,
+        PRIMARY KEY (phone_number, session_id)
       );
     `);
 
-    // 2. Products Table
+    // 3. Products Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS products (
         id SERIAL PRIMARY KEY,
@@ -52,18 +74,19 @@ async function initDb() {
       );
     `);
 
-    // 3. Chat Histories Table
+    // 4. Chat Histories Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS chat_histories (
         id SERIAL PRIMARY KEY,
-        phone_number VARCHAR(50) REFERENCES customers(phone_number) ON DELETE CASCADE,
+        phone_number VARCHAR(50),
+        session_id VARCHAR(50) DEFAULT 'default',
         role VARCHAR(20) NOT NULL, -- 'user' or 'model'
         content TEXT NOT NULL,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
-    // 4. Settings Table
+    // 5. Settings Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS settings (
         key VARCHAR(100) PRIMARY KEY,
@@ -85,9 +108,45 @@ async function initDb() {
     await client.query(`
       ALTER TABLE products ADD COLUMN IF NOT EXISTS embedding JSONB;
     `);
+    await client.query(`
+      ALTER TABLE customers ADD COLUMN IF NOT EXISTS session_id VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE CASCADE;
+    `);
+    await client.query(`
+      ALTER TABLE chat_histories ADD COLUMN IF NOT EXISTS session_id VARCHAR(50) DEFAULT 'default';
+    `);
+
+    // Dynamic PK Migration check
+    const pkCheck = await client.query(`
+      SELECT a.attname
+      FROM pg_index i
+      JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
+      WHERE i.indrelid = 'customers'::regclass AND i.indisprimary;
+    `);
+
+    if (pkCheck.rows.length === 1 && pkCheck.rows[0].attname === 'phone_number') {
+      console.log('🔄 Migrating customers table to composite primary key (phone_number, session_id)...');
+      // Drop old FK
+      await client.query(`ALTER TABLE chat_histories DROP CONSTRAINT IF EXISTS chat_histories_phone_number_fkey;`);
+      // Drop old PK
+      await client.query(`ALTER TABLE customers DROP CONSTRAINT IF EXISTS customers_pkey;`);
+      // Set session_id to NOT NULL
+      await client.query(`UPDATE customers SET session_id = 'default' WHERE session_id IS NULL;`);
+      await client.query(`ALTER TABLE customers ALTER COLUMN session_id SET NOT NULL;`);
+      // Add composite PK
+      await client.query(`ALTER TABLE customers ADD PRIMARY KEY (phone_number, session_id);`);
+      // Update chat_histories session_id
+      await client.query(`UPDATE chat_histories SET session_id = 'default' WHERE session_id IS NULL;`);
+      await client.query(`ALTER TABLE chat_histories ALTER COLUMN session_id SET NOT NULL;`);
+      // Add new FK
+      await client.query(`
+        ALTER TABLE chat_histories ADD CONSTRAINT chat_histories_customer_fkey 
+        FOREIGN KEY (phone_number, session_id) REFERENCES customers(phone_number, session_id) ON DELETE CASCADE;
+      `);
+      console.log('✅ Composite primary key migration completed.');
+    }
 
     // Create indexes for optimization
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_chat_histories_phone ON chat_histories(phone_number);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_chat_histories_phone_session ON chat_histories(phone_number, session_id);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_products_name ON products(product_name);`);
 
     console.log('✅ PostgreSQL database tables initialized successfully.');
@@ -161,10 +220,10 @@ async function setSetting(key, value) {
 /**
  * Get customer details
  */
-async function getCustomer(phoneNumber) {
+async function getCustomer(phoneNumber, sessionId = 'default') {
   const res = await pool.query(
-    'SELECT * FROM customers WHERE phone_number = $1',
-    [phoneNumber]
+    'SELECT * FROM customers WHERE phone_number = $1 AND session_id = $2',
+    [phoneNumber, sessionId]
   );
   return res.rows[0] || null;
 }
@@ -172,16 +231,17 @@ async function getCustomer(phoneNumber) {
 /**
  * Create or update customer record
  */
-async function createOrUpdateCustomer(phoneNumber, name, updates = {}) {
-  const existing = await getCustomer(phoneNumber);
+async function createOrUpdateCustomer(phoneNumber, name, updates = {}, sessionId = 'default') {
+  const existing = await getCustomer(phoneNumber, sessionId);
   
   if (!existing) {
     const res = await pool.query(
-      `INSERT INTO customers (phone_number, name, status, notes, needs_follow_up, follow_up_reason, contact_phone, ai_enabled, needs_admin, last_interaction)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+      `INSERT INTO customers (phone_number, session_id, name, status, notes, needs_follow_up, follow_up_reason, contact_phone, ai_enabled, needs_admin, last_interaction)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
        RETURNING *`,
       [
         phoneNumber,
+        sessionId,
         name || 'Customer',
         updates.status || 'lead',
         updates.notes || '',
@@ -236,7 +296,11 @@ async function createOrUpdateCustomer(phoneNumber, name, updates = {}) {
     fields.push(`last_interaction = NOW()`);
 
     values.push(phoneNumber);
-    const query = `UPDATE customers SET ${fields.join(', ')} WHERE phone_number = $${idx} RETURNING *`;
+    const phoneIdx = idx++;
+    values.push(sessionId);
+    const sessionIdx = idx++;
+
+    const query = `UPDATE customers SET ${fields.join(', ')} WHERE phone_number = $${phoneIdx} AND session_id = $${sessionIdx} RETURNING *`;
     const res = await pool.query(query, values);
     return res.rows[0];
   }
@@ -245,20 +309,20 @@ async function createOrUpdateCustomer(phoneNumber, name, updates = {}) {
 /**
  * Save chat message to database
  */
-async function saveChatMessage(phoneNumber, role, content) {
+async function saveChatMessage(phoneNumber, role, content, sessionId = 'default') {
   await pool.query(
-    'INSERT INTO chat_histories (phone_number, role, content, timestamp) VALUES ($1, $2, $3, NOW())',
-    [phoneNumber, role, content]
+    'INSERT INTO chat_histories (phone_number, session_id, role, content, timestamp) VALUES ($1, $2, $3, $4, NOW())',
+    [phoneNumber, sessionId, role, content]
   );
 }
 
 /**
  * Retrieve chat history for a customer
  */
-async function getChatHistory(phoneNumber, limit = 10) {
+async function getChatHistory(phoneNumber, limit = 10, sessionId = 'default') {
   const res = await pool.query(
-    'SELECT role, content FROM chat_histories WHERE phone_number = $1 ORDER BY timestamp DESC LIMIT $2',
-    [phoneNumber, limit]
+    'SELECT role, content FROM chat_histories WHERE phone_number = $1 AND session_id = $2 ORDER BY timestamp DESC LIMIT $3',
+    [phoneNumber, sessionId, limit]
   );
   // Return in chronological order
   return res.rows.reverse();
@@ -448,6 +512,54 @@ async function backfillProductEmbeddings() {
   }
 }
 
+/**
+ * WhatsApp Session management DB functions
+ */
+async function getSessions() {
+  const res = await pool.query('SELECT * FROM whatsapp_sessions ORDER BY created_at ASC');
+  return res.rows;
+}
+
+async function getSession(id) {
+  const res = await pool.query('SELECT * FROM whatsapp_sessions WHERE id = $1', [id]);
+  return res.rows[0] || null;
+}
+
+async function createSession(id, name) {
+  const res = await pool.query(
+    `INSERT INTO whatsapp_sessions (id, name, status) 
+     VALUES ($1, $2, 'disconnected') 
+     RETURNING *`,
+    [id, name]
+  );
+  return res.rows[0];
+}
+
+async function deleteSession(id) {
+  await pool.query('DELETE FROM whatsapp_sessions WHERE id = $1', [id]);
+}
+
+async function updateSessionStatus(id, status) {
+  await pool.query(
+    'UPDATE whatsapp_sessions SET status = $1, updated_at = NOW() WHERE id = $2',
+    [status, id]
+  );
+}
+
+async function updateSessionQR(id, qrCode, status) {
+  await pool.query(
+    'UPDATE whatsapp_sessions SET qr_code = $1, status = $2, updated_at = NOW() WHERE id = $3',
+    [qrCode, status, id]
+  );
+}
+
+async function updateSessionConnected(id, phoneNumber, status) {
+  await pool.query(
+    'UPDATE whatsapp_sessions SET phone_number = $1, status = $2, qr_code = NULL, updated_at = NOW() WHERE id = $3',
+    [phoneNumber, status, id]
+  );
+}
+
 module.exports = {
   pool,
   initDb,
@@ -462,5 +574,12 @@ module.exports = {
   upsertProduct,
   getCustomersForFollowUp,
   generateEmbedding,
-  backfillProductEmbeddings
+  backfillProductEmbeddings,
+  getSessions,
+  getSession,
+  createSession,
+  deleteSession,
+  updateSessionStatus,
+  updateSessionQR,
+  updateSessionConnected
 };

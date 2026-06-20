@@ -49,11 +49,28 @@ interface ChatInboxProps {
   products: Product[];
   onRefreshData: () => void;
   showToast: (message: string) => void;
+  selectedJid: string;
+  setSelectedJid: (jid: string) => void;
+  selectedCustName: string;
+  setSelectedCustName: (name: string) => void;
+  selectedSessionId: string;
+  setSelectedSessionId: (id: string) => void;
+  sessions: { id: string; name: string; status: string }[];
 }
 
-export default function ChatInbox({ customers, products, onRefreshData, showToast }: ChatInboxProps) {
-  const [selectedJid, setSelectedJid] = useState('');
-  const [selectedCustName, setSelectedCustName] = useState('');
+export default function ChatInbox({ 
+  customers, 
+  products, 
+  onRefreshData, 
+  showToast,
+  selectedJid,
+  setSelectedJid,
+  selectedCustName,
+  setSelectedCustName,
+  selectedSessionId,
+  setSelectedSessionId,
+  sessions
+}: ChatInboxProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [loadingChat, setLoadingChat] = useState(false);
@@ -150,7 +167,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
   // Fetch active customer details and history
   const fetchCustomerDetails = async (jid: string) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}`);
+      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}?session_id=${selectedSessionId}`);
       const data = await res.json();
       if (data) {
         setAiEnabled(data.ai_enabled !== false);
@@ -167,7 +184,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
   const fetchChatHistory = async (jid: string) => {
     setLoadingChat(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}/history`);
+      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}/history?session_id=${selectedSessionId}`);
       const data = await res.json();
       setChatHistory(data || []);
     } catch (err) {
@@ -181,6 +198,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
     if (selectedJid) {
       fetchCustomerDetails(selectedJid);
       fetchChatHistory(selectedJid);
+      setMobileView('chat');
     }
   }, [selectedJid]);
 
@@ -233,7 +251,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
       const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/toggle-ai`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ai_enabled: checked })
+        body: JSON.stringify({ ai_enabled: checked, session_id: selectedSessionId })
       });
       const data = await res.json();
       if (data.status === 'success') {
@@ -258,7 +276,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
       const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/send-message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textToSend })
+        body: JSON.stringify({ text: textToSend, session_id: selectedSessionId })
       });
       const data = await res.json();
       if (data.status === 'success') {
@@ -292,7 +310,7 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
       const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/update-details`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: custStatus, notes: custNotes })
+        body: JSON.stringify({ status: custStatus, notes: custNotes, session_id: selectedSessionId })
       });
       const data = await res.json();
       if (data.status === 'success') {
@@ -346,7 +364,27 @@ export default function ChatInbox({ customers, products, onRefreshData, showToas
         className={`${mobileView === 'list' ? 'flex' : 'hidden md:flex'} w-full shrink-0 border-r border-border flex flex-col bg-card/50 relative`}
         style={{ width: window.innerWidth >= 768 ? `${listWidth}px` : undefined }}
       >
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border flex flex-col gap-3">
+          {/* Sesi Dropdown Selector */}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Sesi WhatsApp</label>
+            <select
+              value={selectedSessionId}
+              onChange={(e) => {
+                setSelectedSessionId(e.target.value);
+                setSelectedJid('');
+                setSelectedCustName('');
+              }}
+              className="w-full bg-card border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground font-medium outline-none focus:border-primary transition-colors cursor-pointer"
+            >
+              {sessions.map(s => (
+                <option key={s.id} value={s.id}>
+                  {s.name} ({s.status === 'connected' ? '🟢 Connected' : '🔴 Offline'})
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="relative">
             <IconSearch size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
             <Input 

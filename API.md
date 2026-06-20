@@ -30,18 +30,22 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 13 | Catalog | POST | `/api/products` | Menambah produk baru ke katalog (generate embedding otomatis). |
 | 14 | Catalog | PUT | `/api/products/:id` | Memperbarui data produk (regenerate embedding otomatis). |
 | 15 | Catalog | DELETE | `/api/products/:id` | Menghapus produk dari katalog. |
-| 16 | WhatsApp | GET | `/api/whatsapp/groups` | Mendapatkan daftar grup WhatsApp yang diikuti bot. |
-| 17 | WhatsApp | POST | `/send-message` | Mengirim pesan WhatsApp mentah ke nomor/grup mana saja. |
-| 18 | Pengaturan | GET | `/api/settings` | Mendapatkan konfigurasi sistem (API Key disamarkan). |
-| 19 | Pengaturan | POST | `/api/settings` | Menyimpan konfigurasi sistem (otomatis memuat ulang scheduler). |
-| 20 | Pengaturan | GET | `/api/settings/default-system-prompt` | Melihat draf default prompt sistem agen AI. |
-| 21 | Ads & Creative | POST | `/run-analysis` | Menjalankan skrip analisis Meta Ads secara sinkron. |
-| 22 | Ads & Creative | POST | `/trigger-analysis` | Memicu analisis Meta Ads dan siaran laporan di latar belakang. |
-| 23 | Ads & Creative | GET | `/api/creative-report` | Mengambil laporan ide konten kreatif ad terbaru. |
-| 24 | Ads & Creative | POST | `/api/trigger-creative-analysis` | Memicu audit kreatif di latar belakang. |
-| 25 | Ads & Creative | GET | `/api/trigger-creative-analysis-stream` | Memicu audit kreatif dan melakukan streaming progress (SSE). |
-| 26 | Follow-Up | POST | `/api/trigger-followups` | Memicu pengiriman pesan follow-up manual (sinkron). |
-| 27 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
+| 16 | WhatsApp | GET | `/api/whatsapp/groups` | Mendapatkan daftar grup WhatsApp yang diikuti bot (opsional dengan session_id). |
+| 17 | WhatsApp | GET | `/api/whatsapp/sessions` | Mendapatkan daftar seluruh sesi WhatsApp beserta status & QR. |
+| 18 | WhatsApp | POST | `/api/whatsapp/sessions` | Membuat sesi WhatsApp baru (menginisialisasi koneksi). |
+| 19 | WhatsApp | DELETE | `/api/whatsapp/sessions/:id` | Menghapus sesi WhatsApp, menutup koneksi dan folder kredensial. |
+| 20 | WhatsApp | POST | `/api/whatsapp/sessions/:id/regenerate` | Mereset sesi WhatsApp untuk generate QR code baru. |
+| 21 | WhatsApp | POST | `/send-message` | Mengirim pesan WhatsApp mentah ke nomor/grup mana saja. |
+| 22 | Pengaturan | GET | `/api/settings` | Mendapatkan konfigurasi sistem (API Key disamarkan). |
+| 23 | Pengaturan | POST | `/api/settings` | Menyimpan konfigurasi sistem (otomatis memuat ulang scheduler). |
+| 24 | Pengaturan | GET | `/api/settings/default-system-prompt` | Melihat draf default prompt sistem agen AI. |
+| 25 | Ads & Creative | POST | `/run-analysis` | Menjalankan skrip analisis Meta Ads secara sinkron. |
+| 26 | Ads & Creative | POST | `/trigger-analysis` | Memicu analisis Meta Ads dan siaran laporan di latar belakang. |
+| 27 | Ads & Creative | GET | `/api/creative-report` | Mengambil laporan ide konten kreatif ad terbaru. |
+| 28 | Ads & Creative | POST | `/api/trigger-creative-analysis` | Memicu audit kreatif di latar belakang. |
+| 29 | Ads & Creative | GET | `/api/trigger-creative-analysis-stream` | Memicu audit kreatif dan melakukan streaming progress (SSE). |
+| 30 | Follow-Up | POST | `/api/trigger-followups` | Memicu pengiriman pesan follow-up manual (sinkron). |
+| 31 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
 
 ---
 
@@ -128,13 +132,16 @@ Mengambil metrik ringkasan untuk ditampilkan di halaman overview dashboard.
 ## 3. Kategori: CRM (Manajemen Pelanggan)
 
 ### GET `/api/customers`
-Mendapatkan daftar seluruh kontak pelanggan yang terekam di database, diurutkan berdasarkan waktu interaksi terakhir secara menurun (terbaru dahulu).
+Mendapatkan daftar seluruh kontak pelanggan yang terekam di database untuk sesi WhatsApp tertentu, diurutkan berdasarkan waktu interaksi terakhir secara menurun (terbaru dahulu).
 
+- **Query Parameters**:
+  - `session_id` (string, opsional): ID sesi WhatsApp tertentu. Default: `'default'`.
 - **Response (200 OK)**:
   ```json
   [
     {
       "phone_number": "628123456789@s.whatsapp.net",
+      "session_id": "default",
       "name": "Fardhan Rasya",
       "status": "lead",
       "notes": "Tertarik custom cake cokelat",
@@ -152,14 +159,17 @@ Mendapatkan daftar seluruh kontak pelanggan yang terekam di database, diurutkan 
 ---
 
 ### GET `/api/customers/:phone`
-Mendapatkan informasi detail tentang profil satu pelanggan tertentu berdasarkan nomor telepon (JID).
+Mendapatkan informasi detail tentang profil satu pelanggan tertentu berdasarkan nomor telepon (JID) dan sesi WhatsApp-nya.
 
 - **Path Parameters**:
   - `phone`: Nomor telepon JID pelanggan (contoh: `628123456789@s.whatsapp.net`).
+- **Query Parameters**:
+  - `session_id` (string, opsional): ID sesi WhatsApp tertentu. Default: `'default'`.
 - **Response (200 OK)**:
   ```json
   {
     "phone_number": "628123456789@s.whatsapp.net",
+    "session_id": "default",
     "name": "Fardhan Rasya",
     "status": "lead",
     "notes": "Tertarik custom cake cokelat",
@@ -183,10 +193,12 @@ Mendapatkan informasi detail tentang profil satu pelanggan tertentu berdasarkan 
 ---
 
 ### GET `/api/customers/:phone/history`
-Mengambil semua riwayat pesan WhatsApp antara bot agen AI dan pelanggan tersebut, diurutkan secara kronologis (pesan terlama dahulu).
+Mengambil semua riwayat pesan WhatsApp antara bot agen AI dan pelanggan tersebut pada sesi WhatsApp tertentu, diurutkan secara kronologis (pesan terlama dahulu).
 
 - **Path Parameters**:
   - `phone`: Nomor telepon JID pelanggan.
+- **Query Parameters**:
+  - `session_id` (string, opsional): ID sesi WhatsApp tertentu. Default: `'default'`.
 - **Response (200 OK)**:
   ```json
   [
@@ -206,14 +218,15 @@ Mengambil semua riwayat pesan WhatsApp antara bot agen AI dan pelanggan tersebut
 ---
 
 ### POST `/api/customers/:phone/toggle-ai`
-Mengaktifkan atau menonaktifkan agen AI dalam merespon pesan WhatsApp dari pelanggan tertentu. Jika dinonaktifkan (`ai_enabled: false`), bot tidak akan merespon pesan masuk secara otomatis, sehingga admin dapat membalas secara manual dari dashboard.
+Mengaktifkan atau menonaktifkan agen AI dalam merespon pesan WhatsApp dari pelanggan tertentu pada sesi tertentu. Jika dinonaktifkan (`ai_enabled: false`), bot tidak akan merespon pesan masuk secara otomatis, sehingga admin dapat membalas secara manual dari dashboard.
 
 - **Path Parameters**:
   - `phone`: Nomor telepon JID pelanggan.
 - **Request Body (JSON)**:
   ```json
   {
-    "ai_enabled": false
+    "ai_enabled": false,
+    "session_id": "default"
   }
   ```
 - **Response (200 OK)**:
@@ -227,16 +240,16 @@ Mengaktifkan atau menonaktifkan agen AI dalam merespon pesan WhatsApp dari pelan
 ---
 
 ### POST `/api/customers/:phone/update-details`
-Memperbarui kolom status CRM dan kolom catatan internal (`notes`) untuk pelanggan tertentu.
+Memperbarui kolom status CRM dan kolom catatan internal (`notes`) untuk pelanggan tertentu pada sesi tertentu.
 
 - **Path Parameters**:
   - `phone`: Nomor telepon JID pelanggan.
 - **Request Body (JSON)**:
-  - *Semua properti bersifat opsional.*
   ```json
   {
     "status": "customer",
-    "notes": "Sudah melakukan pembayaran DP untuk pesanan tanggal 25 Juni"
+    "notes": "Sudah melakukan pembayaran DP untuk pesanan tanggal 25 Juni",
+    "session_id": "default"
   }
   ```
   *(Status yang valid: `'lead'`, `'customer'`, `'dormant'`, `'opt_out'`)*
@@ -250,7 +263,7 @@ Memperbarui kolom status CRM dan kolom catatan internal (`notes`) untuk pelangga
 ---
 
 ### POST `/api/customers/:phone/send-message`
-Mengirimkan pesan WhatsApp manual kepada pelanggan melalui bot dari halaman dashboard. 
+Mengirimkan pesan WhatsApp manual kepada pelanggan melalui bot dari halaman dashboard menggunakan sesi tertentu. 
 > [!IMPORTANT]
 > Pemanggilan endpoint ini secara otomatis akan **menonaktifkan respon otomatis AI** (`ai_enabled` diubah menjadi `false`) dan **mereset status handoff admin** (`needs_admin` diubah menjadi `false`) untuk nomor tersebut agar admin dapat mengontrol percakapan secara penuh tanpa interupsi bot.
 
@@ -259,7 +272,8 @@ Mengirimkan pesan WhatsApp manual kepada pelanggan melalui bot dari halaman dash
 - **Request Body (JSON)**:
   ```json
   {
-    "text": "Halo Kak, pesanannya sudah kami catat ya. Nanti akan dikirim via kurir jam 10 pagi."
+    "text": "Halo Kak, pesanannya sudah kami catat ya. Nanti akan dikirim via kurir jam 10 pagi.",
+    "session_id": "default"
   }
   ```
 - **Response (200 OK)**:
@@ -396,6 +410,8 @@ Menghapus produk tertentu dari katalog database berdasarkan ID.
 ### GET `/api/whatsapp/groups`
 Mendapatkan daftar seluruh grup WhatsApp yang diikuti oleh bot (digunakan oleh admin untuk memilih grup target siaran laporan performa iklan).
 
+- **Query Parameters**:
+  - `session_id` (string, opsional): ID sesi WhatsApp tertentu yang ingin diambil daftar grupnya. Default: `'default'`.
 - **Response (200 OK)**:
   ```json
   [
@@ -410,7 +426,87 @@ Mendapatkan daftar seluruh grup WhatsApp yang diikuti oleh bot (digunakan oleh a
   ]
   ```
 - **Response (Error Fallback)**:
-  Mengembalikan array kosong `[]` jika pemanggilan fungsi Baileys `whatsappService.getGroups()` gagal.
+  Mengembalikan array kosong `[]` jika pemanggilan fungsi Baileys `whatsappService.getGroups(session_id)` gagal.
+
+---
+
+### GET `/api/whatsapp/sessions`
+Mendapatkan daftar seluruh sesi WhatsApp yang terdaftar beserta status koneksi dan QR code (jika statusnya `qr_received`).
+
+- **Response (200 OK)**:
+  ```json
+  [
+    {
+      "id": "default",
+      "name": "Default Agent",
+      "phone_number": "6281188027702",
+      "status": "connected",
+      "qr_code": null,
+      "created_at": "2026-06-20T15:30:26.123Z",
+      "updated_at": "2026-06-20T15:30:26.123Z"
+    },
+    {
+      "id": "cs-hampers",
+      "name": "CS Hampers",
+      "phone_number": null,
+      "status": "qr_received",
+      "qr_code": "2@gK8h...",
+      "created_at": "2026-06-20T16:05:12.123Z",
+      "updated_at": "2026-06-20T16:05:15.123Z"
+    }
+  ]
+  ```
+
+---
+
+### POST `/api/whatsapp/sessions`
+Membuat sesi WhatsApp baru di database dan menginisialisasi socket Baileys baru di latar belakang.
+
+- **Request Body (JSON)**:
+  ```json
+  {
+    "id": "cs-hampers",
+    "name": "CS Hampers"
+  }
+  ```
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": "cs-hampers",
+      "name": "CS Hampers",
+      "status": "disconnected",
+      "created_at": "2026-06-20T16:05:12.123Z"
+    }
+  }
+  ```
+
+---
+
+### DELETE `/api/whatsapp/sessions/:id`
+Menghapus sesi WhatsApp dari database, memutus koneksi socket yang aktif, dan menghapus folder kredensial sesi tersebut secara permanen.
+
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Session cs-hampers deleted successfully."
+  }
+  ```
+
+---
+
+### POST `/api/whatsapp/sessions/:id/regenerate`
+Mereset sesi WhatsApp tertentu. Tindakan ini akan menutup koneksi, menghapus kredensial lama, dan menginisialisasi ulang koneksi baru untuk menghasilkan QR code baru.
+
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Session cs-hampers regenerated successfully."
+  }
+  ```
 
 ---
 

@@ -1,4 +1,3 @@
-const qrcode = require('qrcode-terminal');
 const {
   default: makeWASocket,
   useMultiFileAuthState,
@@ -6,77 +5,106 @@ const {
   downloadMediaMessage
 } = require('@whiskeysockets/baileys');
 const path = require('path');
+const fs = require('fs');
 const db = require('../db');
 const agent = require('../agent');
 
-const SESSION_DIR = path.join(__dirname, '../../whatsapp-session');
+const SESSION_BASE_DIR = path.join(__dirname, '../../whatsapp-sessions');
 
-let sock = null;
-let ready = false;
+// Pool of active sessions: sessionId -> { sock, ready, qr, status, name }
+const sessions = new Map();
 
 // In-Memory Rate Limiter Cache
 const rateLimitCache = new Map();
 
-async function isRateLimited(jid) {
+async function isRateLimited(jid, sessionId) {
+  const cacheKey = `${sessionId}:${jid}`;
   const now = Date.now();
   const windowMs = parseInt(await db.getSetting('rate_limit_window') || process.env.RATE_LIMIT_WINDOW_MS || '60000', 10);
   const maxMsg = parseInt(await db.getSetting('rate_limit_max') || process.env.RATE_LIMIT_MAX_MSG || '5', 10);
 
-  if (!rateLimitCache.has(jid)) {
-    rateLimitCache.set(jid, [now]);
+  if (!rateLimitCache.has(cacheKey)) {
+    rateLimitCache.set(cacheKey, [now]);
     return false;
   }
-  const timestamps = rateLimitCache.get(jid).filter(ts => now - ts < windowMs);
+  const timestamps = rateLimitCache.get(cacheKey).filter(ts => now - ts < windowMs);
   if (timestamps.length >= maxMsg) {
     return true;
   }
   timestamps.push(now);
-  rateLimitCache.set(jid, timestamps);
+  rateLimitCache.set(cacheKey, timestamps);
   return false;
 }
 
 /**
- * Initialize WhatsApp connection
+ * Connect a specific WhatsApp session
  */
-async function connectToWhatsApp(log = console) {
-  const { state, saveCreds } = await useMultiFileAuthState(SESSION_DIR);
-
-  sock = makeWASocket({
+async function connectSession(sessionId, name, log = console) {
+  log.info(`🔌 Connecting WhatsApp session: ${name} (${sessionId})...`);
+  
+  const sessionDir = path.join(SESSION_BASE_DIR, sessionId);
+  const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+  
+  const sock = makeWASocket({
     auth: state,
     printQRInTerminal: false,
     logger: require('pino')({ level: 'silent' })
   });
-
-  sock.ev.on('connection.update', (update) => {
+  
+  const sessionData = {
+    sock,
+    ready: false,
+    qr: null,
+    status: 'connecting',
+    name
+  };
+  sessions.set(sessionId, sessionData);
+  await db.updateSessionStatus(sessionId, 'connecting');
+  
+  sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
-
+    
     if (qr) {
-      log.info('Scan this QR code to connect your WhatsApp account:');
-      qrcode.generate(qr, { small: true });
+      log.info(`📲 QR code updated for session: ${name} (${sessionId})`);
+      sessionData.qr = qr;
+      sessionData.status = 'qr_received';
+      await db.updateSessionQR(sessionId, qr, 'qr_received');
     }
-
+    
     if (connection === 'close') {
-      ready = false;
+      sessionData.ready = false;
+      sessionData.qr = null;
       const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-      log.warn(`Connection closed due to: ${lastDisconnect?.error?.message || 'unknown error'}`);
+      log.warn(`⚠️ Connection closed for session "${name}" (${sessionId}) due to: ${lastDisconnect?.error?.message || 'unknown error'}`);
       
       if (shouldReconnect) {
-        log.info('Attempting reconnection in 5 seconds...');
-        setTimeout(() => connectToWhatsApp(log), 5000);
+        sessionData.status = 'connecting';
+        await db.updateSessionStatus(sessionId, 'connecting');
+        log.info(`🔄 Attempting reconnection for session "${name}" (${sessionId}) in 5 seconds...`);
+        setTimeout(() => connectSession(sessionId, name, log), 5000);
       } else {
-        log.error('Logged out from WhatsApp. Please delete whatsapp-session folder and restart gateway to scan QR again.');
+        sessionData.status = 'disconnected';
+        await db.updateSessionStatus(sessionId, 'disconnected');
+        log.error(`❌ Session "${name}" (${sessionId}) logged out. Clearing credentials folder.`);
+        try {
+          fs.rmSync(sessionDir, { recursive: true, force: true });
+        } catch (err) {
+          log.error(`Failed to delete session folder: ${err.message}`);
+        }
       }
     } else if (connection === 'open') {
-      ready = true;
-      log.info('=============================================');
-      log.info('🟢 WhatsApp Gateway is CONNECTED and READY!');
-      log.info('=============================================');
+      sessionData.ready = true;
+      sessionData.qr = null;
+      sessionData.status = 'connected';
+      const userPhone = sock.user.id.split(':')[0];
+      log.info(`🟢 WhatsApp Session "${name}" (${sessionId}) is CONNECTED and READY as ${userPhone}!`);
+      await db.updateSessionConnected(sessionId, userPhone, 'connected');
     }
   });
 
   sock.ev.on('creds.update', saveCreds);
 
-  // Listen for incoming messages
+  // Listen for incoming messages on this socket
   sock.ev.on('messages.upsert', async (m) => {
     if (m.type !== 'notify') return;
 
@@ -105,8 +133,8 @@ async function connectToWhatsApp(log = console) {
         if (text.startsWith('/')) continue;
 
         // Rate Limit check
-        if (await isRateLimited(jid)) {
-          log.warn(`Rate limit triggered for JID: ${jid}. Message ignored.`);
+        if (await isRateLimited(jid, sessionId)) {
+          log.warn(`Rate limit triggered for JID: ${jid} on session ${sessionId}. Message ignored.`);
           continue;
         }
 
@@ -134,7 +162,6 @@ async function connectToWhatsApp(log = console) {
             const filepath = path.join(__dirname, '../../public/uploads', filename);
 
             // Ensure uploads directory exists
-            const fs = require('fs');
             const dir = path.dirname(filepath);
             if (!fs.existsSync(dir)) {
               fs.mkdirSync(dir, { recursive: true });
@@ -155,18 +182,18 @@ async function connectToWhatsApp(log = console) {
           }
         }
 
-        log.info(`📨 Received DM from ${senderName} (${jid}): "${text}" ${imageUrl ? '[Image Attached]' : ''}`);
+        log.info(`📨 [Session: ${sessionId}] Received DM from ${senderName} (${jid}): "${text}" ${imageUrl ? '[Image Attached]' : ''}`);
 
-        let customer = await db.getCustomer(jid);
+        let customer = await db.getCustomer(jid, sessionId);
         if (!customer) {
-          customer = await db.createOrUpdateCustomer(jid, senderName, { status: 'lead' });
+          customer = await db.createOrUpdateCustomer(jid, senderName, { status: 'lead' }, sessionId);
         }
 
         const dbText = imageUrl ? `[Foto: ${imageUrl}] ${text}`.trim() : text;
 
         if (customer.ai_enabled === false) {
-          log.info(`🤫 AI response is disabled for ${senderName} (${jid}). Message logged, skipping reply.`);
-          await db.saveChatMessage(jid, 'user', dbText);
+          log.info(`🤫 AI response is disabled for ${senderName} (${jid}) on session ${sessionId}. Message logged, skipping reply.`);
+          await db.saveChatMessage(jid, 'user', dbText, sessionId);
           continue;
         }
 
@@ -175,42 +202,115 @@ async function connectToWhatsApp(log = console) {
             await sock.sendPresenceUpdate('composing', jid);
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            const replyText = await agent.handleIncomingMessage(jid, text, senderName, imagePart, imageUrl);
+            const replyText = await agent.handleIncomingMessage(jid, text, senderName, imagePart, imageUrl, sessionId);
 
             await sock.sendPresenceUpdate('paused', jid);
             await sock.sendMessage(jid, { text: replyText });
           } catch (replyErr) {
-            log.error(`Error sending AI reply to ${jid}: ${replyErr.message}`);
+            log.error(`Error sending AI reply to ${jid} on session ${sessionId}: ${replyErr.message}`);
           }
         })();
 
       } catch (err) {
-        log.error(`Error in messages.upsert handler: ${err.message}`);
+        log.error(`Error in messages.upsert handler for session ${sessionId}: ${err.message}`);
       }
     }
   });
 }
 
-function isReady() {
-  return ready;
-}
-
-function getSock() {
-  return sock;
-}
-
-async function sendMessage(jid, content) {
-  if (!ready || !sock) {
-    throw new Error('WhatsApp connection is not ready.');
+/**
+ * Disconnect a WhatsApp session socket
+ */
+async function disconnectSession(sessionId) {
+  const session = sessions.get(sessionId);
+  if (session) {
+    try {
+      if (session.sock) {
+        session.sock.ev.removeAllListeners('connection.update');
+        session.sock.ev.removeAllListeners('creds.update');
+        session.sock.ev.removeAllListeners('messages.upsert');
+        session.sock.end();
+      }
+    } catch (e) {
+      console.error(`Error closing socket for session ${sessionId}:`, e.message);
+    }
+    sessions.delete(sessionId);
   }
-  return await sock.sendMessage(jid, content);
 }
 
-async function getGroups() {
-  if (!ready || !sock) {
-    throw new Error('WhatsApp connection is not ready.');
+/**
+ * Initialize WhatsApp connections for all stored sessions
+ */
+async function connectToWhatsApp(log = console) {
+  // Ensure SESSION_BASE_DIR exists
+  if (!fs.existsSync(SESSION_BASE_DIR)) {
+    fs.mkdirSync(SESSION_BASE_DIR, { recursive: true });
   }
-  const groups = await sock.groupFetchAllParticipating();
+
+  // Load all sessions from database
+  const dbSessions = await db.getSessions();
+  if (dbSessions.length === 0) {
+    // Automatically create default session
+    await db.createSession('default', 'Default Agent');
+    await connectSession('default', 'Default Agent', log);
+  } else {
+    for (const session of dbSessions) {
+      await connectSession(session.id, session.name, log);
+    }
+  }
+}
+
+function isReady(sessionId = null) {
+  if (sessionId) {
+    const s = sessions.get(sessionId);
+    return s ? s.ready : false;
+  }
+  for (const s of sessions.values()) {
+    if (s.ready) return true;
+  }
+  return false;
+}
+
+async function sendMessage(jid, content, sessionId = null) {
+  let targetSessionId = sessionId;
+  if (!targetSessionId) {
+    for (const [id, s] of sessions.entries()) {
+      if (s.ready) {
+        targetSessionId = id;
+        break;
+      }
+    }
+    if (!targetSessionId) {
+      targetSessionId = 'default';
+    }
+  }
+
+  const s = sessions.get(targetSessionId);
+  if (!s || !s.sock || !s.ready) {
+    throw new Error(`WhatsApp session "${targetSessionId || 'default'}" is not ready.`);
+  }
+  return await s.sock.sendMessage(jid, content);
+}
+
+async function getGroups(sessionId = null) {
+  let targetSessionId = sessionId;
+  if (!targetSessionId) {
+    for (const [id, s] of sessions.entries()) {
+      if (s.ready) {
+        targetSessionId = id;
+        break;
+      }
+    }
+    if (!targetSessionId) {
+      targetSessionId = 'default';
+    }
+  }
+
+  const s = sessions.get(targetSessionId);
+  if (!s || !s.sock || !s.ready) {
+    throw new Error(`WhatsApp session "${targetSessionId || 'default'}" is not ready.`);
+  }
+  const groups = await s.sock.groupFetchAllParticipating();
   return Object.keys(groups).map(jid => ({
     jid,
     subject: groups[jid].subject
@@ -219,8 +319,10 @@ async function getGroups() {
 
 module.exports = {
   connectToWhatsApp,
+  connectSession,
+  disconnectSession,
   isReady,
-  getSock,
   sendMessage,
-  getGroups
+  getGroups,
+  sessions
 };

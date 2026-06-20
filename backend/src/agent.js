@@ -143,7 +143,7 @@ const agentTools = [
 /**
  * Core AI Agent processing logic
  */
-async function handleIncomingMessage(jid, text, profileName = 'Customer', imagePart = null, imageUrl = null) {
+async function handleIncomingMessage(jid, text, profileName = 'Customer', imagePart = null, imageUrl = null, sessionId = 'default') {
   // Dynamically load API Key and system prompts from database
   const activeApiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
   if (!activeApiKey) {
@@ -155,14 +155,14 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
   const activeModelName = await db.getSetting('gemini_model') || defaultModelName;
 
   // 1. Get or create customer in database
-  let customer = await db.getCustomer(jid);
+  let customer = await db.getCustomer(jid, sessionId);
   if (!customer) {
-    customer = await db.createOrUpdateCustomer(jid, profileName, { status: 'lead' });
+    customer = await db.createOrUpdateCustomer(jid, profileName, { status: 'lead' }, sessionId);
   }
 
   // 2. Fetch last N messages of chat history from DB
   const maxHistory = parseInt(await db.getSetting('max_history') || defaultMaxHistory, 10);
-  const historyRows = await db.getChatHistory(jid, maxHistory);
+  const historyRows = await db.getChatHistory(jid, maxHistory, sessionId);
   
   // Sanitize and format history to ensure compliance with Gemini SDK rules
   const formattedHistory = [];
@@ -208,7 +208,7 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
   try {
     // Save user's incoming message to DB first, including the photo metadata if present
     const dbText = imageUrl ? `[Foto: ${imageUrl}] ${text}`.trim() : text;
-    await db.saveChatMessage(jid, 'user', dbText);
+    await db.saveChatMessage(jid, 'user', dbText, sessionId);
 
     // Send the user message (including image if present) to Gemini
     let result;
@@ -246,11 +246,11 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
             await db.createOrUpdateCustomer(jid, args.customer_name || null, { 
               notes: args.notes,
               contact_phone: args.contact_phone
-            });
+            }, sessionId);
             toolResult = { status: 'success', message: 'Profil kustomer berhasil diperbarui.' };
           } else if (name === 'request_follow_up') {
             // Flag needs_follow_up in Postgres
-            await db.createOrUpdateCustomer(jid, null, { needs_follow_up: true, follow_up_reason: args.reason });
+            await db.createOrUpdateCustomer(jid, null, { needs_follow_up: true, follow_up_reason: args.reason }, sessionId);
             toolResult = { status: 'success', message: 'Follow up dijadwalkan.' };
           } else if (name === 'request_human_handoff') {
             // Disable AI responding and flag needs_admin in Postgres
@@ -258,7 +258,7 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
               ai_enabled: false,
               needs_admin: true,
               notes: `Handoff requested: ${args.reason}`
-            });
+            }, sessionId);
             toolResult = { status: 'success', message: 'Chat berhasil ditransfer ke admin.' };
           }
         } catch (toolErr) {
@@ -284,7 +284,7 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
     const replyText = response.text();
     
     // Save model's reply to DB
-    await db.saveChatMessage(jid, 'model', replyText);
+    await db.saveChatMessage(jid, 'model', replyText, sessionId);
 
     return replyText;
   } catch (err) {

@@ -28,7 +28,14 @@ async function runProactiveFollowUps(log = console, ignoreThreshold = false) {
 
     for (const lead of leads) {
       const jid = lead.phone_number;
-      const historyRows = await db.getChatHistory(jid, 10);
+      const sessionId = lead.session_id || 'default';
+
+      if (!whatsappService.isReady(sessionId)) {
+        log.warn(`WhatsApp session "${sessionId}" is not ready. Skipping follow-up for customer ${jid}.`);
+        continue;
+      }
+
+      const historyRows = await db.getChatHistory(jid, 10, sessionId);
 
       if (historyRows.length === 0) continue;
 
@@ -84,11 +91,11 @@ ${strictOutputRule}`;
         const replyText = result.response.text().trim();
 
         if (replyText) {
-          log.info(`Sending proactive follow-up to ${jid}...`);
-          await whatsappService.sendMessage(jid, { text: replyText });
+          log.info(`Sending proactive follow-up to ${jid} on session ${sessionId}...`);
+          await whatsappService.sendMessage(jid, { text: replyText }, sessionId);
 
-          await db.saveChatMessage(jid, 'model', replyText);
-          await db.createOrUpdateCustomer(jid, null, { needs_follow_up: false, follow_up_reason: null });
+          await db.saveChatMessage(jid, 'model', replyText, sessionId);
+          await db.createOrUpdateCustomer(jid, null, { needs_follow_up: false, follow_up_reason: null }, sessionId);
         }
       } catch (err) {
         log.error(`Failed to follow up for ${jid}: ${err.message}`);

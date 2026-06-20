@@ -7,6 +7,7 @@ import Actions from '@/components/Actions';
 import Settings from '@/components/Settings';
 import AdsReport from '@/components/AdsReport';
 import CreativeReport from '@/components/CreativeReport';
+import WhatsappSessions from '@/components/WhatsappSessions';
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { API_BASE_URL } from '@/config';
@@ -115,6 +116,9 @@ export default function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  const [selectedSessionId, setSelectedSessionId] = useState('default');
+  const [sessions, setSessions] = useState<{ id: string; name: string; status: string }[]>([]);
+
   const [stats, setStats] = useState<Stats>({
     status: 'disconnected',
     totalLeads: 0,
@@ -125,14 +129,28 @@ export default function App() {
   });
   const [customers, setCustomers] = useState<Lead[]>([]);
   const [products, setProducts] = useState([]);
+  const [selectedJid, setSelectedJid] = useState('');
+  const [selectedCustName, setSelectedCustName] = useState('');
 
   const showToast = (message: string) => {
     toast(message);
   };
 
+  const loadSessions = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setSessions(data);
+      }
+    } catch (err) {
+      console.error('Failed to load sessions:', err);
+    }
+  };
+
   const loadStats = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/stats`);
+      const res = await fetch(`${API_BASE_URL}/api/stats?session_id=${selectedSessionId}`);
       const data = await res.json();
       setStats(data);
     } catch (err) {
@@ -142,7 +160,7 @@ export default function App() {
 
   const loadCustomers = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers`);
+      const res = await fetch(`${API_BASE_URL}/api/customers?session_id=${selectedSessionId}`);
       const data = await res.json();
       setCustomers(data || []);
     } catch (err) {
@@ -194,30 +212,42 @@ export default function App() {
     }
   };
 
-  const handleSelectCustomerFromOverview = () => {
+  const handleSelectCustomerFromOverview = (phone_number: string, name: string) => {
+    setSelectedJid(phone_number);
+    setSelectedCustName(name);
     setActiveTab('inbox');
   };
 
   // Initial load
   useEffect(() => {
+    loadSessions();
+    loadProducts();
+  }, []);
+
+  // Reload customers and stats when selected session changes
+  useEffect(() => {
     loadStats();
     loadCustomers();
-    loadProducts();
+  }, [selectedSessionId]);
 
-    // Poll stats and customer lists every 8 seconds
+  // Poll stats and customer lists every 8 seconds
+  useEffect(() => {
     const interval = setInterval(() => {
       loadStats();
       loadCustomers();
+      loadSessions();
     }, 8000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedSessionId]);
 
   // Sync header metadata based on tab
   const getHeaderInfo = () => {
     switch (activeTab) {
       case 'overview':
         return { title: 'Overview Dashboard', subtitle: 'Real-time statistics & WhatsApp client monitoring' };
+      case 'whatsapp-sessions':
+        return { title: 'WhatsApp Sessions', subtitle: 'Manage multiple WhatsApp numbers, agents, and QR codes' };
       case 'inbox':
         return { title: 'Conversations Inbox', subtitle: 'WhatsApp Live Chat console and lead updates' };
       case 'products':
@@ -319,6 +349,10 @@ export default function App() {
                 onSelectCustomer={handleSelectCustomerFromOverview} 
               />
             )}
+
+            {activeTab === 'whatsapp-sessions' && (
+              <WhatsappSessions />
+            )}
             
             {activeTab === 'inbox' && (
               <ChatInbox 
@@ -326,6 +360,13 @@ export default function App() {
                 products={products}
                 onRefreshData={loadCustomers}
                 showToast={showToast}
+                selectedJid={selectedJid}
+                setSelectedJid={setSelectedJid}
+                selectedCustName={selectedCustName}
+                setSelectedCustName={setSelectedCustName}
+                selectedSessionId={selectedSessionId}
+                setSelectedSessionId={setSelectedSessionId}
+                sessions={sessions}
               />
             )}
             

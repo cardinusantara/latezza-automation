@@ -28,14 +28,17 @@ function registerRoutes(fastify) {
   // API: Stats Endpoint
   fastify.get('/api/stats', async (request, reply) => {
     try {
-      const leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers');
+      const { session_id } = request.query;
+      const targetSessionId = session_id || 'default';
+
+      const leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE session_id = $1', [targetSessionId]);
       const productsCountRes = await db.pool.query('SELECT COUNT(*) FROM products');
-      const followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE');
-      const messagesCountRes = await db.pool.query('SELECT COUNT(*) FROM chat_histories');
-      const recentLeadsRes = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC LIMIT 5');
+      const followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE AND session_id = $1', [targetSessionId]);
+      const messagesCountRes = await db.pool.query('SELECT COUNT(*) FROM chat_histories WHERE session_id = $1', [targetSessionId]);
+      const recentLeadsRes = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC LIMIT 5', [targetSessionId]);
       
       return {
-        status: whatsappService.isReady() ? 'connected' : 'disconnected',
+        status: whatsappService.isReady(targetSessionId) ? 'connected' : 'disconnected',
         totalLeads: parseInt(leadsCountRes.rows[0].count, 10),
         totalProducts: parseInt(productsCountRes.rows[0].count, 10),
         pendingFollowUps: parseInt(followupsCountRes.rows[0].count, 10),
@@ -52,7 +55,9 @@ function registerRoutes(fastify) {
   // API: Customers List
   fastify.get('/api/customers', async (request, reply) => {
     try {
-      const res = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC');
+      const { session_id } = request.query;
+      const targetSessionId = session_id || 'default';
+      const res = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC', [targetSessionId]);
       return res.rows;
     } catch (err) {
       fastify.log.error(`API customers error: ${err.message}`);
@@ -64,8 +69,9 @@ function registerRoutes(fastify) {
   // API: Get Single Customer Details
   fastify.get('/api/customers/:phone', async (request, reply) => {
     const { phone } = request.params;
+    const { session_id } = request.query;
     try {
-      const customer = await db.getCustomer(phone);
+      const customer = await db.getCustomer(phone, session_id || 'default');
       if (!customer) {
         reply.status(404);
         return { status: 'error', message: 'Customer not found.' };
@@ -81,10 +87,11 @@ function registerRoutes(fastify) {
   // API: Chat History
   fastify.get('/api/customers/:phone/history', async (request, reply) => {
     const { phone } = request.params;
+    const { session_id } = request.query;
     try {
       const res = await db.pool.query(
-        'SELECT role, content, timestamp FROM chat_histories WHERE phone_number = $1 ORDER BY timestamp ASC',
-        [phone]
+        'SELECT role, content, timestamp FROM chat_histories WHERE phone_number = $1 AND session_id = $2 ORDER BY timestamp ASC',
+        [phone, session_id || 'default']
       );
       return res.rows;
     } catch (err) {
@@ -234,9 +241,10 @@ function registerRoutes(fastify) {
 
   // API: Fetch WhatsApp Groups
   fastify.get('/api/whatsapp/groups', async (request, reply) => {
+    const { session_id } = request.query;
     try {
-      fastify.log.info('Fetching connected WhatsApp groups...');
-      const groupList = await whatsappService.getGroups();
+      fastify.log.info(`Fetching connected WhatsApp groups for session ${session_id || 'default'}...`);
+      const groupList = await whatsappService.getGroups(session_id || 'default');
       return groupList;
     } catch (err) {
       fastify.log.error(`Failed to fetch WhatsApp groups: ${err.message}`);
@@ -264,23 +272,25 @@ function registerRoutes(fastify) {
         type: 'object',
         required: ['text'],
         properties: {
-          text: { type: 'string' }
+          text: { type: 'string' },
+          session_id: { type: 'string' }
         }
       }
     },
     handler: async (request, reply) => {
       const { phone } = request.params;
-      const { text } = request.body;
+      const { text, session_id } = request.body;
+      const targetSessionId = session_id || 'default';
 
       try {
-        fastify.log.info(`Sending manual dashboard message to ${phone}...`);
-        const response = await whatsappService.sendMessage(phone, { text });
+        fastify.log.info(`Sending manual dashboard message to ${phone} on session ${targetSessionId}...`);
+        const response = await whatsappService.sendMessage(phone, { text }, targetSessionId);
         
-        await db.saveChatMessage(phone, 'model', text);
+        await db.saveChatMessage(phone, 'model', text, targetSessionId);
         await db.createOrUpdateCustomer(phone, null, {
           ai_enabled: false,
           needs_admin: false
-        });
+        }, targetSessionId);
 
         return { status: 'success', messageId: response.key.id };
       } catch (err) {
@@ -298,17 +308,19 @@ function registerRoutes(fastify) {
         type: 'object',
         required: ['ai_enabled'],
         properties: {
-          ai_enabled: { type: 'boolean' }
+          ai_enabled: { type: 'boolean' },
+          session_id: { type: 'string' }
         }
       }
     },
     handler: async (request, reply) => {
       const { phone } = request.params;
-      const { ai_enabled } = request.body;
+      const { ai_enabled, session_id } = request.body;
+      const targetSessionId = session_id || 'default';
 
       try {
-        fastify.log.info(`Toggling AI response for ${phone} to ${ai_enabled}`);
-        await db.createOrUpdateCustomer(phone, null, { ai_enabled });
+        fastify.log.info(`Toggling AI response for ${phone} to ${ai_enabled} on session ${targetSessionId}`);
+        await db.createOrUpdateCustomer(phone, null, { ai_enabled }, targetSessionId);
         return { status: 'success', ai_enabled };
       } catch (err) {
         fastify.log.error(`Failed to toggle AI: ${err.message}`);
@@ -325,16 +337,18 @@ function registerRoutes(fastify) {
         type: 'object',
         properties: {
           status: { type: 'string' },
-          notes: { type: 'string' }
+          notes: { type: 'string' },
+          session_id: { type: 'string' }
         }
       }
     },
     handler: async (request, reply) => {
       const { phone } = request.params;
-      const { status, notes } = request.body;
+      const { status, notes, session_id } = request.body;
+      const targetSessionId = session_id || 'default';
       try {
-        fastify.log.info(`Updating CRM details for customer ${phone}: status=${status}`);
-        await db.createOrUpdateCustomer(phone, null, { status, notes });
+        fastify.log.info(`Updating CRM details for customer ${phone} on session ${targetSessionId}: status=${status}`);
+        await db.createOrUpdateCustomer(phone, null, { status, notes }, targetSessionId);
         return { status: 'success' };
       } catch (err) {
         fastify.log.error(`Failed to update customer details: ${err.message}`);
@@ -627,6 +641,125 @@ function registerRoutes(fastify) {
       sendEvent({ type: 'error', message: err.message });
     } finally {
       reply.raw.end();
+    }
+  });
+
+  // API: Get all WhatsApp sessions
+  fastify.get('/api/whatsapp/sessions', async (request, reply) => {
+    try {
+      const sessions = await db.getSessions();
+      const pool = whatsappService.sessions;
+      const enriched = sessions.map(s => {
+        const active = pool.get(s.id);
+        return {
+          ...s,
+          status: active ? active.status : s.status,
+          qr_code: active ? active.qr : s.qr_code,
+          ready: active ? active.ready : false
+        };
+      });
+      return enriched;
+    } catch (err) {
+      fastify.log.error(`Failed to fetch sessions: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // API: Create new WhatsApp session
+  fastify.post('/api/whatsapp/sessions', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['id', 'name'],
+        properties: {
+          id: { type: 'string', pattern: '^[a-zA-Z0-9_-]+$' },
+          name: { type: 'string' }
+        }
+      }
+    },
+    handler: async (request, reply) => {
+      const { id, name } = request.body;
+      try {
+        fastify.log.info(`Creating new WhatsApp session: ${name} (${id})`);
+        
+        // 1. Insert into DB
+        const session = await db.createSession(id, name);
+        
+        // 2. Initialize connection in background
+        whatsappService.connectSession(id, name, fastify.log).catch(err => {
+          fastify.log.error(`Failed to start session ${id} connection: ${err.message}`);
+        });
+        
+        return { status: 'success', data: session };
+      } catch (err) {
+        fastify.log.error(`Failed to create session: ${err.message}`);
+        reply.status(500);
+        return { status: 'error', message: err.message };
+      }
+    }
+  });
+
+  // API: Delete WhatsApp session
+  fastify.delete('/api/whatsapp/sessions/:id', async (request, reply) => {
+    const { id } = request.params;
+    try {
+      fastify.log.info(`Deleting WhatsApp session: ${id}`);
+      
+      // 1. Close connection and delete from pool
+      await whatsappService.disconnectSession(id);
+      
+      // 2. Delete from DB
+      await db.deleteSession(id);
+      
+      // 3. Delete directory credentials
+      const sessionDir = path.join(__dirname, '../../whatsapp-sessions', id);
+      if (fs.existsSync(sessionDir)) {
+        fs.rmSync(sessionDir, { recursive: true, force: true });
+      }
+      
+      return { status: 'success', message: `Session ${id} deleted successfully.` };
+    } catch (err) {
+      fastify.log.error(`Failed to delete session ${id}: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // API: Regenerate WhatsApp session (reset & scan QR again)
+  fastify.post('/api/whatsapp/sessions/:id/regenerate', async (request, reply) => {
+    const { id } = request.params;
+    try {
+      fastify.log.info(`Regenerating WhatsApp session: ${id}`);
+      
+      const session = await db.getSession(id);
+      if (!session) {
+        reply.status(404);
+        return { status: 'error', message: 'Session not found.' };
+      }
+      
+      // 1. Disconnect current socket
+      await whatsappService.disconnectSession(id);
+      
+      // 2. Clear credentials directory
+      const sessionDir = path.join(__dirname, '../../whatsapp-sessions', id);
+      if (fs.existsSync(sessionDir)) {
+        fs.rmSync(sessionDir, { recursive: true, force: true });
+      }
+      
+      // 3. Clear QR and update status in DB
+      await db.updateSessionQR(id, null, 'disconnected');
+      
+      // 4. Connect again in background
+      whatsappService.connectSession(id, session.name, fastify.log).catch(err => {
+        fastify.log.error(`Failed to start session ${id} connection: ${err.message}`);
+      });
+      
+      return { status: 'success', message: `Session ${id} regenerated successfully.` };
+    } catch (err) {
+      fastify.log.error(`Failed to regenerate session ${id}: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
     }
   });
 }

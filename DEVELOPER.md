@@ -31,7 +31,7 @@ latezza-automation/
 │   │   ├── automation.js         # Meta Ads fetcher + Gemini NLP summarizer + report.html generator
 │   │   ├── template.html         # HTML template for report generation (has {{PLACEHOLDER}} tokens)
 │   │   └── report.html           # generated output — served at GET /report-html
-│   ├── whatsapp-session/         # Baileys auth session files (gitignored — do not delete while running)
+│   ├── whatsapp-sessions/        # Baileys auth session subdirectories (gitignored — do not delete while running)
 │   └── package.json
 ├── frontend/
 │   ├── .env                      # frontend env file (contains VITE_API_URL)
@@ -45,6 +45,7 @@ latezza-automation/
 │   │   │   ├── Products.tsx      # product catalog CRUD (create/edit/delete via API)
 │   │   │   ├── Settings.tsx      # all configurable settings — API keys, prompts, follow-up, Meta Ads
 │   │   │   ├── AdsReport.tsx     # ads report viewer — iframe of report.html + manual trigger buttons
+│   │   │   ├── WhatsappSessions.tsx # WhatsApp Session management & QR scanner UI
 │   │   │   └── ui/               # shadcn/ui base components (Card, Button, Input, Dialog, etc.)
 │   │   └── main.tsx
 │   ├── vite.config.ts
@@ -109,47 +110,62 @@ VITE_API_URL=http://localhost:3001
 
 All tables are created automatically on server start in `src/db.js` using `CREATE TABLE IF NOT EXISTS`. Migrations (add column if not exists) also run on every startup.
 
+### whatsapp_sessions
+```sql
+id           VARCHAR(50) PRIMARY KEY
+name         VARCHAR(100) NOT NULL
+phone_number VARCHAR(50)
+status       VARCHAR(20) DEFAULT 'disconnected' -- values: disconnected | connecting | connected | qr_received
+qr_code      TEXT
+created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
 ### customers
 ```sql
-phone_number    VARCHAR(50) PRIMARY KEY  -- WA JID e.g. 628xxx@s.whatsapp.net or xxx@lid
+phone_number    VARCHAR(50)
+session_id      VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE CASCADE
 name            VARCHAR(100)
 status          VARCHAR(20) DEFAULT 'lead'   -- values: lead | customer | dormant | opt_out
 notes           TEXT
+needs_follow_up BOOLEAN DEFAULT FALSE        -- set TRUE by AI when customer shows interest but doesn't confirm
+follow_up_reason VARCHAR(255)                -- context for follow-up (e.g. "Tertarik custom cake tapi belum DP")
+last_interaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 contact_phone   VARCHAR(20)
-ai_enabled      BOOLEAN DEFAULT TRUE     -- if FALSE, AI is muted for this customer; admin responds manually
-needs_admin     BOOLEAN DEFAULT FALSE    -- set TRUE when AI detects situation needs human (e.g. custom order)
-needs_follow_up BOOLEAN DEFAULT FALSE    -- set TRUE by AI when customer shows interest but doesn't confirm
-follow_up_reason VARCHAR(255)           -- context for follow-up (e.g. "Tertarik custom cake tapi belum DP")
-last_interaction TIMESTAMP DEFAULT NOW()
-created_at      TIMESTAMP DEFAULT NOW()
+ai_enabled      BOOLEAN DEFAULT TRUE         -- if FALSE, AI is muted for this customer; admin responds manually
+needs_admin     BOOLEAN DEFAULT FALSE        -- set TRUE when AI detects situation needs human (e.g. custom order)
+PRIMARY KEY (phone_number, session_id)
 ```
 
 ### chat_histories
 ```sql
 id           SERIAL PRIMARY KEY
-phone_number VARCHAR(50)   -- FK to customers
-role         VARCHAR(10)   -- 'user' | 'model'
-content      TEXT
-timestamp    TIMESTAMP DEFAULT NOW()
+phone_number VARCHAR(50)
+session_id   VARCHAR(50) DEFAULT 'default'
+role         VARCHAR(20) NOT NULL         -- 'user' | 'model'
+content      TEXT NOT NULL
+timestamp    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+FOREIGN KEY (phone_number, session_id) REFERENCES customers(phone_number, session_id) ON DELETE CASCADE
 ```
 
 ### products
 ```sql
 id           SERIAL PRIMARY KEY
-product_name VARCHAR(255) UNIQUE
-price        NUMERIC
-description  TEXT
-image_url    TEXT
-shopee_link  TEXT
-embedding    JSONB                    -- Stores the 768-dimensional embedding vector from gemini-embedding-2
-created_at   TIMESTAMP DEFAULT NOW()
+product_name VARCHAR(255) UNIQUE NOT NULL
+price        NUMERIC DEFAULT 0
+description  TEXT DEFAULT ''
+image_url    TEXT DEFAULT ''
+shopee_link  TEXT DEFAULT ''
+embedding    JSONB                        -- Stores the 768-dimensional embedding vector from gemini-embedding-2
+created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```
 
 ### settings (key-value store)
 ```sql
 key        VARCHAR(100) PRIMARY KEY
 value      TEXT
-updated_at TIMESTAMP DEFAULT NOW()
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```
 
 known keys in settings table:
@@ -191,17 +207,18 @@ sensitive keys (gemini_api_key, meta_access_token) are masked when returned from
 
 ---
 
-## WHATSAPP GATEWAY (whatsapp.js + Baileys)
+## WHATSAPP GATEWAY (whatsapp.js + Baileys - Multi-Session Support)
 
 library: `@whiskeysockets/baileys`
 implemented in: `backend/src/services/whatsapp.js`
-session: stored in `backend/whatsapp-session/` (multi-file auth). Do not delete this folder while server is running.
+session paths: stored in `backend/whatsapp-sessions/<session_id>/` (multi-file auth). Do not delete these folders while sessions are running.
 
 startup flow:
-1. `connectToWhatsApp()` is called in `whatsapp.js` during server startup
-2. Baileys attempts to load session from `whatsapp-session/`
-3. If no session exists → generates QR code in terminal → admin scans with phone
-4. On `connection.update` with `connection: 'open'` → `ready = true` → follow-ups and broadcasts can now fire
+1. `initWhatsApp()` is called in `whatsapp.js` during server startup
+2. Fastify server queries all registered sessions from `whatsapp_sessions` table and initializes connection socket for each of them.
+3. Baileys attempts to load each session from `backend/whatsapp-sessions/<session_id>/`.
+4. If a session is new/disconnected → generates QR code → saves QR code string to `whatsapp_sessions` DB table. Frontend polls/displays this QR.
+5. On `connection.update` with `connection: 'open'` → status is updated to `connected` in DB → messages and webhooks can be processed for that session.
 
 message handling flow (`messages.upsert`):
 1. Skip: group messages, broadcast, status, self-sent, non-text
@@ -399,7 +416,7 @@ implemented in: `backend/src/routes.js`
 
 ## KNOWN GOTCHAS / PITFALLS
 
-1. WA session files in whatsapp-session/ must persist across restarts. If deleted, re-scan QR required.
+1. WA session credentials in backend/whatsapp-sessions/<session_id>/ must persist across restarts. If deleted, re-scanning QR is required.
 
 2. settingsCache is in-memory. Changes via `db.setSetting()` (dashboard) update cache immediately. But changes made by direct SQL (psql / scripts) will NOT update cache — either restart backend or wait until the key is evicted.
 

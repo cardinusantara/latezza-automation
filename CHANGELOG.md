@@ -5,6 +5,19 @@ entries: plain text, AI-readable, no markdown fluff
 
 ---
 
+## 2026-06-20
+
+### WhatsApp Multi-Session & QR Scanner Dashboard
+- created `whatsapp_sessions` table in database to track session credentials, names, connection statuses, and active QR codes
+- migrated `customers` and `chat_histories` tables to use composite primary keys `(phone_number, session_id)` for chat data isolation
+- refactored `backend/src/services/whatsapp.js` to support connection pooling using `Map` of socket connections and isolated multi-file auth paths
+- added new Fastify endpoints: `GET /api/whatsapp/sessions` (list sessions), `POST /api/whatsapp/sessions` (create session), `DELETE /api/whatsapp/sessions/:id` (delete session), and `POST /api/whatsapp/sessions/:id/regenerate` (reset session credentials & get new QR)
+- updated CRM, stats, toggle-ai, and update-details endpoints to support the `session_id` query/body parameter
+- updated `agent.js` and `followup.js` to process and store chat records mapped to the correct `session_id`
+- created `WhatsappSessions.tsx` component in frontend to show a grid of WhatsApp agents, status badges (glowing/pulsing), and live scanning animation QR codes
+- integrated the "WA Sessions" tab in frontend `Sidebar.tsx` and `App.tsx`
+- added session selector dropdown at the top of `ChatInbox.tsx` customer list sidebar to filter leads and isolate active chat conversations
+
 ## 2026-06-19
 
 ### Latezza Agent branding, Warm UI theme, Light/Dark Mode & Mobile responsiveness
