@@ -347,6 +347,9 @@ threshold: `0.35` (minimum similarity to be considered a match, maximum top 5 re
 
 ## API ROUTES REFERENCE
 
+> [!NOTE]
+> Untuk detail lengkap setiap endpoint, parameter request, skema body, dan contoh respons JSON sukses/error, silakan merujuk ke berkas dokumentasi lengkap: [API.md](file:///C:/Users/Fardhan%20Rasya/.gemini/antigravity/worktrees/latezza-automation/generate-backend-api-docs/API.md).
+
 implemented in: `backend/src/routes.js`
 
 ### general

@@ -146,4 +146,6 @@ The **Settings** panel on the dashboard allows you to configure settings live wi
 ---
 
 ## 📚 Technical Docs
-For in-depth details regarding database schemas, API route references, prompt structures, and RAG vector search parameters, please refer to [DEVELOPER.md](file:///c:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/DEVELOPER.md).
+For in-depth details regarding database schemas, prompt structures, and RAG vector search parameters, please refer to [DEVELOPER.md](file:///C:/Users/Fardhan%20Rasya/.gemini/antigravity/worktrees/latezza-automation/generate-backend-api-docs/DEVELOPER.md).
+For a comprehensive guide on all available backend HTTP/REST endpoints, request bodies, and response formats, please refer to [API.md](file:///C:/Users/Fardhan%20Rasya/.gemini/antigravity/worktrees/latezza-automation/generate-backend-api-docs/API.md).
+
