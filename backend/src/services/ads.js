@@ -8,7 +8,14 @@ const scriptPath = path.join(__dirname, '../../ads-analysis/automation.js');
 /**
  * Run the ads analysis script and broadcast the report to WhatsApp group
  */
-async function runAnalysisAndSendReport(log = console) {
+async function runAnalysisAndSendReport(dateFrom = null, dateTo = null, log = console) {
+  // If the first argument is a logger object, swap it to log and set dates to null
+  if (dateFrom && typeof dateFrom === 'object' && typeof dateFrom.info === 'function') {
+    log = dateFrom;
+    dateFrom = null;
+    dateTo = null;
+  }
+
   return new Promise(async (resolve, reject) => {
     log.info(`Starting Meta Ads analysis background runner at ${scriptPath}...`);
     
@@ -16,12 +23,20 @@ async function runAnalysisAndSendReport(log = console) {
     const activeMetaAccessToken = await db.getSetting('meta_access_token') || process.env.META_ACCESS_TOKEN;
     const activeMetaAdAccountId = await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID;
 
+    const dataSource = await db.getSetting('ads_data_source') || 'api';
+    const csvPath = path.join(__dirname, '../../ads-analysis/uploaded-ads.csv');
+
     const envVars = {
       ...process.env,
       GEMINI_API_KEY: activeApiKey,
       META_ACCESS_TOKEN: activeMetaAccessToken,
-      META_AD_ACCOUNT_ID: activeMetaAdAccountId
+      META_AD_ACCOUNT_ID: activeMetaAdAccountId,
+      ADS_DATA_SOURCE: dataSource,
+      ADS_CSV_PATH: csvPath
     };
+
+    if (dateFrom) envVars.ADS_DATE_FROM = dateFrom;
+    if (dateTo) envVars.ADS_DATE_TO = dateTo;
 
     exec(`node "${scriptPath}"`, { env: envVars }, async (error, stdout, stderr) => {
       const targetJid = await db.getSetting('whatsapp_group_jid') || process.env.WHATSAPP_GROUP_JID || '120363427625298309@g.us';
@@ -50,8 +65,8 @@ async function runAnalysisAndSendReport(log = console) {
         const baseUrl = process.env.PUBLIC_REPORT_URL || 'https://localhost:3001';
         const reportUrl = `${baseUrl.replace(/\/$/, '')}/report-html`;
         
-        const text = `📊 *LAPORAN HARIAN*: ${data.daily.dateRange}\n\n` +
-          `${data.daily.summary}\n\n` +
+        const text = `📊 *LAPORAN IKLAN*: ${data.custom.dateRange}\n\n` +
+          `${data.custom.summary}\n\n` +
           `🔗 *Link Dashboard Report*:\n${reportUrl}`;
         
         if (whatsappService.isReady()) {
@@ -74,7 +89,14 @@ async function runAnalysisAndSendReport(log = console) {
 /**
  * Raw analysis execution wrapper returning execution logs
  */
-async function runAnalysisRaw(log = console) {
+async function runAnalysisRaw(dateFrom = null, dateTo = null, log = console) {
+  // If the first argument is a logger object, swap it to log and set dates to null
+  if (dateFrom && typeof dateFrom === 'object' && typeof dateFrom.info === 'function') {
+    log = dateFrom;
+    dateFrom = null;
+    dateTo = null;
+  }
+
   return new Promise(async (resolve, reject) => {
     log.info(`Running raw analysis script at ${scriptPath}...`);
     
@@ -82,12 +104,20 @@ async function runAnalysisRaw(log = console) {
     const activeMetaAccessToken = await db.getSetting('meta_access_token') || process.env.META_ACCESS_TOKEN;
     const activeMetaAdAccountId = await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID;
 
+    const dataSource = await db.getSetting('ads_data_source') || 'api';
+    const csvPath = path.join(__dirname, '../../ads-analysis/uploaded-ads.csv');
+
     const envVars = {
       ...process.env,
       GEMINI_API_KEY: activeApiKey,
       META_ACCESS_TOKEN: activeMetaAccessToken,
-      META_AD_ACCOUNT_ID: activeMetaAdAccountId
+      META_AD_ACCOUNT_ID: activeMetaAdAccountId,
+      ADS_DATA_SOURCE: dataSource,
+      ADS_CSV_PATH: csvPath
     };
+
+    if (dateFrom) envVars.ADS_DATE_FROM = dateFrom;
+    if (dateTo) envVars.ADS_DATE_TO = dateTo;
 
     exec(`node "${scriptPath}"`, { env: envVars }, (error, stdout, stderr) => {
       if (error) {

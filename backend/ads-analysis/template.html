@@ -145,9 +145,6 @@
     <div id="brandBadges" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
   </div>
 
-  <!-- Dynamic Timeframe Tabs -->
-  <div id="tabRow" class="tab-row"></div>
-
   <!-- Dynamic Dashboard Container -->
   <div id="dashboardContainer" class="dashboard-grid"></div>
 
@@ -156,7 +153,7 @@
   
   <script>
     // Global data injected by compilation engine
-    const aiData = {DAILY_WEEKLY_MONTHLY_DATA_PLACEHOLDER};
+    const aiData = {DASHBOARD_DATA_PLACEHOLDER};
 
     let chartInstances = [];
 
@@ -283,7 +280,6 @@
                 const cellStr = String(cell).trim();
                 if (/^[\d,.\-\s]+$/.test(cellStr) || cellStr.startsWith('Rp') || cellStr.endsWith('%') || cellStr.endsWith('×') || cellStr.endsWith('Jt') || cellStr.endsWith('K') || cellStr.endsWith('M')) {
                   td.style.textAlign = 'right';
-                  // Check if header exists and contains alignment keywords, or align right default
                 }
               }
               tr.appendChild(td);
@@ -409,7 +405,6 @@
         }
       };
       
-      // Deep merge option overlays
       const mergedOptions = JSON.parse(JSON.stringify(defaultOptions));
       if (widget.options) {
         Object.keys(widget.options).forEach(k => {
@@ -421,8 +416,6 @@
         });
       }
       
-      // Restore callback function definitions if they were simplified in JSON options
-      // (Like custom currency tick labels)
       if (mergedOptions.scales && mergedOptions.scales.x && mergedOptions.scales.x.ticks) {
         if (widget.options?.scales?.x?.ticks?.callbackType === 'currency') {
           mergedOptions.scales.x.ticks.callback = function(value) {
@@ -451,15 +444,16 @@
       chartInstances.push(chart);
     }
 
-    function switchTab(tabKey) {
+    function renderDashboard() {
       chartInstances.forEach(chart => chart.destroy());
       chartInstances = [];
       
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = document.getElementById(`tab-${tabKey}`);
-      if (activeBtn) activeBtn.classList.add('active');
+      const timeframe = aiData.timeframes.custom;
+      if (!timeframe) {
+        document.getElementById('reportSubtext').innerText = "Data tidak ditemukan.";
+        return;
+      }
       
-      const timeframe = aiData.timeframes[tabKey];
       document.getElementById('reportSubtext').innerText = timeframe.dateRange;
       
       // Update screen reader text
@@ -497,25 +491,8 @@
         });
       }
       
-      // 3. Render tabs
-      const tabRow = document.getElementById('tabRow');
-      tabRow.innerHTML = '';
-      const tabKeys = Object.keys(aiData.timeframes);
-      tabKeys.forEach((key, index) => {
-        const tf = aiData.timeframes[key];
-        const btn = document.createElement('button');
-        btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
-        btn.id = `tab-${key}`;
-        btn.innerText = tf.label;
-        btn.onclick = () => switchTab(key);
-        tabRow.appendChild(btn);
-      });
-      
-      // 4. Default to first tab or query parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const paramTab = urlParams.get('tab');
-      const initialTab = tabKeys.includes(paramTab) ? paramTab : tabKeys[0];
-      switchTab(initialTab);
+      // 3. Render dashboard
+      renderDashboard();
     });
   </script>
 </body>

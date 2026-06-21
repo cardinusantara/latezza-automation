@@ -29,6 +29,13 @@ fastify.register(require('@fastify/cors'), {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 });
 
+// Register multipart for file uploads
+fastify.register(require('@fastify/multipart'), {
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB max
+  }
+});
+
 // Ensure public/uploads directory exists
 const fs = require('fs');
 const uploadsDir = path.join(__dirname, 'public/uploads');

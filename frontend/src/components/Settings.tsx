@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { API_BASE_URL } from '@/config';
 
 interface SettingsState {
@@ -29,8 +30,10 @@ interface SettingsState {
   followup_instruction: string;
   meta_access_token: string;
   meta_ad_account_id: string;
+  ads_analysis_enabled: string;
   ads_analysis_frequency: string;
   ads_analysis_time: string;
+  creative_analysis_enabled: string;
   creative_analysis_frequency: string;
   creative_analysis_time: string;
 }
@@ -58,8 +61,10 @@ export default function Settings({ showToast }: SettingsProps) {
     followup_instruction: '',
     meta_access_token: '',
     meta_ad_account_id: '',
+    ads_analysis_enabled: 'true',
     ads_analysis_frequency: '1',
     ads_analysis_time: '09:00',
+    creative_analysis_enabled: 'true',
     creative_analysis_frequency: '7',
     creative_analysis_time: '09:00'
   });
@@ -433,7 +438,21 @@ export default function Settings({ showToast }: SettingsProps) {
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Ads Report Scheduling */}
           <div className="flex flex-col gap-3">
-            <label className="text-xs font-semibold text-foreground/80">Ads Analysis Schedule</label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-foreground/80">Ads Analysis Schedule</label>
+              <div className="flex items-center gap-2">
+                <label className="text-[10px] text-muted-foreground">
+                  {settings.ads_analysis_enabled === 'true' ? 'Aktif' : 'Nonaktif'}
+                </label>
+                <Switch
+                  checked={settings.ads_analysis_enabled === 'true'}
+                  onCheckedChange={(checked) => {
+                    setSettings(prev => ({ ...prev, ads_analysis_enabled: checked ? 'true' : 'false' }));
+                  }}
+                  size="sm"
+                />
+              </div>
+            </div>
             <div className="flex gap-3">
               <div className="flex flex-col gap-1 flex-grow">
                 <label className="text-[10px] text-muted-foreground">Frekuensi</label>
@@ -441,7 +460,8 @@ export default function Settings({ showToast }: SettingsProps) {
                   name="ads_analysis_frequency"
                   value={settings.ads_analysis_frequency}
                   onChange={handleChange}
-                  className="flex h-9 rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+                  disabled={settings.ads_analysis_enabled !== 'true'}
+                  className="flex h-9 rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground disabled:opacity-50"
                 >
                   <option value="1" className="bg-[#111827]">Setiap Hari</option>
                   <option value="2" className="bg-[#111827]">Setiap 2 Hari</option>
@@ -456,7 +476,8 @@ export default function Settings({ showToast }: SettingsProps) {
                   name="ads_analysis_time"
                   value={settings.ads_analysis_time}
                   onChange={handleChange}
-                  className="bg-card/30 border-border text-foreground h-9"
+                  disabled={settings.ads_analysis_enabled !== 'true'}
+                  className="bg-card/30 border-border text-foreground h-9 disabled:opacity-50"
                 />
               </div>
             </div>
@@ -467,7 +488,21 @@ export default function Settings({ showToast }: SettingsProps) {
 
           {/* Creative Ideas Scheduling */}
           <div className="flex flex-col gap-3">
-            <label className="text-xs font-semibold text-foreground/80">AI Creative Ideas Schedule</label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-foreground/80">AI Creative Ideas Schedule</label>
+              <div className="flex items-center gap-2">
+                <label className="text-[10px] text-muted-foreground">
+                  {settings.creative_analysis_enabled === 'true' ? 'Aktif' : 'Nonaktif'}
+                </label>
+                <Switch
+                  checked={settings.creative_analysis_enabled === 'true'}
+                  onCheckedChange={(checked) => {
+                    setSettings(prev => ({ ...prev, creative_analysis_enabled: checked ? 'true' : 'false' }));
+                  }}
+                  size="sm"
+                />
+              </div>
+            </div>
             <div className="flex gap-3">
               <div className="flex flex-col gap-1 flex-grow">
                 <label className="text-[10px] text-muted-foreground">Frekuensi</label>
@@ -475,7 +510,8 @@ export default function Settings({ showToast }: SettingsProps) {
                   name="creative_analysis_frequency"
                   value={settings.creative_analysis_frequency}
                   onChange={handleChange}
-                  className="flex h-9 rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+                  disabled={settings.creative_analysis_enabled !== 'true'}
+                  className="flex h-9 rounded-md border border-border bg-background px-3 py-1.5 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground disabled:opacity-50"
                 >
                   <option value="1" className="bg-[#111827]">Setiap Hari</option>
                   <option value="3" className="bg-[#111827]">Setiap 3 Hari</option>
@@ -490,7 +526,8 @@ export default function Settings({ showToast }: SettingsProps) {
                   name="creative_analysis_time"
                   value={settings.creative_analysis_time}
                   onChange={handleChange}
-                  className="bg-card/30 border-border text-foreground h-9"
+                  disabled={settings.creative_analysis_enabled !== 'true'}
+                  className="bg-card/30 border-border text-foreground h-9 disabled:opacity-50"
                 />
               </div>
             </div>

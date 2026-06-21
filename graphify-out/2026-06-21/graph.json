@@ -480,10 +480,20 @@
       "norm_label": "@fastify/static"
     },
     {
-      "label": "@google/generative-ai",
+      "label": "@ffmpeg-installer/ffmpeg",
       "file_type": "code",
       "source_file": "backend/package.json",
       "source_location": "L12",
+      "_origin": "ast",
+      "id": "backend_package_dependencies_ffmpeg_installer_ffmpeg",
+      "community": 12,
+      "norm_label": "@ffmpeg-installer/ffmpeg"
+    },
+    {
+      "label": "@google/generative-ai",
+      "file_type": "code",
+      "source_file": "backend/package.json",
+      "source_location": "L13",
       "_origin": "ast",
       "id": "backend_package_dependencies_google_generative_ai",
       "community": 12,
@@ -493,7 +503,7 @@
       "label": "@whiskeysockets/baileys",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "backend_package_dependencies_whiskeysockets_baileys",
       "community": 12,
@@ -503,7 +513,7 @@
       "label": "dotenv",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "backend_package_dependencies_dotenv",
       "community": 12,
@@ -513,7 +523,7 @@
       "label": "fastify",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "backend_package_dependencies_fastify",
       "community": 12,
@@ -523,7 +533,7 @@
       "label": "node-cron",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "backend_package_dependencies_node_cron",
       "community": 12,
@@ -533,7 +543,7 @@
       "label": "pg",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L17",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "backend_package_dependencies_pg",
       "community": 12,
@@ -543,7 +553,7 @@
       "label": "pino",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "backend_package_dependencies_pino",
       "community": 12,
@@ -553,7 +563,7 @@
       "label": "pino-pretty",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L19",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "backend_package_dependencies_pino_pretty",
       "community": 12,
@@ -563,11 +573,41 @@
       "label": "qrcode-terminal",
       "file_type": "code",
       "source_file": "backend/package.json",
-      "source_location": "L20",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "backend_package_dependencies_qrcode_terminal",
       "community": 12,
       "norm_label": "qrcode-terminal"
+    },
+    {
+      "label": "check_db.js",
+      "file_type": "code",
+      "source_file": "backend/scratch/check_db.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scratch_check_db",
+      "community": 57,
+      "norm_label": "check_db.js"
+    },
+    {
+      "label": "{ Client }",
+      "file_type": "code",
+      "source_file": "backend/scratch/check_db.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scratch_check_db_client",
+      "community": 57,
+      "norm_label": "{ client }"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "backend/scratch/check_db.js",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "scratch_check_db_main",
+      "community": 57,
+      "norm_label": "main()"
     },
     {
       "label": "list-models.js",
@@ -608,6 +648,26 @@
       "id": "scratch_list_models_listmodels",
       "community": 39,
       "norm_label": "listmodels()"
+    },
+    {
+      "label": "test_ffmpeg.js",
+      "file_type": "code",
+      "source_file": "backend/scratch/test_ffmpeg.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scratch_test_ffmpeg",
+      "community": 58,
+      "norm_label": "test_ffmpeg.js"
+    },
+    {
+      "label": "{ execFile }",
+      "file_type": "code",
+      "source_file": "backend/scratch/test_ffmpeg.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scratch_test_ffmpeg_execfile",
+      "community": 58,
+      "norm_label": "{ execfile }"
     },
     {
       "label": "check-history.js",
@@ -1290,10 +1350,20 @@
       "norm_label": "path"
     },
     {
-      "label": "db",
+      "label": "{ execFile }",
       "file_type": "code",
       "source_file": "backend/src/routes.js",
       "source_location": "L3",
+      "_origin": "ast",
+      "id": "src_routes_execfile",
+      "community": 28,
+      "norm_label": "{ execfile }"
+    },
+    {
+      "label": "db",
+      "file_type": "code",
+      "source_file": "backend/src/routes.js",
+      "source_location": "L5",
       "_origin": "ast",
       "id": "src_routes_db",
       "community": 28,
@@ -1303,7 +1373,7 @@
       "label": "agent",
       "file_type": "code",
       "source_file": "backend/src/routes.js",
-      "source_location": "L4",
+      "source_location": "L6",
       "_origin": "ast",
       "id": "src_routes_agent",
       "community": 28,
@@ -1313,7 +1383,7 @@
       "label": "whatsappService",
       "file_type": "code",
       "source_file": "backend/src/routes.js",
-      "source_location": "L5",
+      "source_location": "L7",
       "_origin": "ast",
       "id": "src_routes_whatsappservice",
       "community": 28,
@@ -1323,7 +1393,7 @@
       "label": "followupService",
       "file_type": "code",
       "source_file": "backend/src/routes.js",
-      "source_location": "L6",
+      "source_location": "L8",
       "_origin": "ast",
       "id": "src_routes_followupservice",
       "community": 28,
@@ -1333,17 +1403,27 @@
       "label": "adsService",
       "file_type": "code",
       "source_file": "backend/src/routes.js",
-      "source_location": "L7",
+      "source_location": "L9",
       "_origin": "ast",
       "id": "src_routes_adsservice",
       "community": 28,
       "norm_label": "adsservice"
     },
     {
+      "label": "convertWebmToOgg()",
+      "file_type": "code",
+      "source_file": "backend/src/routes.js",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_routes_convertwebmtoogg",
+      "community": 28,
+      "norm_label": "convertwebmtoogg()"
+    },
+    {
       "label": "registerRoutes()",
       "file_type": "code",
       "source_file": "backend/src/routes.js",
-      "source_location": "L9",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "src_routes_registerroutes",
       "community": 28,
@@ -2606,7 +2686,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_chatinbox",
-      "community": 9,
+      "community": 7,
       "norm_label": "chatinbox.tsx"
     },
     {
@@ -2616,7 +2696,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "components_chatinbox_customer",
-      "community": 9,
+      "community": 7,
       "norm_label": "customer"
     },
     {
@@ -2626,7 +2706,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "components_chatinbox_product",
-      "community": 9,
+      "community": 7,
       "norm_label": "product"
     },
     {
@@ -2636,7 +2716,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "components_chatinbox_chatmessage",
-      "community": 9,
+      "community": 7,
       "norm_label": "chatmessage"
     },
     {
@@ -2646,7 +2726,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "components_chatinbox_chatinboxprops",
-      "community": 9,
+      "community": 7,
       "norm_label": "chatinboxprops"
     },
     {
@@ -2656,7 +2736,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "components_chatinbox_chatinbox",
-      "community": 9,
+      "community": 7,
       "norm_label": "chatinbox()"
     },
     {
@@ -2836,7 +2916,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_sidebar",
-      "community": 7,
+      "community": 56,
       "norm_label": "sidebar.tsx"
     },
     {
@@ -2846,7 +2926,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "components_sidebar_sidebarprops",
-      "community": 7,
+      "community": 56,
       "norm_label": "sidebarprops"
     },
     {
@@ -2856,7 +2936,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "components_sidebar_sidebar",
-      "community": 7,
+      "community": 56,
       "norm_label": "sidebar()"
     },
     {
@@ -3026,7 +3106,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_badge",
-      "community": 9,
+      "community": 7,
       "norm_label": "badge.tsx"
     },
     {
@@ -3036,7 +3116,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "ui_badge_badgevariants",
-      "community": 9,
+      "community": 7,
       "norm_label": "badgevariants"
     },
     {
@@ -3046,7 +3126,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "ui_badge_badge",
-      "community": 9,
+      "community": 7,
       "norm_label": "badge()"
     },
     {
@@ -3136,7 +3216,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "ui_card_cardaction",
-      "community": 7,
+      "community": 9,
       "norm_label": "cardaction()"
     },
     {
@@ -3156,7 +3236,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "ui_card_cardfooter",
-      "community": 7,
+      "community": 9,
       "norm_label": "cardfooter()"
     },
     {
@@ -3216,7 +3296,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "ui_dialog_dialogoverlay",
-      "community": 7,
+      "community": 9,
       "norm_label": "dialogoverlay()"
     },
     {
@@ -3276,7 +3356,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_input",
-      "community": 9,
+      "community": 7,
       "norm_label": "input.tsx"
     },
     {
@@ -3286,7 +3366,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "ui_input_input",
-      "community": 9,
+      "community": 7,
       "norm_label": "input()"
     },
     {
@@ -3916,7 +3996,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_textarea",
-      "community": 9,
+      "community": 7,
       "norm_label": "textarea.tsx"
     },
     {
@@ -3926,7 +4006,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "ui_textarea_textarea",
-      "community": 9,
+      "community": 7,
       "norm_label": "textarea()"
     },
     {
@@ -4896,7 +4976,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "shadcn_cli",
-      "community": 6,
+      "community": 35,
       "norm_label": "cli.md"
     },
     {
@@ -5346,7 +5426,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "shadcn_registry",
-      "community": 6,
+      "community": 35,
       "norm_label": "registry.md"
     },
     {
@@ -5356,7 +5436,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "shadcn_registry_registry_authoring_and_addresses",
-      "community": 6,
+      "community": 55,
       "norm_label": "registry authoring and addresses"
     },
     {
@@ -5366,7 +5446,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "shadcn_registry_mental_model",
-      "community": 6,
+      "community": 55,
       "norm_label": "mental model"
     },
     {
@@ -5376,7 +5456,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "shadcn_registry_root_registry_json",
-      "community": 6,
+      "community": 55,
       "norm_label": "root `registry.json`"
     },
     {
@@ -5386,7 +5466,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "shadcn_registry_include",
-      "community": 6,
+      "community": 55,
       "norm_label": "include"
     },
     {
@@ -5396,7 +5476,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "shadcn_registry_item_definitions",
-      "community": 6,
+      "community": 55,
       "norm_label": "item definitions"
     },
     {
@@ -5406,7 +5486,7 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "shadcn_registry_registry_dependencies",
-      "community": 6,
+      "community": 55,
       "norm_label": "registry dependencies"
     },
     {
@@ -5416,7 +5496,7 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "shadcn_registry_address_schemes",
-      "community": 6,
+      "community": 55,
       "norm_label": "address schemes"
     },
     {
@@ -5426,7 +5506,7 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "shadcn_registry_github_registries",
-      "community": 6,
+      "community": 55,
       "norm_label": "github registries"
     },
     {
@@ -5436,7 +5516,7 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "shadcn_registry_build_and_verify",
-      "community": 6,
+      "community": 55,
       "norm_label": "build and verify"
     },
     {
@@ -6500,10 +6580,20 @@
       "norm_label": "2026-06-21"
     },
     {
-      "label": "Dashboard Outgoing Voice Message Recording & Transcribing",
+      "label": "Audio Playback, Transcoding, and Database Metadata Fixes",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
       "source_location": "L10",
+      "_origin": "ast",
+      "id": "changelog_audio_playback_transcoding_and_database_metadata_fixes",
+      "community": 5,
+      "norm_label": "audio playback, transcoding, and database metadata fixes"
+    },
+    {
+      "label": "Dashboard Outgoing Voice Message Recording & Transcribing",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "changelog_dashboard_outgoing_voice_message_recording_transcribing",
       "community": 5,
@@ -6513,7 +6603,7 @@
       "label": "2026-06-20",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L19",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "changelog_2026_06_20",
       "community": 5,
@@ -6523,7 +6613,7 @@
       "label": "Voice Message Comprehension & Audio Player",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L21",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "changelog_voice_message_comprehension_audio_player",
       "community": 5,
@@ -6533,7 +6623,7 @@
       "label": "WhatsApp Multi-Session & QR Scanner Dashboard",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L30",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "changelog_whatsapp_multi_session_qr_scanner_dashboard",
       "community": 5,
@@ -6543,7 +6633,7 @@
       "label": "2026-06-19",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L41",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "changelog_2026_06_19",
       "community": 5,
@@ -6553,7 +6643,7 @@
       "label": "Latezza Agent branding, Warm UI theme, Light/Dark Mode & Mobile responsiveness",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L43",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "changelog_latezza_agent_branding_warm_ui_theme_light_dark_mode_mobile_responsiveness",
       "community": 5,
@@ -6563,7 +6653,7 @@
       "label": "AI Creative Ad Ideas & Copywriting Audit",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L55",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "changelog_ai_creative_ad_ideas_copywriting_audit",
       "community": 5,
@@ -6573,7 +6663,7 @@
       "label": "Dynamic Background Scheduler & Reloading",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L62",
+      "source_location": "L68",
       "_origin": "ast",
       "id": "changelog_dynamic_background_scheduler_reloading",
       "community": 5,
@@ -6583,7 +6673,7 @@
       "label": "SSE Progress Streaming & Dashboard UI",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L67",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "changelog_sse_progress_streaming_dashboard_ui",
       "community": 5,
@@ -6593,7 +6683,7 @@
       "label": "Best-Practice Error Propagation",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L73",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "changelog_best_practice_error_propagation",
       "community": 5,
@@ -6603,7 +6693,7 @@
       "label": "2026-06-18",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L79",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "changelog_2026_06_18",
       "community": 5,
@@ -6613,7 +6703,7 @@
       "label": "RAG semantic product search \u2014 AI-powered catalog matching",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L81",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "changelog_rag_semantic_product_search_ai_powered_catalog_matching",
       "community": 5,
@@ -6623,7 +6713,7 @@
       "label": "backend layered refactoring \u2014 architecture overhaul",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L89",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "changelog_backend_layered_refactoring_architecture_overhaul",
       "community": 5,
@@ -6633,7 +6723,7 @@
       "label": "environment separation \u2014 independent backend & frontend",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L102",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "changelog_environment_separation_independent_backend_frontend",
       "community": 5,
@@ -6643,7 +6733,7 @@
       "label": "follow-up time safeguard \u2014 manual trigger bypass & hourly cron",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L108",
+      "source_location": "L114",
       "_origin": "ast",
       "id": "changelog_follow_up_time_safeguard_manual_trigger_bypass_hourly_cron",
       "community": 5,
@@ -6653,7 +6743,7 @@
       "label": "AI response formatting \u2014 natural plaintext guardrails",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L113",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "changelog_ai_response_formatting_natural_plaintext_guardrails",
       "community": 5,
@@ -6663,7 +6753,7 @@
       "label": "obsolete product sync \u2014 removal",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L118",
+      "source_location": "L124",
       "_origin": "ast",
       "id": "changelog_obsolete_product_sync_removal",
       "community": 5,
@@ -6673,7 +6763,7 @@
       "label": "follow-up system \u2014 prompt quality fix",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L122",
+      "source_location": "L128",
       "_origin": "ast",
       "id": "changelog_follow_up_system_prompt_quality_fix",
       "community": 5,
@@ -6683,7 +6773,7 @@
       "label": "follow-up instruction \u2014 smart prompt wrapping (3 modes)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L131",
+      "source_location": "L137",
       "_origin": "ast",
       "id": "changelog_follow_up_instruction_smart_prompt_wrapping_3_modes",
       "community": 5,
@@ -6693,7 +6783,7 @@
       "label": "Settings UI \u2014 follow-up section improvement",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L140",
+      "source_location": "L146",
       "_origin": "ast",
       "id": "changelog_settings_ui_follow_up_section_improvement",
       "community": 5,
@@ -6703,7 +6793,7 @@
       "label": "settings cache \u2014 clarification",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L148",
+      "source_location": "L154",
       "_origin": "ast",
       "id": "changelog_settings_cache_clarification",
       "community": 5,
@@ -6713,7 +6803,7 @@
       "label": "follow-up system \u2014 confirmed working end-to-end",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L154",
+      "source_location": "L160",
       "_origin": "ast",
       "id": "changelog_follow_up_system_confirmed_working_end_to_end",
       "community": 5,
@@ -6723,7 +6813,7 @@
       "label": "2026-06-17 (evening)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L161",
+      "source_location": "L167",
       "_origin": "ast",
       "id": "changelog_2026_06_17_evening",
       "community": 5,
@@ -6733,7 +6823,7 @@
       "label": "Ads Report \u2014 dashboard tab",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L163",
+      "source_location": "L169",
       "_origin": "ast",
       "id": "changelog_ads_report_dashboard_tab",
       "community": 5,
@@ -6743,7 +6833,7 @@
       "label": "Meta Ads config \u2014 dashboard settings",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L170",
+      "source_location": "L176",
       "_origin": "ast",
       "id": "changelog_meta_ads_config_dashboard_settings",
       "community": 5,
@@ -6753,7 +6843,7 @@
       "label": "WhatsApp groups \u2014 dynamic dropdown",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L175",
+      "source_location": "L181",
       "_origin": "ast",
       "id": "changelog_whatsapp_groups_dynamic_dropdown",
       "community": 5,
@@ -6763,7 +6853,7 @@
       "label": "DEVELOPER.md \u2014 initial version",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L181",
+      "source_location": "L187",
       "_origin": "ast",
       "id": "changelog_developer_md_initial_version",
       "community": 5,
@@ -6773,7 +6863,7 @@
       "label": "2026-06-17 (afternoon)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L186",
+      "source_location": "L192",
       "_origin": "ast",
       "id": "changelog_2026_06_17_afternoon",
       "community": 5,
@@ -6783,7 +6873,7 @@
       "label": "Products CRUD \u2014 full database-backed",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L188",
+      "source_location": "L194",
       "_origin": "ast",
       "id": "changelog_products_crud_full_database_backed",
       "community": 5,
@@ -6793,7 +6883,7 @@
       "label": "shadcn/ui migration",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L194",
+      "source_location": "L200",
       "_origin": "ast",
       "id": "changelog_shadcn_ui_migration",
       "community": 5,
@@ -6803,7 +6893,7 @@
       "label": "project restructure \u2014 monorepo split",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L200",
+      "source_location": "L206",
       "_origin": "ast",
       "id": "changelog_project_restructure_monorepo_split",
       "community": 5,
@@ -6813,7 +6903,7 @@
       "label": "2026-06-17 (morning \u2014 initial build)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L209",
+      "source_location": "L215",
       "_origin": "ast",
       "id": "changelog_2026_06_17_morning_initial_build",
       "community": 5,
@@ -6823,7 +6913,7 @@
       "label": "initial all-in-one dashboard",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L211",
+      "source_location": "L217",
       "_origin": "ast",
       "id": "changelog_initial_all_in_one_dashboard",
       "community": 5,
@@ -6833,7 +6923,7 @@
       "label": "React SPA migration",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L214",
+      "source_location": "L220",
       "_origin": "ast",
       "id": "changelog_react_spa_migration",
       "community": 5,
@@ -6843,7 +6933,7 @@
       "label": "Chat Inbox \u2014 WhatsApp-style UI",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L218",
+      "source_location": "L224",
       "_origin": "ast",
       "id": "changelog_chat_inbox_whatsapp_style_ui",
       "community": 5,
@@ -6853,7 +6943,7 @@
       "label": "AI handoff system",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L226",
+      "source_location": "L232",
       "_origin": "ast",
       "id": "changelog_ai_handoff_system",
       "community": 5,
@@ -6863,7 +6953,7 @@
       "label": "proactive follow-up \u2014 initial implementation",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L231",
+      "source_location": "L237",
       "_origin": "ast",
       "id": "changelog_proactive_follow_up_initial_implementation",
       "community": 5,
@@ -6873,7 +6963,7 @@
       "label": "Meta Ads daily report \u2014 initial implementation",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L237",
+      "source_location": "L243",
       "_origin": "ast",
       "id": "changelog_meta_ads_daily_report_initial_implementation",
       "community": 5,
@@ -6883,7 +6973,7 @@
       "label": "DATA NOTES",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L245",
+      "source_location": "L251",
       "_origin": "ast",
       "id": "changelog_data_notes",
       "community": 5,
@@ -7263,7 +7353,7 @@
       "label": "ADDING NEW FEATURES \u2014 PATTERNS TO FOLLOW",
       "file_type": "document",
       "source_file": "DEVELOPER.md",
-      "source_location": "L450",
+      "source_location": "L452",
       "_origin": "ast",
       "id": "developer_adding_new_features_patterns_to_follow",
       "community": 4,
@@ -7273,7 +7363,7 @@
       "label": "adding a new settings key",
       "file_type": "document",
       "source_file": "DEVELOPER.md",
-      "source_location": "L452",
+      "source_location": "L454",
       "_origin": "ast",
       "id": "developer_adding_a_new_settings_key",
       "community": 4,
@@ -7283,7 +7373,7 @@
       "label": "adding a new API route",
       "file_type": "document",
       "source_file": "DEVELOPER.md",
-      "source_location": "L458",
+      "source_location": "L460",
       "_origin": "ast",
       "id": "developer_adding_a_new_api_route",
       "community": 4,
@@ -7293,7 +7383,7 @@
       "label": "adding a new AI tool",
       "file_type": "document",
       "source_file": "DEVELOPER.md",
-      "source_location": "L463",
+      "source_location": "L465",
       "_origin": "ast",
       "id": "developer_adding_a_new_ai_tool",
       "community": 4,
@@ -7303,7 +7393,7 @@
       "label": "adding a new frontend tab/panel",
       "file_type": "document",
       "source_file": "DEVELOPER.md",
-      "source_location": "L469",
+      "source_location": "L471",
       "_origin": "ast",
       "id": "developer_adding_a_new_frontend_tab_panel",
       "community": 4,
@@ -8473,6 +8563,16 @@
       "source_file": "backend/package.json",
       "source_location": "L12",
       "weight": 1.0,
+      "source": "backend_package_dependencies",
+      "target": "backend_package_dependencies_ffmpeg_installer_ffmpeg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/package.json",
+      "source_location": "L12",
+      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "backend_package_dependencies",
       "target": "backend_package_dependencies_google_generative_ai"
@@ -8540,6 +8640,26 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "backend/scratch/check_db.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "scratch_check_db",
+      "target": "scratch_check_db_client",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/scratch/check_db.js",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "scratch_check_db",
+      "target": "scratch_check_db_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "backend/scratch/list-models.js",
       "source_location": "L3",
       "weight": 1.0,
@@ -8577,6 +8697,16 @@
       "confidence_score": 1.0,
       "source": "scratch_list_models",
       "target": "src_db"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/scratch/test_ffmpeg.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "scratch_test_ffmpeg",
+      "target": "scratch_test_ffmpeg_execfile",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -9472,11 +9602,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "backend/src/routes.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_routes",
+      "target": "src_routes_convertwebmtoogg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/src/routes.js",
       "source_location": "L3",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_routes",
       "target": "src_routes_db"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/src/routes.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_routes",
+      "target": "src_routes_execfile",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -17191,9 +17341,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_changelog_latezza_cake_whatsapp_ai_agent",
-      "target": "changelog_2026_06_21",
-      "confidence_score": 1.0
+      "target": "changelog_2026_06_21"
     },
     {
       "relation": "contains",
@@ -17212,8 +17362,18 @@
       "source_location": "L10",
       "weight": 1.0,
       "source": "changelog_2026_06_21",
-      "target": "changelog_dashboard_outgoing_voice_message_recording_transcribing",
+      "target": "changelog_audio_playback_transcoding_and_database_metadata_fixes",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "changelog_2026_06_21",
+      "target": "changelog_dashboard_outgoing_voice_message_recording_transcribing"
     },
     {
       "relation": "contains",
@@ -17861,9 +18021,9 @@
       "source_file": "DEVELOPER.md",
       "source_location": "L404",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "developer_api_routes_reference",
-      "target": "developer_products_404",
-      "confidence_score": 1.0
+      "target": "developer_products_404"
     },
     {
       "relation": "contains",

@@ -4,18 +4,19 @@ const path = require('path');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 /**
- * Fetch Meta Ads insights for a specific date preset
+ * Fetch Meta Ads insights for a specific date range (since/until)
  */
-async function fetchMetaInsights(accessToken, adAccountId, datePreset) {
+async function fetchMetaInsightsRange(accessToken, adAccountId, since, until) {
   const actId = adAccountId.startsWith('act_') ? adAccountId : `act_${adAccountId}`;
   const fields = 'ad_id,ad_name,spend,impressions,reach,actions,cost_per_action_type,adset_name,campaign_name,quality_ranking,engagement_rate_ranking';
-  const metaUrl = `https://graph.facebook.com/v19.0/${actId}/insights?level=ad&date_preset=${datePreset}&fields=${fields}&access_token=${accessToken}`;
+  const timeRange = JSON.stringify({ since, until });
+  const metaUrl = `https://graph.facebook.com/v19.0/${actId}/insights?level=ad&time_range=${encodeURIComponent(timeRange)}&fields=${fields}&access_token=${accessToken}`;
   
-  console.log(`Fetching Meta Ads data for preset [${datePreset}]...`);
+  console.log(`Fetching Meta Ads data for range [${since} → ${until}]...`);
   const res = await fetch(metaUrl);
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`Meta API error for ${datePreset} (${res.status}): ${errText}`);
+    throw new Error(`Meta API error for range ${since}–${until} (${res.status}): ${errText}`);
   }
   const json = await res.json();
   return json.data || [];
@@ -213,12 +214,11 @@ function groupBrands(ads) {
 }
 
 /**
- * Builds standard layouts programmatically
+ * Builds the dashboard layout for a single date range
  */
-function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
+function buildDashboardLayout(dateRange, ads, brandsMap) {
   const isConversions = ads.some(a => a.results > 0);
   const hasMultipleBrands = Object.keys(brandsMap).length > 1;
-  const isDark = true; // For default color templates
   
   // Calculate aggregate metrics
   const totalSpend = ads.reduce((sum, a) => sum + a.spend, 0);
@@ -295,7 +295,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
   widgets.push({
     type: "chart",
     gridSpan: 6,
-    chartId: `bubble-${timeframeKey}`,
+    chartId: `bubble-custom`,
     chartType: "bubble",
     title: isConversions ? "Pengeluaran vs Konversi per Iklan" : "Pengeluaran vs Jangkauan per Iklan",
     subtitle: isConversions ? "Ukuran bubble = volume konversi" : "Ukuran bubble = volume jangkauan",
@@ -314,7 +314,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
     widgets.push({
       type: "chart",
       gridSpan: 6,
-      chartId: `cpr-bar-${timeframeKey}`,
+      chartId: `cpr-bar-custom`,
       chartType: "bar",
       title: "Biaya per Konversi (CPR)",
       subtitle: "Semakin rendah nilai CPR, efisiensi semakin tinggi (IDR)",
@@ -342,7 +342,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
     widgets.push({
       type: "chart",
       gridSpan: 6,
-      chartId: `cpm-bar-${timeframeKey}`,
+      chartId: `cpm-bar-custom`,
       chartType: "bar",
       title: "Biaya per 1000 Impresi (CPM)",
       subtitle: "Biaya penayangan visual iklan (IDR)",
@@ -371,7 +371,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
   widgets.push({
     type: "chart",
     gridSpan: 12,
-    chartId: `imp-reach-${timeframeKey}`,
+    chartId: `imp-reach-custom`,
     chartType: "bar",
     title: "Impresi vs Jangkauan per Iklan",
     subtitle: "Menunjukkan visual exposure vs jumlah unik penonton",
@@ -403,7 +403,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
     widgets.push({
       type: "chart",
       gridSpan: 6,
-      chartId: `brand-pie-${timeframeKey}`,
+      chartId: `brand-pie-custom`,
       chartType: "doughnut",
       title: isConversions ? "Distribusi Konversi per Brand" : "Distribusi Impresi per Brand",
       subtitle: isConversions ? "Persentase kontribusi chat dimulai" : "Persentase paparan tayangan iklan",
@@ -430,7 +430,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
     widgets.push({
       type: "chart",
       gridSpan: 6,
-      chartId: `adset-pie-${timeframeKey}`,
+      chartId: `adset-pie-custom`,
       chartType: "doughnut",
       title: isConversions ? "Distribusi Konversi per Set Iklan" : "Distribusi Impresi per Set Iklan",
       data: {
@@ -450,7 +450,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
     widgets.push({
       type: "chart",
       gridSpan: 6,
-      chartId: `contact-split-${timeframeKey}`,
+      chartId: `contact-split-custom`,
       chartType: "bar",
       title: "Kontak Baru vs Returning per Iklan",
       subtitle: "Menilai efektivitas menjaring audiens baru",
@@ -472,7 +472,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
     widgets.push({
       type: "chart",
       gridSpan: 6,
-      chartId: `reach-ratio-${timeframeKey}`,
+      chartId: `reach-ratio-custom`,
       chartType: "bar",
       title: "Rasio Frekuensi: Jangkauan vs Impresi",
       subtitle: "Kekuatan penetrasi audiens",
@@ -570,7 +570,7 @@ function buildDashboardLayout(timeframeKey, label, dateRange, ads, brandsMap) {
   });
 
   return {
-    label: label,
+    label: `Periode: ${dateRange}`,
     dateRange: dateRange,
     widgets: widgets
   };
@@ -589,41 +589,35 @@ async function main() {
     process.exit(1);
   }
 
-  let dailyAds = [];
-  let weeklyAds = [];
-  let monthlyAds = [];
-  let dateRangeDaily = 'Hari Ini (Daily)';
-  let dateRangeWeekly = 'Minggu Ini (Weekly)';
-  let dateRangeMonthly = 'Bulan Ini (Monthly)';
+  // Determine date range from env or default to last 7 days
+  const today = new Date();
+  const defaultFrom = new Date(today);
+  defaultFrom.setDate(today.getDate() - 7);
+  
+  const dateFrom = process.env.ADS_DATE_FROM || defaultFrom.toISOString().split('T')[0];
+  const dateTo = process.env.ADS_DATE_TO || today.toISOString().split('T')[0];
+  
+  console.log(`Analysis date range: ${dateFrom} → ${dateTo}`);
+
+  // Format date range for display
+  const formatIndo = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  const displayDateRange = `${formatIndo(new Date(dateFrom))} – ${formatIndo(new Date(dateTo))}`;
+
+  let ads = [];
   let isApiFetchSuccess = false;
 
-  // 1. Try to fetch from Meta Ads API
-  if (accessToken && adAccountId) {
+  // Determine if we should use CSV instead of API
+  const dataSource = process.env.ADS_DATA_SOURCE || 'api';
+  const useCsvSource = dataSource === 'csv';
+
+  // 1. Try to fetch from Meta Ads API (skip if data source is set to csv)
+  if (!useCsvSource && accessToken && adAccountId) {
     try {
       console.log('Attempting to fetch real-time insights from Meta Ads API...');
-      const apiDaily = await fetchMetaInsights(accessToken, adAccountId, 'today');
-      const apiWeekly = await fetchMetaInsights(accessToken, adAccountId, 'last_7d');
-      const apiMonthly = await fetchMetaInsights(accessToken, adAccountId, 'last_30d');
+      const apiData = await fetchMetaInsightsRange(accessToken, adAccountId, dateFrom, dateTo);
       
       console.log('Successfully fetched real-time insights from Meta Ads API. Normalizing...');
-      dailyAds = normalizeMetaInsights(apiDaily);
-      weeklyAds = normalizeMetaInsights(apiWeekly);
-      monthlyAds = normalizeMetaInsights(apiMonthly);
-      
-      // Dynamic Date range based on current local date
-      const today = new Date();
-      const formatIndo = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-      const formatIndoNoYear = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' });
-      
-      const sevenDaysAgo = new Date(today);
-      sevenDaysAgo.setDate(today.getDate() - 7);
-      const thirtyDaysAgo = new Date(today);
-      thirtyDaysAgo.setDate(today.getDate() - 30);
-      
-      dateRangeDaily = formatIndo(today);
-      dateRangeWeekly = `${formatIndoNoYear(sevenDaysAgo)} – ${formatIndo(today)}`;
-      dateRangeMonthly = `${formatIndoNoYear(thirtyDaysAgo)} – ${formatIndo(today)}`;
-      
+      ads = normalizeMetaInsights(apiData);
       isApiFetchSuccess = true;
     } catch (err) {
       console.error(`Error: Meta Ads API fetch failed: ${err.message}`);
@@ -631,55 +625,31 @@ async function main() {
     }
   }
 
-  // 2. Fallback to Local CSV if API fetch was skipped or failed
+  // 2. Fallback to Local CSV if API fetch was skipped/failed, or data source is csv
   if (!isApiFetchSuccess) {
-    const csvFileName = 'Ru-y-Latezza-Iklan-14-Mei-2026-21-Mei-2026.csv';
-    const csvPath = path.join(__dirname, csvFileName);
+    const csvPath = process.env.ADS_CSV_PATH || path.join(__dirname, 'uploaded-ads.csv');
 
     if (!fs.existsSync(csvPath)) {
       console.error(`Error: Fallback CSV file not found at ${csvPath}`);
       process.exit(1);
     }
 
-    console.log(`Reading CSV file: ${csvFileName}...`);
+    console.log(`Reading CSV file: ${path.basename(csvPath)}...`);
     const csvText = fs.readFileSync(csvPath, 'utf8');
-    const rawAds = parseCSV(csvText);
-    console.log(`Parsed ${rawAds.length} ad rows from CSV.`);
-    
-    // Use raw ads as weekly, and project daily/monthly
-    weeklyAds = rawAds;
-    dailyAds = rawAds.map(a => ({
-      ...a,
-      spend: a.spend / 7,
-      impressions: Math.round(a.impressions / 7),
-      reach: Math.round(a.reach / 7),
-      results: Math.round(a.results / 7),
-      newContacts: Math.round(a.newContacts / 7)
-    }));
-    monthlyAds = rawAds.map(a => ({
-      ...a,
-      spend: a.spend * 4.3,
-      impressions: Math.round(a.impressions * 4.3),
-      reach: Math.round(a.reach * 4.3),
-      results: Math.round(a.results * 4.3),
-      newContacts: Math.round(a.newContacts * 4.3)
-    }));
-
-    dateRangeDaily = '21 Mei 2026';
-    dateRangeWeekly = '14 Mei – 21 Mei 2026';
-    dateRangeMonthly = '1 Mei – 30 Mei 2026 (Proyeksi)';
+    ads = parseCSV(csvText);
+    console.log(`Parsed ${ads.length} ad rows from CSV. Using data as-is (no projections).`);
   }
 
-  // 3. Zero-Data check across timeframes
-  if (dailyAds.length === 0 && weeklyAds.length === 0 && monthlyAds.length === 0) {
-    console.warn("WARNING: Empty datasets. Writing empty-state dashboard report...");
+  // 3. Zero-Data check
+  if (ads.length === 0) {
+    console.warn("WARNING: Empty dataset. Writing empty-state dashboard report...");
     const emptyStateJson = {
       title: "Laporan Performa Iklan Digital",
       subtitle: "Tidak Ada Data Ditemukan",
       timeframes: {
-        daily: {
+        custom: {
           label: "Dashboard",
-          dateRange: "N/A",
+          dateRange: displayDateRange,
           whatsAppSummary: "⚠️ *Pemberitahuan*: Tidak ditemukan data kampanye aktif.",
           widgets: [
             {
@@ -696,91 +666,69 @@ async function main() {
     const templatePath = path.join(__dirname, 'template.html');
     const outputPath = path.join(__dirname, 'report.html');
     let html = fs.readFileSync(templatePath, 'utf8');
-    html = html.replace('{DAILY_WEEKLY_MONTHLY_DATA_PLACEHOLDER}', JSON.stringify(emptyStateJson, null, 2));
+    html = html.replace('{DASHBOARD_DATA_PLACEHOLDER}', JSON.stringify(emptyStateJson, null, 2));
     fs.writeFileSync(outputPath, html, 'utf8');
     console.log(`Empty-state report.html created successfully.`);
     process.exit(0);
   }
 
-  // 4. Group Brands using merged list of all ads to ensure brand mapping consistency
-  const allAdsMerged = [...dailyAds, ...weeklyAds, ...monthlyAds];
-  const brandsMap = groupBrands(allAdsMerged);
+  // 4. Group Brands
+  const brandsMap = groupBrands(ads);
   console.log("Dynamically identified brands/categories:", Object.values(brandsMap).map(b => b.name).join(', '));
 
-  // Map brand details to each timeframe's ads
-  const mapAdBrands = (adsList) => {
-    adsList.forEach(ad => {
-      if (brandsMap[ad.adset]) {
-        ad.brandKey = brandsMap[ad.adset].id;
-        ad.brandName = brandsMap[ad.adset].name;
-        ad.brandColor = brandsMap[ad.adset].color;
+  // Map brand details to each ad
+  ads.forEach(ad => {
+    if (brandsMap[ad.adset]) {
+      ad.brandKey = brandsMap[ad.adset].id;
+      ad.brandName = brandsMap[ad.adset].name;
+      ad.brandColor = brandsMap[ad.adset].color;
+    } else {
+      const parts = ad.name.split(/[\s()_.-]+/);
+      const pref = parts[0] && parts[0].length > 2 ? parts[0] : 'General';
+      if (brandsMap[pref]) {
+        ad.brandKey = brandsMap[pref].id;
+        ad.brandName = brandsMap[pref].name;
+        ad.brandColor = brandsMap[pref].color;
       } else {
-        const parts = ad.name.split(/[\s()_.-]+/);
-        const pref = parts[0] && parts[0].length > 2 ? parts[0] : 'General';
-        if (brandsMap[pref]) {
-          ad.brandKey = brandsMap[pref].id;
-          ad.brandName = brandsMap[pref].name;
-          ad.brandColor = brandsMap[pref].color;
-        } else {
-          ad.brandKey = 'brand_general';
-          ad.brandName = 'General';
-          ad.brandColor = '#64748b';
-        }
+        ad.brandKey = 'brand_general';
+        ad.brandName = 'General';
+        ad.brandColor = '#64748b';
       }
-    });
-  };
+    }
+  });
 
-  mapAdBrands(dailyAds);
-  mapAdBrands(weeklyAds);
-  mapAdBrands(monthlyAds);
+  // 5. Construct layout programmatically (single custom date range)
+  const customLayout = buildDashboardLayout(displayDateRange, ads, brandsMap);
 
-  // 5. Construct layouts programmatically
-  const dailyLayout = buildDashboardLayout('daily', 'Hari Ini (Daily)', dateRangeDaily, dailyAds, brandsMap);
-  const weeklyLayout = buildDashboardLayout('weekly', 'Minggu Ini (Weekly)', dateRangeWeekly, weeklyAds, brandsMap);
-  const monthlyLayout = buildDashboardLayout('monthly', 'Bulan Ini (Monthly)', dateRangeMonthly, monthlyAds, brandsMap);
-
-  // 5. Build condensed statistical summaries for Gemini NLP analysis
-  const getSummaryPayload = (layout, adsList) => {
-    const isConversions = adsList.some(a => a.results > 0);
-    const sorted = [...adsList].sort((a,b) => b.spend - a.spend);
-    const topPerformers = sorted.slice(0, 3).map(a => ({ name: a.name, spend: Math.round(a.spend), conv: a.results, reach: a.reach, cpr: Math.round(a.cpr) }));
-    const underperforming = [...adsList].sort((a,b) => isConversions ? (b.cpr - a.cpr) : (b.spend / (b.impressions || 1) - a.spend / (a.impressions || 1))).slice(0, 2).map(a => ({ name: a.name, spend: Math.round(a.spend), conv: a.results, cpr: Math.round(a.cpr) }));
-    
-    // Find high spend with zero conversions anomalies
-    const anomalies = adsList.filter(a => a.spend > 20000 && a.results === 0).map(a => ({ name: a.name, spend: Math.round(a.spend) }));
-    
-    return {
-      timeframe: layout.label,
-      dateRange: layout.dateRange,
-      campaignType: isConversions ? "Direct Response / Conversions (Chat)" : "Brand Awareness / Traffic",
-      brands: Object.values(brandsMap).map(b => b.name),
-      summaryMetrics: {
-        totalSpend: Math.round(adsList.reduce((s, a) => s + a.spend, 0)),
-        totalImpressions: adsList.reduce((s, a) => s + a.impressions, 0),
-        totalConversions: adsList.reduce((s, a) => s + a.results, 0),
-        overallReach: adsList.reduce((s, a) => s + a.reach, 0)
-      },
-      topPerformers,
-      underperforming,
-      anomalies
-    };
-  };
-
+  // 6. Build condensed statistical summary for Gemini NLP analysis
+  const isConversions = ads.some(a => a.results > 0);
+  const sorted = [...ads].sort((a,b) => b.spend - a.spend);
+  const topPerformers = sorted.slice(0, 3).map(a => ({ name: a.name, spend: Math.round(a.spend), conv: a.results, reach: a.reach, cpr: Math.round(a.cpr) }));
+  const underperforming = [...ads].sort((a,b) => isConversions ? (b.cpr - a.cpr) : (b.spend / (b.impressions || 1) - a.spend / (a.impressions || 1))).slice(0, 2).map(a => ({ name: a.name, spend: Math.round(a.spend), conv: a.results, cpr: Math.round(a.cpr) }));
+  const anomalies = ads.filter(a => a.spend > 20000 && a.results === 0).map(a => ({ name: a.name, spend: Math.round(a.spend) }));
+  
   const geminiPayload = {
-    daily: getSummaryPayload(dailyLayout, dailyAds),
-    weekly: getSummaryPayload(weeklyLayout, weeklyAds),
-    monthly: getSummaryPayload(monthlyLayout, monthlyAds)
+    dateRange: displayDateRange,
+    campaignType: isConversions ? "Direct Response / Conversions (Chat)" : "Brand Awareness / Traffic",
+    brands: Object.values(brandsMap).map(b => b.name),
+    summaryMetrics: {
+      totalSpend: Math.round(ads.reduce((s, a) => s + a.spend, 0)),
+      totalImpressions: ads.reduce((s, a) => s + a.impressions, 0),
+      totalConversions: ads.reduce((s, a) => s + a.results, 0),
+      overallReach: ads.reduce((s, a) => s + a.reach, 0)
+    },
+    topPerformers,
+    underperforming,
+    anomalies
   };
 
-  // 6. Request copywriting and qualitative insights from Gemini
+  // 7. Request copywriting and qualitative insights from Gemini
   const prompt = `
-  You are an expert advertising data analyst and copywriter. Analyze this statistical summary of ad campaigns:
+  You are an expert advertising data analyst and copywriter. Analyze this statistical summary of ad campaigns for the period ${displayDateRange}:
   
-  Daily: ${JSON.stringify(geminiPayload.daily, null, 2)}
-  Weekly: ${JSON.stringify(geminiPayload.weekly, null, 2)}
-  Monthly: ${JSON.stringify(geminiPayload.monthly, null, 2)}
+  ${JSON.stringify(geminiPayload, null, 2)}
   
-  For each timeframe (daily, weekly, monthly), generate:
+  Generate:
   1. A professional Indonesian WhatsApp summary paragraph highlighting total spend, top brand category, key performance indicators, and concrete optimization advice.
   2. Exactly 6 qualitative insight cards. Each card must have:
      - "headline": Short punchy title (Indonesian)
@@ -790,20 +738,10 @@ async function main() {
      
   Output a single JSON object matching this structure:
   {
-    "daily": {
-      "whatsAppSummary": "Paragraph text...",
-      "insights": [
-        { "headline": "...", "body": "...", "icon": "...", "color": "#HEX" }
-      ]
-    },
-    "weekly": {
-      "whatsAppSummary": "Paragraph text...",
-      "insights": [ ... ]
-    },
-    "monthly": {
-      "whatsAppSummary": "Paragraph text...",
-      "insights": [ ... ]
-    }
+    "whatsAppSummary": "Paragraph text...",
+    "insights": [
+      { "headline": "...", "body": "...", "icon": "...", "color": "#HEX" }
+    ]
   }
   
   Make sure your analysis is highly factual, referencing the values in the summary. Avoid general placeholders. Return ONLY the JSON object. Do not wrap in markdown \`\`\`json block.
@@ -851,80 +789,55 @@ async function main() {
     process.exit(1);
   }
 
-  // 7. Merge NLP insights back into our programmatically built layouts
-  const mergeInsights = (layout, textData) => {
-    layout.whatsAppSummary = textData.whatsAppSummary;
-    
-    // Append the insights widget to the widgets list
-    layout.widgets.splice(5, 0, {
-      type: "insights",
-      gridSpan: 12,
-      title: "Insight Utama",
-      items: textData.insights
-    });
-  };
-
-  mergeInsights(dailyLayout, aiTextData.daily);
-  mergeInsights(weeklyLayout, aiTextData.weekly);
-  mergeInsights(monthlyLayout, aiTextData.monthly);
+  // 8. Merge NLP insights back into our layout
+  customLayout.whatsAppSummary = aiTextData.whatsAppSummary;
+  
+  // Append the insights widget to the widgets list
+  customLayout.widgets.splice(5, 0, {
+    type: "insights",
+    gridSpan: 12,
+    title: "Insight Utama",
+    items: aiTextData.insights
+  });
 
   // Compile final JSON structure for template.html
   const finalDashboardJson = {
-    title: weeklyAds.some(a => a.results > 0) ? "Laporan Performa Iklan Multi-Brand" : "Laporan Performa Kampanye Awareness",
-    subtitle: `Periode: ${weeklyLayout.dateRange}`,
+    title: ads.some(a => a.results > 0) ? "Laporan Performa Iklan Multi-Brand" : "Laporan Performa Kampanye Awareness",
+    subtitle: `Periode: ${displayDateRange}`,
     theme: {
       primary: Object.values(brandsMap)[0]?.color || "#3B82F6"
     },
     brands: brandsMap,
     timeframes: {
-      daily: dailyLayout,
-      weekly: weeklyLayout,
-      monthly: monthlyLayout
+      custom: customLayout
     }
   };
 
-  // 8. Compile report.html
+  // 9. Compile report.html
   console.log('Compiling final dashboard report...');
   const templatePath = path.join(__dirname, 'template.html');
   const outputPath = path.join(__dirname, 'report.html');
 
   let html = fs.readFileSync(templatePath, 'utf8');
-  html = html.replace('{DAILY_WEEKLY_MONTHLY_DATA_PLACEHOLDER}', JSON.stringify(finalDashboardJson, null, 2));
+  html = html.replace('{DASHBOARD_DATA_PLACEHOLDER}', JSON.stringify(finalDashboardJson, null, 2));
   fs.writeFileSync(outputPath, html, 'utf8');
   
   console.log(`report.html compiled successfully at: ${outputPath}`);
 
   console.log('\n==================================================================');
-  console.log('Gemini-Generated WhatsApp Broadcast Summaries (Preview)');
+  console.log('Gemini-Generated WhatsApp Broadcast Summary (Preview)');
   console.log('==================================================================');
   
-  console.log('\n[DAILY BROADCAST]');
-  console.log(`📊 *LAPORAN HARIAN*: ${finalDashboardJson.timeframes.daily.dateRange}`);
-  console.log(finalDashboardJson.timeframes.daily.whatsAppSummary);
-  
-  console.log('\n[WEEKLY BROADCAST]');
-  console.log(`📈 *LAPORAN MINGGUAN*: ${finalDashboardJson.timeframes.weekly.dateRange}`);
-  console.log(finalDashboardJson.timeframes.weekly.whatsAppSummary);
-  
-  console.log('\n[MONTHLY BROADCAST]');
-  console.log(`🏆 *LAPORAN BULANAN*: ${finalDashboardJson.timeframes.monthly.dateRange}`);
-  console.log(finalDashboardJson.timeframes.monthly.whatsAppSummary);
+  console.log(`\n📊 *LAPORAN PERFORMA IKLAN*: ${displayDateRange}`);
+  console.log(finalDashboardJson.timeframes.custom.whatsAppSummary);
   console.log('==================================================================\n');
 
   console.log('Automation execution completed successfully!');
 
   const jsonResult = {
-    daily: {
-      summary: finalDashboardJson.timeframes.daily.whatsAppSummary,
-      dateRange: finalDashboardJson.timeframes.daily.dateRange
-    },
-    weekly: {
-      summary: finalDashboardJson.timeframes.weekly.whatsAppSummary,
-      dateRange: finalDashboardJson.timeframes.weekly.dateRange
-    },
-    monthly: {
-      summary: finalDashboardJson.timeframes.monthly.whatsAppSummary,
-      dateRange: finalDashboardJson.timeframes.monthly.dateRange
+    custom: {
+      summary: finalDashboardJson.timeframes.custom.whatsAppSummary,
+      dateRange: displayDateRange
     }
   };
   console.log('::JSON_RESULT::' + JSON.stringify(jsonResult));

@@ -20,9 +20,9 @@
     "semantic_hash": "6875f68f5ba5d3da14d1796001564afc"
   },
   "backend/package.json": {
-    "mtime": 1781772645.6066334,
-    "ast_hash": "b6175e9650933ba7417057c6c52dbe9b",
-    "semantic_hash": "b6175e9650933ba7417057c6c52dbe9b"
+    "mtime": 1781975925.2052352,
+    "ast_hash": "ba2e111b0c8af510ec1cd9a0a8565b03",
+    "semantic_hash": ""
   },
   "backend/scratch/list-models.js": {
     "mtime": 1781777833.3949256,
@@ -75,9 +75,9 @@
     "semantic_hash": "13b94b3128eb04c356606c7c7db44907"
   },
   "backend/src/agent.js": {
-    "mtime": 1781971562.5747125,
-    "ast_hash": "8a7b752bb52188d249aca7bd1c7deb8c",
-    "semantic_hash": "8a7b752bb52188d249aca7bd1c7deb8c"
+    "mtime": 1781975979.7907212,
+    "ast_hash": "6985944a770dfed2d7bc9883b675db25",
+    "semantic_hash": ""
   },
   "backend/src/db.js": {
     "mtime": 1781971494.1014073,
@@ -85,8 +85,8 @@
     "semantic_hash": "dd456bf4c38bca2698a2e5c37c783aee"
   },
   "backend/src/routes.js": {
-    "mtime": 1781975306.7794876,
-    "ast_hash": "5833c130ac1486b75826d3ab5ed1096b",
+    "mtime": 1781976110.138152,
+    "ast_hash": "f2190a5caff5c2d327e6798f6c464afb",
     "semantic_hash": ""
   },
   "backend/src/services/ads.js": {
@@ -110,8 +110,8 @@
     "semantic_hash": "6f63b702bdd931c76f78db0442e92a41"
   },
   "backend/src/services/whatsapp.js": {
-    "mtime": 1781975299.8861852,
-    "ast_hash": "edc16346ee76398d83ab67540edf4c31",
+    "mtime": 1781975987.2686734,
+    "ast_hash": "ce30f48760dbc1e0914d2d820f70c0f0",
     "semantic_hash": ""
   },
   "business-profile.json": {
@@ -370,18 +370,18 @@
     "semantic_hash": "1873b34282624ef89b08d3d9263bf98d"
   },
   "API.md": {
-    "mtime": 1781975366.7027695,
-    "ast_hash": "48794b6be8e68297f884e215cee18927",
+    "mtime": 1781976168.216103,
+    "ast_hash": "bd46c1ad71eb9e4b01c44117a593cb15",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1781975348.7767594,
-    "ast_hash": "7da849fbbb1cf72559a5da2907951da7",
+    "mtime": 1781976151.4946232,
+    "ast_hash": "cfaeffac60ea4531ac95be54047d4b67",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
-    "mtime": 1781975359.927749,
-    "ast_hash": "1f20527404a91bd1e23445a0dd3521f9",
+    "mtime": 1781976164.5132277,
+    "ast_hash": "c130838ef08b7f95fcd52dcef4c65e93",
     "semantic_hash": ""
   },
   "ISSUES.md": {
@@ -6772,6 +6772,16 @@
   "backend/whatsapp-sessions/default/tctoken-__index.json": {
     "mtime": 1781974825.8354914,
     "ast_hash": "862212257a99050ab5ea0809d61827f6",
+    "semantic_hash": ""
+  },
+  "backend/scratch/check_db.js": {
+    "mtime": 1781976085.2927852,
+    "ast_hash": "63febee96b80a41a3b0f5ce4c5b6b8d6",
+    "semantic_hash": ""
+  },
+  "backend/scratch/test_ffmpeg.js": {
+    "mtime": 1781976102.9552674,
+    "ast_hash": "3adf7e7573a7c9c403a7ba0441cda0f3",
     "semantic_hash": ""
   }
 }

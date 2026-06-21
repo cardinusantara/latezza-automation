@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { execFile } = require('child_process');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const db = require('./db');
@@ -480,8 +481,10 @@ function registerRoutes(fastify) {
         followup_instruction: await db.getSetting('followup_instruction') || '',
         meta_access_token: maskedMetaToken,
         meta_ad_account_id: await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID || '',
+        ads_analysis_enabled: await db.getSetting('ads_analysis_enabled') || 'true',
         ads_analysis_frequency: await db.getSetting('ads_analysis_frequency') || '1',
         ads_analysis_time: await db.getSetting('ads_analysis_time') || '09:00',
+        creative_analysis_enabled: await db.getSetting('creative_analysis_enabled') || 'true',
         creative_analysis_frequency: await db.getSetting('creative_analysis_frequency') || '7',
         creative_analysis_time: await db.getSetting('creative_analysis_time') || '09:00'
       };
@@ -537,8 +540,10 @@ function registerRoutes(fastify) {
         if (settings.followup_hours !== undefined) await db.setSetting('followup_hours', settings.followup_hours);
         if (settings.system_instruction !== undefined) await db.setSetting('system_instruction', settings.system_instruction);
         if (settings.followup_instruction !== undefined) await db.setSetting('followup_instruction', settings.followup_instruction);
+        if (settings.ads_analysis_enabled !== undefined) await db.setSetting('ads_analysis_enabled', settings.ads_analysis_enabled);
         if (settings.ads_analysis_frequency !== undefined) await db.setSetting('ads_analysis_frequency', settings.ads_analysis_frequency);
         if (settings.ads_analysis_time !== undefined) await db.setSetting('ads_analysis_time', settings.ads_analysis_time);
+        if (settings.creative_analysis_enabled !== undefined) await db.setSetting('creative_analysis_enabled', settings.creative_analysis_enabled);
         if (settings.creative_analysis_frequency !== undefined) await db.setSetting('creative_analysis_frequency', settings.creative_analysis_frequency);
         if (settings.creative_analysis_time !== undefined) await db.setSetting('creative_analysis_time', settings.creative_analysis_time);
         
@@ -609,6 +614,141 @@ function registerRoutes(fastify) {
     }
   });
 
+  // API: Upload CSV for Ads Analysis
+  fastify.post('/api/upload-ads-csv', async (request, reply) => {
+    try {
+      const data = await request.file();
+      if (!data) {
+        reply.status(400);
+        return { status: 'error', message: 'Tidak ada file yang diupload.' };
+      }
+
+      const filename = data.filename;
+      if (!filename || (!filename.endsWith('.csv') && !filename.endsWith('.CSV'))) {
+        reply.status(400);
+        return { status: 'error', message: 'Hanya file CSV yang diperbolehkan.' };
+      }
+
+      // Read file buffer
+      const chunks = [];
+      for await (const chunk of data.file) {
+        chunks.push(chunk);
+      }
+      const buffer = Buffer.concat(chunks);
+
+      // Validate content is actually CSV-like
+      const content = buffer.toString('utf8');
+      const lines = content.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) {
+        reply.status(400);
+        return { status: 'error', message: 'File CSV harus memiliki header dan minimal 1 baris data.' };
+      }
+
+      // Save to uploaded-ads.csv
+      const adsDir = path.join(__dirname, '../ads-analysis');
+      if (!fs.existsSync(adsDir)) {
+        fs.mkdirSync(adsDir, { recursive: true });
+      }
+      const csvPath = path.join(adsDir, 'uploaded-ads.csv');
+      fs.writeFileSync(csvPath, buffer);
+
+      // Parse row count (skip header)
+      const dataLines = lines.slice(1).filter(l => l.trim());
+      const rowCount = dataLines.length;
+
+      // Save metadata
+      const metadata = JSON.stringify({
+        filename: filename,
+        rows: rowCount,
+        uploadedAt: new Date().toISOString(),
+        size: buffer.length
+      });
+      await db.setSetting('ads_csv_metadata', metadata);
+      await db.setSetting('ads_data_source', 'csv');
+
+      fastify.log.info(`CSV uploaded: ${filename} (${rowCount} rows, ${buffer.length} bytes)`);
+      return {
+        status: 'success',
+        message: `File "${filename}" berhasil diupload (${rowCount} baris data).`,
+        metadata: JSON.parse(metadata)
+      };
+    } catch (err) {
+      fastify.log.error(`CSV upload error: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // API: Check uploaded CSV status
+  fastify.get('/api/ads-csv-status', async (request, reply) => {
+    try {
+      const csvPath = path.join(__dirname, '../ads-analysis/uploaded-ads.csv');
+      const exists = fs.existsSync(csvPath);
+      
+      if (!exists) {
+        return {
+          status: 'success',
+          exists: false,
+          dataSource: await db.getSetting('ads_data_source') || 'api',
+          metadata: null
+        };
+      }
+
+      const stat = fs.statSync(csvPath);
+      const storedMetadata = await db.getSetting('ads_csv_metadata');
+      
+      return {
+        status: 'success',
+        exists: true,
+        dataSource: await db.getSetting('ads_data_source') || 'api',
+        metadata: storedMetadata ? JSON.parse(storedMetadata) : {
+          filename: 'uploaded-ads.csv',
+          rows: 0,
+          uploadedAt: stat.mtime.toISOString(),
+          size: stat.size
+        }
+      };
+    } catch (err) {
+      fastify.log.error(`CSV status check error: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // API: Toggle data source (api/csv)
+  fastify.post('/api/ads-data-source', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['source'],
+        properties: {
+          source: { type: 'string', enum: ['api', 'csv'] }
+        }
+      }
+    },
+    handler: async (request, reply) => {
+      try {
+        const { source } = request.body;
+        await db.setSetting('ads_data_source', source);
+        
+        // Verify CSV exists if switching to csv
+        if (source === 'csv') {
+          const csvPath = path.join(__dirname, '../ads-analysis/uploaded-ads.csv');
+          if (!fs.existsSync(csvPath)) {
+            reply.status(400);
+            return { status: 'error', message: 'Tidak ada file CSV terupload. Upload CSV terlebih dahulu.' };
+          }
+        }
+        
+        return { status: 'success', dataSource: source };
+      } catch (err) {
+        fastify.log.error(`Data source toggle error: ${err.message}`);
+        reply.status(500);
+        return { status: 'error', message: err.message };
+      }
+    }
+  });
+
   // API: Outgoing message directly
   fastify.post('/send-message', {
     schema: {
@@ -650,7 +790,8 @@ function registerRoutes(fastify) {
 
   fastify.post('/run-analysis', async (request, reply) => {
     try {
-      const result = await adsService.runAnalysisRaw(fastify.log);
+      const { date_from, date_to } = request.body || {};
+      const result = await adsService.runAnalysisRaw(date_from, date_to, fastify.log);
       return {
         status: 'success',
         stdout: result.stdout,
@@ -665,8 +806,9 @@ function registerRoutes(fastify) {
   });
 
   fastify.post('/trigger-analysis', async (request, reply) => {
-    fastify.log.info('Manual analysis trigger received via POST /trigger-analysis');
-    adsService.runAnalysisAndSendReport(fastify.log)
+    const { date_from, date_to } = request.body || {};
+    fastify.log.info(`Manual analysis trigger received via POST /trigger-analysis (range: ${date_from || 'default'} to ${date_to || 'default'})`);
+    adsService.runAnalysisAndSendReport(date_from, date_to, fastify.log)
       .then(result => {
         fastify.log.info(`Manual analysis trigger completed successfully: ${result.messageId}`);
       })

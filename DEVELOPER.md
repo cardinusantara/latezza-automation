@@ -326,17 +326,17 @@ Whenever settings are saved via `POST /api/settings`, `scheduler.reloadSchedules
 ## META ADS ANALYSIS (src/services/ads.js)
 
 cron: dynamic scheduler (default: every 1 day at 09:00 WIB)
-manual trigger: `POST /run-analysis` or `POST /trigger-analysis` (background execution)
+manual trigger: `POST /run-analysis` or `POST /trigger-analysis` (accepts optional `date_from` and `date_to` payload parameters)
 report viewer: `GET /report-html` (serves report.html), viewable in dashboard under Ads Report tab
 
 flow:
 1. read META_ACCESS_TOKEN and META_AD_ACCOUNT_ID from DB settings (fallback to process.env)
-2. inject as env vars into child process: `exec('node automation.js', { env: { ...process.env, META_ACCESS_TOKEN: x, ... } })`
-3. automation.js fetches data from Meta Graph API for today / last_7d / last_30d
-4. if API fails or creds missing → exit fast (process.exit(1)) and skip LLM
-5. Gemini generates Indonesian qualitative summary + optimization insights
-6. fills template.html tokens → writes report.html
-7. broadcasts formatted summary + report link to whatsapp_group_jid
+2. inject as env vars into child process: `exec('node automation.js', { env: { ...process.env, META_ACCESS_TOKEN: x, ADS_DATE_FROM: dateFrom, ADS_DATE_TO: dateTo, ... } })`
+3. automation.js fetches data from Meta Graph API for the custom time range (falls back to last 7 days if date boundaries are not provided)
+4. all projections/extrapolations are removed; data is parsed as-is (API time_range is query-filtered; CSV uses original row values without modification)
+5. Gemini generates Indonesian qualitative summary + optimization insights based on this single custom timeframe
+6. fills template.html tokens → writes report.html (which renders a unified single timeframe dashboard layout without tabs)
+7. broadcasts formatted custom range summary + report link to whatsapp_group_jid
 
 ---
 

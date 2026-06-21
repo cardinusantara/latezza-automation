@@ -639,6 +639,14 @@ Mengambil salinan teks instruksi prompt sistem bawaan (default system instructio
 ### POST `/run-analysis`
 Menjalankan skrip ekstraksi data Meta Ads API (`ads-analysis/automation.js`) secara sinkron sebagai sub-proses (`child_process.exec`). Endpoint ini akan memblokir dan mengembalikan output stdout/stderr proses setelah skrip selesai dieksekusi.
 
+- **Request Body (JSON)**:
+  - *Semua parameter bersifat opsional.*
+  ```json
+  {
+    "date_from": "2026-06-01",
+    "date_to": "2026-06-07"
+  }
+  ```
 - **Response (200 OK)**:
   ```json
   {
@@ -664,6 +672,14 @@ Menjalankan skrip ekstraksi data Meta Ads API (`ads-analysis/automation.js`) sec
 ### POST `/trigger-analysis`
 Memicu eksekusi analisis performa iklan Meta Ads di latar belakang secara asinkron. Iklan akan dianalisis, berkas `report.html` akan di-overwrite, dan laporan teks ringkasan akan diposting otomatis ke grup WhatsApp target.
 
+- **Request Body (JSON)**:
+  - *Semua parameter bersifat opsional.*
+  ```json
+  {
+    "date_from": "2026-06-01",
+    "date_to": "2026-06-07"
+  }
+  ```
 - **Response (200 OK)**:
   ```json
   {

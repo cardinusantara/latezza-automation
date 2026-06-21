@@ -7,6 +7,15 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-21
 
+### Meta Ads Analysis Refactor: Custom Date Range & Projection Removal
+- removed all daily/weekly/monthly projections and extrapolation calculations from `backend/ads-analysis/automation.js` to prevent misleading data reports
+- replaced the 3-timeframe fixed tabs (daily/weekly/monthly) with a single unified dashboard layout using custom date ranges
+- updated Meta Ads API mode to query insights using the `time_range` property dynamically based on user selection
+- refactored `backend/src/services/ads.js` functions `runAnalysisAndSendReport` and `runAnalysisRaw` to accept custom `dateFrom` and `dateTo` parameters (retaining backward-compatible logger object fallbacks)
+- updated Fastify routes in `backend/src/routes.js` (`POST /run-analysis` and `POST /trigger-analysis`) to retrieve and pass `date_from` and `date_to` parameters from the request payload
+- simplified the HTML reporting engine template `backend/ads-analysis/template.html` by removing the tab-switching UI and logic to support direct rendering of a single custom-range dashboard
+- enhanced the frontend `frontend/src/components/AdsReport.tsx` component to include a dual date-picker control bar ("Dari" and "Sampai") along with quick preset buttons ("7 Hari", "14 Hari", "30 Hari", "Bulan Ini")
+
 ### Audio Playback, Transcoding, and Database Metadata Fixes
 - corrected relative directory resolution paths in `routes.js` to ensure recorded voice messages are saved directly to `backend/public/uploads` (resolving 404 audio player loading issues in the dashboard)
 - integrated WebM-to-Ogg transcoding via FFmpeg in `routes.js` using the `convertWebmToOgg` utility helper
