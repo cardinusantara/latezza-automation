@@ -116,6 +116,7 @@ META_AD_ACCOUNT_ID=act_...      # fallback if not set in DB settings
 PUBLIC_REPORT_URL=https://yourdomain.com
 WHATSAPP_GROUP_JID=120363...@g.us
 PORT=3001
+DEBOUNCE_DELAY_MS=3000          # message buffering delay in ms (default 3000)
 ```
 
 #### Frontend Env (`frontend/.env`)

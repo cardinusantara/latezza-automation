@@ -18,6 +18,50 @@ const sessions = new Map();
 // In-Memory Rate Limiter Cache
 const rateLimitCache = new Map();
 
+// In-Memory Debounce Cache for incoming messages
+const debounceCache = new Map();
+const DEBOUNCE_DELAY_MS = parseInt(process.env.DEBOUNCE_DELAY_MS || '3000', 10);
+
+async function processDebouncedMessage(cacheKey, log = console) {
+  const data = debounceCache.get(cacheKey);
+  if (!data) return;
+
+  // Immediately remove from cache so any subsequent messages start a new debounce timer
+  debounceCache.delete(cacheKey);
+
+  const { jid, sessionId, senderName, sock, texts, imageParts, imageUrls, voiceUrls } = data;
+
+  try {
+    // Combine all texts. Filter out empty messages.
+    const combinedText = texts.map(t => t.trim()).filter(Boolean).join('\n');
+    
+    // Choose the latest media (if any)
+    const finalImagePart = imageParts.length > 0 ? imageParts[imageParts.length - 1] : null;
+    const finalImageUrl = imageUrls.length > 0 ? imageUrls[imageUrls.length - 1] : null;
+    const finalVoiceUrl = voiceUrls.length > 0 ? voiceUrls[voiceUrls.length - 1] : null;
+
+    log.info(`🤖 Processing debounced messages for ${senderName} (${jid}) on session ${sessionId}. Total messages: ${texts.length}. Combined Text: "${combinedText}"`);
+
+    // Dynamic typing status during actual Gemini processing
+    await sock.sendPresenceUpdate('composing', jid);
+
+    const replyText = await agent.handleIncomingMessage(
+      jid,
+      combinedText,
+      senderName,
+      finalImagePart,
+      finalImageUrl,
+      sessionId,
+      finalVoiceUrl
+    );
+
+    await sock.sendPresenceUpdate('paused', jid);
+    await sock.sendMessage(jid, { text: replyText });
+  } catch (err) {
+    log.error(`❌ Error in processDebouncedMessage for ${jid} on session ${sessionId}: ${err.message}`);
+  }
+}
+
 async function isRateLimited(jid, sessionId) {
   const cacheKey = `${sessionId}:${jid}`;
   const now = Date.now();
@@ -292,19 +336,34 @@ async function connectSession(sessionId, name, log = console) {
           continue;
         }
 
-        (async () => {
-          try {
-            await sock.sendPresenceUpdate('composing', jid);
-            await new Promise(resolve => setTimeout(resolve, 1500));
+        // Debounce / Buffer the incoming message
+        const cacheKey = `${sessionId}:${jid}`;
+        if (debounceCache.has(cacheKey)) {
+          const pending = debounceCache.get(cacheKey);
+          clearTimeout(pending.timer);
 
-            const replyText = await agent.handleIncomingMessage(jid, text, senderName, imagePart, imageUrl, sessionId, voiceUrl);
+          pending.texts.push(text);
+          if (imagePart) pending.imageParts.push(imagePart);
+          if (imageUrl) pending.imageUrls.push(imageUrl);
+          if (voiceUrl) pending.voiceUrls.push(voiceUrl);
 
-            await sock.sendPresenceUpdate('paused', jid);
-            await sock.sendMessage(jid, { text: replyText });
-          } catch (replyErr) {
-            log.error(`Error sending AI reply to ${jid} on session ${sessionId}: ${replyErr.message}`);
-          }
-        })();
+          pending.timer = setTimeout(() => processDebouncedMessage(cacheKey, log), DEBOUNCE_DELAY_MS);
+          log.info(`⏳ Added to existing debounce buffer for ${senderName} (${jid}). Message count: ${pending.texts.length}`);
+        } else {
+          const timer = setTimeout(() => processDebouncedMessage(cacheKey, log), DEBOUNCE_DELAY_MS);
+          debounceCache.set(cacheKey, {
+            timer,
+            jid,
+            sessionId,
+            senderName,
+            sock,
+            texts: [text],
+            imageParts: imagePart ? [imagePart] : [],
+            imageUrls: imageUrl ? [imageUrl] : [],
+            voiceUrls: voiceUrl ? [voiceUrl] : []
+          });
+          log.info(`⏳ Created new debounce buffer for ${senderName} (${jid}) with ${DEBOUNCE_DELAY_MS}ms window.`);
+        }
 
       } catch (err) {
         log.error(`Error in messages.upsert handler for session ${sessionId}: ${err.message}`);
@@ -420,5 +479,7 @@ module.exports = {
   sendMessage,
   getGroups,
   sessions,
-  transcribeAudio
+  transcribeAudio,
+  debounceCache,
+  processDebouncedMessage
 };

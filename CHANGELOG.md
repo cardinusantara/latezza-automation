@@ -5,6 +5,16 @@ entries: plain text, AI-readable, no markdown fluff
 
 ---
 
+## 2026-06-22
+
+### WhatsApp Message Debouncing & Abuse Prevention
+- implemented in-memory `debounceCache` and `processDebouncedMessage` inside `backend/src/services/whatsapp.js` to buffer rapid incoming messages from a customer within a 3-second window (`DEBOUNCE_DELAY_MS`)
+- combined multiple text messages into a single newline-separated prompt (`\n`) for the AI Agent, reducing Gemini API costs and preventing redundant AI responses
+- preserved media attachments (images, audio) across debounced messages by passing the latest non-null media files in the combined prompt
+- added environment variable `DEBOUNCE_DELAY_MS` to customize the debouncing buffer time
+- exported `debounceCache` and `processDebouncedMessage` from `whatsapp.js` to enable automated unit testing
+- wrote comprehensive unit tests in `backend/src/__tests__/whatsapp.test.js` to verify combining texts and preserving media attachments
+
 ## 2026-06-21
 
 ### Comprehensive Test Cases & Automated Testing Pipeline
