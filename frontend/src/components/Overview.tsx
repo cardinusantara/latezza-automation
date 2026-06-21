@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface Lead {
   phone_number: string;
+  session_id: string;
   name?: string;
   contact_phone?: string;
   status?: string;
@@ -29,10 +30,13 @@ interface Stats {
 
 interface OverviewProps {
   stats: Stats;
-  onSelectCustomer: (phone_number: string, name: string) => void;
+  sessions: { id: string; name: string; status: string }[];
+  overviewSessionId: string;
+  setOverviewSessionId: (id: string) => void;
+  onSelectCustomer: (phone_number: string, name: string, sessionId: string) => void;
 }
 
-export default function Overview({ stats, onSelectCustomer }: OverviewProps) {
+export default function Overview({ stats, sessions, overviewSessionId, setOverviewSessionId, onSelectCustomer }: OverviewProps) {
   const kpis = [
     {
       title: 'Total Leads',
@@ -62,6 +66,26 @@ export default function Overview({ stats, onSelectCustomer }: OverviewProps) {
 
   return (
     <div className="flex flex-col gap-8">
+      {/* Session Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-card border border-border p-4 rounded-xl shadow-sm">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">WhatsApp Agent Filter</span>
+          <span className="text-[11px] text-muted-foreground">Select a specific agent session to filter KPIs and activity log</span>
+        </div>
+        <select
+          value={overviewSessionId}
+          onChange={(e) => setOverviewSessionId(e.target.value)}
+          className="bg-background border border-border rounded-lg px-3 py-2 text-xs text-foreground font-medium outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors cursor-pointer w-full sm:w-[220px]"
+        >
+          <option value="all">All Agent Sessions</option>
+          {sessions.map(s => (
+            <option key={s.id} value={s.id}>
+              {s.name} ({s.status === 'connected' ? '🟢 Connected' : '🔴 Offline'})
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpis.map((kpi, idx) => (
@@ -88,7 +112,8 @@ export default function Overview({ stats, onSelectCustomer }: OverviewProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[250px]">Customer</TableHead>
+                <TableHead className="w-[220px]">Customer</TableHead>
+                <TableHead>WhatsApp Agent</TableHead>
                 <TableHead>Actual Contact</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Needs Follow-up</TableHead>
@@ -98,7 +123,7 @@ export default function Overview({ stats, onSelectCustomer }: OverviewProps) {
             <TableBody>
               {!stats.recentLeads || stats.recentLeads.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                     Belum ada aktivitas kustomer.
                   </TableCell>
                 </TableRow>
@@ -112,9 +137,9 @@ export default function Overview({ stats, onSelectCustomer }: OverviewProps) {
                   });
                   return (
                     <TableRow 
-                      key={lead.phone_number} 
+                      key={`${lead.phone_number}-${lead.session_id}`} 
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => onSelectCustomer(lead.phone_number, lead.name || 'Customer')}
+                      onClick={() => onSelectCustomer(lead.phone_number, lead.name || 'Customer', lead.session_id)}
                     >
                       <TableCell className="font-semibold text-foreground flex items-center gap-2">
                         {lead.name || 'Customer'}
@@ -123,6 +148,11 @@ export default function Overview({ stats, onSelectCustomer }: OverviewProps) {
                             <IconAlertCircle size={10} /> Butuh Admin
                           </Badge>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[11px] font-semibold">
+                          {sessions.find(s => s.id === lead.session_id)?.name || lead.session_id || 'Default'}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <code className="text-xs text-blue-400">

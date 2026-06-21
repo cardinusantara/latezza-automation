@@ -1,11 +1,11 @@
 # Graph Report - latezza-automation  (2026-06-21)
 
 ## Corpus Check
-- 90 files · ~60,992 words
+- 90 files · ~62,547 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 805 nodes · 1049 edges · 62 communities (47 shown, 15 thin omitted)
+- 808 nodes · 1052 edges · 62 communities (47 shown, 15 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
@@ -119,7 +119,7 @@ Nodes (44): dependencies, class-variance-authority, clsx, @fontsource-variable/f
 
 ### Community 3 - "Meta Ads Analysis"
 Cohesion: 0.05
-Nodes (42): 1. Kategori: Umum, 2. Kategori: Statistik Dashboard, 3. Kategori: CRM (Manajemen Pelanggan), 4. Kategori: Catalog (Manajemen Produk), 5. Kategori: Integrasi WhatsApp, 6. Kategori: Pengaturan & Prompt, 7. Kategori: Automasi Ads & Creative, 8. Kategori: Automasi Follow-Up (+34 more)
+Nodes (43): 1. Kategori: Umum, 2. Kategori: Statistik Dashboard, 3. Kategori: CRM (Manajemen Pelanggan), 4. Kategori: Catalog (Manajemen Produk), 5. Kategori: Integrasi WhatsApp, 6. Kategori: Pengaturan & Prompt, 7. Kategori: Automasi Ads & Creative, 8. Kategori: Automasi Follow-Up (+35 more)
 
 ### Community 4 - "Scheduler & Settings"
 Cohesion: 0.05
@@ -127,7 +127,7 @@ Nodes (41): adding a new AI tool, adding a new API route, adding a new frontend 
 
 ### Community 5 - "AI Agent Core"
 Cohesion: 0.04
-Nodes (44): 2026-06-17 (afternoon), 2026-06-17 (evening), 2026-06-17 (morning — initial build), 2026-06-18, 2026-06-19, 2026-06-20, 2026-06-21, Ads Report — dashboard tab (+36 more)
+Nodes (45): 2026-06-17 (afternoon), 2026-06-17 (evening), 2026-06-17 (morning — initial build), 2026-06-18, 2026-06-19, 2026-06-20, 2026-06-21, Ads Report — dashboard tab (+37 more)
 
 ### Community 6 - "SSE Streaming API"
 Cohesion: 0.12
@@ -231,7 +231,7 @@ Cohesion: 0.25
 Nodes (8): Buttons inside inputs use InputGroup + InputGroupAddon, Contents, Field validation and disabled states, FieldSet + FieldLegend for grouping related fields, Forms & Inputs, Forms use FieldGroup + Field, InputGroup requires InputGroupInput/InputGroupTextarea, Option sets (2–7 choices) use ToggleGroup
 
 ### Community 30 - "Community 30"
-Cohesion: 0.25
+Cohesion: 0.22
 Nodes (5): db, { exec }, path, scriptPath, whatsappService
 
 ### Community 31 - "Community 31"
@@ -271,7 +271,7 @@ Cohesion: 0.20
 Nodes (9): Agent habits — always do these, AGENTS.md — Latezza WhatsApp AI Agent, API overview, Backend (in `backend/`), Development commands, Frontend (in `frontend/`), graphify, Project structure (+1 more)
 
 ## Knowledge Gaps
-- **464 isolated node(s):** `fs`, `path`, `{ GoogleGenerativeAI }`, `name`, `version` (+459 more)
+- **466 isolated node(s):** `fs`, `path`, `{ GoogleGenerativeAI }`, `name`, `version` (+461 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -285,10 +285,10 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `shadcn CLI Reference` connect `SSE Streaming API` to `Community 35`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **What connects `fs`, `path`, `{ GoogleGenerativeAI }` to the rest of the system?**
-  _468 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _470 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Meta Ads Analysis` be split into smaller, more focused modules?**
-  _Cohesion score 0.046511627906976744 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._

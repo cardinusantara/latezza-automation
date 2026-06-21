@@ -102,6 +102,8 @@ Menyajikan berkas HTML statis laporan performa Meta Ads terbaru yang dihasilkan 
 ### GET `/api/stats`
 Mengambil metrik ringkasan untuk ditampilkan di halaman overview dashboard.
 
+- **Query Parameters**:
+  - `session_id` (string, opsional): ID sesi WhatsApp tertentu. Gunakan `'all'` untuk menampilkan statistik agregasi dari seluruh sesi WhatsApp yang terdaftar. Default: `'default'`.
 - **Response (200 OK)**:
   ```json
   {
@@ -113,6 +115,7 @@ Mengambil metrik ringkasan untuk ditampilkan di halaman overview dashboard.
     "recentLeads": [
       {
         "phone_number": "628123456789@s.whatsapp.net",
+        "session_id": "default",
         "name": "Fardhan Rasya",
         "status": "lead",
         "notes": "Tertarik custom cake cokelat",

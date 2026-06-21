@@ -7,6 +7,14 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-21
 
+### Overview Session Filter, Navigation, and Immediate WhatsApp AI Status Updates
+- implemented a session filter dropdown on the Overview Dashboard to let users filter KPIs and activity logs by specific agent sessions, defaulting to "All Agent Sessions" (aggregated view)
+- added a "WhatsApp Agent" badge to the Recent Customer Activity table showing which session handles each customer
+- updated customer row click behavior in Overview to set `selectedSessionId` and open the conversation directly inside the Inbox tab
+- added `selectedSessionId` to the dependency arrays of `useEffect` fetching and polling hooks in `ChatInbox.tsx` to handle cross-session customer navigation cleanly
+- optimized the message receiver socket listener in `backend/src/services/whatsapp.js` to retrieve the customer record early and check the AI status
+- implemented immediate composing status indicator (`composing`) and WhatsApp read receipts (`readMessages`) for incoming messages when processed by AI, running concurrently with audio download and Gemini transcription
+
 ### Meta Ads Analysis UI/UX & Real-time Progress Streaming
 - implemented Server-Sent Events (SSE) streaming for Meta Ads Analysis via a new GET endpoint `/api/run-analysis-stream` in `backend/src/routes.js`
 - updated `backend/src/services/ads.js` to expose `runAnalysisSpawn` which returns a spawned node process to stream stdout and stderr logs in real-time

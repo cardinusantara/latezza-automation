@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 
 interface Lead {
   phone_number: string;
+  session_id: string;
   name?: string;
   contact_phone?: string;
   status?: string;
@@ -117,6 +118,7 @@ export default function App() {
   }, [theme]);
 
   const [selectedSessionId, setSelectedSessionId] = useState('default');
+  const [overviewSessionId, setOverviewSessionId] = useState('all');
   const [sessions, setSessions] = useState<{ id: string; name: string; status: string }[]>([]);
 
   const [stats, setStats] = useState<Stats>({
@@ -150,7 +152,7 @@ export default function App() {
 
   const loadStats = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/stats?session_id=${selectedSessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/stats?session_id=${overviewSessionId}`);
       const data = await res.json();
       setStats(data);
     } catch (err) {
@@ -212,7 +214,10 @@ export default function App() {
     }
   };
 
-  const handleSelectCustomerFromOverview = (phone_number: string, name: string) => {
+  const handleSelectCustomerFromOverview = (phone_number: string, name: string, sessionId?: string) => {
+    if (sessionId) {
+      setSelectedSessionId(sessionId);
+    }
     setSelectedJid(phone_number);
     setSelectedCustName(name);
     setActiveTab('inbox');
@@ -224,9 +229,13 @@ export default function App() {
     loadProducts();
   }, []);
 
-  // Reload customers and stats when selected session changes
+  // Reload stats when overview session changes
   useEffect(() => {
     loadStats();
+  }, [overviewSessionId]);
+
+  // Reload customers when selected session changes
+  useEffect(() => {
     loadCustomers();
   }, [selectedSessionId]);
 
@@ -239,7 +248,7 @@ export default function App() {
     }, 8000);
 
     return () => clearInterval(interval);
-  }, [selectedSessionId]);
+  }, [selectedSessionId, overviewSessionId]);
 
   // Sync header metadata based on tab
   const getHeaderInfo = () => {
@@ -346,6 +355,9 @@ export default function App() {
             {activeTab === 'overview' && (
               <Overview 
                 stats={stats} 
+                sessions={sessions}
+                overviewSessionId={overviewSessionId}
+                setOverviewSessionId={setOverviewSessionId}
                 onSelectCustomer={handleSelectCustomerFromOverview} 
               />
             )}

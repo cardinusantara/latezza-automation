@@ -182,6 +182,20 @@ async function connectSession(sessionId, name, log = console) {
         }
 
         const senderName = msg.pushName || 'Customer';
+
+        let customer = await db.getCustomer(jid, sessionId);
+        if (!customer) {
+          customer = await db.createOrUpdateCustomer(jid, senderName, { status: 'lead' }, sessionId);
+        }
+
+        if (customer.ai_enabled !== false) {
+          try {
+            await sock.sendPresenceUpdate('composing', jid);
+            await sock.readMessages([msg.key]);
+          } catch (err) {
+            log.warn(`Failed initial presence/read update: ${err.message}`);
+          }
+        }
         
         // Handle image downloading and local storage
         let imagePart = null;
@@ -267,11 +281,6 @@ async function connectSession(sessionId, name, log = console) {
         }
 
         log.info(`📨 [Session: ${sessionId}] Received DM from ${senderName} (${jid}): "${text}" ${imageUrl ? '[Image Attached]' : ''} ${voiceUrl ? '[Voice Note Attached]' : ''}`);
-
-        let customer = await db.getCustomer(jid, sessionId);
-        if (!customer) {
-          customer = await db.createOrUpdateCustomer(jid, senderName, { status: 'lead' }, sessionId);
-        }
 
         const dbText = imageUrl 
           ? `[Foto: ${imageUrl}] ${text}`.trim() 

@@ -209,7 +209,7 @@ export default function ChatInbox({
       fetchChatHistory(selectedJid);
       setMobileView('chat');
     }
-  }, [selectedJid]);
+  }, [selectedJid, selectedSessionId]);
 
   // Scroll to bottom when history changes under correct UX conditions
   useEffect(() => {
@@ -245,7 +245,7 @@ export default function ChatInbox({
       fetchCustomerDetails(selectedJid);
     }, 4000);
     return () => clearInterval(interval);
-  }, [selectedJid]);
+  }, [selectedJid, selectedSessionId]);
 
   // Cleanup recording resources on unmount
   useEffect(() => {

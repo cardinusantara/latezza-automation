@@ -223,17 +223,17 @@ startup flow:
 message handling flow (`messages.upsert`):
 1. Skip: group messages, broadcast, status, self-sent, and messages that do not contain text, image, or audio
 2. Extract `jid` and `text`
-3. If audio/voice message (`audioMessage`):
+3. Rate limit check (in-memory Map, per JID)
+4. Fetch/create customer record early.
+5. If `customer.ai_enabled !== false`, immediately send typing status (`composing`) and mark message as read (`readMessages`) to return double blue ticks.
+6. If audio/voice message (`audioMessage`):
    - Download the audio media payload using Baileys `downloadMediaMessage`
    - Save the binary buffer to `public/uploads/` as `voice_{timestamp}_{random}.ogg`
    - Transcribe the audio using the `transcribeAudio` service helper, which uploads the audio to Gemini API using inlineData and prompts for a literal transcription in Indonesian (falling back to `gemini-3.5-flash` if the user-configured model fails)
    - Assign the returned transcription to `text`
-4. Rate limit check (in-memory Map, per JID)
-5. `createOrUpdateCustomer(jid, pushName)` — upsert customer record
-6. Check `customer.ai_enabled` → if false, skip AI response, but save message in history
-7. Check `customer.needs_admin` → if true, skip AI (requires manual response)
-8. Call `agent.js` → Gemini generates reply
-9. Send typing indicator (`composing`) → delay → send reply
+7. If `customer.ai_enabled === false` or `customer.needs_admin === true` -> skip AI response, but save message in history.
+8. Call `agent.js` → Gemini generates reply.
+9. Send typing status (`composing`) → delay → send reply.
 10. Save both user message and AI reply to `chat_histories` (user message is formatted as `[Voice Note: <url>] <transcription>` if it was a voice message)
 
 outgoing message handling flow (manual send from dashboard):

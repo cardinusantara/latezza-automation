@@ -5,8 +5,8 @@
     "semantic_hash": "39548690bb4e71065df0b7fa69903082"
   },
   "backend/ads-analysis/automation.js": {
-    "mtime": 1782048710.9604874,
-    "ast_hash": "b5e009058718395063bc50031ec25325",
+    "mtime": 1782049061.5408432,
+    "ast_hash": "7c1243bdf14152ce0aac373a5715753e",
     "semantic_hash": ""
   },
   "backend/ads-analysis/package.json": {
@@ -85,13 +85,13 @@
     "semantic_hash": "dd456bf4c38bca2698a2e5c37c783aee"
   },
   "backend/src/routes.js": {
-    "mtime": 1781987229.5637493,
-    "ast_hash": "cdcc63bf2488ef43400217911f59de32",
+    "mtime": 1782048896.2015903,
+    "ast_hash": "a899989d7d5272f066540b3724c95b30",
     "semantic_hash": ""
   },
   "backend/src/services/ads.js": {
-    "mtime": 1781987314.7111335,
-    "ast_hash": "155217055e9c3b14e9e6a2381319d6d7",
+    "mtime": 1782048888.3508396,
+    "ast_hash": "660f52b79b0a85f7fb057e411a8e2123",
     "semantic_hash": ""
   },
   "backend/src/services/creative.js": {
@@ -145,8 +145,8 @@
     "semantic_hash": "0abdc683d32edc409637760553d18ac6"
   },
   "frontend/src/components/AdsReport.tsx": {
-    "mtime": 1781987287.9070673,
-    "ast_hash": "ba760331fe62c511911db955fba79395",
+    "mtime": 1782048923.4938598,
+    "ast_hash": "a515feaf59e4af54173671cf3d19b15c",
     "semantic_hash": ""
   },
   "frontend/src/components/ChatInbox.tsx": {
@@ -370,18 +370,18 @@
     "semantic_hash": "1873b34282624ef89b08d3d9263bf98d"
   },
   "API.md": {
-    "mtime": 1782048777.9547899,
-    "ast_hash": "6e0c91971b1ee2fdfc10b687c467ccfa",
+    "mtime": 1782048959.711177,
+    "ast_hash": "a10a7cc937d6c110e62b65c6eecfc76c",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1782048774.4512753,
-    "ast_hash": "e99edcc520350a259dc0fe8284469ce8",
+    "mtime": 1782048941.1662817,
+    "ast_hash": "dc932755a0d55322c03f2fc515789d78",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
-    "mtime": 1782048776.046596,
-    "ast_hash": "403abf0814540309cdbc5002b011ed6c",
+    "mtime": 1782048947.404936,
+    "ast_hash": "87477451000e0265e67a4016f83ae406",
     "semantic_hash": ""
   },
   "ISSUES.md": {

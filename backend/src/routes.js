@@ -52,18 +52,33 @@ function registerRoutes(fastify) {
   fastify.get('/api/stats', async (request, reply) => {
     try {
       const { session_id } = request.query;
-      const targetSessionId = session_id || 'default';
+      
+      let leadsCountRes, followupsCountRes, messagesCountRes, recentLeadsRes;
+      let status = 'disconnected';
 
-      const leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE session_id = $1', [targetSessionId]);
-      const productsCountRes = await db.pool.query('SELECT COUNT(*) FROM products');
-      const followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE AND session_id = $1', [targetSessionId]);
-      const messagesCountRes = await db.pool.query('SELECT COUNT(*) FROM chat_histories WHERE session_id = $1', [targetSessionId]);
-      const recentLeadsRes = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC LIMIT 5', [targetSessionId]);
+      if (session_id === 'all') {
+        const sessions = await db.getSessions();
+        const anyReady = sessions.some(s => whatsappService.isReady(s.id));
+        status = anyReady ? 'connected' : 'disconnected';
+
+        leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers');
+        followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE');
+        messagesCountRes = await db.pool.query('SELECT COUNT(*) FROM chat_histories');
+        recentLeadsRes = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC LIMIT 5');
+      } else {
+        const targetSessionId = session_id || 'default';
+        status = whatsappService.isReady(targetSessionId) ? 'connected' : 'disconnected';
+
+        leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE session_id = $1', [targetSessionId]);
+        followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE AND session_id = $1', [targetSessionId]);
+        messagesCountRes = await db.pool.query('SELECT COUNT(*) FROM chat_histories WHERE session_id = $1', [targetSessionId]);
+        recentLeadsRes = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC LIMIT 5', [targetSessionId]);
+      }
       
       return {
-        status: whatsappService.isReady(targetSessionId) ? 'connected' : 'disconnected',
+        status,
         totalLeads: parseInt(leadsCountRes.rows[0].count, 10),
-        totalProducts: parseInt(productsCountRes.rows[0].count, 10),
+        totalProducts: parseInt((await db.pool.query('SELECT COUNT(*) FROM products')).rows[0].count, 10),
         pendingFollowUps: parseInt(followupsCountRes.rows[0].count, 10),
         totalMessages: parseInt(messagesCountRes.rows[0].count, 10),
         recentLeads: recentLeadsRes.rows

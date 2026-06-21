@@ -1913,7 +1913,7 @@
       "label": "disconnectSession()",
       "file_type": "code",
       "source_file": "backend/src/services/whatsapp.js",
-      "source_location": "L310",
+      "source_location": "L319",
       "_origin": "ast",
       "id": "services_whatsapp_disconnectsession",
       "community": 16,
@@ -1923,7 +1923,7 @@
       "label": "connectToWhatsApp()",
       "file_type": "code",
       "source_file": "backend/src/services/whatsapp.js",
-      "source_location": "L330",
+      "source_location": "L339",
       "_origin": "ast",
       "id": "services_whatsapp_connecttowhatsapp",
       "community": 16,
@@ -1933,7 +1933,7 @@
       "label": "isReady()",
       "file_type": "code",
       "source_file": "backend/src/services/whatsapp.js",
-      "source_location": "L349",
+      "source_location": "L358",
       "_origin": "ast",
       "id": "services_whatsapp_isready",
       "community": 16,
@@ -1943,7 +1943,7 @@
       "label": "sendMessage()",
       "file_type": "code",
       "source_file": "backend/src/services/whatsapp.js",
-      "source_location": "L360",
+      "source_location": "L369",
       "_origin": "ast",
       "id": "services_whatsapp_sendmessage",
       "community": 16,
@@ -1953,7 +1953,7 @@
       "label": "getGroups()",
       "file_type": "code",
       "source_file": "backend/src/services/whatsapp.js",
-      "source_location": "L381",
+      "source_location": "L390",
       "_origin": "ast",
       "id": "services_whatsapp_getgroups",
       "community": 16,
@@ -2663,7 +2663,7 @@
       "label": "Stats",
       "file_type": "code",
       "source_file": "frontend/src/App.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "src_app_stats",
       "community": 7,
@@ -2673,7 +2673,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "frontend/src/App.tsx",
-      "source_location": "L36",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "src_app_app",
       "community": 7,
@@ -2863,7 +2863,7 @@
       "label": "Stats",
       "file_type": "code",
       "source_file": "frontend/src/components/Overview.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "components_overview_stats",
       "community": 7,
@@ -2873,7 +2873,7 @@
       "label": "OverviewProps",
       "file_type": "code",
       "source_file": "frontend/src/components/Overview.tsx",
-      "source_location": "L30",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "components_overview_overviewprops",
       "community": 7,
@@ -2883,7 +2883,7 @@
       "label": "Overview()",
       "file_type": "code",
       "source_file": "frontend/src/components/Overview.tsx",
-      "source_location": "L35",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "components_overview_overview",
       "community": 7,
@@ -9974,9 +9974,9 @@
       "source_file": "backend/src/services/ads.js",
       "source_location": "L136",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_ads",
-      "target": "services_ads_runanalysisspawn",
-      "confidence_score": 1.0
+      "target": "services_ads_runanalysisspawn"
     },
     {
       "relation": "contains",
@@ -17583,9 +17583,9 @@
       "source_file": "API.md",
       "source_location": "L694",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "api_7_kategori_automasi_ads_creative",
-      "target": "api_get_api_run_analysis_stream",
-      "confidence_score": 1.0
+      "target": "api_get_api_run_analysis_stream"
     },
     {
       "relation": "contains",
@@ -17773,9 +17773,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_2026_06_21",
-      "target": "changelog_meta_ads_analysis_ui_ux_real_time_progress_streaming",
-      "confidence_score": 1.0
+      "target": "changelog_meta_ads_analysis_ui_ux_real_time_progress_streaming"
     },
     {
       "relation": "contains",
@@ -18433,9 +18433,9 @@
       "source_file": "DEVELOPER.md",
       "source_location": "L406",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "developer_api_routes_reference",
-      "target": "developer_products_406",
-      "confidence_score": 1.0
+      "target": "developer_products_406"
     },
     {
       "relation": "contains",
@@ -19113,5 +19113,5 @@
       "source_file": "DEVELOPER.md"
     }
   ],
-  "built_at_commit": "0f1799900b84b20ccecfe8717fb642a9aba8e656"
+  "built_at_commit": "4b4c1f3b9523a7f626b9a7d7ee19ce2d0a5f3928"
 }
