@@ -54,7 +54,7 @@ function extractCopywriting(creative) {
 /**
  * Main analysis runner
  */
-async function runCreativeAnalysis(log = console, onProgress = null) {
+async function runCreativeAnalysis(log = console, onProgress = null, userPrompt = null) {
   log.info('Starting AI Creative Analysis & Content Ideation automation...');
   if (onProgress) onProgress({ type: 'status', message: 'Menginisialisasi analisis kreatif...' });
   
@@ -202,6 +202,7 @@ async function runCreativeAnalysis(log = console, onProgress = null) {
     ]
   }
 
+  ${userPrompt ? `\n  INSTRUKSI TAMBAHAN DARI USER:\n  "${userPrompt}"\n  Pastikan ide konten yang kamu hasilkan sesuai dengan arahan di atas. Sesuaikan judul, angle, copywriting, dan visual guide agar relevan dengan instruksi user.\n` : ''}
   PENTING: Tulis respons hanya dalam format JSON yang valid. Jangan gunakan blok markdown \`\`\`json. Teks copywriting harus orisinal, menarik, dan menggunakan bahasa Indonesia yang persuasif, natural, dan asik untuk target audiens Latezza.
   `;
 

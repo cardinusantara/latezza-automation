@@ -1,16 +1,16 @@
 # Graph Report - latezza-automation  (2026-06-21)
 
 ## Corpus Check
-- 90 files · ~62,547 words
+- 91 files · ~66,766 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 808 nodes · 1052 edges · 62 communities (47 shown, 15 thin omitted)
-- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.84)
+- 821 nodes · 1072 edges · 61 communities (47 shown, 14 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0f179990`
+- Built from commit: `51cab598`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -66,7 +66,6 @@
 - [[_COMMUNITY_Community 49|Community 49]]
 - [[_COMMUNITY_Community 50|Community 50]]
 - [[_COMMUNITY_Community 55|Community 55]]
-- [[_COMMUNITY_Community 56|Community 56]]
 - [[_COMMUNITY_Community 57|Community 57]]
 - [[_COMMUNITY_Community 58|Community 58]]
 - [[_COMMUNITY_Community 59|Community 59]]
@@ -75,15 +74,17 @@
 1. `cn()` - 77 edges
 2. `compilerOptions` - 19 edges
 3. `compilerOptions` - 16 edges
-4. `DEVELOPER.md — Latezza Cake WhatsApp AI Agent` - 15 edges
-5. `Button()` - 14 edges
+4. `DEVELOPER.md — Latezza Cake WhatsApp AI Agent` - 16 edges
+5. `Button()` - 15 edges
 6. `Component Composition` - 13 edges
 7. `shadcn/ui` - 12 edges
 8. `Styling & Customization` - 12 edges
-9. `2026-06-18` - 12 edges
-10. `Dokumentasi API Backend` - 11 edges
+9. `Dokumentasi API Backend` - 12 edges
+10. `2026-06-18` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `Overview()` --calls--> `getDateRangeLabel()`  [INFERRED]
+  frontend/src/components/Overview.tsx → backend/src/services/summary.js
 - `Plaintext Output Guardrails` --rationale_for--> `Google Gemini AI Integration`  [EXTRACTED]
   CHANGELOG.md → README.md
 - `AI Creative Ad Content Ideas` --implements--> `Exponential Backoff Retry Logic`  [EXTRACTED]
@@ -92,8 +93,6 @@
   DEVELOPER.md → API.md
 - `AI Creative Ad Content Ideas` --implements--> `Winner/Loser Ad Classification`  [EXTRACTED]
   DEVELOPER.md → CHANGELOG.md
-- `Follow-Up Automation API` --references--> `Proactive Follow-up System`  [EXTRACTED]
-  API.md → DEVELOPER.md
 
 ## Import Cycles
 - None detected.
@@ -103,7 +102,7 @@
 - **Meta Ads Automation Pipeline** — latezza_automation_meta_ads_reporting, latezza_automation_creative_ad_analysis, latezza_automation_meta_graph_api, latezza_automation_dynamic_scheduler [EXTRACTED 0.95]
 - **RAG Product Search Pipeline** — latezza_automation_rag_semantic_search, latezza_automation_gemini_embedding_2, latezza_automation_cosine_similarity, latezza_automation_products_table [EXTRACTED 0.95]
 
-## Communities (62 total, 15 thin omitted)
+## Communities (61 total, 14 thin omitted)
 
 ### Community 0 - "WhatsApp CRM & Follow-up"
 Cohesion: 0.06
@@ -118,32 +117,32 @@ Cohesion: 0.04
 Nodes (44): dependencies, class-variance-authority, clsx, @fontsource-variable/figtree, @fontsource-variable/geist, @hugeicons/core-free-icons, @hugeicons/react, next-themes (+36 more)
 
 ### Community 3 - "Meta Ads Analysis"
-Cohesion: 0.05
-Nodes (43): 1. Kategori: Umum, 2. Kategori: Statistik Dashboard, 3. Kategori: CRM (Manajemen Pelanggan), 4. Kategori: Catalog (Manajemen Produk), 5. Kategori: Integrasi WhatsApp, 6. Kategori: Pengaturan & Prompt, 7. Kategori: Automasi Ads & Creative, 8. Kategori: Automasi Follow-Up (+35 more)
+Cohesion: 0.04
+Nodes (46): 1. Kategori: Umum, 2. Kategori: Statistik Dashboard, 3. Kategori: CRM (Manajemen Pelanggan), 4. Kategori: Catalog (Manajemen Produk), 5. Kategori: Integrasi WhatsApp, 6. Kategori: Pengaturan & Prompt, 7. Kategori: Automasi Ads & Creative, 8. Kategori: Automasi Follow-Up (+38 more)
 
 ### Community 4 - "Scheduler & Settings"
 Cohesion: 0.05
-Nodes (41): adding a new AI tool, adding a new API route, adding a new frontend tab/panel, adding a new settings key, ADDING NEW FEATURES — PATTERNS TO FOLLOW, ads & creative ideas, AI AGENT (src/agent.js), AI CREATIVE AD CONTENT IDEAS (src/services/creative.js) (+33 more)
+Nodes (42): adding a new AI tool, adding a new API route, adding a new frontend tab/panel, adding a new settings key, ADDING NEW FEATURES — PATTERNS TO FOLLOW, ads & creative ideas, AI AGENT (src/agent.js), AI CREATIVE AD CONTENT IDEAS (src/services/creative.js) (+34 more)
 
 ### Community 5 - "AI Agent Core"
 Cohesion: 0.04
-Nodes (45): 2026-06-17 (afternoon), 2026-06-17 (evening), 2026-06-17 (morning — initial build), 2026-06-18, 2026-06-19, 2026-06-20, 2026-06-21, Ads Report — dashboard tab (+37 more)
+Nodes (47): 2026-06-17 (afternoon), 2026-06-17 (evening), 2026-06-17 (morning — initial build), 2026-06-18, 2026-06-19, 2026-06-20, 2026-06-21, Ads Report — dashboard tab (+39 more)
 
 ### Community 6 - "SSE Streaming API"
-Cohesion: 0.12
-Nodes (17): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+9 more)
+Cohesion: 0.07
+Nodes (26): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+18 more)
 
 ### Community 7 - "UI Actions Component"
 Cohesion: 0.07
-Nodes (46): Actions(), ActionsProps, CsvMetadata, ChatInboxProps, ChatMessage, Customer, Product, CreativeIdea (+38 more)
+Nodes (44): Actions(), ActionsProps, CsvMetadata, ChatInboxProps, ChatMessage, Customer, Product, CreativeIdea (+36 more)
 
 ### Community 8 - "Theme Provider"
 Cohesion: 0.13
 Nodes (9): ResolvedTheme, Theme, THEME_VALUES, ThemeProvider(), ThemeProviderContext, ThemeProviderProps, ThemeProviderState, useTheme() (+1 more)
 
 ### Community 9 - "Mobile Hook"
-Cohesion: 0.07
-Nodes (49): useIsMobile(), cn(), CardAction(), CardFooter(), DialogOverlay(), Separator(), Sheet(), SheetContent() (+41 more)
+Cohesion: 0.06
+Nodes (53): useIsMobile(), cn(), CardAction(), CardFooter(), DialogOverlay(), Input(), Separator(), Sheet() (+45 more)
 
 ### Community 10 - "Utility Functions"
 Cohesion: 0.09
@@ -263,32 +262,32 @@ Cohesion: 0.50
 Nodes (3): Adding components, React + TypeScript + Vite + shadcn/ui, Using components
 
 ### Community 55 - "Community 55"
-Cohesion: 0.22
-Nodes (9): Address Schemes, Build and Verify, GitHub Registries, Include, Item Definitions, Mental Model, Registry Authoring and Addresses, Registry Dependencies (+1 more)
+Cohesion: 0.38
+Nodes (6): Overview(), db, generateMessageSummary(), generateStreamWithRetry(), getDateRangeLabel(), { GoogleGenerativeAI }
 
 ### Community 59 - "Community 59"
 Cohesion: 0.20
 Nodes (9): Agent habits — always do these, AGENTS.md — Latezza WhatsApp AI Agent, API overview, Backend (in `backend/`), Development commands, Frontend (in `frontend/`), graphify, Project structure (+1 more)
 
 ## Knowledge Gaps
-- **466 isolated node(s):** `fs`, `path`, `{ GoogleGenerativeAI }`, `name`, `version` (+461 more)
+- **474 isolated node(s):** `fs`, `path`, `{ GoogleGenerativeAI }`, `name`, `version` (+469 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
+- **Why does `Overview()` connect `Community 55` to `UI Actions Component`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Why does `cn()` connect `Mobile Hook` to `UI Actions Component`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `shadcn/ui` connect `Community 15` to `Community 35`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `shadcn CLI Reference` connect `SSE Streaming API` to `Community 35`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **What connects `fs`, `path`, `{ GoogleGenerativeAI }` to the rest of the system?**
-  _470 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _478 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Meta Ads Analysis` be split into smaller, more focused modules?**
-  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
+- **Should `Scheduler & Settings` be split into smaller, more focused modules?**
+  _Cohesion score 0.046511627906976744 - nodes in this community are weakly interconnected._

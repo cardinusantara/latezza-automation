@@ -40,6 +40,7 @@ export default function CreativeReport() {
   const [checking, setChecking] = useState(true);
   const [streamMessages, setStreamMessages] = useState<string[]>([]);
   const [streamChunks, setStreamChunks] = useState<string>('');
+  const [userPrompt, setUserPrompt] = useState('');
 
   // Auto scroll pre tag to bottom when new chunks arrive
   useEffect(() => {
@@ -76,9 +77,8 @@ export default function CreativeReport() {
     setLoading(true);
     setStreamMessages([]);
     setStreamChunks('');
-    toast.info('Menghubungkan ke AI Creative Engine...');
-
-    const eventSource = new EventSource(`${API_BASE_URL}/api/trigger-creative-analysis-stream`);
+    const promptParam = userPrompt.trim() ? `?prompt=${encodeURIComponent(userPrompt.trim())}` : '';
+    const eventSource = new EventSource(`${API_BASE_URL}/api/trigger-creative-analysis-stream${promptParam}`);
 
     eventSource.onmessage = (event) => {
       try {
@@ -190,32 +190,45 @@ export default function CreativeReport() {
     <div className="flex flex-col gap-8 pb-12">
       {/* Header Controls */}
       <Card className="bg-card/45 backdrop-blur-md border-border shadow-sm flex-shrink-0">
-        <CardHeader className="flex flex-row items-center justify-between pb-4 space-y-0 flex-wrap gap-4">
-          <div className="flex flex-col gap-1">
-            <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
-              <IconSparkles className="text-emerald-500 animate-pulse" size={20} />
-              <span>AI Creative Ad Content Ideas</span>
-            </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground">
-              Analisis kualitatif otomatis terhadap hook, sudut pandang, dan copywriting iklan Anda untuk merancang rekomendasi kreatif.
-            </CardDescription>
+        <CardHeader className="flex flex-col gap-4 pb-4">
+          <div className="flex flex-row items-center justify-between space-y-0 flex-wrap gap-4">
+            <div className="flex flex-col gap-1">
+              <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                <IconSparkles className="text-emerald-500 animate-pulse" size={20} />
+                <span>AI Creative Ad Content Ideas</span>
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">
+                Analisis kualitatif otomatis terhadap hook, sudut pandang, dan copywriting iklan Anda untuk merancang rekomendasi kreatif.
+              </CardDescription>
+            </div>
+            <div className="flex gap-2.5 items-center">
+              {data && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-accent/40 border border-border px-3.5 py-1.5 rounded-full mr-2">
+                  <IconClock size={13} className="text-emerald-400" />
+                  <span>Diperbarui: {new Date(data.generatedAt).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}</span>
+                </div>
+              )}
+              
+              <Button
+                onClick={handleRegenerate}
+                disabled={loading}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold gap-1.5 h-9 px-4 transition-all duration-200"
+              >
+                {loading ? <IconLoader size={16} className="animate-spin" /> : <IconRefresh size={16} />}
+                <span>{loading ? 'Menganalisis...' : 'Regenerate Ideas'}</span>
+              </Button>
+            </div>
           </div>
-          <div className="flex gap-2.5 items-center">
-            {data && (
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-accent/40 border border-border px-3.5 py-1.5 rounded-full mr-2">
-                <IconClock size={13} className="text-emerald-400" />
-                <span>Diperbarui: {new Date(data.generatedAt).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}</span>
-              </div>
-            )}
-            
-            <Button
-              onClick={handleRegenerate}
+
+          <div className="w-full mt-1">
+            <textarea
+              value={userPrompt}
+              onChange={(e) => setUserPrompt(e.target.value)}
+              placeholder="Contoh: Fokus ke konten Reels edukasi tentang cake custom, buat konten story testimoni pelanggan, ide konten TikTok trending..."
+              className="w-full bg-background border border-border rounded-xl px-4 py-3 text-xs text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none min-h-[70px] font-medium"
+              rows={2}
               disabled={loading}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold gap-1.5 h-9 px-4 transition-all duration-200"
-            >
-              {loading ? <IconLoader size={16} className="animate-spin" /> : <IconRefresh size={16} />}
-              <span>{loading ? 'Menganalisis...' : 'Regenerate Ideas'}</span>
-            </Button>
+            />
           </div>
         </CardHeader>
       </Card>

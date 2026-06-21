@@ -30,7 +30,8 @@ interface Stats {
   totalLeads: number;
   totalProducts: number;
   pendingFollowUps: number;
-  totalMessages: number;
+  incomingMessages: { last24h: number; last7d: number; last30d: number };
+  newLeads: { last24h: number; last7d: number; last30d: number };
   recentLeads: Lead[];
 }
 
@@ -126,7 +127,8 @@ export default function App() {
     totalLeads: 0,
     totalProducts: 0,
     pendingFollowUps: 0,
-    totalMessages: 0,
+    incomingMessages: { last24h: 0, last7d: 0, last30d: 0 },
+    newLeads: { last24h: 0, last7d: 0, last30d: 0 },
     recentLeads: []
   });
   const [customers, setCustomers] = useState<Lead[]>([]);

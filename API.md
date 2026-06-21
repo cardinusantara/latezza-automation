@@ -47,6 +47,8 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 30 | Ads & Creative | GET | `/api/trigger-creative-analysis-stream` | Memicu audit kreatif dan melakukan streaming progress (SSE). |
 | 31 | Follow-Up | POST | `/api/trigger-followups` | Memicu pengiriman pesan follow-up manual (sinkron). |
 | 32 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
+| 33 | AI Message Summary | GET | `/api/message-summary` | Mengambil laporan ringkasan pesan AI terbaru. |
+| 34 | AI Message Summary | GET | `/api/trigger-message-summary-stream` | Memicu pembuatan ringkasan pesan AI dan melakukan streaming progress (SSE). |
 
 ---
 
@@ -111,7 +113,16 @@ Mengambil metrik ringkasan untuk ditampilkan di halaman overview dashboard.
     "totalLeads": 42,
     "totalProducts": 15,
     "pendingFollowUps": 3,
-    "totalMessages": 520,
+    "incomingMessages": {
+      "last24h": 42,
+      "last7d": 280,
+      "last30d": 1100
+    },
+    "newLeads": {
+      "last24h": 5,
+      "last7d": 30,
+      "last30d": 95
+    },
     "recentLeads": [
       {
         "phone_number": "628123456789@s.whatsapp.net",
@@ -801,6 +812,8 @@ Mengambil laporan terstruktur berupa analisis ide kreatif konten ad terbaru yang
 ### POST `/api/trigger-creative-analysis`
 Memicu audit dan regenerasi analisis konten kreatif Meta Ads di latar belakang secara asinkron.
 
+- **Request Body (JSON, opsional)**:
+  - `prompt` (string, opsional): Instruksi tambahan dari pengguna untuk mengarahkan gaya, tipe, atau fokus konten (contoh: "Fokus ke konten Reels edukasi cake custom").
 - **Response (200 OK)**:
   ```json
   {
@@ -820,6 +833,8 @@ Memicu audit dan regenerasi analisis konten kreatif Meta Ads di latar belakang s
 ### GET `/api/trigger-creative-analysis-stream`
 Memicu eksekusi analisis kreatif iklan Meta Ads secara manual dan melakukan streaming kemajuan pengerjaan (progress logs) secara real-time langsung ke browser menggunakan protokol **Server-Sent Events (SSE)**.
 
+- **Query Parameters**:
+  - `prompt` (string, opsional): Instruksi tambahan dari pengguna untuk mengarahkan gaya, tipe, atau fokus konten (harus di-URL encode).
 - **Response Headers**:
   - `Content-Type`: `text/event-stream`
   - `Cache-Control`: `no-cache`
@@ -881,3 +896,91 @@ Memicu pemindaian follow-up manual yang sama dengan `/api/trigger-followups`, te
     "message": "Follow-up scan triggered in background. Check server logs."
   }
   ```
+
+---
+
+## 9. Kategori: AI Message Summary (Ringkasan Pesan)
+
+### GET `/api/message-summary`
+Mengambil laporan ringkasan analisis pesan pelanggan terakhir yang tersimpan di dalam pengaturan basis data.
+
+- **Response (200 OK)**:
+  ```json
+  {
+    "generatedAt": "2026-06-21T21:20:00.000Z",
+    "dateRange": "today",
+    "sessionId": "all",
+    "totalMessages": 120,
+    "totalCustomers": 18,
+    "summary": {
+      "totalCustomers": 18,
+      "topProducts": [
+        "Korean Cake 10cm",
+        "Cookies hampers"
+      ],
+      "commonQuestions": [
+        "Menanyakan harga custom cake ukuran 15cm",
+        "Menanyakan estimasi waktu pengiriman instan"
+      ],
+      "complaints": [
+        "Ada pelanggan mengeluhkan pengiriman marmer cake yang agak terlambat"
+      ],
+      "salesOpportunities": [
+        "Beberapa pelanggan ingin memesan dalam jumlah banyak (hampers korporat)"
+      ],
+      "insights": [
+        "Minat tertinggi hari ini terpusat pada kategori kue ulang tahun ukuran mini (Korean cake)"
+      ]
+    }
+  }
+  ```
+- **Response (404 Not Found)**:
+  ```json
+  {
+    "status": "not_found",
+    "message": "No summary report available."
+  }
+  ```
+
+---
+
+### GET `/api/trigger-message-summary-stream`
+Memicu eksekusi summarization pesan secara manual menggunakan Gemini AI dengan strategi hierarchical batching, dan melakukan streaming kemajuan pengerjaan (progress logs) secara real-time langsung menggunakan protokol **Server-Sent Events (SSE)**.
+
+- **Query Parameters**:
+  - `session_id` (string, opsional): ID sesi WhatsApp tertentu yang ingin dianalisis pesan masuknya. Gunakan `'all'` untuk menganalisis pesan dari semua agen. Default: `'all'`.
+  - `date_range` (string, opsional): Rentang waktu percakapan. Pilihan: `'today'`, `'3d'`, `'7d'`, `'30d'`. Default: `'today'`.
+- **Response Headers**:
+  - `Content-Type`: `text/event-stream`
+  - `Cache-Control`: `no-cache`
+  - `Connection`: `keep-alive`
+- **Response Stream Event Formats**:
+  Setiap baris data dikirim dalam format `data: <JSON_STRING>\n\n`.
+  - **Status Progress Event**:
+    ```json
+    {
+      "type": "status",
+      "message": "Mengambil riwayat percakapan dari database..."
+    }
+    ```
+  - **Selesai Event**:
+    ```json
+    {
+      "type": "done",
+      "data": {
+        "generatedAt": "2026-06-21T21:20:00.000Z",
+        "dateRange": "today",
+        "sessionId": "all",
+        "totalMessages": 120,
+        "totalCustomers": 18,
+        "summary": { ... }
+      }
+    }
+    ```
+  - **Error Event**:
+    ```json
+    {
+      "type": "error",
+      "message": "Missing active Gemini API key. Cannot run AI analysis."
+    }
+    ```

@@ -25,6 +25,7 @@ latezza-automation/
 │   │       ├── followup.js       # Proactive customer follow-up scanning and LLM logic
 │   │       ├── ads.js            # Meta Ads script execution, group broadcast, and spawning progress stream
 │   │       ├── creative.js       # AI creative ad content analysis (copywriting audit & ideation)
+│   │       ├── summary.js        # AI message summary service (hierarchical batching & synthesis)
 │   │       └── scheduler.js      # Dynamic background scheduler (node-cron wrapper with database-driven reload)
 │   ├── scripts/                  # Developer tools and test utilities (e.g., debug-followup.js, seed-test-followup.js)
 │   ├── ads-analysis/
@@ -345,7 +346,7 @@ flow (standard and SSE stream):
 ## AI CREATIVE AD CONTENT IDEAS (src/services/creative.js)
 
 cron: dynamic scheduler (default: every 7 days at 09:00 WIB)
-manual trigger: `POST /api/trigger-creative-analysis` (background execution) or `GET /api/trigger-creative-analysis-stream` (Server-Sent Events progress stream)
+manual trigger: `POST /api/trigger-creative-analysis` (background execution) or `GET /api/trigger-creative-analysis-stream` (Server-Sent Events progress stream; accepts optional `prompt` body/query parameter)
 report viewer: viewable in dashboard under Creative Ideas tab (calls `GET /api/creative-report`)
 
 flow:
@@ -353,9 +354,28 @@ flow:
 2. query Meta Graph API for active ads (`/ads` endpoint) to fetch copywriting caption (body), headline, and media
 3. query Meta Graph API for performance insights (`/insights`) to match conversions (messaging actions), spend, and CPR
 4. categorize ads into "Winners" (high conversions, low CPR) and "Losers" (high spend, low/zero conversions)
-5. invoke Gemini API (`gemini-2.5-flash` or similar fallback) using `generateContentStream` to perform a creative audit and generate 3-5 brand-new Indonesian ad copy concepts + visual briefs
+5. invoke Gemini API (`gemini-2.5-flash` or similar fallback) using `generateContentStream` to perform a creative audit and generate 3-5 brand-new Indonesian ad copy concepts + visual briefs (incorporating optional user custom prompt instructions if provided)
 6. save structured JSON report in settings cache/database table under `creative_analysis_report`
 7. broadcast report summary to `whatsapp_group_jid`
+
+---
+
+## AI MESSAGE SUMMARY (src/services/summary.js)
+
+manual trigger: `GET /api/trigger-message-summary-stream` (Server-Sent Events progress stream; accepts `session_id` and `date_range` query parameters)
+report viewer: viewable in dashboard under Overview tab (calls `GET /api/message-summary`)
+
+flow:
+1. read `gemini_api_key` and `gemini_model` from DB settings (fallback to process.env)
+2. query database for incoming messages (role = 'user') from `chat_histories` filtered by:
+   - `session_id` (specific or 'all' sessions)
+   - `date_range` ('today' (CURRENT_DATE), '3d', '7d', '30d')
+3. calculate total active customers (unique phone numbers) in this period
+4. use a Two-Pass Hierarchical Summarization strategy for efficiency and token limits:
+   - **Single-Pass (< 100 messages)**: Formats all messages chronologically and calls Gemini once with `responseMimeType: 'application/json'` to generate structured JSON report.
+   - **Two-Pass (>= 100 messages)**: Split messages into batches of 50. First pass summarizes each batch individually into bullet points (low token cost). Second pass synthesizes the batch summaries into the final structured JSON report.
+5. save structured JSON report in settings cache/database table under `message_summary_report`
+6. return structured JSON containing: Products, Questions, Complaints, Opportunities, and Insights
 
 ---
 

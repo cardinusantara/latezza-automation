@@ -53,7 +53,9 @@ function registerRoutes(fastify) {
     try {
       const { session_id } = request.query;
       
-      let leadsCountRes, followupsCountRes, messagesCountRes, recentLeadsRes;
+      let leadsCountRes, followupsCountRes, recentLeadsRes;
+      let incomingLast24h, incomingLast7d, incomingLast30d;
+      let newLeadsLast24h, newLeadsLast7d, newLeadsLast30d;
       let status = 'disconnected';
 
       if (session_id === 'all') {
@@ -63,16 +65,30 @@ function registerRoutes(fastify) {
 
         leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers');
         followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE');
-        messagesCountRes = await db.pool.query('SELECT COUNT(*) FROM chat_histories');
         recentLeadsRes = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC LIMIT 5');
+
+        incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '24 hours'");
+        incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '7 days'");
+        incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '30 days'");
+
+        newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '24 hours'");
+        newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '7 days'");
+        newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '30 days'");
       } else {
         const targetSessionId = session_id || 'default';
         status = whatsappService.isReady(targetSessionId) ? 'connected' : 'disconnected';
 
         leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE session_id = $1', [targetSessionId]);
         followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE AND session_id = $1', [targetSessionId]);
-        messagesCountRes = await db.pool.query('SELECT COUNT(*) FROM chat_histories WHERE session_id = $1', [targetSessionId]);
         recentLeadsRes = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC LIMIT 5', [targetSessionId]);
+
+        incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND session_id = $1 AND timestamp >= NOW() - INTERVAL '24 hours'", [targetSessionId]);
+        incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND session_id = $1 AND timestamp >= NOW() - INTERVAL '7 days'", [targetSessionId]);
+        incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND session_id = $1 AND timestamp >= NOW() - INTERVAL '30 days'", [targetSessionId]);
+
+        newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE session_id = $1 AND created_at >= NOW() - INTERVAL '24 hours'", [targetSessionId]);
+        newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE session_id = $1 AND created_at >= NOW() - INTERVAL '7 days'", [targetSessionId]);
+        newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE session_id = $1 AND created_at >= NOW() - INTERVAL '30 days'", [targetSessionId]);
       }
       
       return {
@@ -80,7 +96,16 @@ function registerRoutes(fastify) {
         totalLeads: parseInt(leadsCountRes.rows[0].count, 10),
         totalProducts: parseInt((await db.pool.query('SELECT COUNT(*) FROM products')).rows[0].count, 10),
         pendingFollowUps: parseInt(followupsCountRes.rows[0].count, 10),
-        totalMessages: parseInt(messagesCountRes.rows[0].count, 10),
+        incomingMessages: {
+          last24h: parseInt(incomingLast24h.rows[0].count, 10),
+          last7d: parseInt(incomingLast7d.rows[0].count, 10),
+          last30d: parseInt(incomingLast30d.rows[0].count, 10),
+        },
+        newLeads: {
+          last24h: parseInt(newLeadsLast24h.rows[0].count, 10),
+          last7d: parseInt(newLeadsLast7d.rows[0].count, 10),
+          last30d: parseInt(newLeadsLast30d.rows[0].count, 10),
+        },
         recentLeads: recentLeadsRes.rows
       };
     } catch (err) {
@@ -941,8 +966,9 @@ function registerRoutes(fastify) {
   // API: Run manual creative content analysis
   fastify.post('/api/trigger-creative-analysis', async (request, reply) => {
     try {
+      const { prompt } = request.body || {};
       const creativeService = require('./services/creative');
-      const report = await creativeService.runCreativeAnalysis(fastify.log);
+      const report = await creativeService.runCreativeAnalysis(fastify.log, null, prompt || null);
       return { status: 'success', data: report };
     } catch (err) {
       fastify.log.error(`Manual creative analysis trigger error: ${err.message}`);
@@ -966,14 +992,61 @@ function registerRoutes(fastify) {
     };
 
     try {
-      fastify.log.info('Starting SSE Stream for creative analysis manual trigger...');
+      const userPrompt = request.query.prompt || null;
+      fastify.log.info(`Starting SSE Stream for creative analysis manual trigger with prompt: ${userPrompt || 'none'}...`);
       const creativeService = require('./services/creative');
       const report = await creativeService.runCreativeAnalysis(fastify.log, (progress) => {
         sendEvent(progress);
-      });
+      }, userPrompt);
       sendEvent({ type: 'done', data: report });
     } catch (err) {
       fastify.log.error(`Creative analysis stream error: ${err.message}`);
+      sendEvent({ type: 'error', message: err.message });
+    } finally {
+      reply.raw.end();
+    }
+  });
+
+  // API: Get saved message summary
+  fastify.get('/api/message-summary', async (request, reply) => {
+    try {
+      const raw = await db.getSetting('message_summary_report');
+      if (!raw) {
+        reply.status(404);
+        return { status: 'not_found', message: 'No summary report available.' };
+      }
+      return JSON.parse(raw);
+    } catch (err) {
+      fastify.log.error(`Message summary fetch error: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // API: Trigger message summary via SSE stream
+  fastify.get('/api/trigger-message-summary-stream', async (request, reply) => {
+    reply.raw.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*'
+    });
+
+    const sendEvent = (eventObj) => {
+      reply.raw.write(`data: ${JSON.stringify(eventObj)}\n\n`);
+    };
+
+    try {
+      const sessionId = request.query.session_id || 'all';
+      const dateRange = request.query.date_range || 'today';
+      fastify.log.info(`Starting SSE Stream for message summary (session: ${sessionId}, range: ${dateRange})...`);
+      const summaryService = require('./services/summary');
+      const report = await summaryService.generateMessageSummary(fastify.log, (progress) => {
+        sendEvent(progress);
+      }, sessionId, dateRange);
+      sendEvent({ type: 'done', data: report });
+    } catch (err) {
+      fastify.log.error(`Message summary stream error: ${err.message}`);
       sendEvent({ type: 'error', message: err.message });
     } finally {
       reply.raw.end();

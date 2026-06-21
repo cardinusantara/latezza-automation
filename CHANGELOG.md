@@ -7,6 +7,14 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-21
 
+### AI Insights, Timeframe KPIs, and Custom Prompts for Creative Analysis
+- implemented a new daily AI Message Summary service (summary.js) utilizing a two-pass hierarchical batching strategy (pre-filtering user messages, chunking into batches of 50, and synthesizing summaries into structured JSON) to minimize token consumption and handle large message volumes reliably
+- added manual trigger endpoint `GET /api/trigger-message-summary-stream` using Server-Sent Events (SSE) to stream generation progress and output, and `GET /api/message-summary` to retrieve the latest cached report from the database settings table
+- replaced the "Logged Messages" KPI card on the Overview dashboard with "Incoming Messages" (user role only) and "New Leads" (customer created_at) broken down by timeframe (last 24 hours, last 7 days, and last 30 days)
+- updated the `Stats` interface across the frontend components (`App.tsx` and `Overview.tsx`) to support the new timeframe statistics
+- designed and implemented a premium, dark-themed "AI Customer Insights" card in `Overview.tsx` that supports a manual trigger button, date range selector (Hari Ini, 3 Hari, 7 Hari, 30 Hari), interactive SSE loading stream terminal, and dynamic display panels categorized by Products, Questions, Complaints, Opportunities, and Recommendations
+- added custom prompt capability to the Creative Ad Content Ideas generator, allowing users to direct content style (e.g. Reels, Story testimonials) via a new textarea in `CreativeReport.tsx` passed as a query parameter to `/api/trigger-creative-analysis-stream`
+
 ### Overview Session Filter, Navigation, and Immediate WhatsApp AI Status Updates
 - implemented a session filter dropdown on the Overview Dashboard to let users filter KPIs and activity logs by specific agent sessions, defaulting to "All Agent Sessions" (aggregated view)
 - added a "WhatsApp Agent" badge to the Recent Customer Activity table showing which session handles each customer
