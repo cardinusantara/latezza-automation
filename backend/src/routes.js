@@ -788,6 +788,83 @@ function registerRoutes(fastify) {
     }
   });
 
+  // API: Run manual ads analysis via Server-Sent Events (SSE) Stream
+  fastify.get('/api/run-analysis-stream', async (request, reply) => {
+    const { date_from, date_to } = request.query || {};
+    
+    // Set headers for Server-Sent Events (SSE)
+    reply.raw.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*'
+    });
+
+    const sendEvent = (eventObj) => {
+      reply.raw.write(`data: ${JSON.stringify(eventObj)}\n\n`);
+    };
+
+    let child;
+    try {
+      fastify.log.info(`Starting SSE Stream for ads analysis: range: ${date_from || 'default'} to ${date_to || 'default'}...`);
+      child = await adsService.runAnalysisSpawn(date_from, date_to, fastify.log);
+
+      let buffer = '';
+      
+      child.stdout.on('data', (data) => {
+        const chunk = data.toString();
+        // Send the raw logs chunk to be displayed in the terminal UI
+        sendEvent({ type: 'chunk', text: chunk });
+        
+        buffer += chunk;
+        const lines = buffer.split('\n');
+        // Keep the last partial line in the buffer
+        buffer = lines.pop() || '';
+        
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('::STATUS::')) {
+            const message = trimmed.replace('::STATUS::', '');
+            sendEvent({ type: 'status', message });
+          } else if (trimmed.startsWith('::JSON_RESULT::')) {
+            try {
+              const resultPayload = JSON.parse(trimmed.replace('::JSON_RESULT::', ''));
+              sendEvent({ type: 'done', data: resultPayload });
+            } catch (err) {
+              fastify.log.error(`Failed to parse final JSON result from stdout: ${err.message}`);
+            }
+          }
+        }
+      });
+
+      child.stderr.on('data', (data) => {
+        const chunk = data.toString();
+        // Stream raw stderr logs as error logs in terminal
+        sendEvent({ type: 'chunk', text: chunk });
+        fastify.log.warn(`Ads analysis script stderr: ${chunk.trim()}`);
+      });
+
+      child.on('close', (code) => {
+        fastify.log.info(`Ads analysis process closed with code ${code}`);
+        if (code !== 0) {
+          sendEvent({ type: 'error', message: `Proses analisis keluar dengan kode error ${code}` });
+        }
+        reply.raw.end();
+      });
+
+      child.on('error', (err) => {
+        fastify.log.error(`Failed to start child process for ads analysis: ${err.message}`);
+        sendEvent({ type: 'error', message: `Gagal menjalankan proses analisis: ${err.message}` });
+        reply.raw.end();
+      });
+      
+    } catch (err) {
+      fastify.log.error(`Ads analysis stream error: ${err.message}`);
+      sendEvent({ type: 'error', message: err.message });
+      reply.raw.end();
+    }
+  });
+
   fastify.post('/run-analysis', async (request, reply) => {
     try {
       const { date_from, date_to } = request.body || {};

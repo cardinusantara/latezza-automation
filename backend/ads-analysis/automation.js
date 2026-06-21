@@ -113,7 +113,7 @@ function splitCSVLine(line) {
 /**
  * Flexible CSV Parser
  */
-function parseCSV(csvText) {
+function parseCSV(csvText, dateFromStr = null, dateToStr = null) {
   const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
   if (lines.length === 0) return [];
   
@@ -121,6 +121,8 @@ function parseCSV(csvText) {
   
   // Dynamic column mapping based on keywords
   const indexMap = {
+    startDate: headers.findIndex(h => h.includes('awal') || h.includes('start') || h.includes('mulai')),
+    endDate: headers.findIndex(h => h.includes('akhir') || h.includes('end') || h.includes('selesai')),
     adName: headers.findIndex(h => h.includes('nama iklan') || h.includes('ad name') || h.includes('iklan')),
     status: headers.findIndex(h => h.includes('penayangan') || h.includes('status') || h.includes('delivery')),
     results: headers.findIndex(h => h.includes('hasil') || h.includes('result') || h.includes('conversions') || h.includes('conversion')),
@@ -135,6 +137,9 @@ function parseCSV(csvText) {
   };
 
   const ads = [];
+  const targetFrom = dateFromStr ? new Date(dateFromStr) : null;
+  const targetTo = dateToStr ? new Date(dateToStr) : null;
+
   for (let i = 1; i < lines.length; i++) {
     const cells = splitCSVLine(lines[i]).map(c => c.replace(/^"|"$/g, '').trim());
     if (cells.length < headers.length || !cells[0]) continue;
@@ -151,15 +156,50 @@ function parseCSV(csvText) {
       return isNaN(cleanNum) ? defaultVal : cleanNum;
     };
     
+    let spend = getNumValue('spend', 0);
+    let impressions = getNumValue('impressions', 0);
+    let reach = getNumValue('reach', 0);
+    let results = getNumValue('results', 0);
+    let newContacts = getNumValue('newContacts', 0);
+
+    const startDateVal = getValue('startDate', null);
+    const endDateVal = getValue('endDate', null);
+
+    if (targetFrom && targetTo && startDateVal && endDateVal) {
+      const rowStart = new Date(startDateVal);
+      const rowEnd = new Date(endDateVal);
+
+      // Check overlap
+      const intersectStart = new Date(Math.max(rowStart.getTime(), targetFrom.getTime()));
+      const intersectEnd = new Date(Math.min(rowEnd.getTime(), targetTo.getTime()));
+
+      if (intersectStart <= intersectEnd) {
+        const rowDays = Math.round((rowEnd - rowStart) / (1000 * 60 * 60 * 24)) + 1;
+        const overlapDays = Math.round((intersectEnd - intersectStart) / (1000 * 60 * 60 * 24)) + 1;
+        const ratio = overlapDays / rowDays;
+
+        spend = spend * ratio;
+        impressions = Math.round(impressions * ratio);
+        reach = Math.round(reach * ratio);
+        results = Math.round(results * ratio);
+        newContacts = Math.round(newContacts * ratio);
+      } else {
+        // No overlap, exclude this ad row
+        continue;
+      }
+    }
+
+    const cpr = results > 0 ? spend / results : 0;
+    
     ads.push({
       name: getValue('adName', 'Unnamed Ad'),
       status: getValue('status', 'inactive').toLowerCase(),
-      spend: getNumValue('spend', 0),
-      impressions: getNumValue('impressions', 0),
-      reach: getNumValue('reach', 0),
-      results: getNumValue('results', 0),
-      cpr: getNumValue('cpr', 0),
-      newContacts: getNumValue('newContacts', 0),
+      spend: spend,
+      impressions: impressions,
+      reach: reach,
+      results: results,
+      cpr: cpr,
+      newContacts: newContacts,
       quality: getValue('quality', '-'),
       engagement: getValue('engagement', '-'),
       adset: getValue('adset', '-')
@@ -580,6 +620,7 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
  * Main execution
  */
 async function main() {
+  console.log('::STATUS::Mempersiapkan & membaca konfigurasi...');
   const geminiApiKey = process.env.GEMINI_API_KEY;
   const accessToken = process.env.META_ACCESS_TOKEN;
   const adAccountId = process.env.META_AD_ACCOUNT_ID;
@@ -598,6 +639,7 @@ async function main() {
   const dateTo = process.env.ADS_DATE_TO || today.toISOString().split('T')[0];
   
   console.log(`Analysis date range: ${dateFrom} → ${dateTo}`);
+  console.log(`::STATUS::Mengatur rentang tanggal analisis: ${dateFrom} s/d ${dateTo}`);
 
   // Format date range for display
   const formatIndo = (d) => d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -614,9 +656,11 @@ async function main() {
   if (!useCsvSource && accessToken && adAccountId) {
     try {
       console.log('Attempting to fetch real-time insights from Meta Ads API...');
+      console.log('::STATUS::Mengambil data real-time dari Meta Ads API...');
       const apiData = await fetchMetaInsightsRange(accessToken, adAccountId, dateFrom, dateTo);
       
       console.log('Successfully fetched real-time insights from Meta Ads API. Normalizing...');
+      console.log('::STATUS::Berhasil mengambil data dari Meta Ads API. Melakukan normalisasi...');
       ads = normalizeMetaInsights(apiData);
       isApiFetchSuccess = true;
     } catch (err) {
@@ -635,9 +679,11 @@ async function main() {
     }
 
     console.log(`Reading CSV file: ${path.basename(csvPath)}...`);
+    console.log('::STATUS::Membaca data dari file CSV...');
     const csvText = fs.readFileSync(csvPath, 'utf8');
-    ads = parseCSV(csvText);
-    console.log(`Parsed ${ads.length} ad rows from CSV. Using data as-is (no projections).`);
+    ads = parseCSV(csvText, dateFrom, dateTo);
+    console.log(`Parsed ${ads.length} ad rows from CSV after applying date range filter/projections.`);
+    console.log(`::STATUS::Berhasil memuat ${ads.length} data iklan dari CSV.`);
   }
 
   // 3. Zero-Data check
@@ -673,6 +719,7 @@ async function main() {
   }
 
   // 4. Group Brands
+  console.log('::STATUS::Mengelompokkan kategori brand dan produk...');
   const brandsMap = groupBrands(ads);
   console.log("Dynamically identified brands/categories:", Object.values(brandsMap).map(b => b.name).join(', '));
 
@@ -748,6 +795,7 @@ async function main() {
   `;
 
   console.log('Sending condensed metrics to Gemini for NLP copywriting...');
+  console.log('::STATUS::Mengirim ringkasan performa ke Gemini AI untuk dianalisis...');
   const genAI = new GoogleGenerativeAI(geminiApiKey);
   let responseText = '';
   let aiTextData;
@@ -758,6 +806,7 @@ async function main() {
     for (let i = 0; i < retries; i++) {
       try {
         console.log(`Attempting analysis with model: ${modelName} (Attempt ${i + 1}/${retries})...`);
+        console.log(`::STATUS::Menjalankan analisis Gemini AI (${modelName}) - Percobaan ${i + 1}/${retries}...`);
         const result = await model.generateContent({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: { responseMimeType: 'application/json' }
@@ -783,6 +832,7 @@ async function main() {
   try {
     aiTextData = JSON.parse(responseText);
     console.log('Successfully received and parsed dynamic copywriting from Gemini.');
+    console.log('::STATUS::Analisis performa & copywriting dari Gemini AI berhasil diterima.');
   } catch (err) {
     console.error('Failed to parse Gemini response text as JSON:', err.message);
     console.error('Raw Response:', responseText);
@@ -815,6 +865,7 @@ async function main() {
 
   // 9. Compile report.html
   console.log('Compiling final dashboard report...');
+  console.log('::STATUS::Menyusun dashboard laporan interaktif HTML...');
   const templatePath = path.join(__dirname, 'template.html');
   const outputPath = path.join(__dirname, 'report.html');
 
@@ -823,6 +874,7 @@ async function main() {
   fs.writeFileSync(outputPath, html, 'utf8');
   
   console.log(`report.html compiled successfully at: ${outputPath}`);
+  console.log('::STATUS::Laporan HTML berhasil diperbarui!');
 
   console.log('\n==================================================================');
   console.log('Gemini-Generated WhatsApp Broadcast Summary (Preview)');

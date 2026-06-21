@@ -7,6 +7,23 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-21
 
+### Meta Ads Analysis UI/UX & Real-time Progress Streaming
+- implemented Server-Sent Events (SSE) streaming for Meta Ads Analysis via a new GET endpoint `/api/run-analysis-stream` in `backend/src/routes.js`
+- updated `backend/src/services/ads.js` to expose `runAnalysisSpawn` which returns a spawned node process to stream stdout and stderr logs in real-time
+- added `::STATUS::` log statements at key execution phases in `backend/ads-analysis/automation.js` (e.g. database configuration loading, Meta Ads API / CSV reading, brand grouping, Gemini AI analysis, and HTML compilation)
+- redesigned the frontend `frontend/src/components/AdsReport.tsx` component to support real-time streaming updates using the EventSource API
+- implemented a premium dual-column loading user interface when running analysis, featuring:
+  - a pulsing gradient glow and spinning loader indicator
+  - an interactive step-by-step progress checklist that dynamically transitions based on status logs from the backend
+  - a developer-style terminal box displaying live scrolling logs output directly from the running automation process
+- verified complete React bundlings and TypeScript type-checks compile successfully with zero errors
+
+### Meta Ads CSV Date Range Filtering & Proportional Projections Bugfix
+- fixed a bug where the Meta Ads dashboard displayed the entire CSV total metrics (e.g. 14.4 million spend) instead of filtering or projecting for the selected date range
+- updated `parseCSV` in `backend/ads-analysis/automation.js` to parse CSV columns for reporting start and end dates (`Awal pelaporan` and `Akhir pelaporan`)
+- implemented proportional calculations to scale metrics (spend, impressions, reach, conversions) for overlapping days with the selected date range, and filter out any rows with no overlap
+- updated the CSV loader process to pass the selected `dateFrom` and `dateTo` variables to the CSV parser
+
 ### Meta Ads Analysis Refactor: Custom Date Range & Projection Removal
 - removed all daily/weekly/monthly projections and extrapolation calculations from `backend/ads-analysis/automation.js` to prevent misleading data reports
 - replaced the 3-timeframe fixed tabs (daily/weekly/monthly) with a single unified dashboard layout using custom date ranges

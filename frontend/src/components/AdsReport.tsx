@@ -45,6 +45,61 @@ export default function AdsReport() {
   const [reportExists, setReportExists] = useState(false);
   const [iframeKey, setIframeKey] = useState(0);
 
+  // SSE analysis progress states
+  const [streamMessages, setStreamMessages] = useState<string[]>([]);
+  const [streamLogs, setStreamLogs] = useState<string>('');
+
+  const steps = [
+    { key: 'config', label: 'Membaca konfigurasi & rentang tanggal', keywords: ['Mempersiapkan', 'Mengatur rentang tanggal'] },
+    { key: 'fetch', label: 'Mengambil data iklan (API / CSV)', keywords: ['Mengambil data real-time', 'Berhasil mengambil data', 'Membaca data dari file CSV', 'Berhasil memuat'] },
+    { key: 'brand', label: 'Mengelompokkan kategori brand & produk', keywords: ['Mengelompokkan kategori brand'] },
+    { key: 'gemini', label: 'Analisis performa & copywriting dengan Gemini AI', keywords: ['Mengirim ringkasan performa', 'Menjalankan analisis Gemini', 'Analisis performa & copywriting dari Gemini'] },
+    { key: 'compile', label: 'Menyusun dashboard laporan interaktif HTML', keywords: ['Menyusun dashboard laporan', 'Laporan HTML berhasil diperbarui'] }
+  ];
+
+  // Auto scroll pre tag to bottom when new logs arrive
+  useEffect(() => {
+    const pre = document.getElementById('ads-streaming-pre');
+    if (pre) {
+      pre.scrollTop = pre.scrollHeight;
+    }
+  }, [streamLogs]);
+
+  const getStepState = (stepIndex: number) => {
+    if (!loading) return 'pending';
+    
+    // Find the latest message that matches any step's keywords to find current active step
+    let activeStepIdx = -1;
+    for (let i = streamMessages.length - 1; i >= 0; i--) {
+      const msg = streamMessages[i];
+      const foundIdx = steps.findIndex(s => s.keywords.some(k => msg.includes(k)));
+      if (foundIdx !== -1) {
+        activeStepIdx = foundIdx;
+        break;
+      }
+    }
+
+    if (activeStepIdx === -1) {
+      return stepIndex === 0 ? 'active' : 'pending';
+    }
+
+    if (stepIndex < activeStepIdx) return 'completed';
+    if (stepIndex === activeStepIdx) {
+      const latestMsg = streamMessages[streamMessages.length - 1];
+      const completionKeywords = [
+        'Mengatur rentang tanggal', 
+        'Berhasil mengambil data', 
+        'Berhasil memuat',
+        'kategori brand dan produk', 
+        'Gemini AI berhasil diterima', 
+        'Laporan HTML berhasil diperbarui'
+      ];
+      const isCompleted = completionKeywords.some(ck => latestMsg.includes(ck));
+      return isCompleted ? 'completed' : 'active';
+    }
+    return 'pending';
+  };
+
   // CSV upload state
   const [csvStatus, setCsvStatus] = useState<{
     exists: boolean;
@@ -170,30 +225,53 @@ export default function AdsReport() {
     }
   };
 
-  // Run analysis script and update report
-  const handleRunAnalysis = async () => {
+  // Run analysis script and update report using SSE Stream
+  const handleRunAnalysis = () => {
     setLoading(true);
+    setStreamMessages([]);
+    setStreamLogs('');
+    
     const sourceLabel = csvStatus?.dataSource === 'csv' ? 'CSV' : 'Meta Ads API';
     toast.info(`Sedang menganalisis data dari ${sourceLabel} (${dateFrom} s/d ${dateTo})...`);
-    try {
-      const res = await fetch(`${API_BASE_URL}/run-analysis`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date_from: dateFrom, date_to: dateTo })
-      });
-      const data = await res.json();
-      if (data.status === 'success') {
-        toast.success('Analisis iklan berhasil diselesaikan dan laporan diperbarui.');
-        setReportExists(true);
-        setIframeKey(Date.now());
-      } else {
-        toast.error('Gagal menjalankan analisis: ' + (data.message || 'unknown error'));
+    
+    const eventSource = new EventSource(
+      `${API_BASE_URL}/api/run-analysis-stream?date_from=${dateFrom}&date_to=${dateTo}`
+    );
+
+    eventSource.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data);
+        if (payload.type === 'status') {
+          setStreamMessages(prev => {
+            if (prev.length > 0 && prev[prev.length - 1] === payload.message) {
+              return prev;
+            }
+            return [...prev, payload.message];
+          });
+        } else if (payload.type === 'chunk') {
+          setStreamLogs(prev => prev + payload.text);
+        } else if (payload.type === 'done') {
+          toast.success('Analisis iklan berhasil diselesaikan dan laporan diperbarui.');
+          setReportExists(true);
+          setIframeKey(Date.now());
+          eventSource.close();
+          setLoading(false);
+        } else if (payload.type === 'error') {
+          toast.error('Gagal menjalankan analisis: ' + payload.message);
+          eventSource.close();
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Failed to parse SSE payload:', err);
       }
-    } catch {
-      toast.error('Koneksi gagal saat menjalankan analisis.');
-    } finally {
+    };
+
+    eventSource.onerror = (err) => {
+      console.error('EventSource connection error:', err);
+      toast.error('Koneksi terputus saat memproses analisis iklan.');
+      eventSource.close();
       setLoading(false);
-    }
+    };
   };
 
   // Broadcast report to WA group JID
@@ -441,7 +519,82 @@ export default function AdsReport() {
 
       {/* Report View Panel */}
       <div className="flex-grow min-h-0 border border-border rounded-2xl overflow-hidden bg-[#0a0d16] relative flex flex-col shadow-inner">
-        {reportExists ? (
+        {loading ? (
+          <div className="flex flex-col lg:flex-row h-full w-full bg-[#070913] divide-y lg:divide-y-0 lg:divide-x divide-border/40 animate-fadeIn">
+            {/* Left Column: Progress Checklists & Pulsing Spinner */}
+            <div className="flex-1 flex flex-col justify-center items-center p-8 lg:p-12 text-center gap-8 bg-gradient-to-b from-[#0b0f19] to-[#070913]">
+              {/* Elegant Glowing Spinner */}
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-xl animate-pulse w-20 h-20"></div>
+                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                  <IconLoader size={32} className="animate-spin text-emerald-400" style={{ animationDuration: '3s' }} />
+                </div>
+              </div>
+              
+              {/* Title & Description */}
+              <div className="flex flex-col gap-2">
+                <h3 className="text-md font-bold text-foreground tracking-wide">Menjalankan Analisis Performa Iklan</h3>
+                <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                  AI Gemini sedang memproses data kampanye dan merumuskan wawasan copywriting optimasi...
+                </p>
+              </div>
+
+              {/* Step-by-step checklist */}
+              <div className="w-full max-w-sm flex flex-col gap-3 bg-card/30 border border-border/40 backdrop-blur-md rounded-2xl p-5 shadow-sm text-left">
+                {steps.map((step, idx) => {
+                  const state = getStepState(idx);
+                  return (
+                    <div key={step.key} className="flex items-center gap-3.5 transition-all duration-300">
+                      {state === 'completed' ? (
+                        <div className="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-400 animate-scaleIn">
+                          <IconCheck size={12} className="stroke-[3]" />
+                        </div>
+                      ) : state === 'active' ? (
+                        <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center shrink-0 text-blue-400">
+                          <IconLoader size={12} className="animate-spin" />
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 rounded-full border border-border flex items-center justify-center shrink-0 text-muted-foreground/45 bg-muted/5">
+                          <span className="text-[9px] font-bold">{idx + 1}</span>
+                        </div>
+                      )}
+                      <span className={`text-xs font-semibold leading-none ${
+                        state === 'completed'
+                          ? 'text-emerald-400 font-bold'
+                          : state === 'active'
+                          ? 'text-blue-400 font-bold animate-pulse'
+                          : 'text-muted-foreground/60 font-medium'
+                      }`}>
+                        {step.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right Column: Live Terminal Logger */}
+            <div className="flex-1 flex flex-col h-full bg-[#030508] p-5 font-mono">
+              <div className="flex justify-between items-center pb-3 border-b border-border/40 text-[10px] tracking-wider text-muted-foreground uppercase font-bold">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                  Proses Eksekusi Log Langsung
+                </span>
+                <span className="text-[9px] text-zinc-600">Terminal v1.0</span>
+              </div>
+              
+              <div className="flex-grow overflow-hidden mt-4 relative">
+                <pre 
+                  id="ads-streaming-pre"
+                  className="w-full h-full text-[11px] leading-relaxed text-zinc-300 whitespace-pre-wrap overflow-y-auto font-medium select-text scroll-smooth"
+                  style={{ maxHeight: '100%', fontFamily: 'Consolas, Monaco, monospace' }}
+                >
+                  {streamLogs || "Mempersiapkan koneksi ke proses latar belakang..."}
+                </pre>
+              </div>
+            </div>
+          </div>
+        ) : reportExists ? (
           <iframe 
             src={`${API_BASE_URL}/report-html?t=${iframeKey}`}
             className="w-full h-full border-none bg-background flex-grow"

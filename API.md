@@ -41,11 +41,12 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 24 | Pengaturan | GET | `/api/settings/default-system-prompt` | Melihat draf default prompt sistem agen AI. |
 | 25 | Ads & Creative | POST | `/run-analysis` | Menjalankan skrip analisis Meta Ads secara sinkron. |
 | 26 | Ads & Creative | POST | `/trigger-analysis` | Memicu analisis Meta Ads dan siaran laporan di latar belakang. |
-| 27 | Ads & Creative | GET | `/api/creative-report` | Mengambil laporan ide konten kreatif ad terbaru. |
-| 28 | Ads & Creative | POST | `/api/trigger-creative-analysis` | Memicu audit kreatif di latar belakang. |
-| 29 | Ads & Creative | GET | `/api/trigger-creative-analysis-stream` | Memicu audit kreatif dan melakukan streaming progress (SSE). |
-| 30 | Follow-Up | POST | `/api/trigger-followups` | Memicu pengiriman pesan follow-up manual (sinkron). |
-| 31 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
+| 27 | Ads & Creative | GET | `/api/run-analysis-stream` | Memicu analisis Meta Ads manual dengan Server-Sent Events (SSE) progress stream. |
+| 28 | Ads & Creative | GET | `/api/creative-report` | Mengambil laporan ide konten kreatif ad terbaru. |
+| 29 | Ads & Creative | POST | `/api/trigger-creative-analysis` | Memicu audit kreatif di latar belakang. |
+| 30 | Ads & Creative | GET | `/api/trigger-creative-analysis-stream` | Memicu audit kreatif dan melakukan streaming progress (SSE). |
+| 31 | Follow-Up | POST | `/api/trigger-followups` | Memicu pengiriman pesan follow-up manual (sinkron). |
+| 32 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
 
 ---
 
@@ -640,7 +641,7 @@ Mengambil salinan teks instruksi prompt sistem bawaan (default system instructio
 Menjalankan skrip ekstraksi data Meta Ads API (`ads-analysis/automation.js`) secara sinkron sebagai sub-proses (`child_process.exec`). Endpoint ini akan memblokir dan mengembalikan output stdout/stderr proses setelah skrip selesai dieksekusi.
 
 - **Request Body (JSON)**:
-  - *Semua parameter bersifat opsional.*
+  - *Semua parameter bersifat opsional.* Jika sumber data diatur ke CSV (bukan API), parameter rentang tanggal ini digunakan untuk memfilter baris data CSV secara proporsional berdasarkan rentang tanggal yang saling tumpang tindih (overlap).
   ```json
   {
     "date_from": "2026-06-01",
@@ -687,6 +688,55 @@ Memicu eksekusi analisis performa iklan Meta Ads di latar belakang secara asinkr
     "message": "Analysis triggered in background."
   }
   ```
+
+---
+
+### GET `/api/run-analysis-stream`
+Memicu eksekusi analisis performa iklan Meta Ads secara manual dan melakukan streaming progress logs (stdout & stderr) secara real-time langsung ke browser menggunakan protokol **Server-Sent Events (SSE)**.
+
+- **Query Parameters**:
+  - `date_from` (string, opsional): Tanggal mulai analisis (format `YYYY-MM-DD`).
+  - `date_to` (string, opsional): Tanggal akhir analisis (format `YYYY-MM-DD`).
+- **Response Headers**:
+  - `Content-Type`: `text/event-stream`
+  - `Cache-Control`: `no-cache`
+  - `Connection`: `keep-alive`
+- **Response Stream Event Formats**:
+  Setiap baris data dikirim dalam format `data: <JSON_STRING>\n\n`.
+  - **Info Progress Status**:
+    ```json
+    {
+      "type": "status",
+      "message": "Mengambil data real-time dari Meta Ads API..."
+    }
+    ```
+  - **Raw Stream Logs Chunk (stdout/stderr)**:
+    ```json
+    {
+      "type": "chunk",
+      "text": "Analysis date range: 2026-06-14 → 2026-06-21\n..."
+    }
+    ```
+  - **Error Event**:
+    ```json
+    {
+      "type": "error",
+      "message": "Command failed: node automation.js ..."
+    }
+    ```
+  - **Done Event**:
+    Mengembalikan data ringkasan laporan setelah proses selesai berhasil.
+    ```json
+    {
+      "type": "done",
+      "data": {
+        "custom": {
+          "summary": "Laporan performa iklan...",
+          "dateRange": "14 Juni 2026 – 21 Juni 2026"
+        }
+      }
+    }
+    ```
 
 ---
 

@@ -23,7 +23,7 @@ latezza-automation/
 │   │   └── services/
 │   │       ├── whatsapp.js       # WhatsApp Socket service (Baileys auth, events, rate limiting)
 │   │       ├── followup.js       # Proactive customer follow-up scanning and LLM logic
-│   │       ├── ads.js            # Meta Ads script execution and group broadcast reporting
+│   │       ├── ads.js            # Meta Ads script execution, group broadcast, and spawning progress stream
 │   │       ├── creative.js       # AI creative ad content analysis (copywriting audit & ideation)
 │   │       └── scheduler.js      # Dynamic background scheduler (node-cron wrapper with database-driven reload)
 │   ├── scripts/                  # Developer tools and test utilities (e.g., debug-followup.js, seed-test-followup.js)
@@ -326,17 +326,19 @@ Whenever settings are saved via `POST /api/settings`, `scheduler.reloadSchedules
 ## META ADS ANALYSIS (src/services/ads.js)
 
 cron: dynamic scheduler (default: every 1 day at 09:00 WIB)
-manual trigger: `POST /run-analysis` or `POST /trigger-analysis` (accepts optional `date_from` and `date_to` payload parameters)
+manual trigger: `POST /run-analysis`, `POST /trigger-analysis`, or `GET /api/run-analysis-stream` (SSE progress stream; accepts optional `date_from` and `date_to` payload/query parameters)
 report viewer: `GET /report-html` (serves report.html), viewable in dashboard under Ads Report tab
 
-flow:
+flow (standard and SSE stream):
 1. read META_ACCESS_TOKEN and META_AD_ACCOUNT_ID from DB settings (fallback to process.env)
-2. inject as env vars into child process: `exec('node automation.js', { env: { ...process.env, META_ACCESS_TOKEN: x, ADS_DATE_FROM: dateFrom, ADS_DATE_TO: dateTo, ... } })`
+2. inject as env vars into child process.
+   - For standard: spawns process via `exec('node automation.js')` and returns total buffer on completion.
+   - For SSE stream: spawns process via `spawn('node automation.js')` and streams stdout chunks, parsing `::STATUS::` triggers for steps checklist and pipe raw stdout to the terminal log stream on the frontend in real-time.
 3. automation.js fetches data from Meta Graph API for the custom time range (falls back to last 7 days if date boundaries are not provided)
-4. all projections/extrapolations are removed; data is parsed as-is (API time_range is query-filtered; CSV uses original row values without modification)
+4. data is filtered and projected based on user-selected date ranges (API time_range is query-filtered; CSV files containing reporting start/end columns are proportionally projected for the overlapping days, and out-of-range rows are excluded)
 5. Gemini generates Indonesian qualitative summary + optimization insights based on this single custom timeframe
 6. fills template.html tokens → writes report.html (which renders a unified single timeframe dashboard layout without tabs)
-7. broadcasts formatted custom range summary + report link to whatsapp_group_jid
+7. broadcasts formatted custom range summary + report link to whatsapp_group_jid (if triggered in background)
 
 ---
 
@@ -417,6 +419,7 @@ implemented in: `backend/src/routes.js`
 ### ads & creative ideas
 - POST `/run-analysis`                          → triggers raw ads automation.js script and returns output
 - POST `/trigger-analysis`                      → triggers ads analysis and broadcasts report in background
+- GET  `/api/run-analysis-stream`               → manually triggers ads analysis via Server-Sent Events (SSE) progress stream
 - GET  `/api/creative-report`                   → returns the latest AI creative ad content ideas report
 - POST `/api/trigger-creative-analysis`         → manually triggers creative analysis in the background
 - GET  `/api/trigger-creative-analysis-stream`  → manually triggers creative analysis via Server-Sent Events (SSE) progress stream

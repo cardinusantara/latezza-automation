@@ -130,7 +130,38 @@ async function runAnalysisRaw(dateFrom = null, dateTo = null, log = console) {
   });
 }
 
+/**
+ * Spawn the ads analysis script and return the child process (Promise-wrapped)
+ */
+async function runAnalysisSpawn(dateFrom = null, dateTo = null, log = console) {
+  log.info(`Spawning Meta Ads analysis process at ${scriptPath}...`);
+  
+  const activeApiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
+  const activeMetaAccessToken = await db.getSetting('meta_access_token') || process.env.META_ACCESS_TOKEN;
+  const activeMetaAdAccountId = await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID;
+
+  const dataSource = await db.getSetting('ads_data_source') || 'api';
+  const csvPath = path.join(__dirname, '../../ads-analysis/uploaded-ads.csv');
+
+  const envVars = {
+    ...process.env,
+    GEMINI_API_KEY: activeApiKey,
+    META_ACCESS_TOKEN: activeMetaAccessToken,
+    META_AD_ACCOUNT_ID: activeMetaAdAccountId,
+    ADS_DATA_SOURCE: dataSource,
+    ADS_CSV_PATH: csvPath
+  };
+
+  if (dateFrom) envVars.ADS_DATE_FROM = dateFrom;
+  if (dateTo) envVars.ADS_DATE_TO = dateTo;
+
+  const { spawn } = require('child_process');
+  const child = spawn('node', [scriptPath], { env: envVars });
+  return child;
+}
+
 module.exports = {
   runAnalysisAndSendReport,
-  runAnalysisRaw
+  runAnalysisRaw,
+  runAnalysisSpawn
 };
