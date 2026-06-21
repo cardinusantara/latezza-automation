@@ -14,6 +14,7 @@ entries: plain text, AI-readable, no markdown fluff
 - updated the `Stats` interface across the frontend components (`App.tsx` and `Overview.tsx`) to support the new timeframe statistics
 - designed and implemented a premium, dark-themed "AI Customer Insights" card in `Overview.tsx` that supports a manual trigger button, date range selector (Hari Ini, 3 Hari, 7 Hari, 30 Hari), interactive SSE loading stream terminal, and dynamic display panels categorized by Products, Questions, Complaints, Opportunities, and Recommendations
 - added custom prompt capability to the Creative Ad Content Ideas generator, allowing users to direct content style (e.g. Reels, Story testimonials) via a new textarea in `CreativeReport.tsx` passed as a query parameter to `/api/trigger-creative-analysis-stream`
+- removed truncation from the WhatsApp broadcast message for creative ad content ideas (sends full copywriting draft copy instead of cutting off at 150 characters)
 
 ### Overview Session Filter, Navigation, and Immediate WhatsApp AI Status Updates
 - implemented a session filter dropdown on the Overview Dashboard to let users filter KPIs and activity logs by specific agent sessions, defaulting to "All Agent Sessions" (aggregated view)

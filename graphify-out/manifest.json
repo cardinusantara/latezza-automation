@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "backend/src/services/creative.js": {
-    "mtime": 1782051031.823665,
-    "ast_hash": "af334d61c67224829ca0810f1f415570",
+    "mtime": 1782059985.016096,
+    "ast_hash": "4aa6ef219f392b8be6f22d829242f182",
     "semantic_hash": ""
   },
   "backend/src/services/followup.js": {
@@ -6765,8 +6765,8 @@
     "semantic_hash": ""
   },
   "ignore-this.md": {
-    "mtime": 1782050340.4170854,
-    "ast_hash": "b906a8e81c542295e2d7b1541ef400b7",
+    "mtime": 1782053949.7583935,
+    "ast_hash": "65b7043a3b48c9afe6c2cf90fd40a1fa",
     "semantic_hash": ""
   },
   "backend/src/services/summary.js": {

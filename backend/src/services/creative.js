@@ -303,7 +303,7 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
         waText += `*${idx + 1}. ${idea.title}*\n` +
           `• _Angle:_ ${idea.angle}\n` +
           `• _Visual:_ ${idea.visualGuide}\n` +
-          `• _Draft Copy:_ "${idea.copywriting.substring(0, 150)}..."\n\n`;
+          `• _Draft Copy:_ "${idea.copywriting}"\n\n`;
       });
 
       waText += `🔗 _Lihat ide & salin copywriting lengkap di Dashboard!_`;
