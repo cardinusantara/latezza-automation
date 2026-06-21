@@ -895,4 +895,14 @@ async function main() {
   console.log('::JSON_RESULT::' + JSON.stringify(jsonResult));
 }
 
-main();
+if (require.main === module) {
+  main().catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+} else {
+  module.exports = {
+    normalizeMetaInsights,
+    splitCSVLine
+  };
+}

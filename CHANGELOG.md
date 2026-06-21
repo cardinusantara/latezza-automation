@@ -7,6 +7,16 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-21
 
+### Comprehensive Test Cases & Automated Testing Pipeline
+- configured Jest in `backend/` for vanilla CommonJS unit testing with zero compilation overhead
+- configured Vitest, React Testing Library, and jsdom in `frontend/` for native React component and hook testing
+- created `setupTests.ts` in the frontend containing global matchMedia and ResizeObserver mock overrides
+- created `.agents/rules/write-tests.md` and `.agents/workflows/write-tests.md` to establish and enforce a test-writing workflow for future AI agent features or modifications
+- modified `AGENTS.md` to reference the testing guidelines, test commands, and habits
+- wrote comprehensive backend unit tests covering database operations (`db.test.js`), message summary services (`summary.test.js`), ads CSV/API utilities (`ads.test.js`), creative AI classification (`creative.test.js`), AI agent tool calls routing (`agent.test.js`), and Fastify API endpoint router matching (`routes.test.js`)
+- wrote frontend unit tests covering styles class name merger (`utils.test.ts`), responsive viewport hook (`use-mobile.test.ts`), products catalog dashboard (`Products.test.tsx`), settings configuration panel (`Settings.test.tsx`), and overview widgets statistics (`Overview.test.tsx`)
+- verified all backend and frontend test suites pass 100% successfully and that production builds compile with zero typescript compiler errors
+
 ### AI Insights, Timeframe KPIs, and Custom Prompts for Creative Analysis
 - implemented a new daily AI Message Summary service (summary.js) utilizing a two-pass hierarchical batching strategy (pre-filtering user messages, chunking into batches of 50, and synthesizing summaries into structured JSON) to minimize token consumption and handle large message volumes reliably
 - added manual trigger endpoint `GET /api/trigger-message-summary-stream` using Server-Sent Events (SSE) to stream generation progress and output, and `GET /api/message-summary` to retrieve the latest cached report from the database settings table

@@ -82,6 +82,24 @@ npm start            # serves API on port 3001 (frontend must be built/served se
 # open http://localhost:3001/dashboard (redirects to FRONTEND_URL)
 ```
 
+### RUNNING UNIT TESTS
+
+Unit tests are implemented for both backend and frontend. They are fully mocked and run in isolation (no real PostgreSQL database or Gemini API keys needed).
+
+#### Backend Tests (Jest)
+```bash
+cd backend
+npm test          # Runs all Jest test suites once
+npm run test:watch # Runs Jest in interactive watch mode
+```
+
+#### Frontend Tests (Vitest)
+```bash
+cd frontend
+npm run test      # Runs all Vitest test suites once
+npm run test:watch # Runs Vitest in interactive watch mode
+```
+
 ### env files
 
 #### Backend Env (`backend/.env`)

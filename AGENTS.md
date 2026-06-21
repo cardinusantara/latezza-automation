@@ -14,10 +14,12 @@
 - `npm run lint` — ESLint
 - `npm run typecheck` — `tsc --noEmit`
 - `npm run format` — Prettier (`prettier-plugin-tailwindcss` active)
+- `npm run test` — Run unit tests (Vitest)
 - `shadcn add <component>` — add shadcn/ui components (Radix Maia style)
 
 ### Backend (in `backend/`)
 - `npm start` — `node gateway.js` (no hot reload)
+- `npm test` — Run unit tests (Jest)
 - DB schema auto-creates on startup via `CREATE TABLE IF NOT EXISTS` in `src/db.js`
 
 ### Running locally
@@ -28,6 +30,7 @@ Two terminals required:
 ## Agent habits — always do these
 - Before making changes check for existing rule files: `.agents/rules/`.
 - Run `npm run lint && npm run typecheck && npm run build` in `frontend/` to verify frontend changes
+- Always write/update unit tests for any feature addition or modification. Ensure tests run successfully inside `backend/` and `frontend/` directories (see [.agents/rules/write-tests.md](file:///c:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/.agents/rules/write-tests.md) and [.agents/workflows/write-tests.md](file:///c:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/.agents/workflows/write-tests.md)).
 
 ## API overview
 Full API docs at `API.md` (Indonesian).
