@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const db = require('../db');
 const whatsappService = require('./whatsapp');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -67,55 +69,154 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
 
   const accessToken = await db.getSetting('meta_access_token') || process.env.META_ACCESS_TOKEN;
   const adAccountId = await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID;
-
   let adsData = [];
 
-  // 1. Ensure credentials are present
-  if (!accessToken || !adAccountId) {
+  const dataSource = await db.getSetting('ads_data_source') || 'api';
+  log.info(`Using ads data source: ${dataSource}`);
+
+  // 1. Ensure credentials are present if using API and no pre-generated report exists
+  const reportJsonPath = path.join(__dirname, '../../ads-analysis/report.json');
+  let loadedAds = null;
+  let isFromReport = false;
+
+  // Try to load generated report.json
+  if (fs.existsSync(reportJsonPath)) {
+    try {
+      log.info(`Loading generated report from: ${reportJsonPath}`);
+      if (onProgress) onProgress({ type: 'status', message: 'Membaca laporan iklan yang sudah digenerate...' });
+      const reportContent = fs.readFileSync(reportJsonPath, 'utf8');
+      const reportJson = JSON.parse(reportContent);
+      if (reportJson && Array.isArray(reportJson.ads)) {
+        loadedAds = reportJson.ads;
+        isFromReport = true;
+        log.info(`Successfully loaded ${loadedAds.length} ads from report.json`);
+      }
+    } catch (err) {
+      log.warn(`Failed to read or parse report.json: ${err.message}. Falling back to source fetch.`);
+    }
+  }
+
+  if (dataSource === 'api' && !loadedAds && (!accessToken || !adAccountId)) {
     const errMsg = 'Kredensial Meta Ads API (Access Token / Ad Account ID) tidak terkonfigurasi di Pengaturan.';
     if (onProgress) onProgress({ type: 'error', message: errMsg });
     throw new Error(errMsg);
   }
 
-  // 2. Fetch live API data
-  if (onProgress) onProgress({ type: 'status', message: 'Mengunduh data iklan & metrik dari Meta Ads API...' });
-  log.info('Fetching live creative & performance stats from Meta Ads API...');
-  const rawAds = await fetchMetaAdsCreatives(accessToken, adAccountId);
-  const rawInsights = await fetchMetaAdsInsights(accessToken, adAccountId);
+  // If no generated report exists, fall back to source
+  if (!loadedAds) {
+    if (dataSource === 'csv') {
+      const csvPath = path.join(__dirname, '../../ads-analysis/uploaded-ads.csv');
+      if (!fs.existsSync(csvPath)) {
+        const errMsg = 'File CSV terupload tidak ditemukan. Silakan upload terlebih dahulu atau generate report.';
+        if (onProgress) onProgress({ type: 'error', message: errMsg });
+        throw new Error(errMsg);
+      }
+      log.info(`Parsing CSV file: ${csvPath}`);
+      if (onProgress) onProgress({ type: 'status', message: 'Membaca data dari file CSV...' });
+      
+      const automation = require('../../ads-analysis/automation');
+      const csvText = fs.readFileSync(csvPath, 'utf8');
+      
+      const today = new Date();
+      const defaultFrom = new Date(today);
+      defaultFrom.setDate(today.getDate() - 30);
+      const dateFrom = defaultFrom.toISOString().split('T')[0];
+      const dateTo = today.toISOString().split('T')[0];
+      
+      loadedAds = automation.parseCSV(csvText, dateFrom, dateTo);
+      log.info(`Parsed ${loadedAds.length} ads from CSV`);
+    } else {
+      // API fetch fallback
+      if (onProgress) onProgress({ type: 'status', message: 'Mengunduh data iklan & metrik dari Meta Ads API...' });
+      log.info('Fetching live creative & performance stats from Meta Ads API...');
+      const rawAds = await fetchMetaAdsCreatives(accessToken, adAccountId);
+      const rawInsights = await fetchMetaAdsInsights(accessToken, adAccountId);
 
-  log.info(`Fetched ${rawAds.length} ads and ${rawInsights.length} insight rows. Mapping...`);
-  if (onProgress) onProgress({ type: 'status', message: `Berhasil mengunduh ${rawAds.length} iklan dan ${rawInsights.length} baris metrik.` });
+      log.info(`Fetched ${rawAds.length} ads and ${rawInsights.length} insight rows. Mapping...`);
+      if (onProgress) onProgress({ type: 'status', message: `Berhasil mengunduh ${rawAds.length} iklan dan ${rawInsights.length} baris metrik.` });
 
-  // Map insights by ad_id
-  const insightsMap = new Map();
-  rawInsights.forEach(ins => {
-    insightsMap.set(ins.ad_id, ins);
-  });
+      const insightsMap = new Map();
+      rawInsights.forEach(ins => {
+        insightsMap.set(ins.ad_id, ins);
+      });
 
-  // Combine metadata and insights
-  rawAds.forEach(ad => {
-    const ins = insightsMap.get(ad.id);
-    const spend = ins ? parseFloat(ins.spend) || 0 : 0;
-    const impressions = ins ? parseInt(ins.impressions, 10) || 0 : 0;
-    const reach = ins ? parseInt(ins.reach, 10) || 0 : 0;
-    
-    let conversions = 0;
-    if (ins && ins.actions && Array.isArray(ins.actions)) {
-      const action = ins.actions.find(a => 
-        a.action_type === 'onsite_conversion.messaging_conversation_started_7d' ||
-        a.action_type === 'messaging_first_reply' ||
-        a.action_type === 'purchase' ||
-        a.action_type === 'lead'
-      );
-      if (action) conversions = parseInt(action.value, 10) || 0;
+      loadedAds = [];
+      rawAds.forEach(ad => {
+        const ins = insightsMap.get(ad.id);
+        const spend = ins ? parseFloat(ins.spend) || 0 : 0;
+        const impressions = ins ? parseInt(ins.impressions, 10) || 0 : 0;
+        const reach = ins ? parseInt(ins.reach, 10) || 0 : 0;
+        
+        let conversions = 0;
+        if (ins && ins.actions && Array.isArray(ins.actions)) {
+          const action = ins.actions.find(a => 
+            a.action_type === 'onsite_conversion.messaging_conversation_started_7d' ||
+            a.action_type === 'messaging_first_reply' ||
+            a.action_type === 'purchase' ||
+            a.action_type === 'lead'
+          );
+          if (action) conversions = parseInt(action.value, 10) || 0;
+        }
+
+        const cpr = conversions > 0 ? spend / conversions : 0;
+        const copywriting = extractCopywriting(ad.creative);
+
+        loadedAds.push({
+          id: ad.id,
+          name: ad.name,
+          status: ad.status,
+          spend,
+          impressions,
+          reach,
+          results: conversions,
+          cpr,
+          copywriting: copywriting
+        });
+      });
     }
+  }
 
-    const cpr = conversions > 0 ? spend / conversions : 0;
-    const copywriting = extractCopywriting(ad.creative);
+  // 3. Fetch copywriting metadata if source is API and we loaded ads from report.json
+  let creativeCopyMap = new Map();
+  if (dataSource === 'api' && isFromReport && accessToken && adAccountId) {
+    try {
+      log.info('Fetching creative metadata from Meta API for copywriting details...');
+      if (onProgress) onProgress({ type: 'status', message: 'Mengunduh copywriting iklan dari Meta API...' });
+      const rawAds = await fetchMetaAdsCreatives(accessToken, adAccountId);
+      rawAds.forEach(ad => {
+        const copywriting = extractCopywriting(ad.creative);
+        if (copywriting) {
+          creativeCopyMap.set(ad.name, copywriting);
+          if (ad.id) creativeCopyMap.set(ad.id, copywriting);
+        }
+      });
+    } catch (err) {
+      log.warn(`Failed to fetch copywriting from Meta Ads API: ${err.message}. Will use fallback placeholder.`);
+    }
+  }
+
+  // 4. Combine and normalize into adsData for Gemini
+  loadedAds.forEach(ad => {
+    const spend = ad.spend || 0;
+    const impressions = ad.impressions || 0;
+    const reach = ad.reach || 0;
+    const conversions = ad.results || ad.conversions || 0;
+    const cpr = ad.cpr || 0;
+    const status = ad.status || 'active';
+
+    let copywriting = ad.copywriting || creativeCopyMap.get(ad.name) || (ad.id && creativeCopyMap.get(ad.id)) || '';
+
+    if (!copywriting) {
+      if (dataSource === 'csv') {
+        copywriting = `[Iklan CSV: ${ad.name} | Angle: ${ad.adset || 'Umum'} | Kualitas: ${ad.quality || '-'} | Interaksi: ${ad.engagement || '-'}]`;
+      } else {
+        copywriting = `[Teks copywriting tidak ditemukan untuk iklan: ${ad.name}]`;
+      }
+    }
 
     if (copywriting && spend > 5000) {
       adsData.push({
-        ad_id: ad.id,
+        ad_id: ad.id || ad.name,
         ad_name: ad.name,
         copywriting: copywriting,
         spend: spend,
@@ -123,7 +224,7 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
         reach: reach,
         conversions: conversions,
         cpr: cpr,
-        status: ad.status
+        status: status
       });
     }
   });

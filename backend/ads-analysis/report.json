@@ -1,0 +1,1696 @@
+{
+  "title": "Laporan Performa Iklan Multi-Brand",
+  "subtitle": "Periode: 15 Juni 2026 – 22 Juni 2026",
+  "theme": {
+    "primary": "#3B82F6"
+  },
+  "brands": {
+    "Latezza Beauty x CN Mar 16 April": {
+      "id": "brand_1",
+      "name": "Latezza Beauty",
+      "color": "#3B82F6"
+    },
+    "Gaby Florist x CN 16 April": {
+      "id": "brand_2",
+      "name": "Gaby Florist",
+      "color": "#EC4899"
+    },
+    "Cake Admin 2 x CN": {
+      "id": "brand_3",
+      "name": "Cake Admin 2",
+      "color": "#10B981"
+    },
+    "Gudang Parcel X CN 26 Mei": {
+      "id": "brand_4",
+      "name": "Gudang Parcel X CN 26 Mei",
+      "color": "#F59E0B"
+    }
+  },
+  "timeframes": {
+    "custom": {
+      "label": "Periode: 15 Juni 2026 – 22 Juni 2026",
+      "dateRange": "15 Juni 2026 – 22 Juni 2026",
+      "widgets": [
+        {
+          "type": "kpi_grid",
+          "gridSpan": 12,
+          "items": [
+            {
+              "label": "Total Belanja",
+              "value": "Rp 1.522.403",
+              "subtext": "IDR · Avg Rp 84.578/iklan",
+              "status": "normal"
+            },
+            {
+              "label": "Total Impresi",
+              "value": "150.284",
+              "subtext": "CPM Avg Rp 10.130",
+              "status": "normal"
+            },
+            {
+              "label": "Total Konversi",
+              "value": "198",
+              "subtext": "CPR Avg Rp 7.689",
+              "status": "good"
+            },
+            {
+              "label": "Total Jangkauan",
+              "value": "88.164",
+              "subtext": "Frekuensi 1.70×",
+              "status": "normal"
+            }
+          ]
+        },
+        {
+          "type": "chart",
+          "gridSpan": 6,
+          "chartId": "bubble-custom",
+          "chartType": "bubble",
+          "title": "Pengeluaran vs Konversi per Iklan",
+          "subtitle": "Ukuran bubble = volume konversi",
+          "data": {
+            "datasets": [
+              {
+                "label": "Konten 3 LBP (J...",
+                "data": [
+                  {
+                    "x": 25,
+                    "y": 5,
+                    "r": 6.708203932499369
+                  }
+                ],
+                "backgroundColor": "#3B82F680",
+                "borderColor": "#3B82F6",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 2 LBP (P...",
+                "data": [
+                  {
+                    "x": 228,
+                    "y": 54,
+                    "r": 22.045407685048602
+                  }
+                ],
+                "backgroundColor": "#3B82F680",
+                "borderColor": "#3B82F6",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 1 LBP (N...",
+                "data": [
+                  {
+                    "x": 26,
+                    "y": 3,
+                    "r": 5.196152422706632
+                  }
+                ],
+                "backgroundColor": "#3B82F680",
+                "borderColor": "#3B82F6",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 1 GBF (K...",
+                "data": [
+                  {
+                    "x": 16,
+                    "y": 3,
+                    "r": 5.196152422706632
+                  }
+                ],
+                "backgroundColor": "#EC489980",
+                "borderColor": "#EC4899",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 4 LBP (P...",
+                "data": [
+                  {
+                    "x": 12,
+                    "y": 2,
+                    "r": 4.242640687119286
+                  }
+                ],
+                "backgroundColor": "#3B82F680",
+                "borderColor": "#3B82F6",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 2 GBF (C...",
+                "data": [
+                  {
+                    "x": 0,
+                    "y": 0,
+                    "r": 4
+                  }
+                ],
+                "backgroundColor": "#EC489980",
+                "borderColor": "#EC4899",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 3 GBF (R...",
+                "data": [
+                  {
+                    "x": 2,
+                    "y": 0,
+                    "r": 4
+                  }
+                ],
+                "backgroundColor": "#EC489980",
+                "borderColor": "#EC4899",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 4 GBF (R...",
+                "data": [
+                  {
+                    "x": 20,
+                    "y": 2,
+                    "r": 4.242640687119286
+                  }
+                ],
+                "backgroundColor": "#EC489980",
+                "borderColor": "#EC4899",
+                "borderWidth": 1
+              },
+              {
+                "label": "Surganya Korean...",
+                "data": [
+                  {
+                    "x": 332,
+                    "y": 55,
+                    "r": 22.24859546128699
+                  }
+                ],
+                "backgroundColor": "#10B98180",
+                "borderColor": "#10B981",
+                "borderWidth": 1
+              },
+              {
+                "label": "Niatnya Beli Ku...",
+                "data": [
+                  {
+                    "x": 0,
+                    "y": 0,
+                    "r": 4
+                  }
+                ],
+                "backgroundColor": "#10B98180",
+                "borderColor": "#10B981",
+                "borderWidth": 1
+              },
+              {
+                "label": "Custome Cake",
+                "data": [
+                  {
+                    "x": 11,
+                    "y": 1,
+                    "r": 4
+                  }
+                ],
+                "backgroundColor": "#10B98180",
+                "borderColor": "#10B981",
+                "borderWidth": 1
+              },
+              {
+                "label": "Bouquet & Cake ...",
+                "data": [
+                  {
+                    "x": 6,
+                    "y": 0,
+                    "r": 4
+                  }
+                ],
+                "backgroundColor": "#10B98180",
+                "borderColor": "#10B981",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 5 GBF (K...",
+                "data": [
+                  {
+                    "x": 330,
+                    "y": 35,
+                    "r": 17.74823934929885
+                  }
+                ],
+                "backgroundColor": "#EC489980",
+                "borderColor": "#EC4899",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 1 GPO (P...",
+                "data": [
+                  {
+                    "x": 3,
+                    "y": 0,
+                    "r": 4
+                  }
+                ],
+                "backgroundColor": "#F59E0B80",
+                "borderColor": "#F59E0B",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 2 GPO (M...",
+                "data": [
+                  {
+                    "x": 4,
+                    "y": 0,
+                    "r": 4
+                  }
+                ],
+                "backgroundColor": "#F59E0B80",
+                "borderColor": "#F59E0B",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 3 GPO (I...",
+                "data": [
+                  {
+                    "x": 371,
+                    "y": 24,
+                    "r": 14.696938456699067
+                  }
+                ],
+                "backgroundColor": "#F59E0B80",
+                "borderColor": "#F59E0B",
+                "borderWidth": 1
+              },
+              {
+                "label": "Konten 5 LBP (T...",
+                "data": [
+                  {
+                    "x": 64,
+                    "y": 5,
+                    "r": 6.708203932499369
+                  }
+                ],
+                "backgroundColor": "#3B82F680",
+                "borderColor": "#3B82F6",
+                "borderWidth": 1
+              },
+              {
+                "label": "ONE STOP SHOPPI...",
+                "data": [
+                  {
+                    "x": 73,
+                    "y": 9,
+                    "r": 9
+                  }
+                ],
+                "backgroundColor": "#10B98180",
+                "borderColor": "#10B981",
+                "borderWidth": 1
+              }
+            ]
+          },
+          "options": {
+            "scales": {
+              "x": {
+                "title": {
+                  "display": true,
+                  "text": "Belanja (ribu IDR)"
+                },
+                "ticks": {
+                  "callbackType": "currency"
+                }
+              },
+              "y": {
+                "title": {
+                  "display": true,
+                  "text": "Konversi (Chat)"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "chart",
+          "gridSpan": 6,
+          "chartId": "cpr-bar-custom",
+          "chartType": "bar",
+          "title": "Biaya per Konversi (CPR)",
+          "subtitle": "Semakin rendah nilai CPR, efisiensi semakin tinggi (IDR)",
+          "data": {
+            "labels": [
+              "Konten 2 LBP...",
+              "Konten 3 LBP...",
+              "Konten 1 GBF...",
+              "Konten 4 LBP...",
+              "Surganya Kor...",
+              "ONE STOP SHO...",
+              "Konten 1 LBP...",
+              "Konten 5 GBF...",
+              "Konten 4 GBF...",
+              "Custome Cake",
+              "Konten 5 LBP...",
+              "Konten 3 GPO..."
+            ],
+            "datasets": [
+              {
+                "label": "CPR",
+                "data": [
+                  4230,
+                  4992,
+                  5382,
+                  5885,
+                  6042,
+                  8075,
+                  8541,
+                  9420,
+                  9802,
+                  11282,
+                  12776,
+                  15460
+                ],
+                "backgroundColor": [
+                  "#F59E0Bcc",
+                  "#F59E0Bcc",
+                  "#F59E0Bcc",
+                  "#F59E0Bcc",
+                  "#F59E0Bcc",
+                  "#EF4444cc",
+                  "#EF4444cc",
+                  "#EF4444cc",
+                  "#EF4444cc",
+                  "#EF4444cc",
+                  "#EF4444cc",
+                  "#EF4444cc"
+                ],
+                "borderColor": [
+                  "#F59E0B",
+                  "#F59E0B",
+                  "#F59E0B",
+                  "#F59E0B",
+                  "#F59E0B",
+                  "#EF4444",
+                  "#EF4444",
+                  "#EF4444",
+                  "#EF4444",
+                  "#EF4444",
+                  "#EF4444",
+                  "#EF4444"
+                ],
+                "borderWidth": 1,
+                "borderRadius": 4
+              }
+            ]
+          },
+          "options": {
+            "indexAxis": "y",
+            "scales": {
+              "x": {
+                "ticks": {
+                  "callbackType": "currency"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "chart",
+          "gridSpan": 12,
+          "chartId": "imp-reach-custom",
+          "chartType": "bar",
+          "title": "Impresi vs Jangkauan per Iklan",
+          "subtitle": "Menunjukkan visual exposure vs jumlah unik penonton",
+          "data": {
+            "labels": [
+              "Konten 5 GBF (K...",
+              "Surganya Korean...",
+              "Konten 3 GPO (I...",
+              "Konten 2 LBP (P...",
+              "ONE STOP SHOPPI...",
+              "Konten 4 GBF (R...",
+              "Konten 5 LBP (T...",
+              "Konten 1 GBF (K...",
+              "Konten 1 LBP (N...",
+              "Konten 3 LBP (J...",
+              "Custome Cake",
+              "Bouquet & Cake ...",
+              "Konten 4 LBP (P...",
+              "Konten 3 GBF (R...",
+              "Konten 2 GPO (M...",
+              "Konten 1 GPO (P...",
+              "Niatnya Beli Ku...",
+              "Konten 2 GBF (C..."
+            ],
+            "datasets": [
+              {
+                "label": "Impresi",
+                "data": [
+                  44818,
+                  42012,
+                  33058,
+                  11678,
+                  5711,
+                  3171,
+                  2606,
+                  2380,
+                  1253,
+                  1040,
+                  868,
+                  758,
+                  436,
+                  186,
+                  159,
+                  129,
+                  21,
+                  0
+                ],
+                "backgroundColor": "#3B82F6aa",
+                "borderColor": "#3B82F6",
+                "borderWidth": 1,
+                "borderRadius": 3
+              },
+              {
+                "label": "Jangkauan",
+                "data": [
+                  25583,
+                  21823,
+                  18443,
+                  6905,
+                  4263,
+                  2942,
+                  1872,
+                  2191,
+                  1008,
+                  888,
+                  756,
+                  704,
+                  346,
+                  168,
+                  142,
+                  109,
+                  21,
+                  0
+                ],
+                "backgroundColor": "#10B981aa",
+                "borderColor": "#10B981",
+                "borderWidth": 1,
+                "borderRadius": 3
+              }
+            ]
+          }
+        },
+        {
+          "type": "chart",
+          "gridSpan": 6,
+          "chartId": "brand-pie-custom",
+          "chartType": "doughnut",
+          "title": "Distribusi Konversi per Brand",
+          "subtitle": "Persentase kontribusi chat dimulai",
+          "data": {
+            "labels": [
+              "Latezza Beauty",
+              "Gaby Florist",
+              "Cake Admin 2",
+              "Gudang Parcel X CN 26 Mei"
+            ],
+            "datasets": [
+              {
+                "data": [
+                  69,
+                  40,
+                  65,
+                  24
+                ],
+                "backgroundColor": [
+                  "#3B82F6cc",
+                  "#EC4899cc",
+                  "#10B981cc",
+                  "#F59E0Bcc"
+                ],
+                "borderColor": [
+                  "#3B82F6",
+                  "#EC4899",
+                  "#10B981",
+                  "#F59E0B"
+                ],
+                "borderWidth": 1.5
+              }
+            ]
+          }
+        },
+        {
+          "type": "insights",
+          "gridSpan": 12,
+          "title": "Insight Utama",
+          "items": [
+            {
+              "headline": "Juara Konversi Kategori Kue",
+              "body": "Kampanye \"Surganya Korean Cake (Admin 2)\" dari brand Cake Admin 2 adalah top performer dengan 55 konversi chat dari spend Rp 332.316, menghasilkan CPR yang sangat efisien sebesar Rp 6.042. Ini adalah model sukses yang perlu dipelajari dan direplikasi.",
+              "icon": "ti ti-trophy",
+              "color": "#10B981"
+            },
+            {
+              "headline": "Potensi Tinggi Buket Korea",
+              "body": "Konten \"Konten 5 GBF (Korean Bouquet) 25 M\" dari Gaby Florist menunjukkan performa yang menjanjikan dengan 35 konversi dari spend Rp 329.717. CPR Rp 9.420 masih baik, namun ada peluang besar untuk meningkatkan efisiensi dengan optimasi targeting atau materi iklan.",
+              "icon": "ti ti-chart-line",
+              "color": "#3B82F6"
+            },
+            {
+              "headline": "Evaluasi Konten Parcel (CPR Tinggi)",
+              "body": "Meskipun memiliki spend yang signifikan (Rp 371.030), \"Konten 3 GPO (Imagine someone give)\" hanya menghasilkan 24 konversi dengan CPR tinggi Rp 15.460. Perlu tinjauan mendalam pada relevansi konten, targeting, atau penawaran untuk meningkatkan efisiensinya.",
+              "icon": "ti ti-alert-triangle",
+              "color": "#F59E0B"
+            },
+            {
+              "headline": "Perombakan Konten Beauty Mendesak",
+              "body": "Kampanye \"Konten 5 LBP (TEMPAT CHATGE BADAN)\" dari Latezza Beauty menunjukkan performa terendah dengan hanya 5 konversi dari spend Rp 63.881, menghasilkan CPR sangat tinggi yaitu Rp 12.776. Direkomendasikan untuk meninjau ulang secara total, menghentikan, atau mengganti kampanye ini.",
+              "icon": "ti ti-flame",
+              "color": "#EF4444"
+            },
+            {
+              "headline": "Peluang Retargeting Audiens",
+              "body": "Dengan total jangkauan 88.164 audiens dan 150.284 impressions, ada segmen audiens yang telah melihat iklan namun belum berkonversi. Pertimbangkan strategi retargeting untuk mendorong audiens ini agar melakukan chat dan meningkatkan total konversi.",
+              "icon": "ti ti-users",
+              "color": "#3B82F6"
+            },
+            {
+              "headline": "Benchmark Efisiensi Kampanye",
+              "body": "Secara agregat, total spend Rp 1.522.403 menghasilkan 198 konversi, dengan rata-rata Cost Per Result (CPR) sebesar Rp 7.688. Angka ini dapat digunakan sebagai patokan umum untuk mengukur efisiensi kampanye di masa mendatang dan mengidentifikasi anomali.",
+              "icon": "ti ti-bulb",
+              "color": "#06B6D4"
+            }
+          ]
+        },
+        {
+          "type": "chart",
+          "gridSpan": 6,
+          "chartId": "contact-split-custom",
+          "chartType": "bar",
+          "title": "Kontak Baru vs Returning per Iklan",
+          "subtitle": "Menilai efektivitas menjaring audiens baru",
+          "data": {
+            "labels": [
+              "Konten 2 LBP...",
+              "Konten 3 LBP...",
+              "Konten 1 GBF...",
+              "Konten 4 LBP...",
+              "Surganya Kor...",
+              "ONE STOP SHO...",
+              "Konten 1 LBP...",
+              "Konten 5 GBF...",
+              "Konten 4 GBF...",
+              "Custome Cake",
+              "Konten 5 LBP...",
+              "Konten 3 GPO..."
+            ],
+            "datasets": [
+              {
+                "label": "Kontak Baru",
+                "data": [
+                  50,
+                  4,
+                  3,
+                  2,
+                  54,
+                  9,
+                  3,
+                  34,
+                  2,
+                  1,
+                  5,
+                  24
+                ],
+                "backgroundColor": "#10B981cc",
+                "borderRadius": {
+                  "topLeft": 3,
+                  "topRight": 3
+                }
+              },
+              {
+                "label": "Returning",
+                "data": [
+                  4,
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "backgroundColor": "#10B98144"
+              }
+            ]
+          },
+          "options": {
+            "indexAxis": "y",
+            "scales": {
+              "x": {
+                "stacked": true
+              },
+              "y": {
+                "stacked": true
+              }
+            }
+          }
+        },
+        {
+          "type": "table",
+          "gridSpan": 12,
+          "title": "Detail Performa Tiap Iklan",
+          "headers": [
+            "Nama Iklan",
+            "Kategori",
+            "Status",
+            "Belanja",
+            "Impresi",
+            "Konversi",
+            "CPR",
+            "Kualitas",
+            "Interaksi"
+          ],
+          "rows": [
+            [
+              "Konten 3 LBP (Japanese)",
+              {
+                "type": "badge",
+                "text": "Latezza Beauty",
+                "styleClass": "brand-tag",
+                "color": "#3B82F6"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 24.958,526",
+              "1.040",
+              5,
+              {
+                "type": "badge",
+                "text": "Rp 4.992",
+                "styleClass": "badge-warn"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 2 LBP (Paket Nyalon)",
+              {
+                "type": "badge",
+                "text": "Latezza Beauty",
+                "styleClass": "brand-tag",
+                "color": "#3B82F6"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 228.436,632",
+              "11.678",
+              54,
+              {
+                "type": "badge",
+                "text": "Rp 4.230",
+                "styleClass": "badge-warn"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 1 LBP (Nail Art)",
+              {
+                "type": "badge",
+                "text": "Latezza Beauty",
+                "styleClass": "brand-tag",
+                "color": "#3B82F6"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 25.622",
+              "1.253",
+              3,
+              {
+                "type": "badge",
+                "text": "Rp 8.541",
+                "styleClass": "badge-danger"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 1 GBF (Korean Bouquet) 16 April",
+              {
+                "type": "badge",
+                "text": "Gaby Florist",
+                "styleClass": "brand-tag",
+                "color": "#EC4899"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 16.145,053",
+              "2.380",
+              3,
+              {
+                "type": "badge",
+                "text": "Rp 5.382",
+                "styleClass": "badge-warn"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 4 LBP (PL)",
+              {
+                "type": "badge",
+                "text": "Latezza Beauty",
+                "styleClass": "brand-tag",
+                "color": "#3B82F6"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 11.770,842",
+              "436",
+              2,
+              {
+                "type": "badge",
+                "text": "Rp 5.885",
+                "styleClass": "badge-warn"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 2 GBF (Carousel Slide)",
+              {
+                "type": "badge",
+                "text": "Gaby Florist",
+                "styleClass": "brand-tag",
+                "color": "#EC4899"
+              },
+              {
+                "type": "badge",
+                "text": "Nonaktif",
+                "styleClass": "pill-inactive"
+              },
+              "Rp 0",
+              "0",
+              0,
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "badge-good"
+              },
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "r-na"
+              },
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "r-na"
+              }
+            ],
+            [
+              "Konten 3 GBF (Reels Red Roses)",
+              {
+                "type": "badge",
+                "text": "Gaby Florist",
+                "styleClass": "brand-tag",
+                "color": "#EC4899"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 1.842,105",
+              "186",
+              0,
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "badge-good"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 4 GBF (Reels Order Buat Pacar)",
+              {
+                "type": "badge",
+                "text": "Gaby Florist",
+                "styleClass": "brand-tag",
+                "color": "#EC4899"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 19.604,316",
+              "3.171",
+              2,
+              {
+                "type": "badge",
+                "text": "Rp 9.802",
+                "styleClass": "badge-danger"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Surganya Korean Cake (Admin 2)",
+              {
+                "type": "badge",
+                "text": "Cake Admin 2",
+                "styleClass": "brand-tag",
+                "color": "#10B981"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 332.316,316",
+              "42.012",
+              55,
+              {
+                "type": "badge",
+                "text": "Rp 6.042",
+                "styleClass": "badge-warn"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Niatnya Beli Kue (Admin 2)",
+              {
+                "type": "badge",
+                "text": "Cake Admin 2",
+                "styleClass": "brand-tag",
+                "color": "#10B981"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 180,947",
+              "21",
+              0,
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "badge-good"
+              },
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "r-na"
+              },
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "r-na"
+              }
+            ],
+            [
+              "Custome Cake",
+              {
+                "type": "badge",
+                "text": "Cake Admin 2",
+                "styleClass": "brand-tag",
+                "color": "#10B981"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 11.281,579",
+              "868",
+              1,
+              {
+                "type": "badge",
+                "text": "Rp 11.282",
+                "styleClass": "badge-danger"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Bouquet & Cake Harga 295",
+              {
+                "type": "badge",
+                "text": "Cake Admin 2",
+                "styleClass": "brand-tag",
+                "color": "#10B981"
+              },
+              {
+                "type": "badge",
+                "text": "Nonaktif",
+                "styleClass": "pill-inactive"
+              },
+              "Rp 6.433,789",
+              "758",
+              0,
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "badge-good"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 5 GBF (Korean Bouquet) 25 M",
+              {
+                "type": "badge",
+                "text": "Gaby Florist",
+                "styleClass": "brand-tag",
+                "color": "#EC4899"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 329.717,474",
+              "44.818",
+              35,
+              {
+                "type": "badge",
+                "text": "Rp 9.420",
+                "styleClass": "badge-danger"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 1 GPO (Papan Bunga & Standing Flowers)",
+              {
+                "type": "badge",
+                "text": "Gudang Parcel X CN 26 Mei",
+                "styleClass": "brand-tag",
+                "color": "#F59E0B"
+              },
+              {
+                "type": "badge",
+                "text": "Nonaktif",
+                "styleClass": "pill-inactive"
+              },
+              "Rp 2.921,895",
+              "129",
+              0,
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "badge-good"
+              },
+              {
+                "type": "badge",
+                "text": "Rata-rata",
+                "styleClass": "r-avg"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 2 GPO (Mau kasih hampers buah tapi bosen modelnya)",
+              {
+                "type": "badge",
+                "text": "Gudang Parcel X CN 26 Mei",
+                "styleClass": "brand-tag",
+                "color": "#F59E0B"
+              },
+              {
+                "type": "badge",
+                "text": "Nonaktif",
+                "styleClass": "pill-inactive"
+              },
+              "Rp 3.585,895",
+              "159",
+              0,
+              {
+                "type": "badge",
+                "text": "-",
+                "styleClass": "badge-good"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 3 GPO (Imagine someone give)",
+              {
+                "type": "badge",
+                "text": "Gudang Parcel X CN 26 Mei",
+                "styleClass": "brand-tag",
+                "color": "#F59E0B"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 371.029,789",
+              "33.058",
+              24,
+              {
+                "type": "badge",
+                "text": "Rp 15.460",
+                "styleClass": "badge-danger"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "Konten 5 LBP (TEMPAT CHATGE BADAN)",
+              {
+                "type": "badge",
+                "text": "Latezza Beauty",
+                "styleClass": "brand-tag",
+                "color": "#3B82F6"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 63.880,842",
+              "2.606",
+              5,
+              {
+                "type": "badge",
+                "text": "Rp 12.776",
+                "styleClass": "badge-danger"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ],
+            [
+              "ONE STOP SHOPPING 126",
+              {
+                "type": "badge",
+                "text": "Cake Admin 2",
+                "styleClass": "brand-tag",
+                "color": "#10B981"
+              },
+              {
+                "type": "badge",
+                "text": "Aktif",
+                "styleClass": "pill-active"
+              },
+              "Rp 72.674,947",
+              "5.711",
+              9,
+              {
+                "type": "badge",
+                "text": "Rp 8.075",
+                "styleClass": "badge-danger"
+              },
+              {
+                "type": "badge",
+                "text": "Rata-rata",
+                "styleClass": "r-avg"
+              },
+              {
+                "type": "badge",
+                "text": "Di atas rata-rata",
+                "styleClass": "r-low"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "bar_list",
+          "gridSpan": 12,
+          "title": "Skor Efisiensi Iklan (CPR lebih rendah = lebih efisien)",
+          "items": [
+            {
+              "label": "Konten 2 GBF (Carous...",
+              "pct": 0,
+              "value": "Rp 0",
+              "color": "#10B981",
+              "badge": "Gaby Florist",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 3 GBF (Reels ...",
+              "pct": 0,
+              "value": "Rp 0",
+              "color": "#10B981",
+              "badge": "Gaby Florist",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Niatnya Beli Kue (Ad...",
+              "pct": 0,
+              "value": "Rp 0",
+              "color": "#10B981",
+              "badge": "Cake Admin 2",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Bouquet & Cake Harga...",
+              "pct": 0,
+              "value": "Rp 0",
+              "color": "#10B981",
+              "badge": "Cake Admin 2",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 1 GPO (Papan ...",
+              "pct": 0,
+              "value": "Rp 0",
+              "color": "#10B981",
+              "badge": "Gudang Parcel X CN 26 Mei",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 2 GPO (Mau ka...",
+              "pct": 0,
+              "value": "Rp 0",
+              "color": "#10B981",
+              "badge": "Gudang Parcel X CN 26 Mei",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 2 LBP (Paket ...",
+              "pct": 27,
+              "value": "Rp 4.230",
+              "color": "#F59E0B",
+              "badge": "Latezza Beauty",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 3 LBP (Japane...",
+              "pct": 32,
+              "value": "Rp 4.992",
+              "color": "#F59E0B",
+              "badge": "Latezza Beauty",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 1 GBF (Korean...",
+              "pct": 35,
+              "value": "Rp 5.382",
+              "color": "#F59E0B",
+              "badge": "Gaby Florist",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 4 LBP (PL)",
+              "pct": 38,
+              "value": "Rp 5.885",
+              "color": "#F59E0B",
+              "badge": "Latezza Beauty",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Surganya Korean Cake...",
+              "pct": 39,
+              "value": "Rp 6.042",
+              "color": "#F59E0B",
+              "badge": "Cake Admin 2",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "ONE STOP SHOPPING 12...",
+              "pct": 52,
+              "value": "Rp 8.075",
+              "color": "#EF4444",
+              "badge": "Cake Admin 2",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 1 LBP (Nail A...",
+              "pct": 55,
+              "value": "Rp 8.541",
+              "color": "#EF4444",
+              "badge": "Latezza Beauty",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 5 GBF (Korean...",
+              "pct": 61,
+              "value": "Rp 9.420",
+              "color": "#EF4444",
+              "badge": "Gaby Florist",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 4 GBF (Reels ...",
+              "pct": 63,
+              "value": "Rp 9.802",
+              "color": "#EF4444",
+              "badge": "Gaby Florist",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Custome Cake",
+              "pct": 73,
+              "value": "Rp 11.282",
+              "color": "#EF4444",
+              "badge": "Cake Admin 2",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 5 LBP (TEMPAT...",
+              "pct": 83,
+              "value": "Rp 12.776",
+              "color": "#EF4444",
+              "badge": "Latezza Beauty",
+              "badgeClass": "badge-neutral"
+            },
+            {
+              "label": "Konten 3 GPO (Imagin...",
+              "pct": 100,
+              "value": "Rp 15.460",
+              "color": "#EF4444",
+              "badge": "Gudang Parcel X CN 26 Mei",
+              "badgeClass": "badge-neutral"
+            }
+          ]
+        }
+      ],
+      "whatsAppSummary": "Halo Tim,\n\nBerikut ringkasan performa kampanye iklan untuk periode 15 – 22 Juni 2026.\n\nTotal spend tercatat sebesar *Rp 1.522.403*, menghasilkan *198 konversi chat* dari *88.164 audiens* yang dijangkau (total 150.284 impressions). Kategori *Kue*, khususnya brand *Cake Admin 2* dengan kampanye \"Surganya Korean Cake\", menjadi pemimpin konversi dengan *55 chat* dan efisiensi CPR yang sangat baik yaitu *Rp 6.042*.\n\nUntuk optimasi ke depan, disarankan untuk:\n1. Mengidentifikasi dan mereplikasi faktor sukses dari kampanye \"Surganya Korean Cake\" yang sangat efisien.\n2. Melakukan evaluasi mendalam pada kampanye \"Konten 3 GPO\" yang meskipun memiliki spend tinggi, namun CPR-nya kurang efisien (Rp 15.460).\n3. Segera meninjau ulang atau menghentikan kampanye \"Konten 5 LBP\" dari Latezza Beauty yang sangat tidak efisien (hanya 5 konversi dengan CPR Rp 12.776).\n\nFokus pada penskalaan kampanye berkinerja tinggi dan perbaikan/penghentian kampanye yang underperform untuk meningkatkan ROI secara keseluruhan."
+    }
+  },
+  "ads": [
+    {
+      "name": "Konten 3 LBP (Japanese)",
+      "status": "active",
+      "spend": 24958.526315789473,
+      "impressions": 1040,
+      "reach": 888,
+      "results": 5,
+      "cpr": 4991.7052631578945,
+      "newContacts": 4,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Latezza Beauty x CN Mar 16 April",
+      "brandKey": "brand_1",
+      "brandName": "Latezza Beauty",
+      "brandColor": "#3B82F6"
+    },
+    {
+      "name": "Konten 2 LBP (Paket Nyalon)",
+      "status": "active",
+      "spend": 228436.63157894736,
+      "impressions": 11678,
+      "reach": 6905,
+      "results": 54,
+      "cpr": 4230.307992202729,
+      "newContacts": 50,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Latezza Beauty x CN Mar 16 April",
+      "brandKey": "brand_1",
+      "brandName": "Latezza Beauty",
+      "brandColor": "#3B82F6"
+    },
+    {
+      "name": "Konten 1 LBP (Nail Art)",
+      "status": "active",
+      "spend": 25622,
+      "impressions": 1253,
+      "reach": 1008,
+      "results": 3,
+      "cpr": 8540.666666666666,
+      "newContacts": 3,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Latezza Beauty x CN Mar 16 April",
+      "brandKey": "brand_1",
+      "brandName": "Latezza Beauty",
+      "brandColor": "#3B82F6"
+    },
+    {
+      "name": "Konten 1 GBF (Korean Bouquet) 16 April",
+      "status": "active",
+      "spend": 16145.052631578947,
+      "impressions": 2380,
+      "reach": 2191,
+      "results": 3,
+      "cpr": 5381.684210526316,
+      "newContacts": 3,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Gaby Florist x CN 16 April",
+      "brandKey": "brand_2",
+      "brandName": "Gaby Florist",
+      "brandColor": "#EC4899"
+    },
+    {
+      "name": "Konten 4 LBP (PL)",
+      "status": "active",
+      "spend": 11770.842105263157,
+      "impressions": 436,
+      "reach": 346,
+      "results": 2,
+      "cpr": 5885.421052631578,
+      "newContacts": 2,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Latezza Beauty x CN Mar 16 April",
+      "brandKey": "brand_1",
+      "brandName": "Latezza Beauty",
+      "brandColor": "#3B82F6"
+    },
+    {
+      "name": "Konten 2 GBF (Carousel Slide)",
+      "status": "inactive",
+      "spend": 0,
+      "impressions": 0,
+      "reach": 0,
+      "results": 0,
+      "cpr": 0,
+      "newContacts": 0,
+      "quality": "-",
+      "engagement": "-",
+      "adset": "Gaby Florist x CN 16 April",
+      "brandKey": "brand_2",
+      "brandName": "Gaby Florist",
+      "brandColor": "#EC4899"
+    },
+    {
+      "name": "Konten 3 GBF (Reels Red Roses)",
+      "status": "active",
+      "spend": 1842.1052631578946,
+      "impressions": 186,
+      "reach": 168,
+      "results": 0,
+      "cpr": 0,
+      "newContacts": 0,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Gaby Florist x CN 16 April",
+      "brandKey": "brand_2",
+      "brandName": "Gaby Florist",
+      "brandColor": "#EC4899"
+    },
+    {
+      "name": "Konten 4 GBF (Reels Order Buat Pacar)",
+      "status": "active",
+      "spend": 19604.315789473683,
+      "impressions": 3171,
+      "reach": 2942,
+      "results": 2,
+      "cpr": 9802.157894736842,
+      "newContacts": 2,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Gaby Florist x CN 16 April",
+      "brandKey": "brand_2",
+      "brandName": "Gaby Florist",
+      "brandColor": "#EC4899"
+    },
+    {
+      "name": "Surganya Korean Cake (Admin 2)",
+      "status": "active",
+      "spend": 332316.31578947365,
+      "impressions": 42012,
+      "reach": 21823,
+      "results": 55,
+      "cpr": 6042.1148325358845,
+      "newContacts": 54,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Cake Admin 2 x CN",
+      "brandKey": "brand_3",
+      "brandName": "Cake Admin 2",
+      "brandColor": "#10B981"
+    },
+    {
+      "name": "Niatnya Beli Kue (Admin 2)",
+      "status": "active",
+      "spend": 180.94736842105263,
+      "impressions": 21,
+      "reach": 21,
+      "results": 0,
+      "cpr": 0,
+      "newContacts": 0,
+      "quality": "-",
+      "engagement": "-",
+      "adset": "Cake Admin 2 x CN",
+      "brandKey": "brand_3",
+      "brandName": "Cake Admin 2",
+      "brandColor": "#10B981"
+    },
+    {
+      "name": "Custome Cake",
+      "status": "active",
+      "spend": 11281.57894736842,
+      "impressions": 868,
+      "reach": 756,
+      "results": 1,
+      "cpr": 11281.57894736842,
+      "newContacts": 1,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Cake Admin 2 x CN",
+      "brandKey": "brand_3",
+      "brandName": "Cake Admin 2",
+      "brandColor": "#10B981"
+    },
+    {
+      "name": "Bouquet & Cake Harga 295",
+      "status": "inactive",
+      "spend": 6433.78947368421,
+      "impressions": 758,
+      "reach": 704,
+      "results": 0,
+      "cpr": 0,
+      "newContacts": 0,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Cake Admin 2 x CN",
+      "brandKey": "brand_3",
+      "brandName": "Cake Admin 2",
+      "brandColor": "#10B981"
+    },
+    {
+      "name": "Konten 5 GBF (Korean Bouquet) 25 M",
+      "status": "active",
+      "spend": 329717.4736842105,
+      "impressions": 44818,
+      "reach": 25583,
+      "results": 35,
+      "cpr": 9420.4992481203,
+      "newContacts": 34,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Gaby Florist x CN 16 April",
+      "brandKey": "brand_2",
+      "brandName": "Gaby Florist",
+      "brandColor": "#EC4899"
+    },
+    {
+      "name": "Konten 1 GPO (Papan Bunga & Standing Flowers)",
+      "status": "inactive",
+      "spend": 2921.894736842105,
+      "impressions": 129,
+      "reach": 109,
+      "results": 0,
+      "cpr": 0,
+      "newContacts": 0,
+      "quality": "Rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Gudang Parcel X CN 26 Mei",
+      "brandKey": "brand_4",
+      "brandName": "Gudang Parcel X CN 26 Mei",
+      "brandColor": "#F59E0B"
+    },
+    {
+      "name": "Konten 2 GPO (Mau kasih hampers buah tapi bosen modelnya)",
+      "status": "inactive",
+      "spend": 3585.894736842105,
+      "impressions": 159,
+      "reach": 142,
+      "results": 0,
+      "cpr": 0,
+      "newContacts": 0,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Gudang Parcel X CN 26 Mei",
+      "brandKey": "brand_4",
+      "brandName": "Gudang Parcel X CN 26 Mei",
+      "brandColor": "#F59E0B"
+    },
+    {
+      "name": "Konten 3 GPO (Imagine someone give)",
+      "status": "active",
+      "spend": 371029.7894736842,
+      "impressions": 33058,
+      "reach": 18443,
+      "results": 24,
+      "cpr": 15459.57456140351,
+      "newContacts": 24,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Gudang Parcel X CN 26 Mei",
+      "brandKey": "brand_4",
+      "brandName": "Gudang Parcel X CN 26 Mei",
+      "brandColor": "#F59E0B"
+    },
+    {
+      "name": "Konten 5 LBP (TEMPAT CHATGE BADAN)",
+      "status": "active",
+      "spend": 63880.84210526315,
+      "impressions": 2606,
+      "reach": 1872,
+      "results": 5,
+      "cpr": 12776.168421052631,
+      "newContacts": 5,
+      "quality": "Di atas rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Latezza Beauty x CN Mar 16 April",
+      "brandKey": "brand_1",
+      "brandName": "Latezza Beauty",
+      "brandColor": "#3B82F6"
+    },
+    {
+      "name": "ONE STOP SHOPPING 126",
+      "status": "active",
+      "spend": 72674.94736842105,
+      "impressions": 5711,
+      "reach": 4263,
+      "results": 9,
+      "cpr": 8074.994152046784,
+      "newContacts": 9,
+      "quality": "Rata-rata",
+      "engagement": "Di atas rata-rata",
+      "adset": "Cake Admin 2 x CN",
+      "brandKey": "brand_3",
+      "brandName": "Cake Admin 2",
+      "brandColor": "#10B981"
+    }
+  ]
+}

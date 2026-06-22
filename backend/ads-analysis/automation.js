@@ -73,6 +73,7 @@ function normalizeMetaInsights(apiData) {
     const cpr = results > 0 ? spend / results : 0;
     
     return {
+      id: item.ad_id,
       name: item.ad_name || 'Unnamed Ad',
       status: 'active',
       spend: spend,
@@ -860,21 +861,25 @@ async function main() {
     brands: brandsMap,
     timeframes: {
       custom: customLayout
-    }
+    },
+    ads: ads
   };
 
-  // 9. Compile report.html
+  // 9. Compile report.html & report.json
   console.log('Compiling final dashboard report...');
   console.log('::STATUS::Menyusun dashboard laporan interaktif HTML...');
   const templatePath = path.join(__dirname, 'template.html');
   const outputPath = path.join(__dirname, 'report.html');
+  const jsonOutputPath = path.join(__dirname, 'report.json');
 
   let html = fs.readFileSync(templatePath, 'utf8');
   html = html.replace('{DASHBOARD_DATA_PLACEHOLDER}', JSON.stringify(finalDashboardJson, null, 2));
   fs.writeFileSync(outputPath, html, 'utf8');
+  fs.writeFileSync(jsonOutputPath, JSON.stringify(finalDashboardJson, null, 2), 'utf8');
   
   console.log(`report.html compiled successfully at: ${outputPath}`);
-  console.log('::STATUS::Laporan HTML berhasil diperbarui!');
+  console.log(`report.json compiled successfully at: ${jsonOutputPath}`);
+  console.log('::STATUS::Laporan HTML & JSON berhasil diperbarui!');
 
   console.log('\n==================================================================');
   console.log('Gemini-Generated WhatsApp Broadcast Summary (Preview)');
@@ -903,6 +908,9 @@ if (require.main === module) {
 } else {
   module.exports = {
     normalizeMetaInsights,
-    splitCSVLine
+    splitCSVLine,
+    parseCSV,
+    groupBrands,
+    buildDashboardLayout
   };
 }

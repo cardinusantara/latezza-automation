@@ -7,6 +7,16 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-22
 
+### Optimized Creative Analysis Sourcing & CSV Context
+- modified `backend/ads-analysis/automation.js` to output `report.json` next to `report.html` on report compilation, containing raw normalized ads metrics and brand structures
+- included unique ad ID fields in normalized ads arrays inside the compiled report JSON
+- refactored `backend/src/services/creative.js` `runCreativeAnalysis()` to check for `report.json` on startup:
+  - if `report.json` exists, it reads the performance metrics directly from the file, avoiding redundant Meta Ads API insights queries and reducing API fetching counts
+  - if `report.json` is missing, it falls back to the data source configuration (`csv` parses local CSV file, `api` fetches live API metrics)
+- integrated copywriting fetching conditional: it only fetches copywriting metadata from the Meta API if the data source is `api` and the metrics were read from `report.json`
+- added CSV fallback copywriting placeholders using the ad name, category, and quality rankings, ensuring creative content analysis is 100% functional without Meta API credentials when the CSV data source is selected
+- wrote detailed unit tests in `backend/src/__tests__/creative.test.js` to mock filesystem reading and verify report JSON metrics parsing and CSV data source fallback flows
+
 ### WhatsApp Message Debouncing & Abuse Prevention
 - implemented in-memory `debounceCache` and `processDebouncedMessage` inside `backend/src/services/whatsapp.js` to buffer rapid incoming messages from a customer within a 3-second window (`DEBOUNCE_DELAY_MS`)
 - combined multiple text messages into a single newline-separated prompt (`\n`) for the AI Agent, reducing Gemini API costs and preventing redundant AI responses

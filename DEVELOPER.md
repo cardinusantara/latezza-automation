@@ -369,11 +369,15 @@ manual trigger: `POST /api/trigger-creative-analysis` (background execution) or 
 report viewer: viewable in dashboard under Creative Ideas tab (calls `GET /api/creative-report`)
 
 flow:
-1. read META_ACCESS_TOKEN and META_AD_ACCOUNT_ID from DB settings (fallback to process.env)
-2. query Meta Graph API for active ads (`/ads` endpoint) to fetch copywriting caption (body), headline, and media
-3. query Meta Graph API for performance insights (`/insights`) to match conversions (messaging actions), spend, and CPR
+1. determine the current `ads_data_source` setting ('api' or 'csv')
+2. check if `backend/ads-analysis/report.json` exists in the filesystem:
+   - if it exists, read the parsed ads metrics and IDs directly from `report.json`, skipping Meta Ads API insights fetch to prevent double API queries
+   - if it is missing, fall back to parsing the uploaded CSV (if data source is `csv`) or querying the Meta Ads API for active ads and insights (if data source is `api`)
+3. fetch copywriting metadata:
+   - if the data source is `api`, call the Meta Ads API (`/ads` endpoint) only to fetch copywriting details, mapping it back to the ads by name/ID
+   - if the data source is `csv`, generate fallback placeholders containing the ad name and details since CSVs do not contain copywriting text
 4. categorize ads into "Winners" (high conversions, low CPR) and "Losers" (high spend, low/zero conversions)
-5. invoke Gemini API (`gemini-2.5-flash` or similar fallback) using `generateContentStream` to perform a creative audit and generate 3-5 brand-new Indonesian ad copy concepts + visual briefs (incorporating optional user custom prompt instructions if provided)
+5. invoke Gemini API (e.g. `gemini-3.1-flash-lite`, `gemini-2.5-flash`) using `generateContentStream` to perform a creative audit and generate 3-5 brand-new Indonesian ad copy concepts + visual briefs (incorporating optional user custom prompt instructions if provided)
 6. save structured JSON report in settings cache/database table under `creative_analysis_report`
 7. broadcast report summary to `whatsapp_group_jid`
 

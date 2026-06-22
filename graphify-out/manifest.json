@@ -5,8 +5,8 @@
     "semantic_hash": "39548690bb4e71065df0b7fa69903082"
   },
   "backend/ads-analysis/automation.js": {
-    "mtime": 1782060716.259812,
-    "ast_hash": "1d784c1963acb4b76e05dfdf649a69f4",
+    "mtime": 1782114066.6664371,
+    "ast_hash": "99390e2f14156c2d24152b1fb1b767aa",
     "semantic_hash": ""
   },
   "backend/ads-analysis/package.json": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "backend/src/services/creative.js": {
-    "mtime": 1782059985.016096,
-    "ast_hash": "4aa6ef219f392b8be6f22d829242f182",
+    "mtime": 1782114135.9889317,
+    "ast_hash": "5d50ee5327ed7302f42c82b3b78413a0",
     "semantic_hash": ""
   },
   "backend/src/services/followup.js": {
@@ -375,13 +375,13 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1782062637.737055,
-    "ast_hash": "315f80ce282fd5895decb832c199dabf",
+    "mtime": 1782114198.0894685,
+    "ast_hash": "7f740b072653da81201f3ceefee40258",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
-    "mtime": 1782062635.9386768,
-    "ast_hash": "96b959ad75798e01b750c5b38b884889",
+    "mtime": 1782114205.2211232,
+    "ast_hash": "e3785aa7d93bea8c73db261f46244877",
     "semantic_hash": ""
   },
   "ISSUES.md": {
@@ -3139,11 +3139,6 @@
     "ast_hash": "c68d374d279069a509c708f811364171",
     "semantic_hash": ""
   },
-  "backend/whatsapp-sessions/default/pre-key-19.json": {
-    "mtime": 1781974771.1981027,
-    "ast_hash": "61a1744c65801701dc6b04c98e1f07d1",
-    "semantic_hash": ""
-  },
   "backend/whatsapp-sessions/default/pre-key-190.json": {
     "mtime": 1781974771.2048542,
     "ast_hash": "0dd2428ffcbbf27f4aca38e0106e04c7",
@@ -3472,11 +3467,6 @@
   "backend/whatsapp-sessions/default/pre-key-249.json": {
     "mtime": 1781974771.207087,
     "ast_hash": "a90193b6c05966a94b4c0b0915534480",
-    "semantic_hash": ""
-  },
-  "backend/whatsapp-sessions/default/pre-key-25.json": {
-    "mtime": 1781974771.1981027,
-    "ast_hash": "5d00b9b61bc5b906d0d6c1cd0d6e0c8e",
     "semantic_hash": ""
   },
   "backend/whatsapp-sessions/default/pre-key-250.json": {
@@ -4194,11 +4184,6 @@
     "ast_hash": "ff90e2f75b8d0b87a1010c6bedabf437",
     "semantic_hash": ""
   },
-  "backend/whatsapp-sessions/default/pre-key-38.json": {
-    "mtime": 1781974771.1981027,
-    "ast_hash": "ffc6ba6c4cbd147b16f619483a5ec5c1",
-    "semantic_hash": ""
-  },
   "backend/whatsapp-sessions/default/pre-key-380.json": {
     "mtime": 1781974771.2112885,
     "ast_hash": "bc525927770f7c61b6d9241ccd5ec75a",
@@ -4862,11 +4847,6 @@
   "backend/whatsapp-sessions/default/pre-key-5.json": {
     "mtime": 1781974771.1981027,
     "ast_hash": "33663d3a64c8ac40ef4748882185a2e6",
-    "semantic_hash": ""
-  },
-  "backend/whatsapp-sessions/default/pre-key-50.json": {
-    "mtime": 1781974771.2010021,
-    "ast_hash": "4997e017758b26d2b5bea209405886d5",
     "semantic_hash": ""
   },
   "backend/whatsapp-sessions/default/pre-key-500.json": {
@@ -6169,11 +6149,6 @@
     "ast_hash": "9d513476fcf732a10aea1e91e0881541",
     "semantic_hash": ""
   },
-  "backend/whatsapp-sessions/default/pre-key-737.json": {
-    "mtime": 1781974771.2185774,
-    "ast_hash": "a3366b960e3f58e31e9c1b2b1f64070f",
-    "semantic_hash": ""
-  },
   "backend/whatsapp-sessions/default/pre-key-738.json": {
     "mtime": 1781974771.2185774,
     "ast_hash": "f131ce8b34a5bdd86b097c47ad25d092",
@@ -6750,8 +6725,8 @@
     "semantic_hash": ""
   },
   ".opencode/opencode.json": {
-    "mtime": 1781982494.8856714,
-    "ast_hash": "f2ae21510d07365eb2bce8159272c7a0",
+    "mtime": 1782063113.784773,
+    "ast_hash": "1efe24ecf938911d4f23e4b1c6ec91f7",
     "semantic_hash": ""
   },
   ".opencode/plugins/graphify.js": {
@@ -6790,8 +6765,8 @@
     "semantic_hash": ""
   },
   "backend/src/__tests__/creative.test.js": {
-    "mtime": 1782060813.6082964,
-    "ast_hash": "862c20d2d75f135821494dcef5a1b4b3",
+    "mtime": 1782114106.613109,
+    "ast_hash": "9e07279194c0ba3aec9ce3e27ff6bf4d",
     "semantic_hash": ""
   },
   "backend/src/__tests__/db.test.js": {
@@ -6857,6 +6832,16 @@
   ".agents/workflows/write-tests.md": {
     "mtime": 1782060663.905347,
     "ast_hash": "a50561f698ed82112b09bc2f344907a6",
+    "semantic_hash": ""
+  },
+  ".opencode/package.json": {
+    "mtime": 1782063437.689259,
+    "ast_hash": "c92fdb2f8f3c9b54aabf3fcccdaf2114",
+    "semantic_hash": ""
+  },
+  "backend/ads-analysis/report.json": {
+    "mtime": 1782114168.784053,
+    "ast_hash": "b4684f3dd1177dfa8104234e32b80ae8",
     "semantic_hash": ""
   }
 }
