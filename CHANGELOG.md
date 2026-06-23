@@ -3,7 +3,45 @@
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
 
----
+## 2026-06-23
+
+### Gemini Model Configuration Refactor
+- modified `backend/src/services/whatsapp.js`, `backend/src/services/summary.js`, `backend/src/services/followup.js`, `backend/src/services/creative.js`, `backend/src/services/ads.js`:
+  - replaced database-driven model resolution (`db.getSetting('gemini_model')`) with strict environment variable resolution using `process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite'`.
+- modified `backend/ads-analysis/automation.js`:
+  - replaced hardcoded `'gemini-2.5-flash'` with `process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite'`.
+- modified `backend/src/routes.js`:
+  - retired `/api/settings/gemini-models` endpoint.
+  - updated `GET /api/settings` response to return the environment-configured model name directly.
+  - updated `POST /api/settings` schema and handler to remove `gemini_model` body parameter and stop database persistence.
+- modified `frontend/src/components/Settings.tsx`:
+  - removed available models state, loading state, and model fetching logic (`fetchModels()`).
+  - replaced the Gemini Model dropdown select element with a read-only Input component displaying the active model name and a note stating that it is locked via `.env`.
+- modified `frontend/src/components/__tests__/Settings.test.tsx`:
+  - removed mock for `/api/settings/gemini-models` to align with the retired endpoint.
+- modified `DEVELOPER.md`:
+  - updated env variables documentation and retired settings keys documentation to reflect that model config is now exclusively server-side via `GEMINI_MODEL` in `.env`.
+
+### Gemini API Usage & Costs Tracking
+- modified `backend/src/db.js`:
+  - created `api_usage_logs` table in `initDb()` containing fields for feature, model name, input/output tokens, cached tokens, and costs in USD/IDR (calculated at Rp 17.500/USD exchange rate)
+  - implemented and exported `saveUsageLog({ feature, modelName, inputTokens, outputTokens, cachedTokens })` helper function with exact cost math rounded to 6 decimals (USD) and 2 decimals (IDR)
+  - updated unit tests in `backend/src/__tests__/db.test.js` to assert `saveUsageLog()` cost calculations and database insert queries
+- integrated Gemini API token logging in chatbot and background services:
+  - modified `backend/src/agent.js` to log token usage on both initial user replies and subsequent tool calling iterations
+  - modified `backend/src/services/followup.js` to log token usage for proactive reminders
+  - modified `backend/src/services/creative.js` to capture and log token usage for creative content ideation stream generations
+  - modified `backend/ads-analysis/automation.js` to capture and output token usage metadata in stdout `::JSON_RESULT::` payloads
+  - modified `backend/src/services/ads.js` to parse usage metadata from stdout and log it in the database
+- added REST API routes in `backend/src/routes.js`:
+  - added `GET /api/settings/usage-stats` to query and return month-to-date aggregates, 30-day daily usage trends, and feature-based token/cost breakdowns for admin dashboards
+- integrated Gemini API token usage and cost visualization on frontend:
+  - modified `frontend/src/components/Overview.tsx` to:
+    - fetch Month-to-Date (MTD) aggregates, daily trend data, and feature breakdowns on component load
+    - added a "Gemini Cost MTD" KPI card at the top displaying current monthly billing and request totals
+    - added a dedicated "Gemini API Usage & Cost Analytics" panel at the bottom including summary indicators (Totals & Cache efficiency), a custom interactive 30-day daily trend bar chart with tooltips, and relative feature cost breakdown progress indicators
+    - verified full build compliance and clean ESLint compilation
+
 
 ## 2026-06-22
 

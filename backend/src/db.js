@@ -95,6 +95,21 @@ async function initDb() {
       );
     `);
 
+    // 6. API Usage Logs Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS api_usage_logs (
+        id SERIAL PRIMARY KEY,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        feature VARCHAR(50) NOT NULL,
+        model_name VARCHAR(100) NOT NULL,
+        input_tokens INT DEFAULT 0,
+        output_tokens INT DEFAULT 0,
+        cached_input_tokens INT DEFAULT 0,
+        cost_usd NUMERIC(12, 6) DEFAULT 0,
+        cost_idr NUMERIC(14, 2) DEFAULT 0
+      );
+    `);
+
     // Perform database migrations (add columns if they don't exist)
     await client.query(`
       ALTER TABLE customers ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(20);
@@ -560,6 +575,33 @@ async function updateSessionConnected(id, phoneNumber, status) {
   );
 }
 
+/**
+ * Log Gemini API usage (tokens and calculated costs in USD/IDR)
+ */
+async function saveUsageLog({ feature, modelName, inputTokens = 0, outputTokens = 0, cachedTokens = 0 }) {
+  const standardInputTokens = Math.max(0, inputTokens - cachedTokens);
+  
+  // Cost constants (USD per 1M tokens)
+  // Standard input: $0.25 ($0.00000025 per token)
+  // Cached input: $0.025 ($0.000000025 per token)
+  // Output: $1.50 ($0.0000015 per token)
+  const costUsd = parseFloat(((standardInputTokens * 0.00000025) + 
+                  (cachedTokens * 0.000000025) + 
+                  (outputTokens * 0.0000015)).toFixed(6));
+                  
+  const costIdr = parseFloat((costUsd * 17500).toFixed(2));
+
+  try {
+    await pool.query(
+      `INSERT INTO api_usage_logs (feature, model_name, input_tokens, output_tokens, cached_input_tokens, cost_usd, cost_idr)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [feature, modelName, inputTokens, outputTokens, cachedTokens, costUsd, costIdr]
+    );
+  } catch (err) {
+    console.error('❌ Failed to save API usage log to DB:', err.message);
+  }
+}
+
 module.exports = {
   pool,
   initDb,
@@ -581,5 +623,6 @@ module.exports = {
   deleteSession,
   updateSessionStatus,
   updateSessionQR,
-  updateSessionConnected
+  updateSessionConnected,
+  saveUsageLog
 };

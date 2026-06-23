@@ -23,7 +23,7 @@ async function runProactiveFollowUps(log = console, ignoreThreshold = false) {
     }
 
     const genAI = new GoogleGenerativeAI(activeApiKey);
-    const activeModel = await db.getSetting('gemini_model') || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const activeModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
     const model = genAI.getGenerativeModel({ model: activeModel });
 
     for (const lead of leads) {
@@ -89,6 +89,18 @@ ${strictOutputRule}`;
       try {
         const result = await model.generateContent(formattedPrompt);
         const replyText = result.response.text().trim();
+
+        // Log Gemini usage
+        const usage = result.response.usageMetadata;
+        if (usage) {
+          await db.saveUsageLog({
+            feature: 'followup',
+            modelName: activeModel,
+            inputTokens: usage.promptTokenCount,
+            outputTokens: usage.candidatesTokenCount,
+            cachedTokens: usage.cachedContentTokenCount
+          });
+        }
 
         if (replyText) {
           log.info(`Sending proactive follow-up to ${jid} on session ${sessionId}...`);

@@ -102,7 +102,7 @@ async function transcribeAudio(audioBuffer, mimeType, log = console) {
 
   const prompt = 'Tuliskan transkripsi lengkap dari audio berikut dalam bahasa Indonesia. Tuliskan hanya hasil transkripsinya saja secara harfiah, tanpa penjelasan, komentar, pembukaan, atau tanda kutip tambahan.';
 
-  const configuredModel = await db.getSetting('gemini_model') || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+  const configuredModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
   
   try {
     log.info(`🤖 Attempting transcription with configured model: ${configuredModel}...`);

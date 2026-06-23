@@ -6,7 +6,7 @@ const db = require('./db');
 // Read static configuration path fallbacks
 const profilePath = process.env.BUSINESS_PROFILE_PATH || path.join(__dirname, '../business-profile.json');
 const profileKey = process.env.BUSINESS_PROFILE_KEY || 'latezza_cake_hampers_profile';
-const defaultModelName = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const defaultModelName = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 const defaultMaxHistory = parseInt(process.env.MAX_HISTORY_MESSAGES || '10', 10);
 
 /**
@@ -152,7 +152,7 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
   }
 
   const genAI = new GoogleGenerativeAI(activeApiKey);
-  const activeModelName = await db.getSetting('gemini_model') || defaultModelName;
+  const activeModelName = defaultModelName;
 
   // 1. Get or create customer in database
   let customer = await db.getCustomer(jid, sessionId);
@@ -222,6 +222,17 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
       result = await chat.sendMessage(text);
     }
     let response = result.response;
+
+    // Log initial Gemini token usage
+    if (response.usageMetadata) {
+      await db.saveUsageLog({
+        feature: 'whatsapp_chat',
+        modelName: activeModelName,
+        inputTokens: response.usageMetadata.promptTokenCount,
+        outputTokens: response.usageMetadata.candidatesTokenCount,
+        cachedTokens: response.usageMetadata.cachedContentTokenCount
+      });
+    }
     
     // Check if Gemini wants to call a tool
     let functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;
@@ -280,6 +291,17 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
       result = await chat.sendMessage(functionResponseParts);
       
       response = result.response;
+
+      // Log Gemini token usage for this tool turn
+      if (response.usageMetadata) {
+        await db.saveUsageLog({
+          feature: 'whatsapp_chat',
+          modelName: activeModelName,
+          inputTokens: response.usageMetadata.promptTokenCount,
+          outputTokens: response.usageMetadata.candidatesTokenCount,
+          cachedTokens: response.usageMetadata.cachedContentTokenCount
+        });
+      }
       functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;
     }
 

@@ -800,6 +800,7 @@ async function main() {
   const genAI = new GoogleGenerativeAI(geminiApiKey);
   let responseText = '';
   let aiTextData;
+  let geminiUsage = null;
 
   // Retry helper with exponential backoff
   async function generateContentWithRetry(modelName, retries = 4, delay = 3000) {
@@ -812,6 +813,7 @@ async function main() {
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           generationConfig: { responseMimeType: 'application/json' }
         });
+        geminiUsage = result.response.usageMetadata;
         return result.response.text();
       } catch (err) {
         console.warn(`Attempt ${i + 1} failed: ${err.message}`);
@@ -824,7 +826,7 @@ async function main() {
   }
 
   try {
-    responseText = await generateContentWithRetry('gemini-2.5-flash', 4, 3000);
+    responseText = await generateContentWithRetry(process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite', 4, 3000);
   } catch (err) {
     console.error('All attempts to call Gemini API failed:', err.message);
     process.exit(1);
@@ -895,7 +897,12 @@ async function main() {
     custom: {
       summary: finalDashboardJson.timeframes.custom.whatsAppSummary,
       dateRange: displayDateRange
-    }
+    },
+    usage: geminiUsage ? {
+      inputTokens: geminiUsage.promptTokenCount || 0,
+      outputTokens: geminiUsage.candidatesTokenCount || 0,
+      cachedTokens: geminiUsage.cachedContentTokenCount || 0
+    } : null
   };
   console.log('::JSON_RESULT::' + JSON.stringify(jsonResult));
 }

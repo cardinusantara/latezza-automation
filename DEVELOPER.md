@@ -3,7 +3,7 @@
 project: WhatsApp AI Agent + Admin Dashboard
 client: Latezza Cake
 stack: Fastify (Node.js) + React (Vite + Tailwind CSS v4 + shadcn/ui) + PostgreSQL + Baileys + Gemini API
-last_updated: 2026-06-21
+last_updated: 2026-06-23
 
 ---
 
@@ -110,7 +110,7 @@ DB_USER=postgres
 DB_PASSWORD=yourpassword
 DB_NAME=latezzacake
 GEMINI_API_KEY=AIza...          # fallback if not set in DB settings
-GEMINI_MODEL=gemini-2.5-flash   # optional override
+GEMINI_MODEL=gemini-3.1-flash-lite  # Gemini model to use for all features (default fallback: gemini-3.1-flash-lite)
 META_ACCESS_TOKEN=...           # fallback if not set in DB settings
 META_AD_ACCOUNT_ID=act_...      # fallback if not set in DB settings
 PUBLIC_REPORT_URL=https://yourdomain.com
@@ -190,7 +190,7 @@ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 known keys in settings table:
 - gemini_api_key
-- gemini_model
+- gemini_model                  -- (Deprecated) Retired in favor of process.env.GEMINI_MODEL configuration
 - meta_access_token
 - meta_ad_account_id
 - whatsapp_group_jid          -- target group JID for daily ads report broadcast
@@ -204,6 +204,19 @@ known keys in settings table:
 - creative_analysis_frequency -- frequency of creative analysis in days (default: 7)
 - creative_analysis_time      -- hour and minute to trigger creative analysis (default: '09:00')
 - creative_analysis_report    -- JSON string of the latest generated AI creative ad content ideas report
+
+### api_usage_logs
+```sql
+id                  SERIAL PRIMARY KEY
+timestamp           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+feature             VARCHAR(50) NOT NULL         -- e.g., 'chatbot', 'followup', 'creative', 'ads', 'summary'
+model_name          VARCHAR(100) NOT NULL        -- e.g., 'gemini-3.1-flash-lite'
+input_tokens        INT DEFAULT 0
+output_tokens       INT DEFAULT 0
+cached_input_tokens INT DEFAULT 0
+cost_usd            NUMERIC(12, 6) DEFAULT 0     -- Calculated using standard ($0.25/1M), cached ($0.025/1M), and output ($1.50/1M) pricing
+cost_idr            NUMERIC(14, 2) DEFAULT 0     -- Converted using fixed exchange rate (Rp 17.500)
+```
 
 ---
 
@@ -269,7 +282,7 @@ outgoing message handling flow (manual send from dashboard):
 ## AI AGENT (src/agent.js)
 
 uses: `@google/generative-ai` SDK
-model: configurable via `gemini_model` setting (default: `gemini-2.5-flash`)
+model: configurable via `GEMINI_MODEL` environment variable (default: `gemini-3.1-flash-lite`)
 
 context window:
 - fetches last N messages from `chat_histories` for the customer JID
@@ -389,7 +402,7 @@ manual trigger: `GET /api/trigger-message-summary-stream` (Server-Sent Events pr
 report viewer: viewable in dashboard under Overview tab (calls `GET /api/message-summary`)
 
 flow:
-1. read `gemini_api_key` and `gemini_model` from DB settings (fallback to process.env)
+1. read `gemini_api_key` from DB settings and active `gemini_model` from env `GEMINI_MODEL` (fallback: `gemini-3.1-flash-lite`)
 2. query database for incoming messages (role = 'user') from `chat_histories` filtered by:
    - `session_id` (specific or 'all' sessions)
    - `date_range` ('today' (CURRENT_DATE), '3d', '7d', '30d')

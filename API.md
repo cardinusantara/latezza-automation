@@ -39,16 +39,17 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 22 | Pengaturan | GET | `/api/settings` | Mendapatkan konfigurasi sistem (API Key disamarkan). |
 | 23 | Pengaturan | POST | `/api/settings` | Menyimpan konfigurasi sistem (otomatis memuat ulang scheduler). |
 | 24 | Pengaturan | GET | `/api/settings/default-system-prompt` | Melihat draf default prompt sistem agen AI. |
-| 25 | Ads & Creative | POST | `/run-analysis` | Menjalankan skrip analisis Meta Ads secara sinkron. |
-| 26 | Ads & Creative | POST | `/trigger-analysis` | Memicu analisis Meta Ads dan siaran laporan di latar belakang. |
-| 27 | Ads & Creative | GET | `/api/run-analysis-stream` | Memicu analisis Meta Ads manual dengan Server-Sent Events (SSE) progress stream. |
-| 28 | Ads & Creative | GET | `/api/creative-report` | Mengambil laporan ide konten kreatif ad terbaru. |
-| 29 | Ads & Creative | POST | `/api/trigger-creative-analysis` | Memicu audit kreatif di latar belakang. |
-| 30 | Ads & Creative | GET | `/api/trigger-creative-analysis-stream` | Memicu audit kreatif dan melakukan streaming progress (SSE). |
-| 31 | Follow-Up | POST | `/api/trigger-followups` | Memicu pengiriman pesan follow-up manual (sinkron). |
-| 32 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
-| 33 | AI Message Summary | GET | `/api/message-summary` | Mengambil laporan ringkasan pesan AI terbaru. |
-| 34 | AI Message Summary | GET | `/api/trigger-message-summary-stream` | Memicu pembuatan ringkasan pesan AI dan melakukan streaming progress (SSE). |
+| 25 | Pengaturan | GET | `/api/settings/usage-stats` | Mengambil statistik penggunaan token Gemini dan log biaya billing. |
+| 26 | Ads & Creative | POST | `/run-analysis` | Menjalankan skrip analisis Meta Ads secara sinkron. |
+| 27 | Ads & Creative | POST | `/trigger-analysis` | Memicu analisis Meta Ads dan siaran laporan di latar belakang. |
+| 28 | Ads & Creative | GET | `/api/run-analysis-stream` | Memicu analisis Meta Ads manual dengan Server-Sent Events (SSE) progress stream. |
+| 29 | Ads & Creative | GET | `/api/creative-report` | Mengambil laporan ide konten kreatif ad terbaru. |
+| 30 | Ads & Creative | POST | `/api/trigger-creative-analysis` | Memicu audit kreatif di latar belakang. |
+| 31 | Ads & Creative | GET | `/api/trigger-creative-analysis-stream` | Memicu audit kreatif dan melakukan streaming progress (SSE). |
+| 32 | Follow-Up | POST | `/api/trigger-followups` | Memicu pengiriman pesan follow-up manual (sinkron). |
+| 33 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
+| 34 | AI Message Summary | GET | `/api/message-summary` | Mengambil laporan ringkasan pesan AI terbaru. |
+| 35 | AI Message Summary | GET | `/api/trigger-message-summary-stream` | Memicu pembuatan ringkasan pesan AI dan melakukan streaming progress (SSE). |
 
 ---
 
@@ -644,6 +645,62 @@ Mengambil salinan teks instruksi prompt sistem bawaan (default system instructio
   ```json
   {
     "default_system_prompt": "Anda adalah asisten penjualan Latezza Cake. Jawab pertanyaan pelanggan dengan sopan...\n\nBerikut adalah daftar produk kami:\n..."
+  }
+  ```
+
+---
+
+### GET `/api/settings/usage-stats`
+Mengambil data akumulasi penggunaan token (input, output, cached) dan perhitungan biaya (USD & IDR) API Gemini dari tabel logs, mencakup ringkasan Month-to-Date (MTD), tren harian 30 hari terakhir, serta rincian pembagian per fitur.
+
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "mtd": {
+      "inputTokens": 150000,
+      "outputTokens": 85000,
+      "cachedTokens": 45000,
+      "costUsd": 0.154875,
+      "costIdr": 2710.31,
+      "totalRequests": 125
+    },
+    "dailyTrend": [
+      {
+        "date": "2026-06-22",
+        "input_tokens": 12500,
+        "output_tokens": 6200,
+        "cached_tokens": 3000,
+        "cost_idr": 218.75,
+        "request_count": 10
+      },
+      {
+        "date": "2026-06-23",
+        "input_tokens": 15400,
+        "output_tokens": 7800,
+        "cached_tokens": 4500,
+        "cost_idr": 283.5,
+        "request_count": 12
+      }
+    ],
+    "featureBreakdown": [
+      {
+        "feature": "chatbot",
+        "input_tokens": 120000,
+        "output_tokens": 60000,
+        "cached_tokens": 40000,
+        "cost_idr": 1925.0,
+        "request_count": 110
+      },
+      {
+        "feature": "ads",
+        "input_tokens": 30000,
+        "output_tokens": 25000,
+        "cached_tokens": 5000,
+        "cost_idr": 785.31,
+        "request_count": 15
+      }
+    ]
   }
   ```
 

@@ -60,4 +60,32 @@ describe('db.js module', () => {
       ['123456', 'default']
     );
   });
+
+  test('saveUsageLog correctly inserts token usage and calculates costs', async () => {
+    db.pool.query.mockResolvedValueOnce({});
+
+    await db.saveUsageLog({
+      feature: 'whatsapp_chat',
+      modelName: 'gemini-3.1-flash-lite',
+      inputTokens: 2000,
+      outputTokens: 100,
+      cachedTokens: 1000
+    });
+
+    // costUsd = ((2000 - 1000) * 0.00000025) + (1000 * 0.000000025) + (100 * 0.0000015)
+    //         = 0.00025 + 0.000025 + 0.00015 = 0.000425
+    // costIdr = 0.000425 * 17500 = 7.4375 => rounded to 2 decimals is 7.44
+    expect(db.pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO api_usage_logs'),
+      [
+        'whatsapp_chat',
+        'gemini-3.1-flash-lite',
+        2000,
+        100,
+        1000,
+        0.000425,
+        7.44
+      ]
+    );
+  });
 });

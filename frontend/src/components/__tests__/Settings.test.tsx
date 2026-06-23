@@ -8,11 +8,6 @@ describe('Settings component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     window.fetch = vi.fn().mockImplementation((url: string) => {
-      if (url.includes('/api/settings/gemini-models')) {
-        return Promise.resolve({
-          json: () => Promise.resolve([{ name: 'gemini-1.5-flash', displayName: 'Gemini 1.5 Flash' }])
-        } as unknown as Response);
-      }
       if (url.includes('/api/whatsapp/groups')) {
         return Promise.resolve({
           json: () => Promise.resolve([])
@@ -22,7 +17,7 @@ describe('Settings component', () => {
         return Promise.resolve({
           json: () => Promise.resolve({
             gemini_api_key: 'key-1234...-key',
-            gemini_model: 'gemini-1.5-flash',
+            gemini_model: 'gemini-3.1-flash-lite',
             whatsapp_group_jid: 'group-123',
             system_instruction: 'Initial instructions',
           })

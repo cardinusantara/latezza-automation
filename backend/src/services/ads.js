@@ -61,6 +61,18 @@ async function runAnalysisAndSendReport(dateFrom = null, dateTo = null, log = co
           throw new Error('Could not find ::JSON_RESULT:: in stdout');
         }
         const data = JSON.parse(resultLine.replace('::JSON_RESULT::', ''));
+
+        // Log Gemini usage for Meta Ads analysis
+        if (data.usage) {
+          const activeModelName = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
+          await db.saveUsageLog({
+            feature: 'ads_analysis',
+            modelName: activeModelName,
+            inputTokens: data.usage.inputTokens,
+            outputTokens: data.usage.outputTokens,
+            cachedTokens: data.usage.cachedTokens
+          });
+        }
         
         const baseUrl = process.env.PUBLIC_REPORT_URL || 'https://localhost:3001';
         const reportUrl = `${baseUrl.replace(/\/$/, '')}/report-html`;

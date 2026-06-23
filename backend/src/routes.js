@@ -512,7 +512,7 @@ function registerRoutes(fastify) {
       
       return {
         gemini_api_key: maskedKey,
-        gemini_model: await db.getSetting('gemini_model') || process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+        gemini_model: process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite',
         whatsapp_group_jid: await db.getSetting('whatsapp_group_jid') || process.env.WHATSAPP_GROUP_JID || '',
         rate_limit_max: await db.getSetting('rate_limit_max') || process.env.RATE_LIMIT_MAX_MSG || '5',
         rate_limit_window: await db.getSetting('rate_limit_window') || process.env.RATE_LIMIT_WINDOW_MS || '60000',
@@ -542,7 +542,6 @@ function registerRoutes(fastify) {
         type: 'object',
         properties: {
           gemini_api_key: { type: 'string' },
-          gemini_model: { type: 'string' },
           whatsapp_group_jid: { type: 'string' },
           rate_limit_max: { type: 'string' },
           rate_limit_window: { type: 'string' },
@@ -572,7 +571,6 @@ function registerRoutes(fastify) {
           await db.setSetting('meta_access_token', settings.meta_access_token);
         }
         
-        if (settings.gemini_model !== undefined) await db.setSetting('gemini_model', settings.gemini_model);
         if (settings.meta_ad_account_id !== undefined) await db.setSetting('meta_ad_account_id', settings.meta_ad_account_id);
         if (settings.whatsapp_group_jid !== undefined) await db.setSetting('whatsapp_group_jid', settings.whatsapp_group_jid);
         if (settings.rate_limit_max !== undefined) await db.setSetting('rate_limit_max', settings.rate_limit_max);
@@ -613,46 +611,76 @@ function registerRoutes(fastify) {
     }
   });
 
-  // API: Get available Gemini models from official API
-  fastify.get('/api/settings/gemini-models', async (request, reply) => {
+  // API: Get Gemini usage stats and billing cost log
+  fastify.get('/api/settings/usage-stats', async (request, reply) => {
     try {
-      const apiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        return [
-          { name: 'gemini-3.5-flash', displayName: 'Gemini 3.5 Flash' },
-          { name: 'gemini-2.5-flash', displayName: 'Gemini 2.5 Flash' },
-          { name: 'gemini-2.5-pro', displayName: 'Gemini 2.5 Pro' }
-        ];
-      }
+      // 1. Fetch Month-To-Date overall summary
+      const mtdRes = await db.pool.query(`
+        SELECT 
+          COALESCE(SUM(input_tokens), 0) as input_tokens,
+          COALESCE(SUM(output_tokens), 0) as output_tokens,
+          COALESCE(SUM(cached_input_tokens), 0) as cached_tokens,
+          COALESCE(SUM(cost_usd), 0) as cost_usd,
+          COALESCE(SUM(cost_idr), 0) as cost_idr,
+          COUNT(*)::int as total_requests
+        FROM api_usage_logs
+        WHERE timestamp >= DATE_TRUNC('month', CURRENT_DATE)
+      `);
+      const mtd = mtdRes.rows[0];
 
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-      if (!res.ok) {
-        throw new Error(`Gemini API returned status ${res.status}`);
-      }
-      const json = await res.json();
-      const models = json.models || [];
+      // 2. Fetch daily billing trend for chart plotting (last 30 days)
+      const dailyTrendRes = await db.pool.query(`
+        SELECT 
+          TO_CHAR(timestamp, 'YYYY-MM-DD') as date,
+          SUM(input_tokens)::int as input_tokens,
+          SUM(output_tokens)::int as output_tokens,
+          SUM(cached_input_tokens)::int as cached_tokens,
+          SUM(cost_idr)::double precision as cost_idr,
+          COUNT(*)::int as request_count
+        FROM api_usage_logs
+        WHERE timestamp >= NOW() - INTERVAL '30 days'
+        GROUP BY TO_CHAR(timestamp, 'YYYY-MM-DD')
+        ORDER BY date ASC
+      `);
+      const dailyTrend = dailyTrendRes.rows;
 
-      // Filter and map models that support content generation
-      const filtered = models
-        .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
-        .map(m => {
-          const cleanName = m.name.replace(/^models\//, '');
-          return {
-            name: cleanName,
-            displayName: m.displayName || cleanName
-          };
-        });
+      // 3. Fetch breakdown by feature
+      const featureBreakdownRes = await db.pool.query(`
+        SELECT 
+          feature,
+          SUM(input_tokens)::int as input_tokens,
+          SUM(output_tokens)::int as output_tokens,
+          SUM(cached_input_tokens)::int as cached_tokens,
+          SUM(cost_idr)::double precision as cost_idr,
+          COUNT(*)::int as request_count
+        FROM api_usage_logs
+        WHERE timestamp >= DATE_TRUNC('month', CURRENT_DATE)
+        GROUP BY feature
+        ORDER BY cost_idr DESC
+      `);
+      const featureBreakdown = featureBreakdownRes.rows;
 
-      return filtered;
+      return {
+        status: 'success',
+        mtd: {
+          inputTokens: parseInt(mtd.input_tokens, 10),
+          outputTokens: parseInt(mtd.output_tokens, 10),
+          cachedTokens: parseInt(mtd.cached_tokens, 10),
+          costUsd: parseFloat(mtd.cost_usd),
+          costIdr: parseFloat(mtd.cost_idr),
+          totalRequests: mtd.total_requests
+        },
+        dailyTrend,
+        featureBreakdown
+      };
     } catch (err) {
-      fastify.log.error(`Failed to fetch Gemini models: ${err.message}`);
-      return [
-        { name: 'gemini-3.5-flash', displayName: 'Gemini 3.5 Flash' },
-        { name: 'gemini-2.5-flash', displayName: 'Gemini 2.5 Flash' },
-        { name: 'gemini-2.5-pro', displayName: 'Gemini 2.5 Pro' }
-      ];
+      fastify.log.error(`GET usage-stats error: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
     }
   });
+
+
 
   // API: Upload CSV for Ads Analysis
   fastify.post('/api/upload-ads-csv', async (request, reply) => {

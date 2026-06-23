@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>latezza-automation — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 904 nodes, 1164 edges, 77 communities. Commit: 7c11d83</p>
+<p class="subtitle">Generated from graphify knowledge graph: 914 nodes, 1174 edges, 81 communities. Commit: 3e023ac</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -92,15 +92,15 @@ flowchart LR
     class BUILD_GRAPH_321CBB04 module;
     ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>54 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
-    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>117 nodes</small>")
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>71 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
     INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>9 nodes</small>")
     class INGEST_CACHE_UPDATE_FF457338 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>99 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>147 nodes</small>")
     class SERVE_API_35EC8E86 module;
-    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>241 nodes</small>")
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>245 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
-    COMMUNITY_13_E329587C("Community 13<br/><small>26 nodes</small>")
+    COMMUNITY_13_E329587C("Community 13<br/><small>20 nodes</small>")
     class COMMUNITY_13_E329587C module;
     COMMUNITY_19_9462A0B9("Community 19<br/><small>14 nodes</small>")
     class COMMUNITY_19_9462A0B9 module;
@@ -116,9 +116,10 @@ flowchart LR
     class COMMUNITY_27_99AD9ED4 module;
     COMMUNITY_56_189C238D("Community 56<br/><small>9 nodes</small>")
     class COMMUNITY_56_189C238D module;
-    OTHER_D0941E68("Other<br/><small>96 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>106 nodes</small>")
     class OTHER_D0941E68 module;
     TESTS_FIXTURES_B84B1DCC -->|imports x10| COMMUNITY_13_E329587C
+    COMMUNITY_13_E329587C -->|contains x8| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|imports x7| ANALYSIS_CLUSTERING_C79796DA
     OTHER_D0941E68 -->|imports x6| COMMUNITY_13_E329587C
     COMMUNITY_13_E329587C -->|imports x3| ANALYSIS_CLUSTERING_C79796DA
@@ -128,7 +129,6 @@ flowchart LR
     CLI_SKILLS_9964CBB8 -->|references x2| OTHER_D0941E68
     CLI_SKILLS_9964CBB8 -->|contains x2| BUILD_GRAPH_321CBB04
     ANALYSIS_CLUSTERING_C79796DA -->|imports| COMMUNITY_13_E329587C
-    COMMUNITY_13_E329587C -->|imports| OTHER_D0941E68
     COMMUNITY_13_E329587C -->|imports| COMMUNITY_27_99AD9ED4
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -146,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Graph Build</td><td>184</td><td><code>32, 12, 10, 11, 2, 14, 6, 25, 74, 34, 76</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>54</td><td><code>16, 21, 28, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>117</td><td><code>4, 15, 8, 18, 59, 35, 75, 60</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>9</td><td><code>33, 49</code></td></tr><tr><td>Serving API</td><td>99</td><td><code>3, 0, 5</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>241</td><td><code>7, 9, 17, 31, 24, 55, 64, 67, 43, 45, 46, 58, 70, 71</code></td></tr><tr><td>Community 13</td><td>26</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 22</td><td>12</td><td><code>22</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 26</td><td>9</td><td><code>26</code></td></tr><tr><td>Community 27</td><td>9</td><td><code>27</code></td></tr><tr><td>Community 56</td><td>9</td><td><code>56</code></td></tr><tr><td>Other</td><td>96</td><td><code>62, 29, 63, 1, 65, 36, 37, 66, 38, 39, 68, 69, 40, 41, 42, 44, 47, 57, 48, 50, 51, 52, 53, 54, 61, 72, 73</code></td></tr>
+      <tr><td>Graph Build</td><td>184</td><td><code>12, 10, 11, 2, 14, 32, 6, 25, 74, 78, 34, 79, 76</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>54</td><td><code>16, 21, 28, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>71</td><td><code>15, 8, 18, 59, 35, 75, 60</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>9</td><td><code>33, 49</code></td></tr><tr><td>Serving API</td><td>147</td><td><code>3, 4, 0, 5</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>245</td><td><code>7, 9, 17, 31, 24, 55, 64, 67, 43, 45, 46, 58, 70, 71</code></td></tr><tr><td>Community 13</td><td>20</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 22</td><td>12</td><td><code>22</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 26</td><td>9</td><td><code>26</code></td></tr><tr><td>Community 27</td><td>9</td><td><code>27</code></td></tr><tr><td>Community 56</td><td>9</td><td><code>56</code></td></tr><tr><td>Other</td><td>106</td><td><code>62, 29, 63, 77, 1, 65, 36, 37, 66, 38, 39, 68, 69, 40, 41, 42, 44, 47, 57, 80, 48, 50, 51, 52, 53, 54, 61, 72, 73</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -158,7 +158,7 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>904 nodes · 1164 edges · 77 communities (59 shown, 18 thin omitted)</li>
+      <li>914 nodes · 1174 edges · 81 communities (63 shown, 18 thin omitted)</li>
       <li>Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `cn()` - 78 edges</li>
@@ -252,243 +252,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>package.json</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>package.json</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>package.json node in frontend/package.json.</td>
+  <td>package.json node in backend/package.json.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>name</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>name</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>name node in frontend/package.json.</td>
+  <td>name node in backend/package.json.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>private</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>version</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>private node in frontend/package.json.</td>
+  <td>version node in backend/package.json.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>version</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>description</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>version node in frontend/package.json.</td>
+  <td>description node in backend/package.json.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>type</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>main</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>type node in frontend/package.json.</td>
+  <td>main node in backend/package.json.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>scripts</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>scripts</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>scripts node in frontend/package.json.</td>
+  <td>scripts node in backend/package.json.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>dev</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>start</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>dev node in frontend/package.json.</td>
+  <td>start node in backend/package.json.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>build</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>test</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>build node in frontend/package.json.</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>lint</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>test:watch</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>lint node in frontend/package.json.</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>format</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>dependencies</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>format node in frontend/package.json.</td>
+  <td>dependencies node in backend/package.json.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>typecheck</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>@fastify/cors</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>typecheck node in frontend/package.json.</td>
+  <td>@fastify/cors node in backend/package.json.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>test</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>@fastify/multipart</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>@fastify/multipart node in backend/package.json.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>test:watch</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>@fastify/static</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>@fastify/static node in backend/package.json.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>preview</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>@ffmpeg-installer/ffmpeg</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>preview node in frontend/package.json.</td>
+  <td>@ffmpeg-installer/ffmpeg node in backend/package.json.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>dependencies</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>@google/generative-ai</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>dependencies node in frontend/package.json.</td>
+  <td>@google/generative-ai node in backend/package.json.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>@fontsource-variable/figtree</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>@whiskeysockets/baileys</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>@fontsource-variable/figtree node in frontend/package.json.</td>
+  <td>@whiskeysockets/baileys node in backend/package.json.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>@fontsource-variable/geist</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>dotenv</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>@fontsource-variable/geist node in frontend/package.json.</td>
+  <td>dotenv node in backend/package.json.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>@hugeicons/core-free-icons</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>fastify</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>@hugeicons/core-free-icons node in frontend/package.json.</td>
+  <td>fastify node in backend/package.json.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>@hugeicons/react</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>node-cron</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>@hugeicons/react node in frontend/package.json.</td>
+  <td>node-cron node in backend/package.json.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>@tabler/icons-react</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>pg</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>@tabler/icons-react node in frontend/package.json.</td>
+  <td>pg node in backend/package.json.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>@tailwindcss/vite</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>pino</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>@tailwindcss/vite node in frontend/package.json.</td>
+  <td>pino node in backend/package.json.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>class-variance-authority</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>pino-pretty</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>class-variance-authority node in frontend/package.json.</td>
+  <td>pino-pretty node in backend/package.json.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>clsx</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>qrcode-terminal</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>clsx node in frontend/package.json.</td>
+  <td>qrcode-terminal node in backend/package.json.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>next-themes</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>devDependencies</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>next-themes node in frontend/package.json.</td>
+  <td>devDependencies node in backend/package.json.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>radix-ui</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>jest</code><br><small style="color:var(--muted)">backend/package.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>radix-ui node in frontend/package.json.</td>
+  <td>jest node in backend/package.json.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>react</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>components.json</code><br><small style="color:var(--muted)">frontend/components.json</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>react node in frontend/package.json.</td>
+  <td>components.json node in frontend/components.json.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>react-dom</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>$schema</code><br><small style="color:var(--muted)">frontend/components.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>react-dom node in frontend/package.json.</td>
+  <td>$schema node in frontend/components.json.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>shadcn</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>style</code><br><small style="color:var(--muted)">frontend/components.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>shadcn node in frontend/package.json.</td>
+  <td>style node in frontend/components.json.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>sonner</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>rsc</code><br><small style="color:var(--muted)">frontend/components.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>sonner node in frontend/package.json.</td>
+  <td>rsc node in frontend/components.json.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>tailwind-merge</code><br><small style="color:var(--muted)">frontend/package.json</small></td>
+  <td><code>tsx</code><br><small style="color:var(--muted)">frontend/components.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>tailwind-merge node in frontend/package.json.</td>
+  <td>tsx node in frontend/components.json.</td>
 </tr>
 </table>
 
@@ -864,12 +864,12 @@ flowchart LR
 
 <!-- ====== 4. CLI & Skill Installers ====== -->
 <h2 id="cli-skills">4. CLI &amp; Skill Installers</h2>
-<p>CLI &amp; Skill Installers groups implementation around developermd, agents, skills, skillmd, mostly in DEVELOPER.md, skills/shadcn/SKILL.md, skills/gemini-api-dev/SKILL.md. This section covers 117 nodes and 114 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>CLI &amp; Skill Installers groups implementation around agents, skills, skillmd, shadcn, mostly in skills/shadcn/SKILL.md, skills/gemini-api-dev/SKILL.md, src/components/theme-provider.tsx. This section covers 71 nodes and 69 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: CLI &amp; Skill Installers (117 nodes, 114 edges)
+    %% Section: CLI &amp; Skill Installers (71 nodes, 69 edges)
     subgraph cli_skills_src_components_theme_provider_tsx_1521e98e["src/components/theme-provider.tsx"]
         components_theme_provider_17ac69f2("theme-provider.tsx")
         components_theme_provider_themeprovider_c1783996("ThemeProvider()<br/><small>src/components/theme-provider.tsx</small>")
@@ -898,7 +898,7 @@ flowchart LR
     src_main_3231ff52("main.tsx")
     components_theme_provider_17ac69f2 -->|imports| src_main_3231ff52
     components_theme_provider_themeprovider_c1783996 -->|imports| src_main_3231ff52
-    %% Omitted for readability: 99 nodes, 0 edges
+    %% Omitted for readability: 53 nodes, 0 edges
     class components_theme_provider_17ac69f2 ui;
     class components_theme_provider_themeprovider_c1783996 ui;
     class components_theme_provider_resolvedtheme_2e1a014a ui;
@@ -940,243 +940,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>DEVELOPER.md</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>shadcn/ui</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DEVELOPER.md.</td>
+  <td>Documentation node describing shadcn/ui.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>DEVELOPER.md — Latezza Cake WhatsApp AI Agent</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Current Project Context</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DEVELOPER.md — Latezza Cake WhatsApp AI Agent.</td>
+  <td>Documentation node describing Current Project Context.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>DIRECTORY STRUCTURE</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Principles</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DIRECTORY STRUCTURE.</td>
+  <td>Documentation node describing Principles.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>HOW TO RUN</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Critical Rules</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing HOW TO RUN.</td>
+  <td>Documentation node describing Critical Rules.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>local dev (two terminals)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Styling &amp; Tailwind → [styling.md](./rules/styling.md)</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing local dev (two terminals).</td>
+  <td>Documentation node describing Styling &amp; Tailwind → [styling.md](./rules/styling.md).</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>production</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Forms &amp; Inputs → [forms.md](./rules/forms.md)</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing production.</td>
+  <td>Documentation node describing Forms &amp; Inputs → [forms.md](./rules/forms.md).</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>RUNNING UNIT TESTS</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Component Structure → [composition.md](./rules/composition.md)</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing RUNNING UNIT TESTS.</td>
+  <td>Documentation node describing Component Structure → [composition.md](./rules/composition.md).</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>Backend Tests (Jest)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Use Components, Not Custom Markup → [composition.md](./rules/composition.md)</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Backend Tests (Jest).</td>
+  <td>Documentation node describing Use Components, Not Custom Markup → [composition.md](./rules/composition.md).</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>Frontend Tests (Vitest)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Icons → [icons.md](./rules/icons.md)</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Frontend Tests (Vitest).</td>
+  <td>Documentation node describing Icons → [icons.md](./rules/icons.md).</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>env files</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>CLI</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing env files.</td>
+  <td>Documentation node describing CLI.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>Backend Env (`backend/.env`)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Key Patterns</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Backend Env (`backend/.env`).</td>
+  <td>Documentation node describing Key Patterns.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>Frontend Env (`frontend/.env`)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Component Selection</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Frontend Env (`frontend/.env`).</td>
+  <td>Documentation node describing Component Selection.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>DATABASE SCHEMA</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Key Fields</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing DATABASE SCHEMA.</td>
+  <td>Documentation node describing Key Fields.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>whatsapp_sessions</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Component Docs, Examples, and Usage</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing whatsapp_sessions.</td>
+  <td>Documentation node describing Component Docs, Examples, and Usage.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>customers</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Workflow</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing customers.</td>
+  <td>Documentation node describing Workflow.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>chat_histories</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Updating Components</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing chat_histories.</td>
+  <td>Documentation node describing Updating Components.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>products</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Quick Reference</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing products.</td>
+  <td>Documentation node describing Quick Reference.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>settings (key-value store)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
+  <td><code>Detailed References</code><br><small style="color:var(--muted)">skills/shadcn/SKILL.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing settings (key-value store).</td>
+  <td>Documentation node describing Detailed References.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>SETTINGS SYSTEM</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>theme-provider.tsx</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing SETTINGS SYSTEM.</td>
+  <td><code>main.tsx</code><br><small style="color:var(--muted)">frontend/src/main.tsx</small></td>
+  <td>Module file in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>WHATSAPP GATEWAY (whatsapp.js + Baileys - Multi-Session Support)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Theme</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing WHATSAPP GATEWAY (whatsapp.js + Baileys - Multi-Session Support).</td>
+  <td>Theme node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>AI AGENT (src/agent.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>ResolvedTheme</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing AI AGENT (src/agent.js).</td>
+  <td>ResolvedTheme node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>PROACTIVE FOLLOW-UP SYSTEM</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>ThemeProviderProps</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing PROACTIVE FOLLOW-UP SYSTEM.</td>
+  <td>ThemeProviderProps node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>prompt building logic (3 modes)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>ThemeProviderState</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing prompt building logic (3 modes).</td>
+  <td>ThemeProviderState node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>important behavior</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>THEME_VALUES</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing important behavior.</td>
+  <td>THEME_VALUES node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>BACKGROUND SCHEDULER SYSTEM (scheduler.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>ThemeProviderContext</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing BACKGROUND SCHEDULER SYSTEM (scheduler.js).</td>
+  <td>ThemeProviderContext node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>Dynamic Reloading:</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>isTheme()</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Dynamic Reloading:.</td>
+  <td>isTheme() node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>META ADS ANALYSIS (src/services/ads.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>getSystemTheme()</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing META ADS ANALYSIS (src/services/ads.js).</td>
+  <td>getSystemTheme() node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>AI CREATIVE AD CONTENT IDEAS (src/services/creative.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>disableTransitionsTemporarily()</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing AI CREATIVE AD CONTENT IDEAS (src/services/creative.js).</td>
+  <td>disableTransitionsTemporarily() node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>AI MESSAGE SUMMARY (src/services/summary.js)</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>isEditableTarget()</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing AI MESSAGE SUMMARY (src/services/summary.js).</td>
+  <td>isEditableTarget() node in src/components/theme-provider.tsx.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>RAG SEMANTIC PRODUCT SEARCH</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>ThemeProvider()</code><br><small style="color:var(--muted)">src/components/theme-provider.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing RAG SEMANTIC PRODUCT SEARCH.</td>
+  <td><code>main.tsx</code><br><small style="color:var(--muted)">frontend/src/main.tsx</small></td>
+  <td>ThemeProvider() node in src/components/theme-provider.tsx.</td>
 </tr>
 </table>
 
@@ -1185,19 +1185,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>DEVELOPER.md</code></td><td>46 nodes</td></tr>
-<tr><td><code>skills/shadcn/SKILL.md</code></td><td>19 nodes</td></tr>
+      <tr><td><code>skills/shadcn/SKILL.md</code></td><td>19 nodes</td></tr>
 <tr><td><code>skills/gemini-api-dev/SKILL.md</code></td><td>14 nodes</td></tr>
 <tr><td><code>src/components/theme-provider.tsx</code></td><td>13 nodes</td></tr>
 <tr><td><code>AGENTS.md</code></td><td>10 nodes</td></tr>
 <tr><td><code>.opencode/opencode.json</code></td><td>3 nodes</td></tr>
 <tr><td><code>.opencode/plugins/graphify.js</code></td><td>2 nodes</td></tr>
 <tr><td><code>components/ui/sonner.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>skills/shadcn/cli.md</code></td><td>1 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x101, references x10, imports x1, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x56, references x10, imports x1, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1352,13 +1352,15 @@ flowchart LR
 
 <!-- ====== 6. Serving API ====== -->
 <h2 id="serve-api">6. Serving API</h2>
-<p>Serving API groups implementation around apimd, api, developermd, get, mostly in API.md, DEVELOPER.md, CHANGELOG.md. This section covers 99 nodes and 104 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around developermd, apimd, api, get, mostly in DEVELOPER.md, API.md, CHANGELOG.md. This section covers 147 nodes and 151 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (99 nodes, 104 edges)
+    %% Section: Serving API (147 nodes, 151 edges)
     subgraph serve_api_DEVELOPER_md_80f52265["DEVELOPER.md"]
+        developer_developer_md_latezza_cake_whatsapp_ai_625bab4d("DEVELOPER.md — Latezza Cake WhatsApp AI...<br/><small>DEVELOPER.md</small>")
+        developer_api_routes_reference_15fdc467("API ROUTES REFERENCE<br/><small>DEVELOPER.md</small>")
         latezza_automation_rag_semantic_search_0b216e6d("RAG Semantic Product Search<br/><small>DEVELOPER.md</small>")
         latezza_automation_meta_ads_reporting_04123a29("Meta Ads Reporting System<br/><small>DEVELOPER.md</small>")
         latezza_automation_proactive_followup_e9ccdc23("Proactive Follow-up System<br/><small>DEVELOPER.md</small>")
@@ -1370,16 +1372,14 @@ flowchart LR
         latezza_automation_meta_graph_api_de775b85("Meta Graph API<br/><small>DEVELOPER.md</small>")
         latezza_automation_creative_ad_analysis_d631f885("AI Creative Ad Content Ideas<br/><small>DEVELOPER.md</small>")
     end
-    subgraph serve_api_API_md_88936c71["API.md"]
-        api_dokumentasi_api_backend_64dae399("Dokumentasi API Backend<br/><small>API.md</small>")
-        api_3_kategori_crm_manajemen_pelanggan_0db58e94("3. Kategori: CRM (Manajemen Pelanggan)<br/><small>API.md</small>")
-        api_5_kategori_integrasi_whatsapp_4fd3bd5b("5. Kategori: Integrasi WhatsApp<br/><small>API.md</small>")
-        api_7_kategori_automasi_ads_creative_691db6dd("7. Kategori: Automasi Ads &amp; Creative<br/><small>API.md</small>")
-    end
     subgraph serve_api_README_md_d2243946["README.md"]
         readme_whatsapp_ai_agent_ads_report_automation_b476ad20("WhatsApp AI Agent &amp; Ads Report Automation<br/><small>README.md</small>")
         latezza_automation_gemini_ai_integration_83531e40("Google Gemini AI Integration<br/><small>README.md</small>")
         latezza_automation_latezza_cake_brand_1a2cd5aa("Latezza Cake<br/><small>README.md</small>")
+    end
+    subgraph serve_api_API_md_88936c71["API.md"]
+        api_dokumentasi_api_backend_64dae399("Dokumentasi API Backend<br/><small>API.md</small>")
+        api_3_kategori_crm_manajemen_pelanggan_0db58e94("3. Kategori: CRM (Manajemen Pelanggan)<br/><small>API.md</small>")
     end
     changelog_2026_06_18_ee0d72ad("2026-06-18<br/><small>CHANGELOG.md</small>")
     readme_whatsapp_ai_agent_ads_report_automation_b476ad20 -->|references| latezza_automation_gemini_ai_integration_83531e40
@@ -1397,10 +1397,11 @@ flowchart LR
     latezza_automation_creative_ad_analysis_d631f885 -->|relates| latezza_automation_dynamic_scheduler_aa238fca
     latezza_automation_proactive_followup_e9ccdc23 -->|references| latezza_automation_ai_tool_calling_31f83e59
     api_dokumentasi_api_backend_64dae399 -->|contains| api_3_kategori_crm_manajemen_pelanggan_0db58e94
-    api_dokumentasi_api_backend_64dae399 -->|contains| api_5_kategori_integrasi_whatsapp_4fd3bd5b
-    api_dokumentasi_api_backend_64dae399 -->|contains| api_7_kategori_automasi_ads_creative_691db6dd
+    developer_developer_md_latezza_cake_whatsapp_ai_625bab4d -->|contains| developer_api_routes_reference_15fdc467
     latezza_automation_meta_ads_reporting_04123a29 -->|semantically similar to| latezza_automation_creative_ad_analysis_d631f885
-    %% Omitted for readability: 81 nodes, 0 edges
+    %% Omitted for readability: 129 nodes, 0 edges
+    class developer_developer_md_latezza_cake_whatsapp_ai_625bab4d concept;
+    class developer_api_routes_reference_15fdc467 concept;
     class latezza_automation_rag_semantic_search_0b216e6d klass;
     class latezza_automation_meta_ads_reporting_04123a29 klass;
     class latezza_automation_proactive_followup_e9ccdc23 klass;
@@ -1411,13 +1412,11 @@ flowchart LR
     class latezza_automation_baileys_whatsapp_e13728ac klass;
     class latezza_automation_meta_graph_api_de775b85 api;
     class latezza_automation_creative_ad_analysis_d631f885 klass;
-    class api_dokumentasi_api_backend_64dae399 concept;
-    class api_3_kategori_crm_manajemen_pelanggan_0db58e94 concept;
-    class api_5_kategori_integrasi_whatsapp_4fd3bd5b concept;
-    class api_7_kategori_automasi_ads_creative_691db6dd concept;
     class readme_whatsapp_ai_agent_ads_report_automation_b476ad20 concept;
     class latezza_automation_gemini_ai_integration_83531e40 klass;
     class latezza_automation_latezza_cake_brand_1a2cd5aa klass;
+    class api_dokumentasi_api_backend_64dae399 concept;
+    class api_3_kategori_crm_manajemen_pelanggan_0db58e94 concept;
     class changelog_2026_06_18_ee0d72ad concept;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -1687,27 +1686,27 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>API.md</code></td><td>52 nodes</td></tr>
-<tr><td><code>DEVELOPER.md</code></td><td>19 nodes</td></tr>
+      <tr><td><code>DEVELOPER.md</code></td><td>66 nodes</td></tr>
+<tr><td><code>API.md</code></td><td>53 nodes</td></tr>
 <tr><td><code>CHANGELOG.md</code></td><td>15 nodes</td></tr>
 <tr><td><code>README.md</code></td><td>13 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x67, references x11, shares data with x11, implements x8. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x114, references x11, shares data with x11, implements x8. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 7. Tests & Fixtures ====== -->
 <h2 id="tests-fixtures">7. Tests &amp; Fixtures</h2>
-<p>Tests &amp; Fixtures groups implementation around frontend, components, backend, tests, mostly in components/ui/sidebar.tsx, components/ui/dialog.tsx, components/ui/sheet.tsx. This section covers 241 nodes and 478 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Tests &amp; Fixtures groups implementation around frontend, components, backend, tests, mostly in components/ui/sidebar.tsx, components/ui/dialog.tsx, components/ui/sheet.tsx. This section covers 245 nodes and 482 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Tests &amp; Fixtures (241 nodes, 478 edges)
+    %% Section: Tests &amp; Fixtures (245 nodes, 482 edges)
     subgraph tests_fixtures_backend_ads_analysis_automation_j_614edd30["backend/ads-analysis/automation.js"]
         ads_analysis_automation_fetchmetainsightsrange_a819936a("fetchMetaInsightsRange()<br/><small>backend/ads-analysis/automation.js</small>")
         ads_analysis_automation_main_a60f30fe("main()<br/><small>backend/ads-analysis/automation.js</small>")
@@ -1746,7 +1745,7 @@ flowchart LR
     src_app_46efd68e -->|imports| components_products_8a62dc64
     src_app_46efd68e -->|imports| components_settings_d2cd85a2
     src_app_46efd68e -->|imports| components_whatsappsessions_c49ec77f
-    %% Omitted for readability: 223 nodes, 0 edges
+    %% Omitted for readability: 227 nodes, 0 edges
     class ads_analysis_automation_fetchmetainsightsrange_a819936a function;
     class ads_analysis_automation_main_a60f30fe function;
     class ads_analysis_automation_normalizemetainsights_7aea1c59 function;
@@ -1980,6 +1979,38 @@ flowchart LR
 </tr>
 <tr>
   <td>25</td>
+  <td><code>MtdStats</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>MtdStats node in src/components/Overview.tsx.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>DailyTrendItem</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DailyTrendItem node in src/components/Overview.tsx.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>FeatureBreakdownItem</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>FeatureBreakdownItem node in src/components/Overview.tsx.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>UsageStatsData</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>UsageStatsData node in src/components/Overview.tsx.</td>
+</tr>
+<tr>
+  <td>29</td>
   <td><code>OverviewProps</code><br><small style="color:var(--muted)">src/components/Overview.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td>External entry / no inbound edge</td>
@@ -1987,44 +2018,12 @@ flowchart LR
   <td>OverviewProps node in src/components/Overview.tsx.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>30</td>
   <td><code>Products.tsx</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
   <td><span class="tag tag-hook">UI</span></td>
   <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
   <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Button()</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br><code>button.tsx</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br>+26 more</td>
   <td>Module file in src/components/Products.tsx.</td>
-</tr>
-<tr>
-  <td>27</td>
-  <td><code>Product</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Product node in src/components/Products.tsx.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>ProductsProps</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>ProductsProps node in src/components/Products.tsx.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>Products()</code><br><small style="color:var(--muted)">src/components/Products.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Products() node in src/components/Products.tsx.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>Settings.tsx</code><br><small style="color:var(--muted)">src/components/Settings.tsx</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
-  <td><code>API_BASE_URL</code><br><small style="color:var(--muted)">frontend/src/config.ts</small><br><code>Button()</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br><code>button.tsx</code><br><small style="color:var(--muted)">components/ui/button.tsx</small><br>+13 more</td>
-  <td>Module file in src/components/Settings.tsx.</td>
 </tr>
 </table>
 
@@ -2038,34 +2037,27 @@ flowchart LR
 <tr><td><code>components/ui/dialog.tsx</code></td><td>11 nodes</td></tr>
 <tr><td><code>components/ui/sheet.tsx</code></td><td>11 nodes</td></tr>
 <tr><td><code>src/services/creative.js</code></td><td>10 nodes</td></tr>
+<tr><td><code>src/components/Overview.tsx</code></td><td>10 nodes</td></tr>
 <tr><td><code>backend/src/agent.js</code></td><td>9 nodes</td></tr>
 <tr><td><code>components/ui/table.tsx</code></td><td>9 nodes</td></tr>
-<tr><td><code>components/ui/card.tsx</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x191, imports x122, imports x82, calls x82. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x195, imports x122, imports x82, calls x82. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 8. Community 13 ====== -->
 <h2 id="community-13">8. Community 13</h2>
-<p>Community 13 groups implementation around dbjs, backend, pool, googlegenerativeai, mostly in backend/src/db.js. This section covers 26 nodes and 32 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Community 13 groups implementation around dbjs, backend, pool, googlegenerativeai, mostly in backend/src/db.js. This section covers 20 nodes and 20 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Community 13 (26 nodes, 32 edges)
-    src_db_getsetting_16db62de("getSetting()<br/><small>backend/src/db.js</small>")
-    src_db_initdb_23909900("initDb()<br/><small>backend/src/db.js</small>")
-    src_db_generateembedding_94b42922("generateEmbedding()<br/><small>backend/src/db.js</small>")
+    %% Section: Community 13 (20 nodes, 20 edges)
     src_db_getcustomer_0ad8b434("getCustomer()<br/><small>backend/src/db.js</small>")
-    src_db_searchproductsfallback_2ddb7dc8("searchProductsFallback()<br/><small>backend/src/db.js</small>")
-    src_db_backfillproductembeddings_8246a303("backfillProductEmbeddings()<br/><small>backend/src/db.js</small>")
-    src_db_loadallsettings_3cc9756d("loadAllSettings()<br/><small>backend/src/db.js</small>")
-    src_db_searchproducts_0d466a1a("searchProducts()<br/><small>backend/src/db.js</small>")
     src_db_createorupdatecustomer_94e09932("createOrUpdateCustomer()<br/><small>backend/src/db.js</small>")
     src_db_createsession_2051c1b6("createSession()<br/><small>backend/src/db.js</small>")
     src_db_983255c8("db.js")
@@ -2076,22 +2068,16 @@ flowchart LR
     src_db_getsession_74ef2b80("getSession()<br/><small>backend/src/db.js</small>")
     src_db_getsessions_3de17562("getSessions()<br/><small>backend/src/db.js</small>")
     src_db_savechatmessage_03e1bb3f("saveChatMessage()<br/><small>backend/src/db.js</small>")
-    src_db_initdb_23909900 -->|calls| src_db_backfillproductembeddings_8246a303
-    src_db_initdb_23909900 -->|calls| src_db_loadallsettings_3cc9756d
-    src_db_getsetting_16db62de -->|calls| src_db_backfillproductembeddings_8246a303
-    src_db_getsetting_16db62de -->|calls| src_db_searchproducts_0d466a1a
+    src_db_saveusagelog_43d5fe44("saveUsageLog()<br/><small>backend/src/db.js</small>")
+    src_db_setsetting_d11f2dbc("setSetting()<br/><small>backend/src/db.js</small>")
+    src_db_settingscache_8927769a("settingsCache<br/><small>backend/src/db.js</small>")
+    src_db_updatesessionconnected_27d00de1("updateSessionConnected()<br/><small>backend/src/db.js</small>")
+    src_db_updatesessionqr_26c7e80d("updateSessionQR()<br/><small>backend/src/db.js</small>")
+    src_db_updatesessionstatus_07ca7bed("updateSessionStatus()<br/><small>backend/src/db.js</small>")
+    src_db_upsertproduct_7265a349("upsertProduct()<br/><small>backend/src/db.js</small>")
     src_db_getcustomer_0ad8b434 -->|calls| src_db_createorupdatecustomer_94e09932
-    src_db_searchproductsfallback_2ddb7dc8 -->|calls| src_db_searchproducts_0d466a1a
-    src_db_generateembedding_94b42922 -->|calls| src_db_backfillproductembeddings_8246a303
-    %% Omitted for readability: 8 nodes, 0 edges
-    class src_db_getsetting_16db62de function;
-    class src_db_initdb_23909900 function;
-    class src_db_generateembedding_94b42922 function;
+    %% Omitted for readability: 2 nodes, 0 edges
     class src_db_getcustomer_0ad8b434 function;
-    class src_db_searchproductsfallback_2ddb7dc8 function;
-    class src_db_backfillproductembeddings_8246a303 function;
-    class src_db_loadallsettings_3cc9756d function;
-    class src_db_searchproducts_0d466a1a function;
     class src_db_createorupdatecustomer_94e09932 function;
     class src_db_createsession_2051c1b6 function;
     class src_db_983255c8 module;
@@ -2102,6 +2088,13 @@ flowchart LR
     class src_db_getsession_74ef2b80 function;
     class src_db_getsessions_3de17562 function;
     class src_db_savechatmessage_03e1bb3f function;
+    class src_db_saveusagelog_43d5fe44 function;
+    class src_db_setsetting_d11f2dbc function;
+    class src_db_settingscache_8927769a function;
+    class src_db_updatesessionconnected_27d00de1 function;
+    class src_db_updatesessionqr_26c7e80d function;
+    class src_db_updatesessionstatus_07ca7bed function;
+    class src_db_upsertproduct_7265a349 function;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -2165,30 +2158,6 @@ flowchart LR
 </tr>
 <tr>
   <td>6</td>
-  <td><code>initDb()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>backfillProductEmbeddings()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>loadAllSettings()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td>initDb() node in backend/src/db.js.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>loadAllSettings()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>initDb()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td>No direct outbound edge</td>
-  <td>loadAllSettings() node in backend/src/db.js.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>getSetting()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>backfillProductEmbeddings()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>searchProducts()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td>getSetting() node in backend/src/db.js.</td>
-</tr>
-<tr>
-  <td>9</td>
   <td><code>setSetting()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2196,7 +2165,7 @@ flowchart LR
   <td>setSetting() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>10</td>
+  <td>7</td>
   <td><code>getCustomer()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2204,7 +2173,7 @@ flowchart LR
   <td>getCustomer() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>11</td>
+  <td>8</td>
   <td><code>createOrUpdateCustomer()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>getCustomer()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
@@ -2212,7 +2181,7 @@ flowchart LR
   <td>createOrUpdateCustomer() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>9</td>
   <td><code>saveChatMessage()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2220,7 +2189,7 @@ flowchart LR
   <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>10</td>
   <td><code>getChatHistory()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2228,23 +2197,7 @@ flowchart LR
   <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
 </tr>
 <tr>
-  <td>14</td>
-  <td><code>searchProductsFallback()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>searchProducts()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td>searchProductsFallback() node in backend/src/db.js.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>searchProducts()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>getSetting()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>searchProductsFallback()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td>No direct outbound edge</td>
-  <td>searchProducts() node in backend/src/db.js.</td>
-</tr>
-<tr>
-  <td>16</td>
+  <td>11</td>
   <td><code>upsertProduct()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2252,7 +2205,7 @@ flowchart LR
   <td>upsertProduct() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>12</td>
   <td><code>getCustomersForFollowUp()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2260,23 +2213,7 @@ flowchart LR
   <td>getCustomersForFollowUp() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>18</td>
-  <td><code>generateEmbedding()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>backfillProductEmbeddings()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td>generateEmbedding() node in backend/src/db.js.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>backfillProductEmbeddings()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>generateEmbedding()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>getSetting()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>initDb()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
-  <td>No direct outbound edge</td>
-  <td>backfillProductEmbeddings() node in backend/src/db.js.</td>
-</tr>
-<tr>
-  <td>20</td>
+  <td>13</td>
   <td><code>getSessions()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2284,7 +2221,7 @@ flowchart LR
   <td>getSessions() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>14</td>
   <td><code>getSession()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2292,7 +2229,7 @@ flowchart LR
   <td>getSession() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>15</td>
   <td><code>createSession()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2300,7 +2237,7 @@ flowchart LR
   <td>createSession() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>16</td>
   <td><code>deleteSession()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2308,7 +2245,7 @@ flowchart LR
   <td>deleteSession() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>17</td>
   <td><code>updateSessionStatus()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2316,7 +2253,7 @@ flowchart LR
   <td>updateSessionStatus() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>25</td>
+  <td>18</td>
   <td><code>updateSessionQR()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -2324,12 +2261,20 @@ flowchart LR
   <td>updateSessionQR() node in backend/src/db.js.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>19</td>
   <td><code>updateSessionConnected()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
   <td>updateSessionConnected() node in backend/src/db.js.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>saveUsageLog()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>saveUsageLog() node in backend/src/db.js.</td>
 </tr>
 </table>
 
@@ -2338,12 +2283,12 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>backend/src/db.js</code></td><td>26 nodes</td></tr>
+      <tr><td><code>backend/src/db.js</code></td><td>20 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x25, calls x7. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x19, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -3518,69 +3463,65 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around changelogmd, backend, agents, shadcn, mostly in CHANGELOG.md, shadcn/rules/forms.md, shadcn/rules/icons.md. This section covers 96 nodes and 74 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around changelogmd, backend, agents, shadcn, mostly in CHANGELOG.md, shadcn/rules/forms.md, backend/src/db.js. This section covers 106 nodes and 83 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (96 nodes, 74 edges)
-    subgraph other_CHANGELOG_md_536ea415["CHANGELOG.md"]
-        changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1("CHANGELOG — Latezza Cake WhatsApp AI Agent<br/><small>CHANGELOG.md</small>")
-        changelog_2026_06_17_morning_initial_build_bec008b4("2026-06-17 (morning — initial build)<br/><small>CHANGELOG.md</small>")
-        changelog_2026_06_19_025bad6f("2026-06-19<br/><small>CHANGELOG.md</small>")
-        changelog_2026_06_17_evening_ad18885f("2026-06-17 (evening)<br/><small>CHANGELOG.md</small>")
-        latezza_automation_light_dark_mode_71242d66("Light/Dark Mode Theme<br/><small>CHANGELOG.md</small>")
-        latezza_automation_shadcn_ui_4a06c5cf("shadcn/ui Component Library<br/><small>CHANGELOG.md</small>")
-    end
-    subgraph other_backend_scratch_list_models_js_c8003278["backend/scratch/list-models.js"]
-        scratch_list_models_580b44e8("list-models.js")
-        scratch_list_models_db_c239b79a("db<br/><small>backend/scratch/list-models.js</small>")
-        scratch_list_models_googlegenerativeai_19ef6695("GoogleGenerativeAI<br/><small>backend/scratch/list-models.js</small>")
-        scratch_list_models_listmodels_337c9a55("listModels()<br/><small>backend/scratch/list-models.js</small>")
+    %% Section: Other (106 nodes, 83 edges)
+    subgraph other_backend_src_db_js_e9c82801["backend/src/db.js"]
+        src_db_getsetting_16db62de("getSetting()<br/><small>backend/src/db.js</small>")
+        src_db_initdb_23909900("initDb()<br/><small>backend/src/db.js</small>")
+        src_db_generateembedding_94b42922("generateEmbedding()<br/><small>backend/src/db.js</small>")
+        src_db_searchproductsfallback_2ddb7dc8("searchProductsFallback()<br/><small>backend/src/db.js</small>")
+        src_db_backfillproductembeddings_8246a303("backfillProductEmbeddings()<br/><small>backend/src/db.js</small>")
+        src_db_loadallsettings_3cc9756d("loadAllSettings()<br/><small>backend/src/db.js</small>")
+        src_db_searchproducts_0d466a1a("searchProducts()<br/><small>backend/src/db.js</small>")
     end
     subgraph other_backend_scratch_check_db_js_8861c298["backend/scratch/check_db.js"]
         scratch_check_db_29190ad7("check_db.js")
-        scratch_check_db_client_183f18dd("Client<br/><small>backend/scratch/check_db.js</small>")
         scratch_check_db_main_f82977d6("main()<br/><small>backend/scratch/check_db.js</small>")
+        scratch_check_db_client_183f18dd("Client<br/><small>backend/scratch/check_db.js</small>")
+    end
+    subgraph other_backend_scratch_list_models_js_c8003278["backend/scratch/list-models.js"]
+        scratch_list_models_db_c239b79a("db<br/><small>backend/scratch/list-models.js</small>")
+        scratch_list_models_580b44e8("list-models.js")
+        scratch_list_models_listmodels_337c9a55("listModels()<br/><small>backend/scratch/list-models.js</small>")
+    end
+    subgraph other_CHANGELOG_md_536ea415["CHANGELOG.md"]
+        latezza_automation_light_dark_mode_71242d66("Light/Dark Mode Theme<br/><small>CHANGELOG.md</small>")
+        latezza_automation_shadcn_ui_4a06c5cf("shadcn/ui Component Library<br/><small>CHANGELOG.md</small>")
     end
     subgraph other_DEVELOPER_md_14d93c66["DEVELOPER.md"]
         latezza_automation_fastify_backend_6256943c("Fastify Backend Server<br/><small>DEVELOPER.md</small>")
         latezza_automation_react_frontend_eb7d19ee("React Vite Frontend SPA<br/><small>DEVELOPER.md</small>")
     end
-    latezza_automation_postgres_db_21f7289c("PostgreSQL Database<br/><small>docker-compose.yml</small>")
-    rules_forms_forms_inputs_fe8fa5de("Forms &amp; Inputs<br/><small>shadcn/rules/forms.md</small>")
-    services_followup_96686713("followup.js")
-    latezza_automation_postgres_db_21f7289c -->|shares data with| latezza_automation_fastify_backend_6256943c
-    latezza_automation_react_frontend_eb7d19ee -->|implements| latezza_automation_light_dark_mode_71242d66
-    latezza_automation_react_frontend_eb7d19ee -->|implements| latezza_automation_shadcn_ui_4a06c5cf
-    scratch_check_db_29190ad7 -->|contains| scratch_check_db_client_183f18dd
-    scratch_check_db_29190ad7 -->|contains| scratch_check_db_main_f82977d6
-    scratch_list_models_580b44e8 -->|contains| scratch_list_models_db_c239b79a
-    scratch_list_models_580b44e8 -->|contains| scratch_list_models_googlegenerativeai_19ef6695
-    scratch_list_models_580b44e8 -->|contains| scratch_list_models_listmodels_337c9a55
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_17_evening_ad18885f
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_17_morning_initial_build_bec008b4
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_19_025bad6f
-    latezza_automation_fastify_backend_6256943c -->|shares data with| latezza_automation_react_frontend_eb7d19ee
-    %% Omitted for readability: 78 nodes, 0 edges
-    class changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 concept;
-    class changelog_2026_06_17_morning_initial_build_bec008b4 concept;
-    class changelog_2026_06_19_025bad6f concept;
-    class changelog_2026_06_17_evening_ad18885f concept;
+    backend_jest_config_a51150b9("jest.config.js")
+    src_db_initdb_23909900 -->|calls| src_db_backfillproductembeddings_8246a303
+    src_db_initdb_23909900 -->|calls| src_db_loadallsettings_3cc9756d
+    src_db_getsetting_16db62de -->|calls| src_db_backfillproductembeddings_8246a303
+    src_db_getsetting_16db62de -->|calls| src_db_searchproducts_0d466a1a
+    src_db_searchproductsfallback_2ddb7dc8 -->|calls| src_db_searchproducts_0d466a1a
+    src_db_generateembedding_94b42922 -->|calls| src_db_backfillproductembeddings_8246a303
+    %% Omitted for readability: 88 nodes, 0 edges
+    class src_db_getsetting_16db62de function;
+    class src_db_initdb_23909900 function;
+    class src_db_generateembedding_94b42922 function;
+    class src_db_searchproductsfallback_2ddb7dc8 function;
+    class src_db_backfillproductembeddings_8246a303 function;
+    class src_db_loadallsettings_3cc9756d function;
+    class src_db_searchproducts_0d466a1a function;
+    class scratch_check_db_29190ad7 module;
+    class scratch_check_db_main_f82977d6 function;
+    class scratch_check_db_client_183f18dd entry;
+    class scratch_list_models_db_c239b79a function;
+    class scratch_list_models_580b44e8 module;
+    class scratch_list_models_listmodels_337c9a55 function;
     class latezza_automation_light_dark_mode_71242d66 klass;
     class latezza_automation_shadcn_ui_4a06c5cf ui;
-    class scratch_list_models_580b44e8 module;
-    class scratch_list_models_db_c239b79a function;
-    class scratch_list_models_googlegenerativeai_19ef6695 function;
-    class scratch_list_models_listmodels_337c9a55 function;
-    class scratch_check_db_29190ad7 module;
-    class scratch_check_db_client_183f18dd entry;
-    class scratch_check_db_main_f82977d6 function;
     class latezza_automation_fastify_backend_6256943c klass;
     class latezza_automation_react_frontend_eb7d19ee klass;
-    class latezza_automation_postgres_db_21f7289c klass;
-    class rules_forms_forms_inputs_fe8fa5de concept;
-    class services_followup_96686713 module;
+    class backend_jest_config_a51150b9 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -3620,27 +3561,27 @@ flowchart LR
 </tr>
 <tr>
   <td>3</td>
-  <td><code>2026-06-22</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><code>2026-06-23</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing 2026-06-22.</td>
+  <td>Documentation node describing 2026-06-23.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>Optimized Creative Analysis Sourcing &amp; CSV Context</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><code>Gemini Model Configuration Refactor</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Optimized Creative Analysis Sourcing &amp; CSV Context.</td>
+  <td>Documentation node describing Gemini Model Configuration Refactor.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>WhatsApp Message Debouncing &amp; Abuse Prevention</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><code>Gemini API Usage &amp; Costs Tracking</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing WhatsApp Message Debouncing &amp; Abuse Prevention.</td>
+  <td>Documentation node describing Gemini API Usage &amp; Costs Tracking.</td>
 </tr>
 <tr>
   <td>6</td>
@@ -3796,51 +3737,51 @@ flowchart LR
 </tr>
 <tr>
   <td>25</td>
-  <td><code>Docker Compose Deployment</code><br><small style="color:var(--muted)">docker-compose.yml</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>initDb()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Docker Compose Deployment.</td>
+  <td><code>backfillProductEmbeddings()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>loadAllSettings()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td>initDb() node in backend/src/db.js.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>PostgreSQL Database</code><br><small style="color:var(--muted)">docker-compose.yml</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>loadAllSettings()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>initDb()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td>No direct outbound edge</td>
-  <td>PostgreSQL Database node in docker-compose.yml.</td>
+  <td>loadAllSettings() node in backend/src/db.js.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>Fastify Backend Server</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>getSetting()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Fastify Backend Server node in DEVELOPER.md.</td>
+  <td><code>backfillProductEmbeddings()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>searchProducts()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td>getSetting() node in backend/src/db.js.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>React Vite Frontend SPA</code><br><small style="color:var(--muted)">DEVELOPER.md</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>searchProductsFallback()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>React Vite Frontend SPA node in DEVELOPER.md.</td>
+  <td><code>searchProducts()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td>searchProductsFallback() node in backend/src/db.js.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>shadcn/ui Component Library</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-hook">UI</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>searchProducts()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>getSetting()</code><br><small style="color:var(--muted)">backend/src/db.js</small><br><code>searchProductsFallback()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
   <td>No direct outbound edge</td>
-  <td>shadcn/ui Component Library node in CHANGELOG.md.</td>
+  <td>searchProducts() node in backend/src/db.js.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>Light/Dark Mode Theme</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>generateEmbedding()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Light/Dark Mode Theme node in CHANGELOG.md.</td>
+  <td><code>backfillProductEmbeddings()</code><br><small style="color:var(--muted)">backend/src/db.js</small></td>
+  <td>generateEmbedding() node in backend/src/db.js.</td>
 </tr>
 </table>
 
@@ -3849,19 +3790,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>CHANGELOG.md</code></td><td>33 nodes</td></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>36 nodes</td></tr>
 <tr><td><code>shadcn/rules/forms.md</code></td><td>8 nodes</td></tr>
+<tr><td><code>backend/src/db.js</code></td><td>7 nodes</td></tr>
 <tr><td><code>shadcn/rules/icons.md</code></td><td>5 nodes</td></tr>
 <tr><td><code>src/services/followup.js</code></td><td>5 nodes</td></tr>
 <tr><td><code>backend/scratch/list-models.js</code></td><td>4 nodes</td></tr>
 <tr><td><code>frontend/README.md</code></td><td>4 nodes</td></tr>
 <tr><td><code>frontend/src/setupTests.ts</code></td><td>4 nodes</td></tr>
-<tr><td><code>backend/scratch/check_db.js</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x68, references x2, shares data with x2, implements x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x71, calls x6, references x2, shares data with x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -3908,17 +3849,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>904</td></tr>
-      <tr><td>Edges</td><td>1164</td></tr>
+      <tr><td>Nodes</td><td>914</td></tr>
+      <tr><td>Edges</td><td>1174</td></tr>
       <tr><td>Hyperedges</td><td>3</td></tr>
-      <tr><td>Communities</td><td>77</td></tr>
+      <tr><td>Communities</td><td>81</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>1158</td></tr>
+      <tr><td>EXTRACTED</td><td>1168</td></tr>
       <tr><td>INFERRED</td><td>6</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -3927,7 +3868,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>latezza-automation — Architecture Documentation</p>
-  <p>Generated: 2026-06-22 07:43 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-06-23 16:40 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

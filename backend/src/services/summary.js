@@ -91,8 +91,8 @@ async function generateMessageSummary(log = console, onProgress = null, sessionI
   }
 
   const genAI = new GoogleGenerativeAI(activeApiKey);
-  const dbModel = await db.getSetting('gemini_model');
-  const modelsToTry = [dbModel, 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-2.5-flash', 'gemini-1.5-pro'].filter(Boolean);
+  const envModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
+  const modelsToTry = [envModel, 'gemini-3.1-flash-lite', 'gemini-2.5-flash', 'gemini-1.5-pro'].filter(Boolean);
   const uniqueModels = [...new Set(modelsToTry)];
 
   const dateRangeLabel = getDateRangeLabel(dateRange);

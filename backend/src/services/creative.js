@@ -311,10 +311,10 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
   log.info('Invoking Gemini API for Content Ideation analysis...');
   if (onProgress) onProgress({ type: 'status', message: 'Menghubungi Gemini AI untuk proses audit & ideasi...' });
   const genAI = new GoogleGenerativeAI(activeApiKey);
-  const dbModel = await db.getSetting('gemini_model');
+  const envModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 
-  // Order of preference: User configured, Gemini 2.5 Flash, Gemini 1.5 Pro
-  const modelsToTry = [dbModel, 'gemini-3.1-flash-lite', 'gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-1.5-pro'].filter(Boolean);
+  // Order of preference: Environment configured, Gemini 3.1 Flash-Lite, Gemini 2.5 Flash, Gemini 1.5 Pro
+  const modelsToTry = [envModel, 'gemini-3.1-flash-lite', 'gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-1.5-pro'].filter(Boolean);
   const uniqueModels = [...new Set(modelsToTry)];
 
   let responseText = '';
@@ -343,6 +343,24 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
             onProgress({ type: 'chunk', text: chunkText });
           }
         }
+
+        // Log Gemini usage
+        try {
+          const response = await result.response;
+          const usage = response.usageMetadata;
+          if (usage) {
+            await db.saveUsageLog({
+              feature: 'creative_analysis',
+              modelName: modelName,
+              inputTokens: usage.promptTokenCount,
+              outputTokens: usage.candidatesTokenCount,
+              cachedTokens: usage.cachedContentTokenCount
+            });
+          }
+        } catch (usageErr) {
+          log.warn(`Failed to log usage for creative analysis: ${usageErr.message}`);
+        }
+
         return textResult;
       } catch (err) {
         log.warn(`Attempt ${i + 1} failed for ${modelName}: ${err.message}`);
