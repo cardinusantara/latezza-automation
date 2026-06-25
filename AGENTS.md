@@ -2,9 +2,7 @@
 
 ## Project structure
 - `backend/` — Fastify (Node.js) + Baileys + PostgreSQL + Google Gemini AI
-  - Entrypoint: `backend/gateway.js`
-  - No lint/typecheck/test scripts exist for backend
-- `frontend/` — React + Vite + TypeScript + Tailwind v4 + shadcn/ui
+- `frontend/` — React + TypeScript + Tailwind v4 + shadcn/ui
 
 ## Development commands
 
