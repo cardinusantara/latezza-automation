@@ -1,5 +1,5 @@
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
-const path = require('path');
+require('dotenv').config({ path: require('node:path').join(__dirname, '.env') });
+const path = require('node:path');
 const Fastify = require('fastify');
 const cron = require('node-cron');
 
@@ -37,7 +37,7 @@ fastify.register(require('@fastify/multipart'), {
 });
 
 // Ensure public/uploads directory exists
-const fs = require('fs');
+const fs = require('node:fs');
 const uploadsDir = path.join(__dirname, 'public/uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });

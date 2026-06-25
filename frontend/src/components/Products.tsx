@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { 
   IconShoppingCart, 
   IconPlus, 
@@ -9,8 +10,6 @@ import {
 } from '@tabler/icons-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Table, 
   TableBody, 
@@ -30,6 +29,10 @@ import {
 import { toast } from "sonner";
 import { API_BASE_URL } from '@/config';
 
+// Tailwind CSS classes matching shadcn ui components exactly
+const inputClasses = "h-9 w-full min-w-0 rounded-4xl border border-input bg-input/30 px-3 py-1 text-xs transition-colors outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-card/30 border-border text-foreground";
+const textareaClasses = "flex field-sizing-content min-h-16 w-full resize-none rounded-xl border border-input bg-input/30 px-3 py-3 text-xs transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-card/30 border-border text-foreground leading-relaxed";
+
 interface Product {
   id: string;
   product_name: string;
@@ -44,7 +47,7 @@ interface ProductsProps {
   onRefreshData: () => void;
 }
 
-export default function Products({ products, onRefreshData }: ProductsProps) {
+export default function Products({ products, onRefreshData }: Readonly<ProductsProps>) {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Dialog Open States
@@ -101,7 +104,7 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
   };
 
   // Create Product
-  const handleAddProduct = async (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.product_name || !form.price) {
       toast.error('Nama produk dan harga wajib diisi.');
@@ -115,7 +118,7 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           product_name: form.product_name,
-          price: parseFloat(form.price),
+          price: Number.parseFloat(form.price),
           description: form.description,
           image_url: form.image_url,
           shopee_link: form.shopee_link
@@ -131,6 +134,8 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
         toast.error('Gagal menambahkan produk: ' + (data.message || 'unknown error'));
       }
     } catch (err) {
+      // Logged and handled by displaying failure toast to user
+      console.error(err);
       toast.error('Koneksi gagal saat menambahkan produk.');
     } finally {
       setLoading(false);
@@ -138,7 +143,7 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
   };
 
   // Edit Product
-  const handleEditProduct = async (e: React.FormEvent) => {
+  const handleEditProduct = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedProduct) return;
     if (!form.product_name || !form.price) {
@@ -153,7 +158,7 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           product_name: form.product_name,
-          price: parseFloat(form.price),
+          price: Number.parseFloat(form.price),
           description: form.description,
           image_url: form.image_url,
           shopee_link: form.shopee_link
@@ -170,6 +175,8 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
         toast.error('Gagal memperbarui produk: ' + (data.message || 'unknown error'));
       }
     } catch (err) {
+      // Logged and handled by displaying failure toast to user
+      console.error(err);
       toast.error('Koneksi gagal saat memperbarui produk.');
     } finally {
       setLoading(false);
@@ -194,13 +201,15 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
         toast.error('Gagal menghapus produk: ' + (data.message || 'unknown error'));
       }
     } catch (err) {
+      // Logged and handled by displaying failure toast to user
+      console.error(err);
       toast.error('Koneksi gagal saat menghapus produk.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({
       ...prev,
@@ -231,12 +240,14 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
           {/* Search bar */}
           <div className="relative max-w-sm">
             <IconSearch size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-            <Input 
+            <input 
+              id="product-catalog-search"
               type="text" 
               placeholder="Cari nama produk atau deskripsi..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-card/30 border-border text-xs"
+              className={`${inputClasses} pl-9`}
+              aria-label="Cari nama produk atau deskripsi"
             />
           </div>
 
@@ -308,6 +319,7 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
                               size="icon-sm"
                               className="h-8 w-8 text-muted-foreground hover:text-foreground"
                               onClick={() => handleOpenEdit(p)}
+                              aria-label={`Edit ${p.product_name}`}
                             >
                               <IconEdit size={14} />
                             </Button>
@@ -316,6 +328,7 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
                               size="icon-sm"
                               className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
                               onClick={() => handleOpenDelete(p)}
+                              aria-label={`Delete ${p.product_name}`}
                             >
                               <IconTrash size={14} />
                             </Button>
@@ -342,20 +355,22 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
           </DialogHeader>
           <form onSubmit={handleAddProduct} className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Product Name *</label>
-              <Input 
+              <label htmlFor="add_product_name" className="text-xs font-semibold">Product Name *</label>
+              <input 
+                id="add_product_name"
                 name="product_name" 
                 value={form.product_name} 
                 onChange={handleChange}
                 placeholder="Korean Custom Cake 15cm" 
                 required 
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
             
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Price (Rupiah) *</label>
-              <Input 
+              <label htmlFor="add_price" className="text-xs font-semibold">Price (Rupiah) *</label>
+              <input 
+                id="add_price"
                 type="number" 
                 name="price" 
                 value={form.price} 
@@ -363,40 +378,43 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
                 placeholder="150000" 
                 required 
                 min="0"
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Image URL</label>
-              <Input 
+              <label htmlFor="add_image_url" className="text-xs font-semibold">Image URL</label>
+              <input 
+                id="add_image_url"
                 name="image_url" 
                 value={form.image_url} 
                 onChange={handleChange}
                 placeholder="https://example.com/cake.jpg" 
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Shopee Link</label>
-              <Input 
+              <label htmlFor="add_shopee_link" className="text-xs font-semibold">Shopee Link</label>
+              <input 
+                id="add_shopee_link"
                 name="shopee_link" 
                 value={form.shopee_link} 
                 onChange={handleChange}
                 placeholder="https://shopee.co.id/..." 
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Description</label>
-              <Textarea 
+              <label htmlFor="add_description" className="text-xs font-semibold">Description</label>
+              <textarea 
+                id="add_description"
                 name="description" 
                 value={form.description} 
                 onChange={handleChange}
                 placeholder="Korean minimalis cake dengan krim vanilla lembut..." 
-                className="bg-card/30 border-border min-h-[80px] text-xs"
+                className={`${textareaClasses} min-h-[80px]`}
               />
             </div>
 
@@ -424,56 +442,61 @@ export default function Products({ products, onRefreshData }: ProductsProps) {
           </DialogHeader>
           <form onSubmit={handleEditProduct} className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Product Name *</label>
-              <Input 
+              <label htmlFor="edit_product_name" className="text-xs font-semibold">Product Name *</label>
+              <input 
+                id="edit_product_name"
                 name="product_name" 
                 value={form.product_name} 
                 onChange={handleChange}
                 required 
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
             
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Price (Rupiah) *</label>
-              <Input 
+              <label htmlFor="edit_price" className="text-xs font-semibold">Price (Rupiah) *</label>
+              <input 
+                id="edit_price"
                 type="number" 
                 name="price" 
                 value={form.price} 
                 onChange={handleChange}
                 required 
                 min="0"
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Image URL</label>
-              <Input 
+              <label htmlFor="edit_image_url" className="text-xs font-semibold">Image URL</label>
+              <input 
+                id="edit_image_url"
                 name="image_url" 
                 value={form.image_url} 
                 onChange={handleChange}
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Shopee Link</label>
-              <Input 
+              <label htmlFor="edit_shopee_link" className="text-xs font-semibold">Shopee Link</label>
+              <input 
+                id="edit_shopee_link"
                 name="shopee_link" 
                 value={form.shopee_link} 
                 onChange={handleChange}
-                className="bg-card/30 border-border"
+                className={inputClasses}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold">Description</label>
-              <Textarea 
+              <label htmlFor="edit_description" className="text-xs font-semibold">Description</label>
+              <textarea 
+                id="edit_description"
                 name="description" 
                 value={form.description} 
                 onChange={handleChange}
-                className="bg-card/30 border-border min-h-[80px] text-xs"
+                className={`${textareaClasses} min-h-[80px]`}
               />
             </div>
 

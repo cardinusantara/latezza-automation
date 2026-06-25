@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const db = require('../db');
 const whatsappService = require('./whatsapp');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -46,55 +46,121 @@ function extractCopywriting(creative) {
   if (creative.body) return creative.body;
   if (creative.object_story_spec) {
     const spec = creative.object_story_spec;
-    if (spec.link_data && spec.link_data.message) return spec.link_data.message;
-    if (spec.video_data && spec.video_data.message) return spec.video_data.message;
-    if (spec.photo_data && spec.photo_data.message) return spec.photo_data.message;
+    if (spec.link_data?.message) return spec.link_data.message;
+    if (spec.video_data?.message) return spec.video_data.message;
+    if (spec.photo_data?.message) return spec.photo_data.message;
   }
   return '';
 }
 
 /**
- * Main analysis runner
+ * Try to load generated report.json
  */
-async function runCreativeAnalysis(log = console, onProgress = null, userPrompt = null) {
-  log.info('Starting AI Creative Analysis & Content Ideation automation...');
-  if (onProgress) onProgress({ type: 'status', message: 'Menginisialisasi analisis kreatif...' });
-  
-  const activeApiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
-  if (!activeApiKey) {
-    const errMsg = 'Missing active Gemini API key. Cannot run AI analysis.';
+function loadAdsFromReportJson(reportJsonPath, log, onProgress) {
+  if (!fs.existsSync(reportJsonPath)) return null;
+  try {
+    log.info(`Loading generated report from: ${reportJsonPath}`);
+    if (onProgress) onProgress({ type: 'status', message: 'Membaca laporan iklan yang sudah digenerate...' });
+    const reportContent = fs.readFileSync(reportJsonPath, 'utf8');
+    const reportJson = JSON.parse(reportContent);
+    if (reportJson && Array.isArray(reportJson.ads)) {
+      log.info(`Successfully loaded ${reportJson.ads.length} ads from report.json`);
+      return reportJson.ads;
+    }
+  } catch (err) {
+    log.warn(`Failed to read or parse report.json: ${err.message}. Falling back to source fetch.`);
+  }
+  return null;
+}
+
+/**
+ * Load and parse ads from CSV
+ */
+function loadAdsFromCsv(log, onProgress) {
+  const csvPath = path.join(__dirname, '../../ads-analysis/uploaded-ads.csv');
+  if (!fs.existsSync(csvPath)) {
+    const errMsg = 'File CSV terupload tidak ditemukan. Silakan upload terlebih dahulu atau generate report.';
     if (onProgress) onProgress({ type: 'error', message: errMsg });
     throw new Error(errMsg);
   }
+  log.info(`Parsing CSV file: ${csvPath}`);
+  if (onProgress) onProgress({ type: 'status', message: 'Membaca data dari file CSV...' });
+  
+  const automation = require('../../ads-analysis/automation');
+  const csvText = fs.readFileSync(csvPath, 'utf8');
+  
+  const today = new Date();
+  const defaultFrom = new Date(today);
+  defaultFrom.setDate(today.getDate() - 30);
+  const dateFrom = defaultFrom.toISOString().split('T')[0];
+  const dateTo = today.toISOString().split('T')[0];
+  
+  const loadedAds = automation.parseCSV(csvText, dateFrom, dateTo);
+  log.info(`Parsed ${loadedAds.length} ads from CSV`);
+  return loadedAds;
+}
 
-  const accessToken = await db.getSetting('meta_access_token') || process.env.META_ACCESS_TOKEN;
-  const adAccountId = await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID;
-  let adsData = [];
+/**
+ * Fetch and map ads from Meta Ads API
+ */
+async function fetchAndMapApiAds(accessToken, adAccountId, log, onProgress) {
+  if (onProgress) onProgress({ type: 'status', message: 'Mengunduh data iklan & metrik dari Meta Ads API...' });
+  log.info('Fetching live creative & performance stats from Meta Ads API...');
+  const rawAds = await fetchMetaAdsCreatives(accessToken, adAccountId);
+  const rawInsights = await fetchMetaAdsInsights(accessToken, adAccountId);
 
-  const dataSource = await db.getSetting('ads_data_source') || 'api';
-  log.info(`Using ads data source: ${dataSource}`);
+  log.info(`Fetched ${rawAds.length} ads and ${rawInsights.length} insight rows. Mapping...`);
+  if (onProgress) onProgress({ type: 'status', message: `Berhasil mengunduh ${rawAds.length} iklan dan ${rawInsights.length} baris metrik.` });
 
-  // 1. Ensure credentials are present if using API and no pre-generated report exists
-  const reportJsonPath = path.join(__dirname, '../../ads-analysis/report.json');
-  let loadedAds = null;
-  let isFromReport = false;
+  const insightsMap = new Map();
+  rawInsights.forEach(ins => {
+    insightsMap.set(ins.ad_id, ins);
+  });
 
-  // Try to load generated report.json
-  if (fs.existsSync(reportJsonPath)) {
-    try {
-      log.info(`Loading generated report from: ${reportJsonPath}`);
-      if (onProgress) onProgress({ type: 'status', message: 'Membaca laporan iklan yang sudah digenerate...' });
-      const reportContent = fs.readFileSync(reportJsonPath, 'utf8');
-      const reportJson = JSON.parse(reportContent);
-      if (reportJson && Array.isArray(reportJson.ads)) {
-        loadedAds = reportJson.ads;
-        isFromReport = true;
-        log.info(`Successfully loaded ${loadedAds.length} ads from report.json`);
-      }
-    } catch (err) {
-      log.warn(`Failed to read or parse report.json: ${err.message}. Falling back to source fetch.`);
+  const loadedAds = [];
+  rawAds.forEach(ad => {
+    const ins = insightsMap.get(ad.id);
+    const spend = ins ? Number.parseFloat(ins.spend) || 0 : 0;
+    const impressions = ins ? Number.parseInt(ins.impressions, 10) || 0 : 0;
+    const reach = ins ? Number.parseInt(ins.reach, 10) || 0 : 0;
+    
+    let conversions = 0;
+    if (Array.isArray(ins?.actions)) {
+      const action = ins.actions.find(a => 
+        a.action_type === 'onsite_conversion.messaging_conversation_started_7d' ||
+        a.action_type === 'messaging_first_reply' ||
+        a.action_type === 'purchase' ||
+        a.action_type === 'lead'
+      );
+      if (action) conversions = Number.parseInt(action.value, 10) || 0;
     }
-  }
+
+    const cpr = conversions > 0 ? spend / conversions : 0;
+    const copywriting = extractCopywriting(ad.creative);
+
+    loadedAds.push({
+      id: ad.id,
+      name: ad.name,
+      status: ad.status,
+      spend,
+      impressions,
+      reach,
+      results: conversions,
+      cpr,
+      copywriting: copywriting
+    });
+  });
+
+  return loadedAds;
+}
+
+/**
+ * Helper to load ads from various data sources (CSV, API, or local report.json)
+ */
+async function loadAdsFromSource(dataSource, accessToken, adAccountId, log, onProgress) {
+  const reportJsonPath = path.join(__dirname, '../../ads-analysis/report.json');
+  let loadedAds = loadAdsFromReportJson(reportJsonPath, log, onProgress);
+  const isFromReport = !!loadedAds;
 
   if (dataSource === 'api' && !loadedAds && (!accessToken || !adAccountId)) {
     const errMsg = 'Kredensial Meta Ads API (Access Token / Ad Account ID) tidak terkonfigurasi di Pengaturan.';
@@ -102,100 +168,100 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
     throw new Error(errMsg);
   }
 
-  // If no generated report exists, fall back to source
   if (!loadedAds) {
     if (dataSource === 'csv') {
-      const csvPath = path.join(__dirname, '../../ads-analysis/uploaded-ads.csv');
-      if (!fs.existsSync(csvPath)) {
-        const errMsg = 'File CSV terupload tidak ditemukan. Silakan upload terlebih dahulu atau generate report.';
-        if (onProgress) onProgress({ type: 'error', message: errMsg });
-        throw new Error(errMsg);
-      }
-      log.info(`Parsing CSV file: ${csvPath}`);
-      if (onProgress) onProgress({ type: 'status', message: 'Membaca data dari file CSV...' });
-      
-      const automation = require('../../ads-analysis/automation');
-      const csvText = fs.readFileSync(csvPath, 'utf8');
-      
-      const today = new Date();
-      const defaultFrom = new Date(today);
-      defaultFrom.setDate(today.getDate() - 30);
-      const dateFrom = defaultFrom.toISOString().split('T')[0];
-      const dateTo = today.toISOString().split('T')[0];
-      
-      loadedAds = automation.parseCSV(csvText, dateFrom, dateTo);
-      log.info(`Parsed ${loadedAds.length} ads from CSV`);
+      loadedAds = loadAdsFromCsv(log, onProgress);
     } else {
-      // API fetch fallback
-      if (onProgress) onProgress({ type: 'status', message: 'Mengunduh data iklan & metrik dari Meta Ads API...' });
-      log.info('Fetching live creative & performance stats from Meta Ads API...');
-      const rawAds = await fetchMetaAdsCreatives(accessToken, adAccountId);
-      const rawInsights = await fetchMetaAdsInsights(accessToken, adAccountId);
-
-      log.info(`Fetched ${rawAds.length} ads and ${rawInsights.length} insight rows. Mapping...`);
-      if (onProgress) onProgress({ type: 'status', message: `Berhasil mengunduh ${rawAds.length} iklan dan ${rawInsights.length} baris metrik.` });
-
-      const insightsMap = new Map();
-      rawInsights.forEach(ins => {
-        insightsMap.set(ins.ad_id, ins);
-      });
-
-      loadedAds = [];
-      rawAds.forEach(ad => {
-        const ins = insightsMap.get(ad.id);
-        const spend = ins ? parseFloat(ins.spend) || 0 : 0;
-        const impressions = ins ? parseInt(ins.impressions, 10) || 0 : 0;
-        const reach = ins ? parseInt(ins.reach, 10) || 0 : 0;
-        
-        let conversions = 0;
-        if (ins && ins.actions && Array.isArray(ins.actions)) {
-          const action = ins.actions.find(a => 
-            a.action_type === 'onsite_conversion.messaging_conversation_started_7d' ||
-            a.action_type === 'messaging_first_reply' ||
-            a.action_type === 'purchase' ||
-            a.action_type === 'lead'
-          );
-          if (action) conversions = parseInt(action.value, 10) || 0;
-        }
-
-        const cpr = conversions > 0 ? spend / conversions : 0;
-        const copywriting = extractCopywriting(ad.creative);
-
-        loadedAds.push({
-          id: ad.id,
-          name: ad.name,
-          status: ad.status,
-          spend,
-          impressions,
-          reach,
-          results: conversions,
-          cpr,
-          copywriting: copywriting
-        });
-      });
+      loadedAds = await fetchAndMapApiAds(accessToken, adAccountId, log, onProgress);
     }
   }
 
-  // 3. Fetch copywriting metadata if source is API and we loaded ads from report.json
-  let creativeCopyMap = new Map();
-  if (dataSource === 'api' && isFromReport && accessToken && adAccountId) {
-    try {
-      log.info('Fetching creative metadata from Meta API for copywriting details...');
-      if (onProgress) onProgress({ type: 'status', message: 'Mengunduh copywriting iklan dari Meta API...' });
-      const rawAds = await fetchMetaAdsCreatives(accessToken, adAccountId);
-      rawAds.forEach(ad => {
-        const copywriting = extractCopywriting(ad.creative);
-        if (copywriting) {
-          creativeCopyMap.set(ad.name, copywriting);
-          if (ad.id) creativeCopyMap.set(ad.id, copywriting);
-        }
-      });
-    } catch (err) {
-      log.warn(`Failed to fetch copywriting from Meta Ads API: ${err.message}. Will use fallback placeholder.`);
+  return { loadedAds, isFromReport };
+}
+
+/**
+ * Helper to classify ads into winning and losing creatives
+ */
+function classifyWinnerLoserAds(adsData) {
+  // Group 1: Good (conversions > 0, sorted by Conversions desc, CPR asc)
+  const goodAds = [...adsData]
+    .filter(a => a.conversions > 0)
+    .sort((a, b) => b.conversions - a.conversions || a.cpr - b.cpr);
+
+  // Group 2: Bad (spend > 0, sorted by conversions asc, spend desc)
+  const badAds = [...adsData]
+    .sort((a, b) => a.conversions - b.conversions || b.spend - a.spend);
+
+  const bestAdsList = goodAds.slice(0, 3);
+  const worstAdsList = badAds.slice(0, 3).filter(a => !bestAdsList.some(b => b.ad_id === a.ad_id));
+
+  return { bestAdsList, worstAdsList };
+}
+
+/**
+ * Helper to compile the stream response and log token usage
+ */
+async function processStreamResponse(result, modelName, log, onProgress) {
+  let textResult = '';
+  for await (const chunk of result.stream) {
+    const chunkText = chunk.text();
+    textResult += chunkText;
+    if (onProgress) {
+      onProgress({ type: 'chunk', text: chunkText });
     }
   }
 
-  // 4. Combine and normalize into adsData for Gemini
+  // Log Gemini usage
+  try {
+    const response = await result.response;
+    const usage = response.usageMetadata;
+    if (usage) {
+      await db.saveUsageLog({
+        feature: 'creative_analysis',
+        modelName: modelName,
+        inputTokens: usage.promptTokenCount,
+        outputTokens: usage.candidatesTokenCount,
+        cachedTokens: usage.cachedContentTokenCount
+      });
+    }
+  } catch (usageErr) {
+    log.warn(`Failed to log usage for creative analysis: ${usageErr.message}`);
+  }
+
+  return textResult;
+}
+
+/**
+ * Main analysis runner
+ */
+/**
+ * Fetch copywriting details from Meta API if using API and loaded from report.json
+ */
+async function fetchCopywritingFromMeta(accessToken, adAccountId, log, onProgress) {
+  const creativeCopyMap = new Map();
+  if (!accessToken || !adAccountId) return creativeCopyMap;
+  try {
+    log.info('Fetching creative metadata from Meta API for copywriting details...');
+    if (onProgress) onProgress({ type: 'status', message: 'Mengunduh copywriting iklan dari Meta API...' });
+    const rawAds = await fetchMetaAdsCreatives(accessToken, adAccountId);
+    rawAds.forEach(ad => {
+      const copywriting = extractCopywriting(ad.creative);
+      if (copywriting) {
+        creativeCopyMap.set(ad.name, copywriting);
+        if (ad.id) creativeCopyMap.set(ad.id, copywriting);
+      }
+    });
+  } catch (err) {
+    log.warn(`Failed to fetch copywriting from Meta Ads API: ${err.message}. Will use fallback placeholder.`);
+  }
+  return creativeCopyMap;
+}
+
+/**
+ * Combine and normalize adsData for Gemini
+ */
+function normalizeAdsData(loadedAds, dataSource, creativeCopyMap) {
+  const adsData = [];
   loadedAds.forEach(ad => {
     const spend = ad.spend || 0;
     const impressions = ad.impressions || 0;
@@ -228,29 +294,59 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
       });
     }
   });
+  return adsData;
+}
 
-  if (adsData.length === 0) {
-    const errMsg = 'Tidak ditemukan data iklan aktif yang memiliki teks copywriting dan pembelanjaan > Rp 5.000 dalam 30 hari terakhir.';
-    if (onProgress) onProgress({ type: 'error', message: errMsg });
-    throw new Error(errMsg);
+/**
+ * Send creative analysis summary broadcast to WhatsApp Group
+ */
+async function broadcastCreativeReportToWhatsApp(creativeReport, log) {
+  if (!whatsappService.isReady()) {
+    log.warn('WhatsApp service is disconnected. Skipped broadcast.');
+    return;
   }
+  try {
+    const targetJid = await db.getSetting('whatsapp_group_jid') || process.env.WHATSAPP_GROUP_JID || '120363427625298309@g.us';
+    let waText = `💡 *REKOMENDASI IDE KONTEN BARU DARI AI*\n` +
+      `Period: ${creativeReport.dateRange}\n\n` +
+      `Berikut adalah ide konten baru hasil audit copywriting iklan winners vs losers:\n\n`;
 
-  if (onProgress) onProgress({ type: 'status', message: 'Mengkategorikan performa iklan Winners vs Losers...' });
+    creativeReport.ideas.forEach((idea, idx) => {
+      waText += `*${idx + 1}. ${idea.title}*\n` +
+        `• _Angle:_ ${idea.angle}\n` +
+        `• _Visual:_ ${idea.visualGuide}\n` +
+        `• _Draft Copy:_ "${idea.copywriting}"\n\n`;
+    });
 
-  // 2. Classify into winning and losing creatives
-  // Group 1: Good (conversions > 0, sorted by Conversions desc, CPR asc)
-  const goodAds = [...adsData]
-    .filter(a => a.conversions > 0)
-    .sort((a, b) => b.conversions - a.conversions || a.cpr - b.cpr);
+    waText += `🔗 _Lihat ide & salin copywriting lengkap di Dashboard!_`;
 
-  // Group 2: Bad (spend > 0, sorted by conversions asc, spend desc)
-  const badAds = [...adsData]
-    .sort((a, b) => a.conversions - b.conversions || b.spend - a.spend);
+    log.info(`Sending creative analysis summary broadcast to WhatsApp Group: ${targetJid}`);
+    await whatsappService.sendMessage(targetJid, { text: waText });
+  } catch (waErr) {
+    log.error(`Failed to send WhatsApp broadcast for creative report: ${waErr.message}`);
+  }
+}
 
-  const bestAdsList = goodAds.slice(0, 3);
-  const worstAdsList = badAds.slice(0, 3).filter(a => !bestAdsList.some(b => b.ad_id === a.ad_id));
+/**
+ * Main analysis runner
+ */
+function notifyProgress(onProgress, type, message) {
+  if (onProgress) onProgress({ type, message });
+}
 
-  // 3. Formulate Prompt for Gemini
+function parseCreativeReport(responseText, log) {
+  try {
+    const creativeReport = JSON.parse(responseText);
+    creativeReport.generatedAt = new Date().toISOString();
+    creativeReport.isMock = false;
+    return creativeReport;
+  } catch (err) {
+    log.error('Failed to parse Gemini output. Raw response:', responseText, err);
+    throw new Error('Gemini did not return valid JSON for creative report: ' + err.message);
+  }
+}
+
+function buildCreativePrompt(bestAdsList, worstAdsList, userPrompt) {
   const summaryPayload = {
     business: "Latezza Cake Hampers (Korean cakes, Custom cakes, Hampers, cookies, marmer cake, bogel cake)",
     winners: bestAdsList.map(a => ({
@@ -269,7 +365,7 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
     }))
   };
 
-  const prompt = `
+  return `
   Kamu adalah Creative Director dan Copywriter iklan digital senior untuk brand: Latezza Cake Hampers.
   Kamu bekerja dengan jujur, kritis, dan analitis.
   Tugas kamu adalah menganalisis copywriting iklan yang berkinerja BAGUS (Winners) dibanding yang JELEK (Losers), kemudian merumuskan audit kreatif serta menciptakan 3-5 ide konten iklan baru yang siap pakai.
@@ -279,7 +375,7 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
   
   Lakukan tugas berikut:
   1. Identifikasi 3-5 "winningElements" (pola kata, hook, promosi, atau tone suara yang terbukti sukses pada iklan Winners). JIKA TIDAK ADA ELEMEN PEMENANG YANG RELEVAN ATAU BERGUNA, JUJUR AJA DAN ISI TIDAK ADA
-  2. Identifikasi 3-5 "losingElements" (pola tulisan, kesalahan penyusunan, atau tone yang membuat iklan Losers boncos/gagal). JIKA TIDAK ADA ELEMEN GAGAL YANG RELEVAN ATAU BERGUNA, JUJUR AJA DAN ISI TIDAK ADA
+  2. Identifikasi 3-5 "losingElements" (pola tulisan, kesalahan penyusunan, atau tone yang membuat iklan Losers boncos/gagal). JIKA TIDAK ADA ELEMEN GAGAL YANG RELEVAN ATAU BERGUNA, JUJUR AJA DAN ISI TIDADA
   3. Ciptakan minimal 3 ide iklan baru ("ideas") yang memuat:
      - "title": Judul konsep iklan (Indonesian)
      - "angle": Sudut pandang promosi / alasan di balik ide tersebut (Indonesian)
@@ -306,139 +402,134 @@ async function runCreativeAnalysis(log = console, onProgress = null, userPrompt 
   ${userPrompt ? `\n  INSTRUKSI TAMBAHAN DARI USER:\n  "${userPrompt}"\n  Pastikan ide konten yang kamu hasilkan sesuai dengan arahan di atas. Sesuaikan judul, angle, copywriting, dan visual guide agar relevan dengan instruksi user.\n` : ''}
   PENTING: Tulis respons hanya dalam format JSON yang valid. Jangan gunakan blok markdown \`\`\`json. Teks copywriting harus orisinal, menarik, dan menggunakan bahasa Indonesia yang persuasif, natural, dan asik untuk target audiens Latezza.
   `;
+}
 
-  // 4. Invoke Gemini API with fallback model loop and exponential backoff
+async function runCreativeAnalysis(log = console, onProgress = null, userPrompt = null) {
+  log.info('Starting AI Creative Analysis & Content Ideation automation...');
+  notifyProgress(onProgress, 'status', 'Menginisialisasi analisis kreatif...');
+  
+  const activeApiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
+  if (!activeApiKey) {
+    const errMsg = 'Missing active Gemini API key. Cannot run AI analysis.';
+    notifyProgress(onProgress, 'error', errMsg);
+    throw new Error(errMsg);
+  }
+
+  const accessToken = await db.getSetting('meta_access_token') || process.env.META_ACCESS_TOKEN;
+  const adAccountId = await db.getSetting('meta_ad_account_id') || process.env.META_AD_ACCOUNT_ID;
+
+  const dataSource = await db.getSetting('ads_data_source') || 'api';
+  log.info(`Using ads data source: ${dataSource}`);
+
+  // 1. Load ads using helper
+  const { loadedAds, isFromReport } = await loadAdsFromSource(dataSource, accessToken, adAccountId, log, onProgress);
+
+  // 2. Fetch copywriting metadata if source is API and we loaded ads from report.json
+  let creativeCopyMap = new Map();
+  if (dataSource === 'api' && isFromReport) {
+    creativeCopyMap = await fetchCopywritingFromMeta(accessToken, adAccountId, log, onProgress);
+  }
+
+  // 3. Combine and normalize into adsData for Gemini
+  const adsData = normalizeAdsData(loadedAds, dataSource, creativeCopyMap);
+
+  if (adsData.length === 0) {
+    const errMsg = 'Tidak ditemukan data iklan aktif yang memiliki teks copywriting dan pembelanjaan > Rp 5.000 dalam 30 hari terakhir.';
+    notifyProgress(onProgress, 'error', errMsg);
+    throw new Error(errMsg);
+  }
+
+  notifyProgress(onProgress, 'status', 'Mengkategorikan performa iklan Winners vs Losers...');
+
+  const { bestAdsList, worstAdsList } = classifyWinnerLoserAds(adsData);
+
+  // 4. Formulate Prompt for Gemini using helper
+  const prompt = buildCreativePrompt(bestAdsList, worstAdsList, userPrompt);
+
+  // 5. Invoke Gemini API with fallback model loop and exponential backoff
   log.info('Invoking Gemini API for Content Ideation analysis...');
-  if (onProgress) onProgress({ type: 'status', message: 'Menghubungi Gemini AI untuk proses audit & ideasi...' });
+  notifyProgress(onProgress, 'status', 'Menghubungi Gemini AI untuk proses audit & ideasi...');
   const genAI = new GoogleGenerativeAI(activeApiKey);
   const envModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 
-  // Order of preference: Environment configured, Gemini 3.1 Flash-Lite, Gemini 2.5 Flash, Gemini 1.5 Pro
   const modelsToTry = [envModel, 'gemini-3.1-flash-lite', 'gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-1.5-pro'].filter(Boolean);
   const uniqueModels = [...new Set(modelsToTry)];
 
-  let responseText = '';
-  let lastError = null;
-
-  // Helper for retries with backoff and streaming support
-  async function generateWithRetry(modelName, retries = 3, delay = 2000) {
-    const model = genAI.getGenerativeModel({ model: modelName });
-    for (let i = 0; i < retries; i++) {
-      try {
-        log.info(`Attempting content generation stream with model ${modelName} (Attempt ${i + 1}/${retries})...`);
-        if (onProgress && i > 0) {
-          onProgress({ type: 'status', message: `Mencoba ulang model ${modelName} (Percobaan ${i + 1}/${retries})...` });
-        }
-        
-        const result = await model.generateContentStream({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: 'application/json' }
-        });
-        
-        let textResult = '';
-        for await (const chunk of result.stream) {
-          const chunkText = chunk.text();
-          textResult += chunkText;
-          if (onProgress) {
-            onProgress({ type: 'chunk', text: chunkText });
-          }
-        }
-
-        // Log Gemini usage
-        try {
-          const response = await result.response;
-          const usage = response.usageMetadata;
-          if (usage) {
-            await db.saveUsageLog({
-              feature: 'creative_analysis',
-              modelName: modelName,
-              inputTokens: usage.promptTokenCount,
-              outputTokens: usage.candidatesTokenCount,
-              cachedTokens: usage.cachedContentTokenCount
-            });
-          }
-        } catch (usageErr) {
-          log.warn(`Failed to log usage for creative analysis: ${usageErr.message}`);
-        }
-
-        return textResult;
-      } catch (err) {
-        log.warn(`Attempt ${i + 1} failed for ${modelName}: ${err.message}`);
-        if (i === retries - 1) throw err;
-        log.info(`Waiting ${delay}ms before next retry...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        delay *= 2; // exponential backoff
-      }
-    }
-  }
-
-  for (const modelName of uniqueModels) {
-    try {
-      responseText = await generateWithRetry(modelName, 3, 2000);
-      log.info(`Successfully generated content using model: ${modelName}`);
-      break; // stop trying if successful
-    } catch (err) {
-      log.warn(`All attempts failed for model ${modelName}. Moving to next model...`);
-      lastError = err;
-    }
-  }
+  const responseText = await generateCreativeContent(genAI, uniqueModels, prompt, log, onProgress);
 
   if (!responseText) {
     log.error('All model attempts failed.');
-    const errMsg = lastError ? lastError.message : 'Failed to generate content with Gemini API';
-    if (onProgress) onProgress({ type: 'error', message: errMsg });
-    throw lastError || new Error(errMsg);
+    const errMsg = 'Failed to generate content with Gemini API';
+    notifyProgress(onProgress, 'error', errMsg);
+    throw new Error(errMsg);
   }
 
   // Parse result to ensure validity
   let creativeReport;
   try {
-    creativeReport = JSON.parse(responseText);
-    creativeReport.generatedAt = new Date().toISOString();
-    creativeReport.isMock = false;
-    log.info('AI Creative Analysis output parsed successfully.');
-    if (onProgress) onProgress({ type: 'status', message: 'Hasil analisis terstruktur berhasil diproses.' });
+    creativeReport = parseCreativeReport(responseText, log);
+    notifyProgress(onProgress, 'status', 'Hasil analisis terstruktur berhasil diproses.');
   } catch (err) {
-    log.error('Failed to parse Gemini output. Raw response:', responseText);
-    const parseErrMsg = 'Gemini did not return valid JSON for creative report.';
-    if (onProgress) onProgress({ type: 'error', message: parseErrMsg });
-    throw new Error(parseErrMsg);
+    notifyProgress(onProgress, 'error', err.message);
+    throw err;
   }
 
-  // 5. Save report to DB settings table
+  // 6. Save report to DB settings table
   await db.setSetting('creative_analysis_report', JSON.stringify(creativeReport));
   log.info('✅ Saved creative report to database settings.');
-  if (onProgress) onProgress({ type: 'status', message: 'Menyimpan laporan kreatif ke database...' });
+  notifyProgress(onProgress, 'status', 'Menyimpan laporan kreatif ke database...');
 
-  // 6. Broadcast summary to WA target group
-  const targetJid = await db.getSetting('whatsapp_group_jid') || process.env.WHATSAPP_GROUP_JID || '120363427625298309@g.us';
-  if (whatsappService.isReady()) {
-    try {
-      let waText = `💡 *REKOMENDASI IDE KONTEN BARU DARI AI*\n` +
-        `Period: ${creativeReport.dateRange}\n\n` +
-        `Berikut adalah ide konten baru hasil audit copywriting iklan winners vs losers:\n\n`;
+  // 7. Broadcast summary to WA target group
+  await broadcastCreativeReportToWhatsApp(creativeReport, log);
 
-      creativeReport.ideas.forEach((idea, idx) => {
-        waText += `*${idx + 1}. ${idea.title}*\n` +
-          `• _Angle:_ ${idea.angle}\n` +
-          `• _Visual:_ ${idea.visualGuide}\n` +
-          `• _Draft Copy:_ "${idea.copywriting}"\n\n`;
-      });
-
-      waText += `🔗 _Lihat ide & salin copywriting lengkap di Dashboard!_`;
-
-      log.info(`Sending creative analysis summary broadcast to WhatsApp Group: ${targetJid}`);
-      await whatsappService.sendMessage(targetJid, { text: waText });
-      if (onProgress) onProgress({ type: 'status', message: 'Mengirimkan ringkasan laporan ke WhatsApp Group...' });
-    } catch (waErr) {
-      log.error(`Failed to send WhatsApp broadcast for creative report: ${waErr.message}`);
-    }
-  } else {
-    log.warn('WhatsApp service is disconnected. Skipped broadcast.');
-  }
-
-  if (onProgress) onProgress({ type: 'status', message: 'Analisis kreatif selesai sepenuhnya!' });
+  notifyProgress(onProgress, 'status', 'Analisis kreatif selesai sepenuhnya!');
   return creativeReport;
+}
+
+/**
+ * Helper for retries with backoff and streaming support for creative analysis
+ */
+async function generateCreativeWithRetry(genAI, modelName, prompt, log, onProgress, retries = 3, delay = 2000) {
+  const model = genAI.getGenerativeModel({ model: modelName });
+  for (let i = 0; i < retries; i++) {
+    try {
+      log.info(`Attempting content generation stream with model ${modelName} (Attempt ${i + 1}/${retries})...`);
+      if (onProgress && i > 0) {
+        onProgress({ type: 'status', message: `Mencoba ulang model ${modelName} (Percobaan ${i + 1}/${retries})...` });
+      }
+      
+      const result = await model.generateContentStream({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: 'application/json' }
+      });
+      
+      return await processStreamResponse(result, modelName, log, onProgress);
+    } catch (err) {
+      log.warn(`Attempt ${i + 1} failed for ${modelName}: ${err.message}`);
+      if (i === retries - 1) throw err;
+      log.info(`Waiting ${delay}ms before next retry...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      delay *= 2; // exponential backoff
+    }
+  }
+}
+
+/**
+ * Helper to run creative content generation with model fallback
+ */
+async function generateCreativeContent(genAI, uniqueModels, prompt, log, onProgress) {
+  let lastError = null;
+  for (const modelName of uniqueModels) {
+    try {
+      const responseText = await generateCreativeWithRetry(genAI, modelName, prompt, log, onProgress, 3, 2000);
+      log.info(`Successfully generated content using model: ${modelName}`);
+      return responseText;
+    } catch (err) {
+      log.warn(`All attempts failed for model ${modelName}. Moving to next model...`);
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('Failed to generate content with Gemini API');
 }
 
 module.exports = {

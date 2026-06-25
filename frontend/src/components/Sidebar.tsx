@@ -32,7 +32,7 @@ export default function Sidebar({
   isCollapsed,
   onToggleCollapse,
   startResizing
-}: SidebarProps) {
+}: Readonly<SidebarProps>) {
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: <IconDashboard size={18} /> },
     { id: 'whatsapp-sessions', label: 'WA Sessions', icon: <IconBrandWhatsapp size={18} /> },
@@ -48,9 +48,10 @@ export default function Sidebar({
     <>
       {/* Mobile Backdrop Overlay */}
       {isMobileOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity duration-300"
+        <button 
+          className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity duration-300 border-none outline-none cursor-default w-full h-full text-left font-normal"
           onClick={onClose}
+          aria-label="Tutup menu sidebar"
         />
       )}
 
@@ -76,32 +77,36 @@ export default function Sidebar({
             )}
           </div>
           <button 
+            type="button"
             onClick={onClose}
-            className="md:hidden text-muted-foreground hover:text-foreground p-1"
+            className="md:hidden text-muted-foreground hover:text-foreground p-1 border-none bg-transparent"
+            aria-label="Close sidebar"
           >
             <IconX size={20} />
           </button>
         </div>
         
-        <ul className="p-4 flex flex-col gap-1.5 flex-grow list-none overflow-y-auto">
+        <ul className="p-4 flex flex-col gap-1.5 flex-grow list-none overflow-y-auto m-0">
           {menuItems.map((item) => (
-            <li 
-              key={item.id}
-              title={isCollapsed ? item.label : undefined}
-              className={`flex items-center rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 ${
-                isCollapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3'
-              } ${
-                activeTab === item.id 
-                  ? 'text-sidebar-accent-foreground bg-sidebar-accent border-l-4 border-primary rounded-l-none' 
-                  : 'text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
-              }`}
-              onClick={() => {
-                setActiveTab(item.id);
-                onClose(); // Auto-close sidebar on mobile menu click
-              }}
-            >
-              <div className="shrink-0">{item.icon}</div>
-              {!isCollapsed && <span className="truncate">{item.label}</span>}
+            <li key={item.id}>
+              <button 
+                type="button"
+                title={isCollapsed ? item.label : undefined}
+                className={`w-full flex items-center rounded-lg text-sm font-medium transition-all duration-200 border-none bg-transparent ${
+                  isCollapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3'
+                } ${
+                  activeTab === item.id 
+                    ? 'text-sidebar-accent-foreground bg-sidebar-accent border-l-4 border-primary rounded-l-none' 
+                    : 'text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
+                }`}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  onClose(); // Auto-close sidebar on mobile menu click
+                }}
+              >
+                <div className="shrink-0">{item.icon}</div>
+                {!isCollapsed && <span className="truncate">{item.label}</span>}
+              </button>
             </li>
           ))}
         </ul>
@@ -109,8 +114,9 @@ export default function Sidebar({
         {/* Collapse/Expand Toggle Button (Desktop only) */}
         <div className="hidden md:flex p-3 border-t border-sidebar-border/40 justify-center">
           <button
+            type="button"
             onClick={onToggleCollapse}
-            className="w-8 h-8 rounded-lg hover:bg-sidebar-accent flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            className="w-8 h-8 rounded-lg hover:bg-sidebar-accent flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors border-none bg-transparent"
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {isCollapsed ? <IconChevronRight size={18} /> : <IconChevronLeft size={18} />}
@@ -118,28 +124,30 @@ export default function Sidebar({
         </div>
         
         <div className="p-4 border-t border-sidebar-border text-xs text-muted-foreground text-center">
-          {!isCollapsed ? (
+          {isCollapsed ? (
+            <div className="flex justify-center text-primary">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            </div>
+          ) : (
             <>
               <div>Verifikasi Sukses</div>
               <div className="font-semibold mt-1 text-foreground">
                 Latezza Cake Hampers
               </div>
             </>
-          ) : (
-            <div className="flex justify-center text-primary">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            </div>
           )}
         </div>
 
-        {/* Resize Handle (Desktop only) */}
-        <div 
+        {/* Resize Handle (Desktop only) - refactored as a native button for accessibility */}
+        <button 
+          type="button"
+          aria-label="Sidebar resize handle"
           onMouseDown={startResizing}
-          className="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-primary/40 active:bg-primary transition-all z-50 group"
+          className="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-primary/40 active:bg-primary transition-all z-50 group border-none p-0 bg-transparent"
           title="Drag to resize sidebar"
         >
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[3px] h-8 bg-border/40 rounded-full group-hover:bg-primary/70 transition-colors" />
-        </div>
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 w-[3px] h-8 bg-border/40 rounded-full group-hover:bg-primary/70 transition-colors" />
+        </button>
       </div>
     </>
   );

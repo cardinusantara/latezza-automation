@@ -1,11 +1,11 @@
 # Graph Report - latezza-automation  (2026-06-23)
 
 ## Corpus Check
-- 110 files · ~77,927 words
+- 110 files · ~77,682 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 913 nodes · 1173 edges · 78 communities (60 shown, 18 thin omitted)
+- 914 nodes · 1174 edges · 81 communities (63 shown, 18 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
@@ -83,6 +83,9 @@
 - [[_COMMUNITY_Community 75|Community 75]]
 - [[_COMMUNITY_Community 76|Community 76]]
 - [[_COMMUNITY_Community 77|Community 77]]
+- [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 78 edges
@@ -116,7 +119,7 @@
 - **Meta Ads Automation Pipeline** — latezza_automation_meta_ads_reporting, latezza_automation_creative_ad_analysis, latezza_automation_meta_graph_api, latezza_automation_dynamic_scheduler [EXTRACTED 0.95]
 - **RAG Product Search Pipeline** — latezza_automation_rag_semantic_search, latezza_automation_gemini_embedding_2, latezza_automation_cosine_similarity, latezza_automation_products_table [EXTRACTED 0.95]
 
-## Communities (78 total, 18 thin omitted)
+## Communities (81 total, 18 thin omitted)
 
 ### Community 0 - "WhatsApp CRM & Follow-up"
 Cohesion: 0.06
@@ -147,8 +150,8 @@ Cohesion: 0.12
 Nodes (17): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+9 more)
 
 ### Community 7 - "UI Actions Component"
-Cohesion: 0.06
-Nodes (49): Actions(), ActionsProps, CsvMetadata, CreativeIdea, CreativeReportData, DailyTrendItem, FeatureBreakdownItem, Lead (+41 more)
+Cohesion: 0.05
+Nodes (54): Actions(), ActionsProps, CsvMetadata, ChatInboxProps, ChatMessage, Customer, Product, CreativeIdea (+46 more)
 
 ### Community 8 - "Theme Provider"
 Cohesion: 0.13
@@ -156,7 +159,7 @@ Nodes (9): ResolvedTheme, Theme, THEME_VALUES, ThemeProvider(), ThemeProviderCon
 
 ### Community 9 - "Mobile Hook"
 Cohesion: 0.06
-Nodes (55): ChatInboxProps, ChatMessage, Customer, Product, useIsMobile(), cn(), Badge(), badgeVariants (+47 more)
+Nodes (50): useIsMobile(), cn(), CardAction(), CardFooter(), DialogOverlay(), Separator(), Sheet(), SheetContent() (+42 more)
 
 ### Community 10 - "Utility Functions"
 Cohesion: 0.09
@@ -252,8 +255,8 @@ Cohesion: 0.14
 Nodes (14): db, fetchMetaAdsCreatives(), fetchMetaAdsInsights(), fs, { GoogleGenerativeAI }, path, runCreativeAnalysis(), whatsappService (+6 more)
 
 ### Community 32 - "Community 32"
-Cohesion: 0.06
-Nodes (31): dependencies, class-variance-authority, clsx, @fontsource-variable/figtree, @fontsource-variable/geist, @hugeicons/core-free-icons, @hugeicons/react, next-themes (+23 more)
+Cohesion: 0.11
+Nodes (18): dependencies, class-variance-authority, clsx, @fontsource-variable/figtree, @fontsource-variable/geist, @hugeicons/core-free-icons, @hugeicons/react, next-themes (+10 more)
 
 ### Community 33 - "Community 33"
 Cohesion: 0.29
@@ -288,8 +291,8 @@ Cohesion: 0.20
 Nodes (9): Agent habits — always do these, AGENTS.md — Latezza WhatsApp AI Agent, API overview, Backend (in `backend/`), Development commands, Frontend (in `frontend/`), graphify, Project structure (+1 more)
 
 ### Community 62 - "Community 62"
-Cohesion: 0.18
-Nodes (10): 2026-06-20, 2026-06-22, 2026-06-23, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Gemini API Usage & Costs Tracking, Optimized Creative Analysis Sourcing & CSV Context, Voice Message Comprehension & Audio Player (+2 more)
+Cohesion: 0.22
+Nodes (8): 2026-06-20, 2026-06-23, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Gemini API Usage & Costs Tracking, Gemini Model Configuration Refactor, Voice Message Comprehension & Audio Player, WhatsApp Multi-Session & QR Scanner Dashboard
 
 ### Community 63 - "Community 63"
 Cohesion: 0.29
@@ -323,8 +326,20 @@ Nodes (9): Address Schemes, Build and Verify, GitHub Registries, Include, Item D
 Cohesion: 0.29
 Nodes (7): backfillProductEmbeddings(), generateEmbedding(), getSetting(), initDb(), loadAllSettings(), searchProducts(), searchProductsFallback()
 
+### Community 78 - "Community 78"
+Cohesion: 0.22
+Nodes (9): scripts, build, dev, format, lint, preview, test, test:watch (+1 more)
+
+### Community 79 - "Community 79"
+Cohesion: 0.40
+Nodes (4): name, private, type, version
+
+### Community 80 - "Community 80"
+Cohesion: 0.67
+Nodes (3): 2026-06-22, Optimized Creative Analysis Sourcing & CSV Context, WhatsApp Message Debouncing & Abuse Prevention
+
 ## Knowledge Gaps
-- **535 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+530 more)
+- **536 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+531 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -332,11 +347,11 @@ Nodes (7): backfillProductEmbeddings(), generateEmbedding(), getSetting(), initD
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Overview()` connect `Community 55` to `UI Actions Component`?**
-  _High betweenness centrality (0.074) - this node is a cross-community bridge._
+  _High betweenness centrality (0.073) - this node is a cross-community bridge._
 - **Why does `cn()` connect `Mobile Hook` to `UI Actions Component`?**
   _High betweenness centrality (0.032) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugin`, `@opencode-ai/plugin` to the rest of the system?**
-  _539 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _540 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**

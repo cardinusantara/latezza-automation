@@ -5,8 +5,8 @@
     "semantic_hash": "39548690bb4e71065df0b7fa69903082"
   },
   "backend/ads-analysis/automation.js": {
-    "mtime": 1782231507.0807927,
-    "ast_hash": "42c73b655dceb939efd784b1809c0c06",
+    "mtime": 1782232698.124061,
+    "ast_hash": "d324925ada747bd93cf3761e4a472c59",
     "semantic_hash": ""
   },
   "backend/ads-analysis/package.json": {
@@ -75,8 +75,8 @@
     "semantic_hash": "13b94b3128eb04c356606c7c7db44907"
   },
   "backend/src/agent.js": {
-    "mtime": 1782231481.4666412,
-    "ast_hash": "7c1a4c7759c030d623a810fa30097b6e",
+    "mtime": 1782232392.7298505,
+    "ast_hash": "19d75104c74a5cf8f38060009675eecc",
     "semantic_hash": ""
   },
   "backend/src/db.js": {
@@ -85,23 +85,23 @@
     "semantic_hash": ""
   },
   "backend/src/routes.js": {
-    "mtime": 1782231532.2930603,
-    "ast_hash": "46040385f07e092a3adb0c14a0a4bb2e",
+    "mtime": 1782232724.2838707,
+    "ast_hash": "43af0f46467caf278f66bc54803f61c9",
     "semantic_hash": ""
   },
   "backend/src/services/ads.js": {
-    "mtime": 1782231514.1376786,
-    "ast_hash": "dabd315993df7f2a52fb80360d24c1e3",
+    "mtime": 1782232691.492223,
+    "ast_hash": "ce71a11e415916d03f54b6d9adadfa24",
     "semantic_hash": ""
   },
   "backend/src/services/creative.js": {
-    "mtime": 1782231496.4723325,
-    "ast_hash": "4e19408a72f3dd48ebd9ef76b69a78ef",
+    "mtime": 1782232688.2055297,
+    "ast_hash": "04f303a918d4a158be43dead65509b9a",
     "semantic_hash": ""
   },
   "backend/src/services/followup.js": {
-    "mtime": 1782231488.8566377,
-    "ast_hash": "a09a474b1e23278bf45f04a65bdb76c2",
+    "mtime": 1782232681.6188731,
+    "ast_hash": "51995721ff824e41d19b2c89d9205524",
     "semantic_hash": ""
   },
   "backend/src/services/scheduler.js": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "backend/src/services/whatsapp.js": {
-    "mtime": 1782062609.7865825,
-    "ast_hash": "47b611007fd951017c1c4a5eff15f0c5",
+    "mtime": 1782232661.8490863,
+    "ast_hash": "5167741d7015d909f170b21a39ccedf7",
     "semantic_hash": ""
   },
   "business-profile.json": {
@@ -170,8 +170,8 @@
     "semantic_hash": "658824769dfedda0d2c4763f0cc9f699"
   },
   "frontend/src/components/Settings.tsx": {
-    "mtime": 1781983862.507146,
-    "ast_hash": "17b5464fab1848cc975d8da3e634e8ba",
+    "mtime": 1782232753.318146,
+    "ast_hash": "090a7d38bef5d376f2c6eaafa474b66c",
     "semantic_hash": ""
   },
   "frontend/src/components/Sidebar.tsx": {
@@ -375,13 +375,13 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1782231985.7518914,
-    "ast_hash": "679244c4726eab22ad6bca6354050327",
+    "mtime": 1782232832.944951,
+    "ast_hash": "d1753bbf3f801214de54bf9a84769c18",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
-    "mtime": 1782231608.2062829,
-    "ast_hash": "09d29dfa8d4cd2d5271967ee5a3b6e0f",
+    "mtime": 1782232783.082809,
+    "ast_hash": "b127888ec3eab72108060fd7024699ce",
     "semantic_hash": ""
   },
   "ISSUES.md": {
@@ -6735,8 +6735,8 @@
     "semantic_hash": ""
   },
   "backend/src/services/summary.js": {
-    "mtime": 1782052962.9045491,
-    "ast_hash": "6d560e2640bf4a2a36ef656f8543ba85",
+    "mtime": 1782232678.0458593,
+    "ast_hash": "43dbeff57fd2b9c8c6c24f89b70b6e60",
     "semantic_hash": ""
   },
   "backend/jest.config.js": {
@@ -6790,8 +6790,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/Settings.test.tsx": {
-    "mtime": 1782060936.15639,
-    "ast_hash": "58f1ce7c2b5af730cec2f256a62e0366",
+    "mtime": 1782232757.8867638,
+    "ast_hash": "82246bad56b5b1d46b0efa1ab8f84c76",
     "semantic_hash": ""
   },
   "frontend/src/hooks/__tests__/use-mobile.test.ts": {
@@ -6830,8 +6830,13 @@
     "semantic_hash": ""
   },
   "backend/ads-analysis/report.json": {
-    "mtime": 1782203559.8695111,
-    "ast_hash": "812f036be50e6ae5b4e55574fa3bd947",
+    "mtime": 1782232182.6654167,
+    "ast_hash": "02603b284af233228b57068c8256bebf",
+    "semantic_hash": ""
+  },
+  "index.html": {
+    "mtime": 1782233415.5177414,
+    "ast_hash": "e174740c9b4e9a8223c340fc3692422d",
     "semantic_hash": ""
   }
 }

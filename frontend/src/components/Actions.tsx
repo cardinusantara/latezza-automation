@@ -7,7 +7,7 @@ interface ActionsProps {
   onTriggerCreativeAnalysis: () => void;
 }
 
-export default function Actions({ onTriggerFollowUps, onTriggerCreativeAnalysis }: ActionsProps) {
+export default function Actions({ onTriggerFollowUps, onTriggerCreativeAnalysis }: Readonly<ActionsProps>) {
   return (
     <Card className="bg-card border-border shadow-sm">
       <CardHeader>

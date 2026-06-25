@@ -4,9 +4,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Initialize database configuration
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
+  port: Number.parseInt(process.env.DB_PORT || '5432', 10),
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'fardhan123',
+  password: process.env.DB_PASSWORD || (process.env.NODE_ENV === 'production' ? undefined : 'fardhan123'), // Development fallback
   database: process.env.DB_NAME || 'latezzacake',
 };
 
@@ -249,7 +249,42 @@ async function getCustomer(phoneNumber, sessionId = 'default') {
 async function createOrUpdateCustomer(phoneNumber, name, updates = {}, sessionId = 'default') {
   const existing = await getCustomer(phoneNumber, sessionId);
   
-  if (!existing) {
+  if (existing) {
+    // Update existing customer fields that are passed
+    const fields = [];
+    const values = [];
+    let idx = 1;
+
+    const fieldsToUpdate = {
+      name: name,
+      status: updates.status,
+      notes: updates.notes,
+      needs_follow_up: updates.needs_follow_up,
+      follow_up_reason: updates.follow_up_reason,
+      contact_phone: updates.contact_phone,
+      ai_enabled: updates.ai_enabled,
+      needs_admin: updates.needs_admin
+    };
+
+    for (const [key, val] of Object.entries(fieldsToUpdate)) {
+      if (val !== undefined && (key !== 'name' || val !== null)) {
+        fields.push(`${key} = $${idx++}`);
+        values.push(val);
+      }
+    }
+
+    // Always update last interaction
+    fields.push(`last_interaction = NOW()`);
+
+    values.push(phoneNumber);
+    const phoneIdx = idx++;
+    values.push(sessionId);
+    const sessionIdx = idx++;
+
+    const query = `UPDATE customers SET ${fields.join(', ')} WHERE phone_number = $${phoneIdx} AND session_id = $${sessionIdx} RETURNING *`;
+    const res = await pool.query(query, values);
+    return res.rows[0];
+  } else {
     const res = await pool.query(
       `INSERT INTO customers (phone_number, session_id, name, status, notes, needs_follow_up, follow_up_reason, contact_phone, ai_enabled, needs_admin, last_interaction)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
@@ -263,60 +298,10 @@ async function createOrUpdateCustomer(phoneNumber, name, updates = {}, sessionId
         updates.needs_follow_up || false,
         updates.follow_up_reason || null,
         updates.contact_phone || null,
-        updates.ai_enabled !== undefined ? updates.ai_enabled : true,
-        updates.needs_admin !== undefined ? updates.needs_admin : false
+        updates.ai_enabled ?? true,
+        updates.needs_admin ?? false
       ]
     );
-    return res.rows[0];
-  } else {
-    // Update existing customer fields that are passed
-    const fields = [];
-    const values = [];
-    let idx = 1;
-
-    if (name !== undefined && name !== null) {
-      fields.push(`name = $${idx++}`);
-      values.push(name);
-    }
-    if (updates.status !== undefined) {
-      fields.push(`status = $${idx++}`);
-      values.push(updates.status);
-    }
-    if (updates.notes !== undefined) {
-      fields.push(`notes = $${idx++}`);
-      values.push(updates.notes);
-    }
-    if (updates.needs_follow_up !== undefined) {
-      fields.push(`needs_follow_up = $${idx++}`);
-      values.push(updates.needs_follow_up);
-    }
-    if (updates.follow_up_reason !== undefined) {
-      fields.push(`follow_up_reason = $${idx++}`);
-      values.push(updates.follow_up_reason);
-    }
-    if (updates.contact_phone !== undefined) {
-      fields.push(`contact_phone = $${idx++}`);
-      values.push(updates.contact_phone);
-    }
-    if (updates.ai_enabled !== undefined) {
-      fields.push(`ai_enabled = $${idx++}`);
-      values.push(updates.ai_enabled);
-    }
-    if (updates.needs_admin !== undefined) {
-      fields.push(`needs_admin = $${idx++}`);
-      values.push(updates.needs_admin);
-    }
-
-    // Always update last interaction
-    fields.push(`last_interaction = NOW()`);
-
-    values.push(phoneNumber);
-    const phoneIdx = idx++;
-    values.push(sessionId);
-    const sessionIdx = idx++;
-
-    const query = `UPDATE customers SET ${fields.join(', ')} WHERE phone_number = $${phoneIdx} AND session_id = $${sessionIdx} RETURNING *`;
-    const res = await pool.query(query, values);
     return res.rows[0];
   }
 }
@@ -386,9 +371,9 @@ async function searchProducts(queryStr) {
 
     // Cosine similarity helper
     function cosineSimilarity(vecA, vecB) {
-      let dotProduct = 0.0;
-      let normA = 0.0;
-      let normB = 0.0;
+      let dotProduct = 0;
+      let normA = 0;
+      let normB = 0;
       for (let i = 0; i < vecA.length; i++) {
         dotProduct += vecA[i] * vecB[i];
         normA += vecA[i] * vecA[i];
@@ -403,7 +388,9 @@ async function searchProducts(queryStr) {
       if (typeof productVector === 'string') {
         try {
           productVector = JSON.parse(productVector);
-        } catch (e) {}
+        } catch (e) {
+          // Ignore JSON parsing errors for malformed vector strings
+        }
       }
 
       if (!productVector || !Array.isArray(productVector)) {
@@ -585,11 +572,11 @@ async function saveUsageLog({ feature, modelName, inputTokens = 0, outputTokens 
   // Standard input: $0.25 ($0.00000025 per token)
   // Cached input: $0.025 ($0.000000025 per token)
   // Output: $1.50 ($0.0000015 per token)
-  const costUsd = parseFloat(((standardInputTokens * 0.00000025) + 
+  const costUsd = Number.parseFloat(((standardInputTokens * 0.00000025) + 
                   (cachedTokens * 0.000000025) + 
                   (outputTokens * 0.0000015)).toFixed(6));
                   
-  const costIdr = parseFloat((costUsd * 17500).toFixed(2));
+  const costIdr = Number.parseFloat((costUsd * 17500).toFixed(2));
 
   try {
     await pool.query(

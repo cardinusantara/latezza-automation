@@ -12,10 +12,10 @@ let followupJob = null;
  * Helper to build standard cron expression for a daily check at a specific time.
  **/
 function buildDailyCronExpression(timeStr) {
-  const cleanTime = timeStr && timeStr.includes(':') ? timeStr : '09:00';
+  const cleanTime = timeStr?.includes(':') ? timeStr : '09:00';
   const [hourStr, minuteStr] = cleanTime.split(':');
-  const hour = parseInt(hourStr, 10) || 0;
-  const minute = parseInt(minuteStr, 10) || 0;
+  const hour = Number.parseInt(hourStr, 10) || 0;
+  const minute = Number.parseInt(minuteStr, 10) || 0;
   
   return `${minute} ${hour} * * *`;
 }
@@ -42,7 +42,9 @@ async function setupScheduledJobs(log = console) {
   const creativeService = require('./creative');
 
   // 2. Schedule Meta Ads Report Job
-  if (adsEnabled !== 'false') {
+  if (adsEnabled === 'false') {
+    log.info('Ads Analysis cron job is DISABLED by user setting.');
+  } else {
     const adsCronExpr = buildDailyCronExpression(adsTime);
     log.info(`Scheduling Ads Analysis (daily check at ${adsTime}, freq = ${adsFreq} days): "${adsCronExpr}"`);
     
@@ -52,7 +54,7 @@ async function setupScheduledJobs(log = console) {
         const lastRun = new Date(lastRunStr);
         const diffMs = Date.now() - lastRun.getTime();
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
-        if (diffDays < parseInt(adsFreq, 10) - 0.1) {
+        if (diffDays < Number.parseInt(adsFreq, 10) - 0.1) {
           log.info(`Skipping scheduled Ads Analysis: last run was ${diffDays.toFixed(1)} days ago, frequency is ${adsFreq} days.`);
           return;
         }
@@ -63,12 +65,12 @@ async function setupScheduledJobs(log = console) {
     }, {
       timezone: "Asia/Jakarta"
     });
-  } else {
-    log.info('Ads Analysis cron job is DISABLED by user setting.');
   }
 
   // 3. Schedule AI Creative / Content Ideation Job
-  if (creativeEnabled !== 'false') {
+  if (creativeEnabled === 'false') {
+    log.info('AI Creative Analysis cron job is DISABLED by user setting.');
+  } else {
     const creativeCronExpr = buildDailyCronExpression(creativeTime);
     log.info(`Scheduling AI Creative Analysis (daily check at ${creativeTime}, freq = ${creativeFreq} days): "${creativeCronExpr}"`);
     
@@ -81,7 +83,7 @@ async function setupScheduledJobs(log = console) {
             const lastRun = new Date(report.generatedAt);
             const diffMs = Date.now() - lastRun.getTime();
             const diffDays = diffMs / (1000 * 60 * 60 * 24);
-            if (diffDays < parseInt(creativeFreq, 10) - 0.1) {
+            if (diffDays < Number.parseInt(creativeFreq, 10) - 0.1) {
               log.info(`Skipping scheduled AI Creative Analysis: last run was ${diffDays.toFixed(1)} days ago, frequency is ${creativeFreq} days.`);
               return;
             }
@@ -96,8 +98,6 @@ async function setupScheduledJobs(log = console) {
     }, {
       timezone: "Asia/Jakarta"
     });
-  } else {
-    log.info('AI Creative Analysis cron job is DISABLED by user setting.');
   }
 
   // 4. Schedule Hourly Customer Follow-ups (remains hourly)

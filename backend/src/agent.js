@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const db = require('./db');
 
@@ -7,7 +7,7 @@ const db = require('./db');
 const profilePath = process.env.BUSINESS_PROFILE_PATH || path.join(__dirname, '../business-profile.json');
 const profileKey = process.env.BUSINESS_PROFILE_KEY || 'latezza_cake_hampers_profile';
 const defaultModelName = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
-const defaultMaxHistory = parseInt(process.env.MAX_HISTORY_MESSAGES || '10', 10);
+const defaultMaxHistory = Number.parseInt(process.env.MAX_HISTORY_MESSAGES || '10', 10);
 
 /**
  * Loads the business profile and builds dynamic default system instructions for Gemini.
@@ -141,6 +141,115 @@ const agentTools = [
 ];
 
 /**
+ * Helper to format and sanitize chat history rows for Gemini SDK
+ */
+function formatHistory(historyRows) {
+  const formattedHistory = [];
+  for (const row of historyRows) {
+    const role = row.role === 'model' ? 'model' : 'user';
+    const text = (row.content || '').trim();
+    if (!text) continue; // Skip empty messages
+
+    if (formattedHistory.length === 0) {
+      // First message MUST be 'user'
+      if (role === 'user') {
+        formattedHistory.push({ role, parts: [{ text }] });
+      }
+    } else {
+      const last = formattedHistory.at(-1);
+      if (last.role === role) {
+        // Merge consecutive messages from the same role
+        last.parts[0].text += '\n' + text;
+      } else {
+        formattedHistory.push({ role, parts: [{ text }] });
+      }
+    }
+  }
+  return formattedHistory;
+}
+
+/**
+ * Helper to execute a single agent tool call
+ */
+async function executeTool(name, args, jid, sessionId) {
+  try {
+    if (name === 'search_products') {
+      const products = await db.searchProducts(args.query);
+      return { products };
+    } else if (name === 'update_customer_profile') {
+      // Update profile name, notes, or contact phone in Postgres
+      await db.createOrUpdateCustomer(jid, args.customer_name || null, { 
+        notes: args.notes,
+        contact_phone: args.contact_phone
+      }, sessionId);
+      return { status: 'success', message: 'Profil kustomer berhasil diperbarui.' };
+    } else if (name === 'request_follow_up') {
+      // Flag needs_follow_up in Postgres
+      await db.createOrUpdateCustomer(jid, null, { needs_follow_up: true, follow_up_reason: args.reason }, sessionId);
+      return { status: 'success', message: 'Follow up dijadwalkan.' };
+    } else if (name === 'request_human_handoff') {
+      // Disable AI responding and flag needs_admin in Postgres
+      await db.createOrUpdateCustomer(jid, null, { 
+        ai_enabled: false,
+        needs_admin: true,
+        notes: `Handoff requested: ${args.reason}`
+      }, sessionId);
+      return { status: 'success', message: 'Chat berhasil ditransfer ke admin.' };
+    }
+  } catch (toolErr) {
+    console.error(`Error executing tool ${name}:`, toolErr.message);
+    return { status: 'error', error: toolErr.message };
+  }
+  return {};
+}
+
+/**
+ * Helper to process sequential tool execution turns (up to 3)
+ */
+async function handleToolCalls(chat, initialResponse, jid, sessionId, activeModelName) {
+  let response = initialResponse;
+  let functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;
+  let loopCount = 0;
+
+  while (functionCalls && functionCalls.length > 0 && loopCount < 3) {
+    loopCount++;
+    console.log(`🤖 AI Agent JID[${jid}] requested ${functionCalls.length} tool(s) in parallel.`);
+    
+    const functionResponseParts = [];
+
+    for (const call of functionCalls) {
+      const { name, args } = call;
+      console.log(`  - Executing tool: ${name} with args:`, args);
+      const toolResult = await executeTool(name, args, jid, sessionId);
+
+      functionResponseParts.push({
+        functionResponse: {
+          name: name,
+          response: toolResult
+        }
+      });
+    }
+
+    // Feed all function responses back to Gemini in one turn
+    const result = await chat.sendMessage(functionResponseParts);
+    response = result.response;
+
+    // Log Gemini token usage for this tool turn
+    if (response.usageMetadata) {
+      await db.saveUsageLog({
+        feature: 'whatsapp_chat',
+        modelName: activeModelName,
+        inputTokens: response.usageMetadata.promptTokenCount,
+        outputTokens: response.usageMetadata.candidatesTokenCount,
+        cachedTokens: response.usageMetadata.cachedContentTokenCount
+      });
+    }
+    functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;
+  }
+  return response;
+}
+
+/**
  * Core AI Agent processing logic
  */
 async function handleIncomingMessage(jid, text, profileName = 'Customer', imagePart = null, imageUrl = null, sessionId = 'default', voiceUrl = null) {
@@ -155,37 +264,16 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
   const activeModelName = defaultModelName;
 
   // 1. Get or create customer in database
-  let customer = await db.getCustomer(jid, sessionId);
-  if (!customer) {
-    customer = await db.createOrUpdateCustomer(jid, profileName, { status: 'lead' }, sessionId);
+  if (!(await db.getCustomer(jid, sessionId))) {
+    await db.createOrUpdateCustomer(jid, profileName, { status: 'lead' }, sessionId);
   }
 
   // 2. Fetch last N messages of chat history from DB
-  const maxHistory = parseInt(await db.getSetting('max_history') || defaultMaxHistory, 10);
+  const maxHistory = Number.parseInt(await db.getSetting('max_history') || defaultMaxHistory, 10);
   const historyRows = await db.getChatHistory(jid, maxHistory, sessionId);
   
   // Sanitize and format history to ensure compliance with Gemini SDK rules
-  const formattedHistory = [];
-  for (const row of historyRows) {
-    const role = row.role === 'model' ? 'model' : 'user';
-    const text = (row.content || '').trim();
-    if (!text) continue; // Skip empty messages
-
-    if (formattedHistory.length === 0) {
-      // First message MUST be 'user'
-      if (role === 'user') {
-        formattedHistory.push({ role, parts: [{ text }] });
-      }
-    } else {
-      const last = formattedHistory[formattedHistory.length - 1];
-      if (last.role === role) {
-        // Merge consecutive messages from the same role
-        last.parts[0].text += '\n' + text;
-      } else {
-        formattedHistory.push({ role, parts: [{ text }] });
-      }
-    }
-  }
+  const formattedHistory = formatHistory(historyRows);
 
   // 3. Build dynamic instructions
   let systemInstruction = await db.getSetting('system_instruction');
@@ -207,9 +295,12 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
 
   try {
     // Save user's incoming message to DB first, including the photo or voice note metadata if present
-    const dbText = imageUrl 
-      ? `[Foto: ${imageUrl}] ${text}`.trim() 
-      : (voiceUrl ? `[Voice Note: ${voiceUrl}] ${text}`.trim() : text);
+    let dbText = text;
+    if (imageUrl) {
+      dbText = `[Foto: ${imageUrl}] ${text}`.trim();
+    } else if (voiceUrl) {
+      dbText = `[Voice Note: ${voiceUrl}] ${text}`.trim();
+    }
     await db.saveChatMessage(jid, 'user', dbText, sessionId);
 
     // Send the user message (including image if present) to Gemini
@@ -234,76 +325,8 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
       });
     }
     
-    // Check if Gemini wants to call a tool
-    let functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;
-    
-    // We allow up to 3 sequential tool execution steps in a single turn if needed
-    let loopCount = 0;
-    while (functionCalls && functionCalls.length > 0 && loopCount < 3) {
-      loopCount++;
-      console.log(`🤖 AI Agent JID[${jid}] requested ${functionCalls.length} tool(s) in parallel.`);
-      
-      const functionResponseParts = [];
-
-      for (const call of functionCalls) {
-        const { name, args } = call;
-        console.log(`  - Executing tool: ${name} with args:`, args);
-        let toolResult = {};
-
-        try {
-          if (name === 'search_products') {
-            const products = await db.searchProducts(args.query);
-            toolResult = { products };
-          } else if (name === 'update_customer_profile') {
-            // Update profile name, notes, or contact phone in Postgres
-            await db.createOrUpdateCustomer(jid, args.customer_name || null, { 
-              notes: args.notes,
-              contact_phone: args.contact_phone
-            }, sessionId);
-            toolResult = { status: 'success', message: 'Profil kustomer berhasil diperbarui.' };
-          } else if (name === 'request_follow_up') {
-            // Flag needs_follow_up in Postgres
-            await db.createOrUpdateCustomer(jid, null, { needs_follow_up: true, follow_up_reason: args.reason }, sessionId);
-            toolResult = { status: 'success', message: 'Follow up dijadwalkan.' };
-          } else if (name === 'request_human_handoff') {
-            // Disable AI responding and flag needs_admin in Postgres
-            await db.createOrUpdateCustomer(jid, null, { 
-              ai_enabled: false,
-              needs_admin: true,
-              notes: `Handoff requested: ${args.reason}`
-            }, sessionId);
-            toolResult = { status: 'success', message: 'Chat berhasil ditransfer ke admin.' };
-          }
-        } catch (toolErr) {
-          console.error(`Error executing tool ${name}:`, toolErr.message);
-          toolResult = { status: 'error', error: toolErr.message };
-        }
-
-        functionResponseParts.push({
-          functionResponse: {
-            name: name,
-            response: toolResult
-          }
-        });
-      }
-
-      // Feed all function responses back to Gemini in one turn
-      result = await chat.sendMessage(functionResponseParts);
-      
-      response = result.response;
-
-      // Log Gemini token usage for this tool turn
-      if (response.usageMetadata) {
-        await db.saveUsageLog({
-          feature: 'whatsapp_chat',
-          modelName: activeModelName,
-          inputTokens: response.usageMetadata.promptTokenCount,
-          outputTokens: response.usageMetadata.candidatesTokenCount,
-          cachedTokens: response.usageMetadata.cachedContentTokenCount
-        });
-      }
-      functionCalls = typeof response.functionCalls === 'function' ? response.functionCalls() : response.functionCalls;
-    }
+    // Check if Gemini wants to call tools, and handle them
+    response = await handleToolCalls(chat, response, jid, sessionId, activeModelName);
 
     const replyText = response.text();
     

@@ -30,7 +30,7 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=fardhan123
       - DB_NAME=latezzacake
-      - GEMINI_API_KEY=AIzaSyCUKLn3x4iCAF943e_R4E5o2rF_JP-nJEM
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - BUSINESS_PROFILE_PATH=/usr/src/app/business-profile.json
       - BUSINESS_PROFILE_KEY=latezza_cake_hampers_profile
       - SHOPEE_DEFAULT_SEARCH_URL=https://shopee.co.id/search?keyword=

@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const { execFile } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const { execFile } = require('node:child_process');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const db = require('./db');
 const agent = require('./agent');
@@ -21,12 +21,87 @@ function convertWebmToOgg(inputPath, outputPath) {
       outputPath
     ], (error, stdout, stderr) => {
       if (error) {
-        reject(error);
+        reject(error instanceof Error ? error : new Error(error?.message || 'unknown error'));
       } else {
         resolve();
       }
     });
   });
+}
+
+/**
+ * Helper to process manual audio message upload, transcode, transcribe and send via WhatsApp
+ */
+async function handleManualAudioMessage(phone, audioBase64, targetSessionId, fastify) {
+  fastify.log.info(`🎙️ Received manual voice message for ${phone} on session ${targetSessionId}...`);
+  const buffer = Buffer.from(audioBase64, 'base64');
+  
+  // Ensure uploads directory exists (resolving to backend/public/uploads)
+  const uploadsDir = path.join(__dirname, '../public/uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  // Temporary file for original webm audio
+  const tempFilename = `voice_out_temp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.webm`;
+  const tempFilepath = path.join(uploadsDir, tempFilename);
+  fs.writeFileSync(tempFilepath, buffer);
+
+  // Output converted .ogg file path
+  const outputFilename = `voice_out_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.ogg`;
+  const outputFilepath = path.join(uploadsDir, outputFilename);
+
+  try {
+    fastify.log.info(`🔄 Transcoding audio from ${tempFilepath} to ${outputFilepath}...`);
+    await convertWebmToOgg(tempFilepath, outputFilepath);
+    fastify.log.info(`✅ Audio transcoded successfully to Ogg Opus.`);
+  } catch (transcodeErr) {
+    fastify.log.error(`❌ Transcoding failed: ${transcodeErr.message}. Falling back to original audio.`);
+    fs.copyFileSync(tempFilepath, outputFilepath);
+  } finally {
+    if (fs.existsSync(tempFilepath)) {
+      try {
+        fs.unlinkSync(tempFilepath);
+      } catch (unlinkErr) {
+        fastify.log.error(`Failed to delete temp file: ${unlinkErr.message}`);
+      }
+    }
+  }
+
+  const voiceUrl = `/uploads/${outputFilename}`;
+  const oggBuffer = fs.readFileSync(outputFilepath);
+  let finalReplyText = '';
+
+  try {
+    fastify.log.info(`🧠 Transcribing outgoing audio...`);
+    const transcription = await whatsappService.transcribeAudio(oggBuffer, 'audio/ogg', fastify.log);
+    finalReplyText = transcription;
+    fastify.log.info(`📝 Outgoing audio transcription: "${finalReplyText}"`);
+  } catch (tErr) {
+    fastify.log.error(`Failed to transcribe outgoing audio: ${tErr.message}`);
+    finalReplyText = '[Pesan Suara Kiriman]';
+  }
+
+  fastify.log.info(`📤 Sending WhatsApp voice note to ${phone}...`);
+  const response = await whatsappService.sendMessage(phone, { 
+    audio: oggBuffer, 
+    mimetype: 'audio/ogg; codecs=opus', 
+    ptt: true 
+  }, targetSessionId);
+
+  const dbText = `[Voice Note: ${voiceUrl}] ${finalReplyText}`.trim();
+  await db.saveChatMessage(phone, 'model', dbText, targetSessionId);
+  await db.createOrUpdateCustomer(phone, null, {
+    ai_enabled: false,
+    needs_admin: false
+  }, targetSessionId);
+
+  return { 
+    status: 'success', 
+    messageId: response.key.id, 
+    voiceUrl, 
+    transcription: finalReplyText 
+  };
 }
 
 function registerRoutes(fastify) {
@@ -56,7 +131,7 @@ function registerRoutes(fastify) {
       let leadsCountRes, followupsCountRes, recentLeadsRes;
       let incomingLast24h, incomingLast7d, incomingLast30d;
       let newLeadsLast24h, newLeadsLast7d, newLeadsLast30d;
-      let status = 'disconnected';
+      let status;
 
       if (session_id === 'all') {
         const sessions = await db.getSessions();
@@ -93,18 +168,18 @@ function registerRoutes(fastify) {
       
       return {
         status,
-        totalLeads: parseInt(leadsCountRes.rows[0].count, 10),
-        totalProducts: parseInt((await db.pool.query('SELECT COUNT(*) FROM products')).rows[0].count, 10),
-        pendingFollowUps: parseInt(followupsCountRes.rows[0].count, 10),
+        totalLeads: Number.parseInt(leadsCountRes.rows[0].count, 10),
+        totalProducts: Number.parseInt((await db.pool.query('SELECT COUNT(*) FROM products')).rows[0].count, 10),
+        pendingFollowUps: Number.parseInt(followupsCountRes.rows[0].count, 10),
         incomingMessages: {
-          last24h: parseInt(incomingLast24h.rows[0].count, 10),
-          last7d: parseInt(incomingLast7d.rows[0].count, 10),
-          last30d: parseInt(incomingLast30d.rows[0].count, 10),
+          last24h: Number.parseInt(incomingLast24h.rows[0].count, 10),
+          last7d: Number.parseInt(incomingLast7d.rows[0].count, 10),
+          last30d: Number.parseInt(incomingLast30d.rows[0].count, 10),
         },
         newLeads: {
-          last24h: parseInt(newLeadsLast24h.rows[0].count, 10),
-          last7d: parseInt(newLeadsLast7d.rows[0].count, 10),
-          last30d: parseInt(newLeadsLast30d.rows[0].count, 10),
+          last24h: Number.parseInt(newLeadsLast24h.rows[0].count, 10),
+          last7d: Number.parseInt(newLeadsLast7d.rows[0].count, 10),
+          last30d: Number.parseInt(newLeadsLast30d.rows[0].count, 10),
         },
         recentLeads: recentLeadsRes.rows
       };
@@ -343,92 +418,18 @@ function registerRoutes(fastify) {
     },
     handler: async (request, reply) => {
       const { phone } = request.params;
-      const { text, audioBase64, mimetype, session_id } = request.body;
+      const { text, audioBase64, session_id } = request.body;
       const targetSessionId = session_id || 'default';
 
       try {
-        let finalReplyText = text || '';
-        let voiceUrl = null;
-
         if (audioBase64) {
-          fastify.log.info(`🎙️ Received manual voice message for ${phone} on session ${targetSessionId}...`);
-          const buffer = Buffer.from(audioBase64, 'base64');
-          
-          // Ensure uploads directory exists (resolving to backend/public/uploads)
-          const uploadsDir = path.join(__dirname, '../public/uploads');
-          if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
-          }
-
-          // Temporary file for original webm audio
-          const tempFilename = `voice_out_temp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.webm`;
-          const tempFilepath = path.join(uploadsDir, tempFilename);
-          fs.writeFileSync(tempFilepath, buffer);
-
-          // Output converted .ogg file path
-          const outputFilename = `voice_out_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.ogg`;
-          const outputFilepath = path.join(uploadsDir, outputFilename);
-
-          try {
-            fastify.log.info(`🔄 Transcoding audio from ${tempFilepath} to ${outputFilepath}...`);
-            await convertWebmToOgg(tempFilepath, outputFilepath);
-            fastify.log.info(`✅ Audio transcoded successfully to Ogg Opus.`);
-          } catch (transcodeErr) {
-            fastify.log.error(`❌ Transcoding failed: ${transcodeErr.message}. Falling back to original audio.`);
-            // Fallback: copy temp file as the output file if transcoding fails
-            fs.copyFileSync(tempFilepath, outputFilepath);
-          } finally {
-            // Clean up the temporary webm file
-            if (fs.existsSync(tempFilepath)) {
-              try {
-                fs.unlinkSync(tempFilepath);
-              } catch (unlinkErr) {
-                fastify.log.error(`Failed to delete temp file: ${unlinkErr.message}`);
-              }
-            }
-          }
-
-          voiceUrl = `/uploads/${outputFilename}`;
-          const oggBuffer = fs.readFileSync(outputFilepath);
-
-          // Transcribe the outgoing audio using the transcoded ogg buffer so it is saved in history
-          try {
-            fastify.log.info(`🧠 Transcribing outgoing audio...`);
-            const transcription = await whatsappService.transcribeAudio(oggBuffer, 'audio/ogg', fastify.log);
-            finalReplyText = transcription;
-            fastify.log.info(`📝 Outgoing audio transcription: "${finalReplyText}"`);
-          } catch (tErr) {
-            fastify.log.error(`Failed to transcribe outgoing audio: ${tErr.message}`);
-            finalReplyText = '[Pesan Suara Kiriman]';
-          }
-
-          // Send voice message via WhatsApp
-          fastify.log.info(`📤 Sending WhatsApp voice note to ${phone}...`);
-          const response = await whatsappService.sendMessage(phone, { 
-            audio: oggBuffer, 
-            mimetype: 'audio/ogg; codecs=opus', // standard voice note mimetype for Baileys/WhatsApp
-            ptt: true // ptt: true makes it appear as a recording (Push To Talk)
-          }, targetSessionId);
-
-          const dbText = `[Voice Note: ${voiceUrl}] ${finalReplyText}`.trim();
-          await db.saveChatMessage(phone, 'model', dbText, targetSessionId);
-          await db.createOrUpdateCustomer(phone, null, {
-            ai_enabled: false,
-            needs_admin: false
-          }, targetSessionId);
-
-          return { 
-            status: 'success', 
-            messageId: response.key.id, 
-            voiceUrl, 
-            transcription: finalReplyText 
-          };
+          return await handleManualAudioMessage(phone, audioBase64, targetSessionId, fastify);
         } else {
           // Standard text message send
           fastify.log.info(`Sending manual dashboard message to ${phone} on session ${targetSessionId}...`);
-          const response = await whatsappService.sendMessage(phone, { text: finalReplyText }, targetSessionId);
+          const response = await whatsappService.sendMessage(phone, { text: text || '' }, targetSessionId);
           
-          await db.saveChatMessage(phone, 'model', finalReplyText, targetSessionId);
+          await db.saveChatMessage(phone, 'model', text || '', targetSessionId);
           await db.createOrUpdateCustomer(phone, null, {
             ai_enabled: false,
             needs_admin: false
@@ -561,29 +562,36 @@ function registerRoutes(fastify) {
       try {
         const settings = request.body;
         
-        // Only save Gemini Key if it's new (doesn't contain mask '...')
+        // Loop through standard settings and update if defined
+        const standardKeys = [
+          'meta_ad_account_id',
+          'whatsapp_group_jid',
+          'rate_limit_max',
+          'rate_limit_window',
+          'followup_hours',
+          'system_instruction',
+          'followup_instruction',
+          'ads_analysis_enabled',
+          'ads_analysis_frequency',
+          'ads_analysis_time',
+          'creative_analysis_enabled',
+          'creative_analysis_frequency',
+          'creative_analysis_time'
+        ];
+
+        for (const key of standardKeys) {
+          if (settings[key] !== undefined) {
+            await db.setSetting(key, settings[key]);
+          }
+        }
+
+        // Special keys that require validation / masking
         if (settings.gemini_api_key && !settings.gemini_api_key.includes('...')) {
           await db.setSetting('gemini_api_key', settings.gemini_api_key);
         }
-        
-        // Only save Meta Token if it's new (doesn't contain mask '...')
         if (settings.meta_access_token && !settings.meta_access_token.includes('...')) {
           await db.setSetting('meta_access_token', settings.meta_access_token);
         }
-        
-        if (settings.meta_ad_account_id !== undefined) await db.setSetting('meta_ad_account_id', settings.meta_ad_account_id);
-        if (settings.whatsapp_group_jid !== undefined) await db.setSetting('whatsapp_group_jid', settings.whatsapp_group_jid);
-        if (settings.rate_limit_max !== undefined) await db.setSetting('rate_limit_max', settings.rate_limit_max);
-        if (settings.rate_limit_window !== undefined) await db.setSetting('rate_limit_window', settings.rate_limit_window);
-        if (settings.followup_hours !== undefined) await db.setSetting('followup_hours', settings.followup_hours);
-        if (settings.system_instruction !== undefined) await db.setSetting('system_instruction', settings.system_instruction);
-        if (settings.followup_instruction !== undefined) await db.setSetting('followup_instruction', settings.followup_instruction);
-        if (settings.ads_analysis_enabled !== undefined) await db.setSetting('ads_analysis_enabled', settings.ads_analysis_enabled);
-        if (settings.ads_analysis_frequency !== undefined) await db.setSetting('ads_analysis_frequency', settings.ads_analysis_frequency);
-        if (settings.ads_analysis_time !== undefined) await db.setSetting('ads_analysis_time', settings.ads_analysis_time);
-        if (settings.creative_analysis_enabled !== undefined) await db.setSetting('creative_analysis_enabled', settings.creative_analysis_enabled);
-        if (settings.creative_analysis_frequency !== undefined) await db.setSetting('creative_analysis_frequency', settings.creative_analysis_frequency);
-        if (settings.creative_analysis_time !== undefined) await db.setSetting('creative_analysis_time', settings.creative_analysis_time);
         
         // Dynamically reload background schedules to reflect changes immediately
         const scheduler = require('./services/scheduler');
@@ -663,11 +671,11 @@ function registerRoutes(fastify) {
       return {
         status: 'success',
         mtd: {
-          inputTokens: parseInt(mtd.input_tokens, 10),
-          outputTokens: parseInt(mtd.output_tokens, 10),
-          cachedTokens: parseInt(mtd.cached_tokens, 10),
-          costUsd: parseFloat(mtd.cost_usd),
-          costIdr: parseFloat(mtd.cost_idr),
+          inputTokens: Number.parseInt(mtd.input_tokens, 10),
+          outputTokens: Number.parseInt(mtd.output_tokens, 10),
+          cachedTokens: Number.parseInt(mtd.cached_tokens, 10),
+          costUsd: Number.parseFloat(mtd.cost_usd),
+          costIdr: Number.parseFloat(mtd.cost_idr),
           totalRequests: mtd.total_requests
         },
         dailyTrend,

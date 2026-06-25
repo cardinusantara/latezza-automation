@@ -17,8 +17,9 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock ResizeObserver (used by Radix/Shadcn UI components)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).ResizeObserver = class {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
 };

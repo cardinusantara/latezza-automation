@@ -69,7 +69,9 @@ export default function CreativeReport() {
   };
 
   useEffect(() => {
-    fetchReport();
+    setTimeout(() => {
+      fetchReport();
+    }, 0);
   }, []);
 
   // Run regeneration via SSE Streaming
@@ -85,7 +87,7 @@ export default function CreativeReport() {
         const payload = JSON.parse(event.data);
         if (payload.type === 'status') {
           setStreamMessages(prev => {
-            if (prev.length > 0 && prev[prev.length - 1] === payload.message) {
+            if (prev.length > 0 && prev.at(-1) === payload.message) {
               return prev;
             }
             return [...prev, payload.message];
@@ -155,12 +157,12 @@ export default function CreativeReport() {
           <span className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase pb-1.5 border-b border-border/40">Progress Logs</span>
           <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
             {streamMessages.map((msg, i) => (
-              <div key={i} className="text-xs text-foreground/90 flex items-start gap-2.5 animate-fadeIn">
+              <div key={`${msg}-${i}`} className="text-xs text-foreground/90 flex items-start gap-2.5 animate-fadeIn">
                 <span className="text-emerald-500 shrink-0">✓</span>
                 <span className="font-semibold">{msg}</span>
               </div>
             ))}
-            {streamMessages.length > 0 && !streamMessages[streamMessages.length - 1].includes('selesai') && (
+            {streamMessages.length > 0 && !streamMessages.at(-1)?.includes('selesai') && (
               <div className="text-xs text-muted-foreground flex items-center gap-2.5 animate-pulse pl-1 mt-1">
                 <IconLoader size={12} className="animate-spin text-purple-400" />
                 <span>Memproses langkah berikutnya...</span>
@@ -233,28 +235,7 @@ export default function CreativeReport() {
         </CardHeader>
       </Card>
 
-      {!data ? (
-        /* Empty State */
-        <div className="flex-grow border border-dashed border-border/80 rounded-2xl bg-[#0a0d16]/30 flex flex-col items-center justify-center py-20 px-6 text-center max-w-lg mx-auto w-full shadow-inner gap-4">
-          <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-            <IconSparkles size={28} className="animate-bounce" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <h3 className="text-sm font-bold text-foreground">Rekomendasi Ide Konten Belum Ada</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">
-              Sistem belum menjalankan audit copywriting iklan Latezza. Klik tombol di bawah untuk meminta AI Gemini menganalisis ad copy saat ini dan memberikan ide kampanye baru.
-            </p>
-          </div>
-          <Button
-            onClick={handleRegenerate}
-            disabled={loading}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs gap-1.5 h-9 px-5 mt-2 transition-all duration-200"
-          >
-            {loading ? <IconLoader size={16} className="animate-spin" /> : <IconRefresh size={16} />}
-            <span>Jalankan Analisis Kreatif Pertama</span>
-          </Button>
-        </div>
-      ) : (
+      {data ? (
         /* Main Report Layout */
         <div className="flex flex-col gap-8">
           
@@ -287,7 +268,7 @@ export default function CreativeReport() {
               <CardContent className="pt-5">
                 <ul className="flex flex-col gap-3.5 list-none pl-0">
                   {data.audit.winningElements.map((el, i) => (
-                    <li key={i} className="text-xs text-foreground/90 flex items-start gap-2.5 leading-relaxed">
+                    <li key={`${el}-${i}`} className="text-xs text-foreground/90 flex items-start gap-2.5 leading-relaxed">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
                       <span>{el}</span>
                     </li>
@@ -312,7 +293,7 @@ export default function CreativeReport() {
               <CardContent className="pt-5">
                 <ul className="flex flex-col gap-3.5 list-none pl-0">
                   {data.audit.losingElements.map((el, i) => (
-                    <li key={i} className="text-xs text-foreground/90 flex items-start gap-2.5 leading-relaxed">
+                    <li key={`${el}-${i}`} className="text-xs text-foreground/90 flex items-start gap-2.5 leading-relaxed">
                       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0"></div>
                       <span>{el}</span>
                     </li>
@@ -332,7 +313,7 @@ export default function CreativeReport() {
             <div className="grid grid-cols-1 gap-6">
               {data.ideas.map((idea, idx) => (
                 <Card 
-                  key={idx} 
+                  key={`${idea.title}-${idx}`} 
                   className="bg-card/40 border-border hover:border-emerald-500/20 transition-all duration-300 shadow-sm relative overflow-hidden group flex flex-col"
                 >
                   {/* Decorative corner glow */}
@@ -392,6 +373,27 @@ export default function CreativeReport() {
               ))}
             </div>
           </div>
+        </div>
+      ) : (
+        /* Empty State */
+        <div className="flex-grow border border-dashed border-border/80 rounded-2xl bg-[#0a0d16]/30 flex flex-col items-center justify-center py-20 px-6 text-center max-w-lg mx-auto w-full shadow-inner gap-4">
+          <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <IconSparkles size={28} className="animate-bounce" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <h3 className="text-sm font-bold text-foreground">Rekomendasi Ide Konten Belum Ada</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">
+              Sistem belum menjalankan audit copywriting iklan Latezza. Klik tombol di bawah untuk meminta AI Gemini menganalisis ad copy saat ini dan memberikan ide kampanye baru.
+            </p>
+          </div>
+          <Button
+            onClick={handleRegenerate}
+            disabled={loading}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs gap-1.5 h-9 px-5 mt-2 transition-all duration-200"
+          >
+            {loading ? <IconLoader size={16} className="animate-spin" /> : <IconRefresh size={16} />}
+            <span>Jalankan Analisis Kreatif Pertama</span>
+          </Button>
         </div>
       )}
     </div>

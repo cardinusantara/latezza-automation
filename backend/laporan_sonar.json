@@ -1,0 +1,50 @@
+{
+  "metrics": {
+    "coverage": "92.4",
+    "bugs": "0",
+    "reliability_rating": "1.0",
+    "code_smells": "2",
+    "duplicated_lines_density": "1.8",
+    "security_rating": "1.0",
+    "vulnerabilities": "0",
+    "security_hotspots": "0",
+    "sqale_index": "65",
+    "sqale_rating": "1.0"
+  },
+  "issues_summary": {
+    "severity": {
+      "INFO": 0,
+      "MINOR": 2,
+      "MAJOR": 0,
+      "CRITICAL": 0,
+      "BLOCKER": 0
+    },
+    "type": {
+      "CODE_SMELL": 2,
+      "BUG": 0,
+      "VULNERABILITY": 0
+    }
+  },
+  "issues": [
+    {
+      "key": "f623f298-52da-47a6-9d69-0f6bd0758b6a",
+      "rule": "javascript:S2486",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "component": "backend/src/db.js",
+      "line": 391,
+      "message": "Handle this exception or don't catch it at all.",
+      "debt": "1h"
+    },
+    {
+      "key": "99bd2b09-8171-4163-a359-9acad438a4f9",
+      "rule": "typescript:S7772",
+      "severity": "MINOR",
+      "type": "CODE_SMELL",
+      "component": "frontend/vite.config.ts",
+      "line": 1,
+      "message": "Prefer `node:path` over `path`.",
+      "debt": "5min"
+    }
+  ]
+}

@@ -46,14 +46,14 @@ export default function App() {
 
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const saved = localStorage.getItem('sidebarWidth');
-    return saved ? parseInt(saved, 10) : 256;
+    return saved ? Number.parseInt(saved, 10) : 256;
   });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem('isSidebarCollapsed') === 'true';
   });
   const [lastExpandedWidth, setLastExpandedWidth] = useState(() => {
     const saved = localStorage.getItem('lastExpandedWidth');
-    return saved ? parseInt(saved, 10) : 256;
+    return saved ? Number.parseInt(saved, 10) : 256;
   });
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
 
@@ -195,7 +195,7 @@ export default function App() {
       } else {
         showToast('Gagal memproses follow-up: ' + data.message);
       }
-    } catch (err) {
+    } catch {
       showToast('Koneksi gagal saat memicu follow-up.');
     }
   };
@@ -211,7 +211,7 @@ export default function App() {
       } else {
         showToast('Gagal memproses analisis kreatif: ' + data.message);
       }
-    } catch (err) {
+    } catch {
       showToast('Koneksi gagal saat memicu analisis kreatif.');
     }
   };
@@ -227,18 +227,27 @@ export default function App() {
 
   // Initial load
   useEffect(() => {
-    loadSessions();
-    loadProducts();
+    const timer = setTimeout(() => {
+      loadSessions();
+      loadProducts();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   // Reload stats when overview session changes
   useEffect(() => {
-    loadStats();
+    const timer = setTimeout(() => {
+      loadStats();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [overviewSessionId]);
 
   // Reload customers when selected session changes
   useEffect(() => {
-    loadCustomers();
+    const timer = setTimeout(() => {
+      loadCustomers();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [selectedSessionId]);
 
   // Poll stats and customer lists every 8 seconds

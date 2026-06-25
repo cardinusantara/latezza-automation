@@ -36,9 +36,9 @@ function normalizeMetaInsights(apiData) {
   };
 
   return apiData.map(item => {
-    const spend = parseFloat(item.spend) || 0;
-    const impressions = parseInt(item.impressions) || 0;
-    const reach = parseInt(item.reach) || 0;
+    const spend = Number.parseFloat(item.spend) || 0;
+    const impressions = Number.parseInt(item.impressions) || 0;
+    const reach = Number.parseInt(item.reach) || 0;
     
     let results = 0;
     let newContacts = 0;
@@ -58,14 +58,14 @@ function normalizeMetaInsights(apiData) {
       const linkClickAction = item.actions.find(a => a.action_type === 'link_click');
       
       if (msgAction) {
-        results = parseInt(msgAction.value) || 0;
+        results = Number.parseInt(msgAction.value) || 0;
         newContacts = results;
       } else if (purchaseAction) {
-        results = parseInt(purchaseAction.value) || 0;
+        results = Number.parseInt(purchaseAction.value) || 0;
       } else if (linkClickAction) {
-        results = parseInt(linkClickAction.value) || 0;
+        results = Number.parseInt(linkClickAction.value) || 0;
       } else {
-        const totalActions = item.actions.reduce((sum, a) => sum + (parseInt(a.value) || 0), 0);
+        const totalActions = item.actions.reduce((sum, a) => sum + (Number.parseInt(a.value) || 0), 0);
         results = totalActions;
       }
     }
@@ -96,8 +96,7 @@ function splitCSVLine(line) {
   const result = [];
   let current = '';
   let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
+  for (const char of line) {
     if (char === '"') {
       inQuotes = !inQuotes;
     } else if (char === ',' && !inQuotes) {
@@ -153,8 +152,8 @@ function parseCSV(csvText, dateFromStr = null, dateToStr = null) {
     const getNumValue = (key, defaultVal) => {
       const val = getValue(key, null);
       if (val === null) return defaultVal;
-      const cleanNum = parseFloat(val.replace(/[^0-9.-]/g, ''));
-      return isNaN(cleanNum) ? defaultVal : cleanNum;
+      const cleanNum = Number.parseFloat(val.replace(/[^0-9.-]/g, ''));
+      return Number.isNaN(cleanNum) ? defaultVal : cleanNum;
     };
     
     let spend = getNumValue('spend', 0);
@@ -257,22 +256,15 @@ function groupBrands(ads) {
 /**
  * Builds the dashboard layout for a single date range
  */
-function buildDashboardLayout(dateRange, ads, brandsMap) {
-  const isConversions = ads.some(a => a.results > 0);
-  const hasMultipleBrands = Object.keys(brandsMap).length > 1;
-  
-  // Calculate aggregate metrics
+/**
+ * Helper to build the KPI items for dashboard
+ */
+function buildKPIs(ads, isConversions, overallCpr, overallCpm, frequency) {
   const totalSpend = ads.reduce((sum, a) => sum + a.spend, 0);
   const totalImp = ads.reduce((sum, a) => sum + a.impressions, 0);
   const totalReach = ads.reduce((sum, a) => sum + a.reach, 0);
   const totalResults = ads.reduce((sum, a) => sum + a.results, 0);
-  const totalNewContacts = ads.reduce((sum, a) => sum + a.newContacts, 0);
-  
-  const overallCpr = totalResults > 0 ? totalSpend / totalResults : 0;
-  const overallCpm = totalImp > 0 ? (totalSpend / totalImp) * 1000 : 0;
-  const frequency = totalReach > 0 ? totalImp / totalReach : 1;
-  
-  // 1. Compile KPIs
+
   const kpiItems = [
     {
       label: "Total Belanja",
@@ -311,16 +303,13 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
     status: "normal"
   });
 
-  const widgets = [];
-  
-  // Widget 1: KPI Grid
-  widgets.push({
-    type: "kpi_grid",
-    gridSpan: 12,
-    items: kpiItems
-  });
-  
-  // Widget 2: Spend vs. Performance (Bubble Chart)
+  return kpiItems;
+}
+
+/**
+ * Helper to build the Bubble Chart widget
+ */
+function buildBubbleChartWidget(ads, isConversions) {
   const bubbleDatasets = ads.map(ad => {
     let yVal = isConversions ? ad.results : ad.reach;
     let rVal = isConversions ? Math.max(4, Math.min(25, Math.sqrt(ad.results) * 3)) : Math.max(4, Math.min(25, Math.sqrt(ad.reach / 100)));
@@ -332,8 +321,8 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
       borderWidth: 1
     };
   });
-  
-  widgets.push({
+
+  return {
     type: "chart",
     gridSpan: 6,
     chartId: `bubble-custom`,
@@ -347,12 +336,16 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
         y: { title: { display: true, text: isConversions ? 'Konversi (Chat)' : 'Jangkauan' } }
       }
     }
-  });
+  };
+}
 
-  // Widget 3: Efficiency Chart (CPR or CPM Bar Chart)
+/**
+ * Helper to build the Efficiency Chart widget (CPR or CPM)
+ */
+function buildEfficiencyChartWidget(ads, isConversions) {
   if (isConversions) {
     const sortedCpr = [...ads].filter(a => a.results > 0).sort((a,b) => a.cpr - b.cpr);
-    widgets.push({
+    return {
       type: "chart",
       gridSpan: 6,
       chartId: `cpr-bar-custom`,
@@ -376,11 +369,10 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
           x: { ticks: { callbackType: 'currency' } }
         }
       }
-    });
+    };
   } else {
-    // Awareness fallback: CPM Bar Chart
     const sortedCpm = [...ads].sort((a,b) => a.spend / (a.impressions || 1) - b.spend / (b.impressions || 1));
-    widgets.push({
+    return {
       type: "chart",
       gridSpan: 6,
       chartId: `cpm-bar-custom`,
@@ -404,12 +396,16 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
           x: { ticks: { callbackType: 'currency' } }
         }
       }
-    });
+    };
   }
+}
 
-  // Widget 4: Impresi vs Jangkauan (Grouped Bar Chart)
+/**
+ * Helper to build the Impresi vs Jangkauan Chart widget
+ */
+function buildImpReachChartWidget(ads) {
   const sortedImp = [...ads].sort((a,b) => b.impressions - a.impressions);
-  widgets.push({
+  return {
     type: "chart",
     gridSpan: 12,
     chartId: `imp-reach-custom`,
@@ -423,11 +419,14 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
         { label: 'Jangkauan', data: sortedImp.map(a => a.reach), backgroundColor: '#10B981aa', borderColor: '#10B981', borderWidth: 1, borderRadius: 3 }
       ]
     }
-  });
+  };
+}
 
-  // Widget 5: Brand Doughnut & Stacked Conversions Row
+/**
+ * Helper to build the Brand Distribution Chart widget
+ */
+function buildBrandPieWidget(ads, brandsMap, isConversions, hasMultipleBrands) {
   if (hasMultipleBrands) {
-    // Group conversions by brand
     const brandResults = {};
     Object.keys(brandsMap).forEach(k => {
       const b = brandsMap[k];
@@ -441,7 +440,7 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
 
     const activeBrands = Object.values(brandResults).filter(b => b.val > 0);
 
-    widgets.push({
+    return {
       type: "chart",
       gridSpan: 6,
       chartId: `brand-pie-custom`,
@@ -457,7 +456,7 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
           borderWidth: 1.5
         }]
       }
-    });
+    };
   } else {
     // Single brand fallback: Campaign/Ad Set Split
     const adsetResults = {};
@@ -468,7 +467,7 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
       adsetResults[ad.adset].val += isConversions ? ad.results : ad.impressions;
     });
     const activeAdsets = Object.values(adsetResults);
-    widgets.push({
+    return {
       type: "chart",
       gridSpan: 6,
       chartId: `adset-pie-custom`,
@@ -482,13 +481,17 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
           borderWidth: 1
         }]
       }
-    });
+    };
   }
+}
 
-  // Stacked chart (New vs Returning OR Reach vs Frequency)
+/**
+ * Helper to build the Stacked Chart widget (New vs Returning Contacts OR Reach vs Impressions)
+ */
+function buildStackedChartWidget(ads, isConversions, totalNewContacts) {
   if (isConversions && totalNewContacts > 0) {
     const sortedCpr = [...ads].filter(a => a.results > 0).sort((a,b) => a.cpr - b.cpr);
-    widgets.push({
+    return {
       type: "chart",
       gridSpan: 6,
       chartId: `contact-split-custom`,
@@ -506,11 +509,11 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
         indexAxis: 'y',
         scales: { x: { stacked: true }, y: { stacked: true } }
       }
-    });
+    };
   } else {
     // Fallback stacked chart: Reach vs Impressions
     const sortedReach = [...ads].sort((a,b) => b.reach - a.reach);
-    widgets.push({
+    return {
       type: "chart",
       gridSpan: 6,
       chartId: `reach-ratio-custom`,
@@ -528,10 +531,94 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
         indexAxis: 'y',
         scales: { x: { stacked: true }, y: { stacked: true } }
       }
-    });
+    };
   }
+}
 
-  // Widget 6: Table Widget
+/**
+ * Helper to determine CSS class for quality ranking
+ */
+function getQualityStyle(quality) {
+  if (quality.includes("Atas") || quality.includes("above")) {
+    return "r-above";
+  }
+  if (quality.includes("Rata") || quality.includes("avg")) {
+    return "r-avg";
+  }
+  if (quality === "-") {
+    return "r-na";
+  }
+  return "r-low";
+}
+
+/**
+ * Helper to determine CSS class for engagement ranking
+ */
+function getEngagementStyle(engagement) {
+  if (engagement.includes("Atas") || engagement.includes("above")) {
+    return "r-above";
+  }
+  if (engagement.includes("Rata") || engagement.includes("avg")) {
+    return "r-avg";
+  }
+  if (engagement === "-") {
+    return "r-na";
+  }
+  return "r-low";
+}
+
+/**
+ * Helper to map a single ad object into a table row array
+ */
+function mapAdToRow(ad, isConversions) {
+  const row = [
+    ad.name,
+    { type: "badge", text: ad.brandName || "General", styleClass: "brand-tag", color: ad.brandColor },
+    { type: "badge", text: ad.status === 'active' ? 'Aktif' : 'Nonaktif', styleClass: ad.status === 'active' ? 'pill-active' : 'pill-inactive' }
+  ];
+  
+  row.push("Rp " + ad.spend.toLocaleString('id-ID'));
+  row.push(ad.impressions.toLocaleString('id-ID'));
+  
+  if (isConversions) {
+    row.push(ad.results);
+    
+    let cprStyleClass = "badge-danger";
+    if (ad.cpr < 4000) {
+      cprStyleClass = "badge-good";
+    } else if (ad.cpr < 8000) {
+      cprStyleClass = "badge-warn";
+    }
+    
+    row.push({ 
+      type: "badge", 
+      text: ad.results > 0 ? "Rp " + Math.round(ad.cpr).toLocaleString('id-ID') : "-",
+      styleClass: cprStyleClass
+    });
+  } else {
+    row.push(ad.reach.toLocaleString('id-ID'));
+    const adCpm = ad.impressions > 0 ? (ad.spend / ad.impressions) * 1000 : 0;
+    row.push("Rp " + Math.round(adCpm).toLocaleString('id-ID'));
+  }
+  
+  row.push({ 
+    type: "badge", 
+    text: ad.quality, 
+    styleClass: getQualityStyle(ad.quality)
+  });
+  row.push({ 
+    type: "badge", 
+    text: ad.engagement, 
+    styleClass: getEngagementStyle(ad.engagement)
+  });
+  
+  return row;
+}
+
+/**
+ * Helper to build the detailed performance Table widget
+ */
+function buildTableWidget(ads, isConversions) {
   const headers = ["Nama Iklan", "Kategori", "Status", "Belanja", "Impresi"];
   if (isConversions) {
     headers.push("Konversi", "CPR");
@@ -540,44 +627,21 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
   }
   headers.push("Kualitas", "Interaksi");
 
-  const tableRows = ads.map(ad => {
-    const row = [
-      ad.name,
-      { type: "badge", text: ad.brandName || "General", styleClass: "brand-tag", color: ad.brandColor },
-      { type: "badge", text: ad.status === 'active' ? 'Aktif' : 'Nonaktif', styleClass: ad.status === 'active' ? 'pill-active' : 'pill-inactive' }
-    ];
-    
-    row.push("Rp " + ad.spend.toLocaleString('id-ID'));
-    row.push(ad.impressions.toLocaleString('id-ID'));
-    
-    if (isConversions) {
-      row.push(ad.results);
-      row.push({ 
-        type: "badge", 
-        text: ad.results > 0 ? "Rp " + Math.round(ad.cpr).toLocaleString('id-ID') : "-",
-        styleClass: ad.cpr < 4000 ? "badge-good" : ad.cpr < 8000 ? "badge-warn" : "badge-danger"
-      });
-    } else {
-      row.push(ad.reach.toLocaleString('id-ID'));
-      const adCpm = ad.impressions > 0 ? (ad.spend / ad.impressions) * 1000 : 0;
-      row.push("Rp " + Math.round(adCpm).toLocaleString('id-ID'));
-    }
-    
-    row.push({ type: "badge", text: ad.quality, styleClass: ad.quality.includes("Atas") || ad.quality.includes("above") ? "r-above" : ad.quality.includes("Rata") || ad.quality.includes("avg") ? "r-avg" : ad.quality === "-" ? "r-na" : "r-low" });
-    row.push({ type: "badge", text: ad.engagement, styleClass: ad.engagement.includes("Atas") || ad.engagement.includes("above") ? "r-above" : ad.engagement.includes("Rata") || ad.engagement.includes("avg") ? "r-avg" : ad.engagement === "-" ? "r-na" : "r-low" });
-    
-    return row;
-  });
+  const tableRows = ads.map(ad => mapAdToRow(ad, isConversions));
 
-  widgets.push({
+  return {
     type: "table",
     gridSpan: 12,
     title: "Detail Performa Tiap Iklan",
     headers: headers,
     rows: tableRows
-  });
+  };
+}
 
-  // Widget 7: Efficiency Bar List
+/**
+ * Helper to build the Efficiency Bar List widget
+ */
+function buildEfficiencyBarListWidget(ads, isConversions) {
   const effItems = [];
   const maxMetric = Math.max(...ads.map(a => isConversions ? a.cpr : (a.spend / (a.impressions || 1)) * 1000), 1);
   
@@ -603,12 +667,64 @@ function buildDashboardLayout(dateRange, ads, brandsMap) {
     });
   });
 
-  widgets.push({
+  return {
     type: "bar_list",
     gridSpan: 12,
     title: isConversions ? "Skor Efisiensi Iklan (CPR lebih rendah = lebih efisien)" : "Skor Efisiensi Biaya Penayangan (CPM)",
     items: effItems
+  };
+}
+
+/**
+ * Builds the dashboard layout for a single date range
+ */
+function buildDashboardLayout(dateRange, ads, brandsMap) {
+  const isConversions = ads.some(a => a.results > 0);
+  const hasMultipleBrands = Object.keys(brandsMap).length > 1;
+  
+  // Calculate aggregate metrics
+  const totalSpend = ads.reduce((sum, a) => sum + a.spend, 0);
+  const totalImp = ads.reduce((sum, a) => sum + a.impressions, 0);
+  const totalReach = ads.reduce((sum, a) => sum + a.reach, 0);
+  const totalResults = ads.reduce((sum, a) => sum + a.results, 0);
+  const totalNewContacts = ads.reduce((sum, a) => sum + a.newContacts, 0);
+  
+  const overallCpr = totalResults > 0 ? totalSpend / totalResults : 0;
+  const overallCpm = totalImp > 0 ? (totalSpend / totalImp) * 1000 : 0;
+  const frequency = totalReach > 0 ? totalImp / totalReach : 1;
+  
+  // 1. Compile KPIs
+  const kpiItems = buildKPIs(ads, isConversions, overallCpr, overallCpm, frequency);
+  
+  const widgets = [];
+  
+  // Widget 1: KPI Grid
+  widgets.push({
+    type: "kpi_grid",
+    gridSpan: 12,
+    items: kpiItems
   });
+  
+  // Widget 2: Spend vs. Performance (Bubble Chart)
+  widgets.push(buildBubbleChartWidget(ads, isConversions));
+  
+  // Widget 3: Efficiency Chart (CPR or CPM Bar Chart)
+  widgets.push(buildEfficiencyChartWidget(ads, isConversions));
+
+  // Widget 4: Impresi vs Jangkauan (Grouped Bar Chart)
+  widgets.push(buildImpReachChartWidget(ads));
+
+  // Widget 5: Brand Doughnut & Stacked Conversions Row
+  widgets.push(buildBrandPieWidget(ads, brandsMap, isConversions, hasMultipleBrands));
+
+  // Widget 6: Stacked chart (New vs Returning OR Reach vs Frequency)
+  widgets.push(buildStackedChartWidget(ads, isConversions, totalNewContacts));
+
+  // Widget 7: Table Widget
+  widgets.push(buildTableWidget(ads, isConversions));
+
+  // Widget 8: Efficiency Bar List
+  widgets.push(buildEfficiencyBarListWidget(ads, isConversions));
 
   return {
     label: `Periode: ${dateRange}`,
@@ -907,7 +1023,8 @@ async function main() {
   console.log('::JSON_RESULT::' + JSON.stringify(jsonResult));
 }
 
-if (require.main === module) {
+const isMain = typeof require !== 'undefined' && require.main && require.main.filename === module.filename;
+if (isMain) {
   main().catch(err => {
     console.error(err);
     process.exit(1);

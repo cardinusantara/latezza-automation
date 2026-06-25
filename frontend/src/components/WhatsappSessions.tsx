@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   IconBrandWhatsapp, 
   IconPlus, 
@@ -68,7 +68,9 @@ export default function WhatsappSessions() {
 
   // Poll sessions list when page is active (every 3 seconds to fetch QR updates/connection statuses)
   useEffect(() => {
-    fetchSessions();
+    setTimeout(() => {
+      fetchSessions();
+    }, 0);
     const interval = setInterval(() => {
       fetchSessions(true);
     }, 3000);
@@ -76,7 +78,7 @@ export default function WhatsappSessions() {
   }, []);
 
   // Handle Add Session
-  const handleAddSession = async (e: React.FormEvent) => {
+  const handleAddSession = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.id.trim() || !form.name.trim()) {
       toast.error('ID dan Nama sesi harus diisi.');
@@ -107,6 +109,7 @@ export default function WhatsappSessions() {
         toast.error(data.message || 'Gagal membuat sesi baru.');
       }
     } catch (err) {
+      console.error(err);
       toast.error('Koneksi gagal saat membuat sesi.');
     } finally {
       setLoading(false);
@@ -131,6 +134,7 @@ export default function WhatsappSessions() {
         toast.error(data.message || 'Gagal menghapus sesi.');
       }
     } catch (err) {
+      console.error(err);
       toast.error('Koneksi gagal saat menghapus sesi.');
     } finally {
       setLoading(false);
@@ -152,6 +156,7 @@ export default function WhatsappSessions() {
         toast.error(data.message || 'Gagal me-regenerate sesi.');
       }
     } catch (err) {
+      console.error(err);
       toast.error('Koneksi gagal saat me-regenerate sesi.');
     } finally {
       setActionLoading(null);
@@ -164,21 +169,21 @@ export default function WhatsappSessions() {
         return (
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.15)]">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            Connected
+            <span>Connected</span>
           </span>
         );
       case 'connecting':
         return (
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-            Connecting...
+            <span>Connecting...</span>
           </span>
         );
       case 'qr_received':
         return (
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-            Scan QR
+            <span>Scan QR</span>
           </span>
         );
       case 'disconnected':
@@ -186,7 +191,7 @@ export default function WhatsappSessions() {
         return (
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border">
             <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground"></span>
-            Disconnected
+            <span>Disconnected</span>
           </span>
         );
     }
@@ -211,25 +216,32 @@ export default function WhatsappSessions() {
         </Button>
       </div>
 
-      {loading && sessions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 bg-card border border-border rounded-2xl">
-          <IconLoader className="animate-spin text-primary mb-4" size={40} />
-          <span className="text-sm font-semibold text-muted-foreground">Memuat sesi WhatsApp...</span>
-        </div>
-      ) : sessions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 bg-card border border-border rounded-2xl text-center">
-          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-4">
-            <IconBrandWhatsapp size={32} />
-          </div>
-          <h3 className="text-lg font-bold mb-1">Belum Ada Sesi WhatsApp</h3>
-          <p className="text-sm text-muted-foreground max-w-sm mb-6">
-            Buat sesi WhatsApp pertamamu untuk menghubungkan nomor agen AI dengan sistem Latezza Cake.
-          </p>
-          <Button onClick={() => setIsAddOpen(true)} className="gap-2">
-            <IconPlus size={16} />
-            Buat Sesi Pertama
-          </Button>
-        </div>
+      {sessions.length === 0 ? (
+        (() => {
+          if (loading) {
+            return (
+              <div className="flex flex-col items-center justify-center p-12 bg-card border border-border rounded-2xl">
+                <IconLoader className="animate-spin text-primary mb-4" size={40} />
+                <span className="text-sm font-semibold text-muted-foreground">Memuat sesi WhatsApp...</span>
+              </div>
+            );
+          }
+          return (
+            <div className="flex flex-col items-center justify-center p-12 bg-card border border-border rounded-2xl text-center">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-4">
+                <IconBrandWhatsapp size={32} />
+              </div>
+              <h3 className="text-lg font-bold mb-1">Belum Ada Sesi WhatsApp</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mb-6">
+                Buat sesi WhatsApp pertamamu untuk menghubungkan nomor agen AI dengan sistem Latezza Cake.
+              </p>
+              <Button onClick={() => setIsAddOpen(true)} className="gap-2">
+                <IconPlus size={16} />
+                Buat Sesi Pertama
+              </Button>
+            </div>
+          );
+        })()
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {sessions.map((session) => (
@@ -254,53 +266,64 @@ export default function WhatsappSessions() {
 
               {/* Card Body */}
               <CardContent className="pb-4 flex-grow flex flex-col justify-center items-center">
-                {session.status === 'qr_received' && session.qr_code ? (
-                  <div className="flex flex-col items-center gap-4 p-4 bg-muted/30 border border-border rounded-xl w-full max-w-[280px]">
-                    <div className="relative p-2 bg-white rounded-lg border border-border shadow-inner">
-                      {/* Scan indicator line */}
-                      <div className="absolute left-2 right-2 top-2 h-[2px] bg-primary animate-scan-line z-10 shadow-[0_0_8px_rgba(235,94,40,0.8)]" />
-                      <img 
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(session.qr_code)}`} 
-                        alt="WhatsApp QR Code"
-                        className="w-[200px] h-[200px]"
-                      />
-                    </div>
-                    <div className="text-center flex flex-col gap-1">
-                      <span className="text-xs font-bold text-foreground">Scan untuk Menyambungkan</span>
-                      <p className="text-[10px] text-muted-foreground max-w-[200px]">
-                        Buka WhatsApp &gt; Perangkat Tertaut &gt; Tautkan Perangkat, lalu arahkan kamera ke kode QR ini.
+                {(() => {
+                  if (session.status === 'qr_received' && session.qr_code) {
+                    return (
+                      <div className="flex flex-col items-center gap-4 p-4 bg-muted/30 border border-border rounded-xl w-full max-w-[280px]">
+                        <div className="relative p-2 bg-white rounded-lg border border-border shadow-inner">
+                          {/* Scan indicator line */}
+                          <div className="absolute left-2 right-2 top-2 h-[2px] bg-primary animate-scan-line z-10 shadow-[0_0_8px_rgba(235,94,40,0.8)]" />
+                          <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(session.qr_code)}`} 
+                            alt="WhatsApp QR Code"
+                            className="w-[200px] h-[200px]"
+                          />
+                        </div>
+                        <div className="text-center flex flex-col gap-1">
+                          <span className="text-xs font-bold text-foreground">Scan untuk Menyambungkan</span>
+                          <p className="text-[10px] text-muted-foreground max-w-[200px]">
+                            Buka WhatsApp &gt; Perangkat Tertaut &gt; Tautkan Perangkat, lalu arahkan kamera ke kode QR ini.
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  }
+                  if (session.status === 'connected') {
+                    return (
+                      <div className="flex flex-col items-center justify-center p-8 text-center text-emerald-500 w-full">
+                        <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center text-emerald-500 mb-3 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+                          <IconCheck size={32} />
+                        </div>
+                        <span className="text-sm font-bold text-foreground mb-1">Sesi Aktif</span>
+                        <p className="text-xs text-muted-foreground max-w-xs">
+                          Agen AI sedang memantau dan membalas pesan masuk ke nomor ini secara otomatis.
+                        </p>
+                      </div>
+                    );
+                  }
+                  if (session.status === 'connecting') {
+                    return (
+                      <div className="flex flex-col items-center justify-center p-8 text-center text-amber-500 w-full">
+                        <IconLoader className="animate-spin mb-3 text-amber-500" size={32} />
+                        <span className="text-sm font-bold text-foreground mb-1">Menghubungkan...</span>
+                        <p className="text-xs text-muted-foreground">
+                          Menghubungkan ke server WhatsApp. Mohon tunggu.
+                        </p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground w-full">
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-3">
+                        <IconAlertCircle size={32} />
+                      </div>
+                      <span className="text-sm font-bold text-foreground mb-1">Terputus</span>
+                      <p className="text-xs text-muted-foreground max-w-xs">
+                        Sesi terputus. Klik tombol **Hubungkan Kembali** untuk memunculkan QR Code pemindaian.
                       </p>
                     </div>
-                  </div>
-                ) : session.status === 'connected' ? (
-                  <div className="flex flex-col items-center justify-center p-8 text-center text-emerald-500 w-full">
-                    <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center text-emerald-500 mb-3 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-                      <IconCheck size={32} />
-                    </div>
-                    <span className="text-sm font-bold text-foreground mb-1">Sesi Aktif</span>
-                    <p className="text-xs text-muted-foreground max-w-xs">
-                      Agen AI sedang memantau dan membalas pesan masuk ke nomor ini secara otomatis.
-                    </p>
-                  </div>
-                ) : session.status === 'connecting' ? (
-                  <div className="flex flex-col items-center justify-center p-8 text-center text-amber-500 w-full">
-                    <IconLoader className="animate-spin mb-3 text-amber-500" size={32} />
-                    <span className="text-sm font-bold text-foreground mb-1">Menghubungkan...</span>
-                    <p className="text-xs text-muted-foreground">
-                      Menghubungkan ke server WhatsApp. Mohon tunggu.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground w-full">
-                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center text-muted-foreground mb-3">
-                      <IconAlertCircle size={32} />
-                    </div>
-                    <span className="text-sm font-bold text-foreground mb-1">Terputus</span>
-                    <p className="text-xs text-muted-foreground max-w-xs">
-                      Sesi terputus. Klik tombol **Hubungkan Kembali** untuk memunculkan QR Code pemindaian.
-                    </p>
-                  </div>
-                )}
+                  );
+                })()}
               </CardContent>
 
               {/* Card Footer Actions */}

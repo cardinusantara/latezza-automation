@@ -5,3 +5,8 @@ report.html
 .env
 dist/
 uploads/
+.scannerwork/
+
+.agents/rules/sonarqube.md
+coverage/
+**/coverage/

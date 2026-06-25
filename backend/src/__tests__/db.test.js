@@ -88,4 +88,27 @@ describe('db.js module', () => {
       ]
     );
   });
+
+  test('createOrUpdateCustomer inserts new customer if not exists', async () => {
+    db.pool.query.mockResolvedValueOnce({ rows: [] }); // getCustomer SELECT returns empty
+    const mockCustomer = { phone_number: '123456', name: 'New Customer' };
+    db.pool.query.mockResolvedValueOnce({ rows: [mockCustomer] }); // INSERT returns customer
+
+    const customer = await db.createOrUpdateCustomer('123456', 'New Customer', { status: 'lead' }, 'default');
+    expect(customer).toEqual(mockCustomer);
+    expect(db.pool.query).toHaveBeenCalledTimes(2);
+    expect(db.pool.query.mock.calls[1][0]).toContain('INSERT INTO customers');
+  });
+
+  test('createOrUpdateCustomer updates existing customer if exists', async () => {
+    const existingCustomer = { phone_number: '123456', name: 'Old Customer' };
+    db.pool.query.mockResolvedValueOnce({ rows: [existingCustomer] }); // getCustomer SELECT returns existing
+    const updatedCustomer = { phone_number: '123456', name: 'Updated Customer' };
+    db.pool.query.mockResolvedValueOnce({ rows: [updatedCustomer] }); // UPDATE returns updated customer
+
+    const customer = await db.createOrUpdateCustomer('123456', 'Updated Customer', { status: 'customer' }, 'default');
+    expect(customer).toEqual(updatedCustomer);
+    expect(db.pool.query).toHaveBeenCalledTimes(2);
+    expect(db.pool.query.mock.calls[1][0]).toContain('UPDATE customers SET');
+  });
 });
