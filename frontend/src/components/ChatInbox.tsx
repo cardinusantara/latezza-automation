@@ -145,8 +145,8 @@ export default function ChatInbox({
     }
   };
 
-  const fetchChatHistory = async (jid: string) => {
-    setLoadingChat(true);
+  const fetchChatHistory = async (jid: string, isSilent = false) => {
+    if (!isSilent) setLoadingChat(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}/history?session_id=${selectedSessionId}`);
       const data = await res.json();
@@ -154,7 +154,7 @@ export default function ChatInbox({
     } catch (err) {
       console.error('Error fetching chat history:', err);
     } finally {
-      setLoadingChat(false);
+      if (!isSilent) setLoadingChat(false);
     }
   };
 
@@ -199,7 +199,7 @@ export default function ChatInbox({
   useEffect(() => {
     if (!selectedJid) return;
     const interval = setInterval(() => {
-      fetchChatHistory(selectedJid);
+      fetchChatHistory(selectedJid, true);
       fetchCustomerDetails(selectedJid);
     }, 4000);
     return () => clearInterval(interval);

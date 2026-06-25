@@ -274,4 +274,44 @@ describe('ChatInbox Component', () => {
     expect(mainTextarea.value).toContain('https://shopee.co.id/marmer-cake');
     expect(showToastMock).toHaveBeenCalledWith('Link Shopee dimasukkan ke input.');
   });
+
+  test('polling does not show loading spinner during background refresh', async () => {
+    vi.useFakeTimers();
+
+    render(
+      <ChatInbox
+        customers={mockCustomers}
+        products={mockProducts}
+        onRefreshData={onRefreshDataMock}
+        showToast={showToastMock}
+        selectedJid="62812345678@s.whatsapp.net"
+        setSelectedJid={setSelectedJidMock}
+        selectedCustName="Alice Cooper"
+        setSelectedCustName={setSelectedCustNameMock}
+        selectedSessionId="default"
+        setSelectedSessionId={setSelectedSessionIdMock}
+        sessions={mockSessions}
+      />
+    );
+
+    // Run pending timers to trigger mount effects and resolve fetch promises
+    await vi.runOnlyPendingTimersAsync();
+
+    // Verify initial fetch was called
+    expect(window.fetch).toHaveBeenCalledWith(expect.stringContaining('/history'));
+
+    // Clear mock calls to focus on polling
+    vi.mocked(window.fetch).mockClear();
+
+    // Advance time by 4 seconds (4000ms) to trigger polling and resolve fetch promise
+    await vi.advanceTimersByTimeAsync(4000);
+
+    // Verify polling fetch was called
+    expect(window.fetch).toHaveBeenCalledWith(expect.stringContaining('/history'));
+
+    // The loading spinner/text should NOT be visible
+    expect(screen.queryByText('Memuat percakapan...')).not.toBeInTheDocument();
+
+    vi.useRealTimers();
+  });
 });
