@@ -165,13 +165,13 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Products.tsx": {
-    "mtime": 1782365561.0411522,
-    "ast_hash": "d94f025c58d502d6046cbf2f84f92bd4",
+    "mtime": 1782365943.8639069,
+    "ast_hash": "921792ca9555c0167b19da929ccc02cb",
     "semantic_hash": ""
   },
   "frontend/src/components/Settings.tsx": {
-    "mtime": 1782365556.6000755,
-    "ast_hash": "fc20671a6b498fc922917f384b1304c4",
+    "mtime": 1782365956.6414416,
+    "ast_hash": "69eafca9ed95dd4dd76ee3b831c023cd",
     "semantic_hash": ""
   },
   "frontend/src/components/Sidebar.tsx": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/WhatsappSessions.tsx": {
-    "mtime": 1782365721.2526467,
-    "ast_hash": "6bba2d20c16db632f203ce72fc8a9673",
+    "mtime": 1782365962.1117775,
+    "ast_hash": "ad34958e92a8f1d2915c2b3763012d32",
     "semantic_hash": ""
   },
   "frontend/src/components/theme-provider.tsx": {
@@ -375,8 +375,8 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1782365852.977046,
-    "ast_hash": "a4f51ac5692ad30f9de2a2d01b5d61d7",
+    "mtime": 1782366099.97971,
+    "ast_hash": "51cdfb503b5a5ea82dd62d98b6101c30",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
@@ -6835,8 +6835,8 @@
     "semantic_hash": ""
   },
   "backend/laporan_sonar.json": {
-    "mtime": 1782365841.3571453,
-    "ast_hash": "2e93f579d614a4b3ec6c32a20f2fa56d",
+    "mtime": 1782366078.9757693,
+    "ast_hash": "8eb6784566ce4e99dc2fa8c53f432e0d",
     "semantic_hash": ""
   },
   "backend/scratch/fetch_sonar.js": {
@@ -6845,8 +6845,8 @@
     "semantic_hash": ""
   },
   "backend/laporan_sonar.md": {
-    "mtime": 1782365841.3571453,
-    "ast_hash": "ff334202733827d9111a1be3dc395386",
+    "mtime": 1782366078.9757693,
+    "ast_hash": "92678db2224cbbfd1c5cbc1b625d03b3",
     "semantic_hash": ""
   },
   ".scannerwork/report-task.txt": {

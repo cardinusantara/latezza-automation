@@ -651,12 +651,24 @@ function GeminiAnalyticsPanel({ usageStats, usageLoading, loadUsageStats }: Read
   // Map backend feature name to pretty Indonesian label
   const getFeatureLabel = (name: string) => {
     switch (name) {
-      case 'chatbot': return 'Chatbot WhatsApp';
-      case 'followup': return 'Proactive Follow-up';
-      case 'creative': return 'Creative Ad Ideas';
-      case 'ads': return 'Meta Ads Analysis';
-      case 'summary': return 'Conversation Summary';
-      default: return name;
+      case 'whatsapp_chat':
+      case 'chatbot':
+        return 'Chatbot WhatsApp';
+      case 'followup':
+        return 'Proactive Follow-up';
+      case 'creative_analysis':
+      case 'creative':
+        return 'Creative Ad Ideas';
+      case 'ads_analysis':
+      case 'ads':
+        return 'Meta Ads Analysis';
+      case 'message_summary':
+      case 'summary':
+        return 'Conversation Summary';
+      case 'audio_transcription':
+        return 'Audio Transcription';
+      default:
+        return name;
     }
   };
 

@@ -1,16 +1,16 @@
 # Graph Report - latezza-automation  (2026-06-25)
 
 ## Corpus Check
-- 120 files · ~87,853 words
+- 120 files · ~88,202 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1068 nodes · 1401 edges · 102 communities (81 shown, 21 thin omitted)
+- 1069 nodes · 1402 edges · 104 communities (83 shown, 21 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b1196dcf`
+- Built from commit: `b09f0729`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -105,6 +105,8 @@
 - [[_COMMUNITY_Community 99|Community 99]]
 - [[_COMMUNITY_Community 100|Community 100]]
 - [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 78 edges
@@ -138,7 +140,7 @@
 - **Meta Ads Automation Pipeline** — latezza_automation_meta_ads_reporting, latezza_automation_creative_ad_analysis, latezza_automation_meta_graph_api, latezza_automation_dynamic_scheduler [EXTRACTED 0.95]
 - **RAG Product Search Pipeline** — latezza_automation_rag_semantic_search, latezza_automation_gemini_embedding_2, latezza_automation_cosine_similarity, latezza_automation_products_table [EXTRACTED 0.95]
 
-## Communities (102 total, 21 thin omitted)
+## Communities (104 total, 21 thin omitted)
 
 ### Community 0 - "WhatsApp CRM & Follow-up"
 Cohesion: 0.06
@@ -165,8 +167,8 @@ Cohesion: 0.17
 Nodes (12): 2026-06-18, AI response formatting — natural plaintext guardrails, backend layered refactoring — architecture overhaul, environment separation — independent backend & frontend, follow-up instruction — smart prompt wrapping (3 modes), follow-up system — confirmed working end-to-end, follow-up system — prompt quality fix, follow-up time safeguard — manual trigger bypass & hourly cron (+4 more)
 
 ### Community 6 - "SSE Streaming API"
-Cohesion: 0.07
-Nodes (26): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+18 more)
+Cohesion: 0.12
+Nodes (17): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+9 more)
 
 ### Community 7 - "UI Actions Component"
 Cohesion: 0.08
@@ -193,8 +195,8 @@ Cohesion: 0.08
 Nodes (24): dependencies, dotenv, fastify, @fastify/cors, @fastify/multipart, @fastify/static, @ffmpeg-installer/ffmpeg, @google/generative-ai (+16 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.09
-Nodes (13): backfillProductEmbeddings(), createOrUpdateCustomer(), dbConfig, generateEmbedding(), getCustomer(), getSetting(), { GoogleGenerativeAI }, initDb() (+5 more)
+Cohesion: 0.11
+Nodes (6): createOrUpdateCustomer(), dbConfig, getCustomer(), { GoogleGenerativeAI }, { Pool }, settingsCache
 
 ### Community 14 - "Community 14"
 Cohesion: 0.11
@@ -205,13 +207,13 @@ Cohesion: 0.11
 Nodes (18): CLI, Component Docs, Examples, and Usage, Component Selection, Component Structure → [composition.md](./rules/composition.md), Critical Rules, Current Project Context, Detailed References, Forms & Inputs → [forms.md](./rules/forms.md) (+10 more)
 
 ### Community 16 - "Community 16"
-Cohesion: 0.11
-Nodes (15): agent, connectSession(), connectToWhatsApp(), db, DEBOUNCE_DELAY_MS, debounceCache, {
+Cohesion: 0.10
+Nodes (26): addMessageToDebounceBuffer(), agent, connectSession(), connectToWhatsApp(), db, DEBOUNCE_DELAY_MS, debounceCache, {
   default: makeWASocket,
   useMultiFileAuthState,
   DisconnectReason,
   downloadMediaMessage
-}, fs (+7 more)
+} (+18 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.07
@@ -310,8 +312,8 @@ Cohesion: 0.20
 Nodes (9): Agent habits — always do these, AGENTS.md — Latezza WhatsApp AI Agent, API overview, Backend (in `backend/`), Development commands, Frontend (in `frontend/`), graphify, Project structure (+1 more)
 
 ### Community 62 - "Community 62"
-Cohesion: 0.17
-Nodes (11): 2026-06-22, 2026-06-23, 2026-06-25, Achieved 100% SonarQube Quality Gate Compliance, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Dynamic Cost Calculator, Gemini API Usage & Costs Tracking (+3 more)
+Cohesion: 0.22
+Nodes (8): 2026-06-20, 2026-06-22, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Optimized Creative Analysis Sourcing & CSV Context, Voice Message Comprehension & Audio Player, WhatsApp Message Debouncing & Abuse Prevention, WhatsApp Multi-Session & QR Scanner Dashboard
 
 ### Community 63 - "Community 63"
 Cohesion: 0.29
@@ -342,8 +344,8 @@ Cohesion: 0.22
 Nodes (5): SettingsProps, SettingsState, Input(), Switch(), Textarea()
 
 ### Community 77 - "Community 77"
-Cohesion: 0.24
-Nodes (11): addMessageToDebounceBuffer(), downloadAndSaveAudio(), downloadAndSaveImage(), downloadIncomingMedia(), extractMessageText(), handleIncomingMessagesUpsert(), isRateLimited(), processIncomingMessage() (+3 more)
+Cohesion: 0.22
+Nodes (9): Address Schemes, Build and Verify, GitHub Registries, Include, Item Definitions, Mental Model, Registry Authoring and Addresses, Registry Dependencies (+1 more)
 
 ### Community 78 - "Community 78"
 Cohesion: 0.22
@@ -418,11 +420,19 @@ Cohesion: 0.40
 Nodes (5): Tabs(), TabsContent(), TabsList(), tabsListVariants, TabsTrigger()
 
 ### Community 99 - "Community 99"
+Cohesion: 0.29
+Nodes (7): backfillProductEmbeddings(), generateEmbedding(), getSetting(), initDb(), loadAllSettings(), searchProducts(), searchProductsFallback()
+
+### Community 102 - "Community 102"
+Cohesion: 0.50
+Nodes (4): 2026-06-23, Dynamic Cost Calculator, Gemini API Usage & Costs Tracking, Gemini Model Configuration Refactor
+
+### Community 103 - "Community 103"
 Cohesion: 0.67
-Nodes (3): 2026-06-20, Voice Message Comprehension & Audio Player, WhatsApp Multi-Session & QR Scanner Dashboard
+Nodes (3): 2026-06-25, Achieved 100% SonarQube Quality Gate Compliance, Gemini API Usage and Cost Tracking Integration
 
 ## Knowledge Gaps
-- **594 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+589 more)
+- **595 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+590 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **21 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -434,9 +444,9 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `getDateRangeLabel()` connect `Community 55` to `UI Actions Component`?**
   _High betweenness centrality (0.113) - this node is a cross-community bridge._
 - **Why does `cn()` connect `Mobile Hook` to `Community 98`, `UI Actions Component`, `Community 74`, `Community 84`, `Community 87`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugin`, `@opencode-ai/plugin` to the rest of the system?**
-  _598 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _599 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**

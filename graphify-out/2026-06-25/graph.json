@@ -2016,7 +2016,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_db_initdb",
-      "community": 77,
+      "community": 13,
       "norm_label": "initdb()"
     },
     {
@@ -2026,7 +2026,7 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "src_db_loadallsettings",
-      "community": 77,
+      "community": 13,
       "norm_label": "loadallsettings()"
     },
     {
@@ -2036,7 +2036,7 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "src_db_getsetting",
-      "community": 77,
+      "community": 13,
       "norm_label": "getsetting()"
     },
     {
@@ -2096,7 +2096,7 @@
       "source_location": "L334",
       "_origin": "ast",
       "id": "src_db_searchproductsfallback",
-      "community": 77,
+      "community": 13,
       "norm_label": "searchproductsfallback()"
     },
     {
@@ -2106,7 +2106,7 @@
       "source_location": "L349",
       "_origin": "ast",
       "id": "src_db_searchproducts",
-      "community": 77,
+      "community": 13,
       "norm_label": "searchproducts()"
     },
     {
@@ -2136,7 +2136,7 @@
       "source_location": "L471",
       "_origin": "ast",
       "id": "src_db_generateembedding",
-      "community": 77,
+      "community": 13,
       "norm_label": "generateembedding()"
     },
     {
@@ -2146,7 +2146,7 @@
       "source_location": "L488",
       "_origin": "ast",
       "id": "src_db_backfillproductembeddings",
-      "community": 77,
+      "community": 13,
       "norm_label": "backfillproductembeddings()"
     },
     {
@@ -2716,7 +2716,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "services_followup",
-      "community": 37,
+      "community": 80,
       "norm_label": "followup.js"
     },
     {
@@ -2726,7 +2726,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "services_followup_googlegenerativeai",
-      "community": 37,
+      "community": 80,
       "norm_label": "{ googlegenerativeai }"
     },
     {
@@ -2736,7 +2736,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "services_followup_db",
-      "community": 37,
+      "community": 80,
       "norm_label": "db"
     },
     {
@@ -2746,7 +2746,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "services_followup_whatsappservice",
-      "community": 37,
+      "community": 80,
       "norm_label": "whatsappservice"
     },
     {
@@ -2756,7 +2756,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "services_followup_processsinglefollowup",
-      "community": 37,
+      "community": 80,
       "norm_label": "processsinglefollowup()"
     },
     {
@@ -2766,7 +2766,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "services_followup_runproactivefollowups",
-      "community": 37,
+      "community": 80,
       "norm_label": "runproactivefollowups()"
     },
     {
@@ -3126,7 +3126,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "services_whatsapp_isratelimited",
-      "community": 16,
+      "community": 77,
       "norm_label": "isratelimited()"
     },
     {
@@ -3136,7 +3136,7 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "services_whatsapp_transcribeaudio",
-      "community": 16,
+      "community": 77,
       "norm_label": "transcribeaudio()"
     },
     {
@@ -3146,7 +3146,7 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "services_whatsapp_shouldignoremessage",
-      "community": 16,
+      "community": 77,
       "norm_label": "shouldignoremessage()"
     },
     {
@@ -3156,7 +3156,7 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "services_whatsapp_downloadandsaveimage",
-      "community": 16,
+      "community": 77,
       "norm_label": "downloadandsaveimage()"
     },
     {
@@ -3166,7 +3166,7 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "services_whatsapp_downloadandsaveaudio",
-      "community": 16,
+      "community": 77,
       "norm_label": "downloadandsaveaudio()"
     },
     {
@@ -3186,7 +3186,7 @@
       "source_location": "L294",
       "_origin": "ast",
       "id": "services_whatsapp_extractmessagetext",
-      "community": 16,
+      "community": 77,
       "norm_label": "extractmessagetext()"
     },
     {
@@ -3196,7 +3196,7 @@
       "source_location": "L306",
       "_origin": "ast",
       "id": "services_whatsapp_downloadincomingmedia",
-      "community": 16,
+      "community": 77,
       "norm_label": "downloadincomingmedia()"
     },
     {
@@ -3206,7 +3206,7 @@
       "source_location": "L330",
       "_origin": "ast",
       "id": "services_whatsapp_resolvecustomerandpresence",
-      "community": 16,
+      "community": 77,
       "norm_label": "resolvecustomerandpresence()"
     },
     {
@@ -3216,7 +3216,7 @@
       "source_location": "L350",
       "_origin": "ast",
       "id": "services_whatsapp_addmessagetodebouncebuffer",
-      "community": 16,
+      "community": 77,
       "norm_label": "addmessagetodebouncebuffer()"
     },
     {
@@ -3226,7 +3226,7 @@
       "source_location": "L380",
       "_origin": "ast",
       "id": "services_whatsapp_processincomingmessage",
-      "community": 16,
+      "community": 77,
       "norm_label": "processincomingmessage()"
     },
     {
@@ -3236,7 +3236,7 @@
       "source_location": "L433",
       "_origin": "ast",
       "id": "services_whatsapp_handleincomingmessagesupsert",
-      "community": 16,
+      "community": 77,
       "norm_label": "handleincomingmessagesupsert()"
     },
     {
@@ -4066,7 +4066,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app",
-      "community": 86,
+      "community": 87,
       "norm_label": "app.tsx"
     },
     {
@@ -4076,7 +4076,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_app_lead",
-      "community": 86,
+      "community": 87,
       "norm_label": "lead"
     },
     {
@@ -4086,7 +4086,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_app_stats",
-      "community": 86,
+      "community": 87,
       "norm_label": "stats"
     },
     {
@@ -4096,7 +4096,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "src_app_app",
-      "community": 86,
+      "community": 87,
       "norm_label": "app()"
     },
     {
@@ -4126,7 +4126,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "components_actions_actions",
-      "community": 86,
+      "community": 87,
       "norm_label": "actions()"
     },
     {
@@ -4816,7 +4816,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_products",
-      "community": 84,
+      "community": 7,
       "norm_label": "products.tsx"
     },
     {
@@ -4826,7 +4826,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "components_products_product",
-      "community": 84,
+      "community": 7,
       "norm_label": "product"
     },
     {
@@ -4836,7 +4836,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "components_products_productsprops",
-      "community": 84,
+      "community": 7,
       "norm_label": "productsprops"
     },
     {
@@ -4846,7 +4846,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "components_products_products",
-      "community": 84,
+      "community": 7,
       "norm_label": "products()"
     },
     {
@@ -4856,7 +4856,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_settings",
-      "community": 87,
+      "community": 74,
       "norm_label": "settings.tsx"
     },
     {
@@ -4866,7 +4866,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "components_settings_settingsstate",
-      "community": 87,
+      "community": 74,
       "norm_label": "settingsstate"
     },
     {
@@ -4876,7 +4876,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "components_settings_settingsprops",
-      "community": 87,
+      "community": 74,
       "norm_label": "settingsprops"
     },
     {
@@ -4886,7 +4886,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "components_settings_settings",
-      "community": 87,
+      "community": 74,
       "norm_label": "settings()"
     },
     {
@@ -5036,7 +5036,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_overview_test",
-      "community": 7,
+      "community": 101,
       "norm_label": "overview.test.tsx"
     },
     {
@@ -5046,7 +5046,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_overview_test_mockstats",
-      "community": 7,
+      "community": 101,
       "norm_label": "mockstats"
     },
     {
@@ -5056,7 +5056,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_overview_test_mocksessions",
-      "community": 7,
+      "community": 101,
       "norm_label": "mocksessions"
     },
     {
@@ -5066,7 +5066,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_products_test",
-      "community": 84,
+      "community": 7,
       "norm_label": "products.test.tsx"
     },
     {
@@ -5076,7 +5076,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "tests_products_test_mockproducts",
-      "community": 84,
+      "community": 7,
       "norm_label": "mockproducts"
     },
     {
@@ -5086,7 +5086,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_settings_test",
-      "community": 87,
+      "community": 74,
       "norm_label": "settings.test.tsx"
     },
     {
@@ -5236,7 +5236,7 @@
       "source_location": "L222",
       "_origin": "ast",
       "id": "components_theme_provider_usetheme",
-      "community": 86,
+      "community": 8,
       "norm_label": "usetheme()"
     },
     {
@@ -5246,7 +5246,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_badge",
-      "community": 83,
+      "community": 7,
       "norm_label": "badge.tsx"
     },
     {
@@ -5256,7 +5256,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "ui_badge_badgevariants",
-      "community": 83,
+      "community": 7,
       "norm_label": "badgevariants"
     },
     {
@@ -5266,7 +5266,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "ui_badge_badge",
-      "community": 83,
+      "community": 7,
       "norm_label": "badge()"
     },
     {
@@ -5276,7 +5276,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_button",
-      "community": 86,
+      "community": 84,
       "norm_label": "button.tsx"
     },
     {
@@ -5286,7 +5286,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "ui_button_buttonvariants",
-      "community": 86,
+      "community": 84,
       "norm_label": "buttonvariants"
     },
     {
@@ -5296,7 +5296,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "ui_button_button",
-      "community": 86,
+      "community": 84,
       "norm_label": "button()"
     },
     {
@@ -5496,7 +5496,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_input",
-      "community": 9,
+      "community": 74,
       "norm_label": "input.tsx"
     },
     {
@@ -5506,7 +5506,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "ui_input_input",
-      "community": 9,
+      "community": 74,
       "norm_label": "input()"
     },
     {
@@ -5946,7 +5946,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_sonner",
-      "community": 86,
+      "community": 8,
       "norm_label": "sonner.tsx"
     },
     {
@@ -5956,7 +5956,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ui_sonner_toaster",
-      "community": 86,
+      "community": 8,
       "norm_label": "toaster()"
     },
     {
@@ -5966,7 +5966,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_switch",
-      "community": 9,
+      "community": 74,
       "norm_label": "switch.tsx"
     },
     {
@@ -5976,7 +5976,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ui_switch_switch",
-      "community": 9,
+      "community": 74,
       "norm_label": "switch()"
     },
     {
@@ -5986,7 +5986,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_table",
-      "community": 84,
+      "community": 7,
       "norm_label": "table.tsx"
     },
     {
@@ -5996,7 +5996,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "ui_table_table",
-      "community": 84,
+      "community": 7,
       "norm_label": "table()"
     },
     {
@@ -6006,7 +6006,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ui_table_tableheader",
-      "community": 84,
+      "community": 7,
       "norm_label": "tableheader()"
     },
     {
@@ -6016,7 +6016,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "ui_table_tablebody",
-      "community": 84,
+      "community": 7,
       "norm_label": "tablebody()"
     },
     {
@@ -6026,7 +6026,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "ui_table_tablefooter",
-      "community": 84,
+      "community": 7,
       "norm_label": "tablefooter()"
     },
     {
@@ -6036,7 +6036,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "ui_table_tablerow",
-      "community": 84,
+      "community": 7,
       "norm_label": "tablerow()"
     },
     {
@@ -6046,7 +6046,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "ui_table_tablehead",
-      "community": 84,
+      "community": 7,
       "norm_label": "tablehead()"
     },
     {
@@ -6056,7 +6056,7 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "ui_table_tablecell",
-      "community": 84,
+      "community": 7,
       "norm_label": "tablecell()"
     },
     {
@@ -6066,7 +6066,7 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "ui_table_tablecaption",
-      "community": 84,
+      "community": 7,
       "norm_label": "tablecaption()"
     },
     {
@@ -6076,7 +6076,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_tabs",
-      "community": 9,
+      "community": 98,
       "norm_label": "tabs.tsx"
     },
     {
@@ -6086,7 +6086,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "ui_tabs_tabs",
-      "community": 9,
+      "community": 98,
       "norm_label": "tabs()"
     },
     {
@@ -6096,7 +6096,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "ui_tabs_tabslistvariants",
-      "community": 9,
+      "community": 98,
       "norm_label": "tabslistvariants"
     },
     {
@@ -6106,7 +6106,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "ui_tabs_tabslist",
-      "community": 9,
+      "community": 98,
       "norm_label": "tabslist()"
     },
     {
@@ -6116,7 +6116,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "ui_tabs_tabstrigger",
-      "community": 9,
+      "community": 98,
       "norm_label": "tabstrigger()"
     },
     {
@@ -6126,7 +6126,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "ui_tabs_tabscontent",
-      "community": 9,
+      "community": 98,
       "norm_label": "tabscontent()"
     },
     {
@@ -6136,7 +6136,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_textarea",
-      "community": 87,
+      "community": 74,
       "norm_label": "textarea.tsx"
     },
     {
@@ -6146,7 +6146,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "ui_textarea_textarea",
-      "community": 87,
+      "community": 74,
       "norm_label": "textarea()"
     },
     {
@@ -6226,7 +6226,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_use_mobile_test",
-      "community": 9,
+      "community": 100,
       "norm_label": "use-mobile.test.ts"
     },
     {
@@ -6236,7 +6236,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "hooks_use_mobile",
-      "community": 9,
+      "community": 100,
       "norm_label": "use-mobile.ts"
     },
     {
@@ -6246,7 +6246,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "hooks_use_mobile_useismobile",
-      "community": 9,
+      "community": 100,
       "norm_label": "useismobile()"
     },
     {
@@ -6256,7 +6256,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_utils_test",
-      "community": 9,
+      "community": 74,
       "norm_label": "utils.test.ts"
     },
     {
@@ -6266,7 +6266,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_utils",
-      "community": 9,
+      "community": 74,
       "norm_label": "utils.ts"
     },
     {
@@ -7176,7 +7176,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "shadcn_cli",
-      "community": 35,
+      "community": 6,
       "norm_label": "cli.md"
     },
     {
@@ -7626,7 +7626,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "shadcn_registry",
-      "community": 35,
+      "community": 6,
       "norm_label": "registry.md"
     },
     {
@@ -7636,7 +7636,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "shadcn_registry_registry_authoring_and_addresses",
-      "community": 74,
+      "community": 6,
       "norm_label": "registry authoring and addresses"
     },
     {
@@ -7646,7 +7646,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "shadcn_registry_mental_model",
-      "community": 74,
+      "community": 6,
       "norm_label": "mental model"
     },
     {
@@ -7656,7 +7656,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "shadcn_registry_root_registry_json",
-      "community": 74,
+      "community": 6,
       "norm_label": "root `registry.json`"
     },
     {
@@ -7666,7 +7666,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "shadcn_registry_include",
-      "community": 74,
+      "community": 6,
       "norm_label": "include"
     },
     {
@@ -7676,7 +7676,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "shadcn_registry_item_definitions",
-      "community": 74,
+      "community": 6,
       "norm_label": "item definitions"
     },
     {
@@ -7686,7 +7686,7 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "shadcn_registry_registry_dependencies",
-      "community": 74,
+      "community": 6,
       "norm_label": "registry dependencies"
     },
     {
@@ -7696,7 +7696,7 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "shadcn_registry_address_schemes",
-      "community": 74,
+      "community": 6,
       "norm_label": "address schemes"
     },
     {
@@ -7706,7 +7706,7 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "shadcn_registry_github_registries",
-      "community": 74,
+      "community": 6,
       "norm_label": "github registries"
     },
     {
@@ -7716,7 +7716,7 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "shadcn_registry_build_and_verify",
-      "community": 74,
+      "community": 6,
       "norm_label": "build and verify"
     },
     {
@@ -9056,7 +9056,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "changelog_2026_06_23",
-      "community": 80,
+      "community": 62,
       "norm_label": "2026-06-23"
     },
     {
@@ -9066,7 +9066,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "changelog_dynamic_cost_calculator",
-      "community": 80,
+      "community": 62,
       "norm_label": "dynamic cost calculator"
     },
     {
@@ -9076,34 +9076,24 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "changelog_gemini_model_configuration_refactor",
-      "community": 80,
+      "community": 62,
       "norm_label": "gemini model configuration refactor"
-    },
-    {
-      "label": "Gemini Cost Calculator Tool",
-      "file_type": "document",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L119",
-      "_origin": "ast",
-      "id": "changelog_gemini_cost_calculator_tool",
-      "community": 80,
-      "norm_label": "gemini cost calculator tool"
     },
     {
       "label": "Gemini API Usage & Costs Tracking",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L127",
+      "source_location": "L119",
       "_origin": "ast",
       "id": "changelog_gemini_api_usage_costs_tracking",
-      "community": 80,
+      "community": 62,
       "norm_label": "gemini api usage & costs tracking"
     },
     {
       "label": "2026-06-22",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L148",
+      "source_location": "L140",
       "_origin": "ast",
       "id": "changelog_2026_06_22",
       "community": 62,
@@ -9113,7 +9103,7 @@
       "label": "Optimized Creative Analysis Sourcing & CSV Context",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L150",
+      "source_location": "L142",
       "_origin": "ast",
       "id": "changelog_optimized_creative_analysis_sourcing_csv_context",
       "community": 62,
@@ -9123,7 +9113,7 @@
       "label": "WhatsApp Message Debouncing & Abuse Prevention",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L160",
+      "source_location": "L152",
       "_origin": "ast",
       "id": "changelog_whatsapp_message_debouncing_abuse_prevention",
       "community": 62,
@@ -9133,7 +9123,7 @@
       "label": "2026-06-21",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L168",
+      "source_location": "L160",
       "_origin": "ast",
       "id": "changelog_2026_06_21",
       "community": 56,
@@ -9143,7 +9133,7 @@
       "label": "Comprehensive Test Cases & Automated Testing Pipeline",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L170",
+      "source_location": "L162",
       "_origin": "ast",
       "id": "changelog_comprehensive_test_cases_automated_testing_pipeline",
       "community": 56,
@@ -9153,7 +9143,7 @@
       "label": "AI Insights, Timeframe KPIs, and Custom Prompts for Creative Analysis",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L180",
+      "source_location": "L172",
       "_origin": "ast",
       "id": "changelog_ai_insights_timeframe_kpis_and_custom_prompts_for_creative_analysis",
       "community": 56,
@@ -9163,7 +9153,7 @@
       "label": "Overview Session Filter, Navigation, and Immediate WhatsApp AI Status Updates",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L189",
+      "source_location": "L181",
       "_origin": "ast",
       "id": "changelog_overview_session_filter_navigation_and_immediate_whatsapp_ai_status_updates",
       "community": 56,
@@ -9173,7 +9163,7 @@
       "label": "Meta Ads Analysis UI/UX & Real-time Progress Streaming",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L197",
+      "source_location": "L189",
       "_origin": "ast",
       "id": "changelog_meta_ads_analysis_ui_ux_real_time_progress_streaming",
       "community": 56,
@@ -9183,7 +9173,7 @@
       "label": "Meta Ads CSV Date Range Filtering & Proportional Projections Bugfix",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L208",
+      "source_location": "L200",
       "_origin": "ast",
       "id": "changelog_meta_ads_csv_date_range_filtering_proportional_projections_bugfix",
       "community": 56,
@@ -9193,7 +9183,7 @@
       "label": "Meta Ads Analysis Refactor: Custom Date Range & Projection Removal",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L214",
+      "source_location": "L206",
       "_origin": "ast",
       "id": "changelog_meta_ads_analysis_refactor_custom_date_range_projection_removal",
       "community": 56,
@@ -9203,7 +9193,7 @@
       "label": "Audio Playback, Transcoding, and Database Metadata Fixes",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L223",
+      "source_location": "L215",
       "_origin": "ast",
       "id": "changelog_audio_playback_transcoding_and_database_metadata_fixes",
       "community": 56,
@@ -9213,7 +9203,7 @@
       "label": "Dashboard Outgoing Voice Message Recording & Transcribing",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L229",
+      "source_location": "L221",
       "_origin": "ast",
       "id": "changelog_dashboard_outgoing_voice_message_recording_transcribing",
       "community": 56,
@@ -9223,37 +9213,37 @@
       "label": "2026-06-20",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L238",
+      "source_location": "L230",
       "_origin": "ast",
       "id": "changelog_2026_06_20",
-      "community": 62,
+      "community": 99,
       "norm_label": "2026-06-20"
     },
     {
       "label": "Voice Message Comprehension & Audio Player",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L240",
+      "source_location": "L232",
       "_origin": "ast",
       "id": "changelog_voice_message_comprehension_audio_player",
-      "community": 62,
+      "community": 99,
       "norm_label": "voice message comprehension & audio player"
     },
     {
       "label": "WhatsApp Multi-Session & QR Scanner Dashboard",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L249",
+      "source_location": "L241",
       "_origin": "ast",
       "id": "changelog_whatsapp_multi_session_qr_scanner_dashboard",
-      "community": 62,
+      "community": 99,
       "norm_label": "whatsapp multi-session & qr scanner dashboard"
     },
     {
       "label": "2026-06-19",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L260",
+      "source_location": "L252",
       "_origin": "ast",
       "id": "changelog_2026_06_19",
       "community": 65,
@@ -9263,7 +9253,7 @@
       "label": "Latezza Agent branding, Warm UI theme, Light/Dark Mode & Mobile responsiveness",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L262",
+      "source_location": "L254",
       "_origin": "ast",
       "id": "changelog_latezza_agent_branding_warm_ui_theme_light_dark_mode_mobile_responsiveness",
       "community": 65,
@@ -9273,7 +9263,7 @@
       "label": "AI Creative Ad Ideas & Copywriting Audit",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L274",
+      "source_location": "L266",
       "_origin": "ast",
       "id": "changelog_ai_creative_ad_ideas_copywriting_audit",
       "community": 65,
@@ -9283,7 +9273,7 @@
       "label": "Dynamic Background Scheduler & Reloading",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L281",
+      "source_location": "L273",
       "_origin": "ast",
       "id": "changelog_dynamic_background_scheduler_reloading",
       "community": 65,
@@ -9293,7 +9283,7 @@
       "label": "SSE Progress Streaming & Dashboard UI",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L286",
+      "source_location": "L278",
       "_origin": "ast",
       "id": "changelog_sse_progress_streaming_dashboard_ui",
       "community": 65,
@@ -9303,7 +9293,7 @@
       "label": "Best-Practice Error Propagation",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L292",
+      "source_location": "L284",
       "_origin": "ast",
       "id": "changelog_best_practice_error_propagation",
       "community": 65,
@@ -9313,7 +9303,7 @@
       "label": "2026-06-18",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L298",
+      "source_location": "L290",
       "_origin": "ast",
       "id": "changelog_2026_06_18",
       "community": 5,
@@ -9323,7 +9313,7 @@
       "label": "RAG semantic product search \u2014 AI-powered catalog matching",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L300",
+      "source_location": "L292",
       "_origin": "ast",
       "id": "changelog_rag_semantic_product_search_ai_powered_catalog_matching",
       "community": 5,
@@ -9333,7 +9323,7 @@
       "label": "backend layered refactoring \u2014 architecture overhaul",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L308",
+      "source_location": "L300",
       "_origin": "ast",
       "id": "changelog_backend_layered_refactoring_architecture_overhaul",
       "community": 5,
@@ -9343,7 +9333,7 @@
       "label": "environment separation \u2014 independent backend & frontend",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L321",
+      "source_location": "L313",
       "_origin": "ast",
       "id": "changelog_environment_separation_independent_backend_frontend",
       "community": 5,
@@ -9353,7 +9343,7 @@
       "label": "follow-up time safeguard \u2014 manual trigger bypass & hourly cron",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L327",
+      "source_location": "L319",
       "_origin": "ast",
       "id": "changelog_follow_up_time_safeguard_manual_trigger_bypass_hourly_cron",
       "community": 5,
@@ -9363,7 +9353,7 @@
       "label": "AI response formatting \u2014 natural plaintext guardrails",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L332",
+      "source_location": "L324",
       "_origin": "ast",
       "id": "changelog_ai_response_formatting_natural_plaintext_guardrails",
       "community": 5,
@@ -9373,7 +9363,7 @@
       "label": "obsolete product sync \u2014 removal",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L337",
+      "source_location": "L329",
       "_origin": "ast",
       "id": "changelog_obsolete_product_sync_removal",
       "community": 5,
@@ -9383,7 +9373,7 @@
       "label": "follow-up system \u2014 prompt quality fix",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L341",
+      "source_location": "L333",
       "_origin": "ast",
       "id": "changelog_follow_up_system_prompt_quality_fix",
       "community": 5,
@@ -9393,7 +9383,7 @@
       "label": "follow-up instruction \u2014 smart prompt wrapping (3 modes)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L350",
+      "source_location": "L342",
       "_origin": "ast",
       "id": "changelog_follow_up_instruction_smart_prompt_wrapping_3_modes",
       "community": 5,
@@ -9403,7 +9393,7 @@
       "label": "Settings UI \u2014 follow-up section improvement",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L359",
+      "source_location": "L351",
       "_origin": "ast",
       "id": "changelog_settings_ui_follow_up_section_improvement",
       "community": 5,
@@ -9413,7 +9403,7 @@
       "label": "settings cache \u2014 clarification",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L367",
+      "source_location": "L359",
       "_origin": "ast",
       "id": "changelog_settings_cache_clarification",
       "community": 5,
@@ -9423,7 +9413,7 @@
       "label": "follow-up system \u2014 confirmed working end-to-end",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L373",
+      "source_location": "L365",
       "_origin": "ast",
       "id": "changelog_follow_up_system_confirmed_working_end_to_end",
       "community": 5,
@@ -9433,7 +9423,7 @@
       "label": "2026-06-17 (evening)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L380",
+      "source_location": "L372",
       "_origin": "ast",
       "id": "changelog_2026_06_17_evening",
       "community": 66,
@@ -9443,7 +9433,7 @@
       "label": "Ads Report \u2014 dashboard tab",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L382",
+      "source_location": "L374",
       "_origin": "ast",
       "id": "changelog_ads_report_dashboard_tab",
       "community": 66,
@@ -9453,7 +9443,7 @@
       "label": "Meta Ads config \u2014 dashboard settings",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L389",
+      "source_location": "L381",
       "_origin": "ast",
       "id": "changelog_meta_ads_config_dashboard_settings",
       "community": 66,
@@ -9463,7 +9453,7 @@
       "label": "WhatsApp groups \u2014 dynamic dropdown",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L394",
+      "source_location": "L386",
       "_origin": "ast",
       "id": "changelog_whatsapp_groups_dynamic_dropdown",
       "community": 66,
@@ -9473,7 +9463,7 @@
       "label": "DEVELOPER.md \u2014 initial version",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L400",
+      "source_location": "L392",
       "_origin": "ast",
       "id": "changelog_developer_md_initial_version",
       "community": 66,
@@ -9483,7 +9473,7 @@
       "label": "2026-06-17 (afternoon)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L405",
+      "source_location": "L397",
       "_origin": "ast",
       "id": "changelog_2026_06_17_afternoon",
       "community": 68,
@@ -9493,7 +9483,7 @@
       "label": "Products CRUD \u2014 full database-backed",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L407",
+      "source_location": "L399",
       "_origin": "ast",
       "id": "changelog_products_crud_full_database_backed",
       "community": 68,
@@ -9503,7 +9493,7 @@
       "label": "shadcn/ui migration",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L413",
+      "source_location": "L405",
       "_origin": "ast",
       "id": "changelog_shadcn_ui_migration",
       "community": 68,
@@ -9513,7 +9503,7 @@
       "label": "project restructure \u2014 monorepo split",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L419",
+      "source_location": "L411",
       "_origin": "ast",
       "id": "changelog_project_restructure_monorepo_split",
       "community": 68,
@@ -9523,7 +9513,7 @@
       "label": "2026-06-17 (morning \u2014 initial build)",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L428",
+      "source_location": "L420",
       "_origin": "ast",
       "id": "changelog_2026_06_17_morning_initial_build",
       "community": 63,
@@ -9533,7 +9523,7 @@
       "label": "initial all-in-one dashboard",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L430",
+      "source_location": "L422",
       "_origin": "ast",
       "id": "changelog_initial_all_in_one_dashboard",
       "community": 63,
@@ -9543,7 +9533,7 @@
       "label": "React SPA migration",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L433",
+      "source_location": "L425",
       "_origin": "ast",
       "id": "changelog_react_spa_migration",
       "community": 63,
@@ -9553,7 +9543,7 @@
       "label": "Chat Inbox \u2014 WhatsApp-style UI",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L437",
+      "source_location": "L429",
       "_origin": "ast",
       "id": "changelog_chat_inbox_whatsapp_style_ui",
       "community": 63,
@@ -9563,7 +9553,7 @@
       "label": "AI handoff system",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L445",
+      "source_location": "L437",
       "_origin": "ast",
       "id": "changelog_ai_handoff_system",
       "community": 63,
@@ -9573,7 +9563,7 @@
       "label": "proactive follow-up \u2014 initial implementation",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L450",
+      "source_location": "L442",
       "_origin": "ast",
       "id": "changelog_proactive_follow_up_initial_implementation",
       "community": 63,
@@ -9583,7 +9573,7 @@
       "label": "Meta Ads daily report \u2014 initial implementation",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L456",
+      "source_location": "L448",
       "_origin": "ast",
       "id": "changelog_meta_ads_daily_report_initial_implementation",
       "community": 63,
@@ -9593,7 +9583,7 @@
       "label": "DATA NOTES",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L464",
+      "source_location": "L456",
       "_origin": "ast",
       "id": "changelog_data_notes",
       "community": 62,
@@ -10320,40 +10310,10 @@
       "norm_label": "\ud83d\udcc2 top affected files"
     },
     {
-      "label": "\ud83d\udcc4 `frontend/src/components/Products.tsx` (2 issues)",
-      "file_type": "document",
-      "source_file": "backend/laporan_sonar.md",
-      "source_location": "L33",
-      "_origin": "ast",
-      "id": "backend_laporan_sonar_frontend_src_components_products_tsx_2_issues",
-      "community": 81,
-      "norm_label": "\ud83d\udcc4 `frontend/src/components/products.tsx` (2 issues)"
-    },
-    {
-      "label": "\ud83d\udcc4 `frontend/src/components/Settings.tsx` (1 issues)",
-      "file_type": "document",
-      "source_file": "backend/laporan_sonar.md",
-      "source_location": "L37",
-      "_origin": "ast",
-      "id": "backend_laporan_sonar_frontend_src_components_settings_tsx_1_issues",
-      "community": 81,
-      "norm_label": "\ud83d\udcc4 `frontend/src/components/settings.tsx` (1 issues)"
-    },
-    {
-      "label": "\ud83d\udcc4 `frontend/src/components/WhatsappSessions.tsx` (1 issues)",
-      "file_type": "document",
-      "source_file": "backend/laporan_sonar.md",
-      "source_location": "L40",
-      "_origin": "ast",
-      "id": "backend_laporan_sonar_frontend_src_components_whatsappsessions_tsx_1_issues",
-      "community": 81,
-      "norm_label": "\ud83d\udcc4 `frontend/src/components/whatsappsessions.tsx` (1 issues)"
-    },
-    {
       "label": "\ud83d\udcc4 `backend/src/db.js` (1 issues)",
       "file_type": "document",
       "source_file": "backend/laporan_sonar.md",
-      "source_location": "L43",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "backend_laporan_sonar_backend_src_db_js_1_issues",
       "community": 81,
@@ -10363,7 +10323,7 @@
       "label": "\ud83d\udcc4 `frontend/vite.config.ts` (1 issues)",
       "file_type": "document",
       "source_file": "backend/laporan_sonar.md",
-      "source_location": "L46",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "backend_laporan_sonar_frontend_vite_config_ts_1_issues",
       "community": 81,
@@ -11856,9 +11816,9 @@
       "source_file": "backend/scratch/check_coverage.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scratch_check_coverage",
-      "target": "scratch_check_coverage_checkcoverage",
-      "confidence_score": 1.0
+      "target": "scratch_check_coverage_checkcoverage"
     },
     {
       "relation": "contains",
@@ -12548,9 +12508,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "services_followup",
-      "confidence_score": 1.0
+      "target": "services_followup"
     },
     {
       "relation": "imports_from",
@@ -12559,9 +12519,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "services_whatsapp",
-      "confidence_score": 1.0
+      "target": "services_whatsapp"
     },
     {
       "relation": "imports_from",
@@ -12570,9 +12530,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "src_db",
-      "confidence_score": 1.0
+      "target": "src_db"
     },
     {
       "relation": "contains",
@@ -12580,9 +12540,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "tests_followup_test_db",
-      "confidence_score": 1.0
+      "target": "tests_followup_test_db"
     },
     {
       "relation": "contains",
@@ -12590,9 +12550,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "tests_followup_test_followup",
-      "confidence_score": 1.0
+      "target": "tests_followup_test_followup"
     },
     {
       "relation": "contains",
@@ -12600,9 +12560,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "tests_followup_test_googlegenerativeai",
-      "confidence_score": 1.0
+      "target": "tests_followup_test_googlegenerativeai"
     },
     {
       "relation": "contains",
@@ -12610,9 +12570,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "tests_followup_test_mockgeneratecontent",
-      "confidence_score": 1.0
+      "target": "tests_followup_test_mockgeneratecontent"
     },
     {
       "relation": "contains",
@@ -12620,9 +12580,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "tests_followup_test_mockgetgenerativemodel",
-      "confidence_score": 1.0
+      "target": "tests_followup_test_mockgetgenerativemodel"
     },
     {
       "relation": "contains",
@@ -12630,9 +12590,9 @@
       "source_file": "backend/src/__tests__/followup.test.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_followup_test",
-      "target": "tests_followup_test_whatsappservice",
-      "confidence_score": 1.0
+      "target": "tests_followup_test_whatsappservice"
     },
     {
       "relation": "imports_from",
@@ -12714,9 +12674,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "services_ads",
-      "confidence_score": 1.0
+      "target": "services_ads"
     },
     {
       "relation": "imports_from",
@@ -12725,9 +12685,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "services_creative",
-      "confidence_score": 1.0
+      "target": "services_creative"
     },
     {
       "relation": "imports_from",
@@ -12736,9 +12696,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "services_followup",
-      "confidence_score": 1.0
+      "target": "services_followup"
     },
     {
       "relation": "imports_from",
@@ -12747,9 +12707,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "services_scheduler",
-      "confidence_score": 1.0
+      "target": "services_scheduler"
     },
     {
       "relation": "imports_from",
@@ -12758,9 +12718,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "src_db",
-      "confidence_score": 1.0
+      "target": "src_db"
     },
     {
       "relation": "contains",
@@ -12768,9 +12728,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "tests_scheduler_test_adsservice",
-      "confidence_score": 1.0
+      "target": "tests_scheduler_test_adsservice"
     },
     {
       "relation": "contains",
@@ -12778,9 +12738,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "tests_scheduler_test_creativeservice",
-      "confidence_score": 1.0
+      "target": "tests_scheduler_test_creativeservice"
     },
     {
       "relation": "contains",
@@ -12788,9 +12748,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "tests_scheduler_test_cron",
-      "confidence_score": 1.0
+      "target": "tests_scheduler_test_cron"
     },
     {
       "relation": "contains",
@@ -12798,9 +12758,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "tests_scheduler_test_db",
-      "confidence_score": 1.0
+      "target": "tests_scheduler_test_db"
     },
     {
       "relation": "contains",
@@ -12808,9 +12768,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "tests_scheduler_test_followupservice",
-      "confidence_score": 1.0
+      "target": "tests_scheduler_test_followupservice"
     },
     {
       "relation": "contains",
@@ -12818,9 +12778,9 @@
       "source_file": "backend/src/__tests__/scheduler.test.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_scheduler_test",
-      "target": "tests_scheduler_test_scheduler",
-      "confidence_score": 1.0
+      "target": "tests_scheduler_test_scheduler"
     },
     {
       "relation": "imports_from",
@@ -12934,9 +12894,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "src_db",
-      "confidence_score": 1.0
+      "target": "src_db"
     },
     {
       "relation": "contains",
@@ -12954,9 +12914,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "tests_whatsapp_test_db",
-      "confidence_score": 1.0
+      "target": "tests_whatsapp_test_db"
     },
     {
       "relation": "contains",
@@ -12964,9 +12924,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "tests_whatsapp_test_downloadmediamessage",
-      "confidence_score": 1.0
+      "target": "tests_whatsapp_test_downloadmediamessage"
     },
     {
       "relation": "contains",
@@ -12974,9 +12934,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "tests_whatsapp_test_fs",
-      "confidence_score": 1.0
+      "target": "tests_whatsapp_test_fs"
     },
     {
       "relation": "contains",
@@ -12984,9 +12944,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "tests_whatsapp_test_googlegenerativeai",
-      "confidence_score": 1.0
+      "target": "tests_whatsapp_test_googlegenerativeai"
     },
     {
       "relation": "contains",
@@ -12994,9 +12954,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "tests_whatsapp_test_mockgeneratecontent",
-      "confidence_score": 1.0
+      "target": "tests_whatsapp_test_mockgeneratecontent"
     },
     {
       "relation": "contains",
@@ -13004,9 +12964,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "tests_whatsapp_test_mockgetgenerativemodel",
-      "confidence_score": 1.0
+      "target": "tests_whatsapp_test_mockgetgenerativemodel"
     },
     {
       "relation": "contains",
@@ -13014,9 +12974,9 @@
       "source_file": "backend/src/__tests__/whatsapp.test.js",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsapp_test",
-      "target": "tests_whatsapp_test_mocksockobj",
-      "confidence_score": 1.0
+      "target": "tests_whatsapp_test_mocksockobj"
     },
     {
       "relation": "contains",
@@ -13819,9 +13779,9 @@
       "source_file": "backend/src/services/ads.js",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_ads",
-      "target": "services_ads_execpromise",
-      "confidence_score": 1.0
+      "target": "services_ads_execpromise"
     },
     {
       "relation": "contains",
@@ -13879,9 +13839,9 @@
       "source_file": "backend/src/services/ads.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_ads",
-      "target": "services_ads_util",
-      "confidence_score": 1.0
+      "target": "services_ads_util"
     },
     {
       "relation": "contains",
@@ -13922,9 +13882,9 @@
       "source_file": "backend/src/services/ads.js",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_ads_runanalysisandsendreport",
-      "target": "services_ads_execpromise",
-      "confidence_score": 1.0
+      "target": "services_ads_execpromise"
     },
     {
       "relation": "calls",
@@ -13933,9 +13893,9 @@
       "source_file": "backend/src/services/ads.js",
       "source_location": "L127",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "services_ads_runanalysisraw",
-      "target": "services_ads_execpromise",
-      "confidence_score": 1.0
+      "target": "services_ads_execpromise"
     },
     {
       "relation": "contains",
@@ -16451,9 +16411,9 @@
       "source_file": "frontend/src/components/AdsReport.tsx",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adsreport",
-      "target": "components_adsreport_csvstatus",
-      "confidence_score": 1.0
+      "target": "components_adsreport_csvstatus"
     },
     {
       "relation": "contains",
@@ -16651,9 +16611,9 @@
       "source_file": "frontend/src/components/__tests__/AdsReport.test.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_adsreport_test",
-      "target": "components_adsreport",
-      "confidence_score": 1.0
+      "target": "components_adsreport"
     },
     {
       "relation": "calls",
@@ -16915,9 +16875,9 @@
       "source_file": "frontend/src/components/ChatInbox.tsx",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_chatinbox",
-      "target": "components_chatinbox_mobileviewtype",
-      "confidence_score": 1.0
+      "target": "components_chatinbox_mobileviewtype"
     },
     {
       "relation": "contains",
@@ -17098,9 +17058,9 @@
       "source_file": "frontend/src/components/__tests__/ChatInbox.test.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_chatinbox_test",
-      "target": "components_chatinbox",
-      "confidence_score": 1.0
+      "target": "components_chatinbox"
     },
     {
       "relation": "calls",
@@ -17445,9 +17405,9 @@
       "source_file": "frontend/src/components/Overview.tsx",
       "source_location": "L550",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_overview",
-      "target": "components_overview_overviewstats",
-      "confidence_score": 1.0
+      "target": "components_overview_overviewstats"
     },
     {
       "relation": "contains",
@@ -17455,9 +17415,9 @@
       "source_file": "frontend/src/components/Overview.tsx",
       "source_location": "L558",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_overview",
-      "target": "components_overview_overviewusagestats",
-      "confidence_score": 1.0
+      "target": "components_overview_overviewusagestats"
     },
     {
       "relation": "contains",
@@ -18521,9 +18481,9 @@
       "source_file": "frontend/src/components/__tests__/WhatsappSessions.test.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsappsessions_test",
-      "target": "components_whatsappsessions",
-      "confidence_score": 1.0
+      "target": "components_whatsappsessions"
     },
     {
       "relation": "contains",
@@ -18531,9 +18491,9 @@
       "source_file": "frontend/src/components/__tests__/AdsReport.test.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_adsreport_test",
-      "target": "tests_adsreport_test_mockeventsource",
-      "confidence_score": 1.0
+      "target": "tests_adsreport_test_mockeventsource"
     },
     {
       "relation": "method",
@@ -18541,9 +18501,9 @@
       "source_file": "frontend/src/components/__tests__/AdsReport.test.tsx",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_adsreport_test_mockeventsource",
-      "target": "tests_adsreport_test_mockeventsource_clear",
-      "confidence_score": 1.0
+      "target": "tests_adsreport_test_mockeventsource_clear"
     },
     {
       "relation": "method",
@@ -18551,9 +18511,9 @@
       "source_file": "frontend/src/components/__tests__/AdsReport.test.tsx",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_adsreport_test_mockeventsource",
-      "target": "tests_adsreport_test_mockeventsource_constructor",
-      "confidence_score": 1.0
+      "target": "tests_adsreport_test_mockeventsource_constructor"
     },
     {
       "relation": "contains",
@@ -18561,9 +18521,9 @@
       "source_file": "frontend/src/components/__tests__/ChatInbox.test.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_chatinbox_test",
-      "target": "tests_chatinbox_test_mockcustomers",
-      "confidence_score": 1.0
+      "target": "tests_chatinbox_test_mockcustomers"
     },
     {
       "relation": "contains",
@@ -18571,9 +18531,9 @@
       "source_file": "frontend/src/components/__tests__/ChatInbox.test.tsx",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_chatinbox_test",
-      "target": "tests_chatinbox_test_mockproducts",
-      "confidence_score": 1.0
+      "target": "tests_chatinbox_test_mockproducts"
     },
     {
       "relation": "contains",
@@ -18581,9 +18541,9 @@
       "source_file": "frontend/src/components/__tests__/ChatInbox.test.tsx",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_chatinbox_test",
-      "target": "tests_chatinbox_test_mocksessions",
-      "confidence_score": 1.0
+      "target": "tests_chatinbox_test_mocksessions"
     },
     {
       "relation": "contains",
@@ -18621,9 +18581,9 @@
       "source_file": "frontend/src/components/__tests__/WhatsappSessions.test.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_whatsappsessions_test",
-      "target": "tests_whatsappsessions_test_mocksessions",
-      "confidence_score": 1.0
+      "target": "tests_whatsappsessions_test_mocksessions"
     },
     {
       "relation": "contains",
@@ -23671,9 +23631,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_changelog_latezza_cake_whatsapp_ai_agent",
-      "target": "changelog_2026_06_25",
-      "confidence_score": 1.0
+      "target": "changelog_2026_06_25"
     },
     {
       "relation": "contains",
@@ -23691,9 +23651,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_2026_06_25",
-      "target": "changelog_achieved_100_sonarqube_quality_gate_compliance",
-      "confidence_score": 1.0
+      "target": "changelog_achieved_100_sonarqube_quality_gate_compliance"
     },
     {
       "relation": "contains",
@@ -23744,16 +23704,6 @@
       "confidence_score": 1.0,
       "source": "changelog_2026_06_23",
       "target": "changelog_gemini_api_usage_costs_tracking"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "changelog_2026_06_23",
-      "target": "changelog_gemini_cost_calculator_tool"
     },
     {
       "relation": "contains",
@@ -24871,39 +24821,9 @@
       "source_file": "backend/laporan_sonar.md",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "backend_laporan_sonar_top_affected_files",
-      "target": "backend_laporan_sonar_backend_src_db_js_1_issues",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "backend/laporan_sonar.md",
-      "source_location": "L33",
-      "weight": 1.0,
-      "source": "backend_laporan_sonar_top_affected_files",
-      "target": "backend_laporan_sonar_frontend_src_components_products_tsx_2_issues",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "backend/laporan_sonar.md",
-      "source_location": "L37",
-      "weight": 1.0,
-      "source": "backend_laporan_sonar_top_affected_files",
-      "target": "backend_laporan_sonar_frontend_src_components_settings_tsx_1_issues",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "backend/laporan_sonar.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "source": "backend_laporan_sonar_top_affected_files",
-      "target": "backend_laporan_sonar_frontend_src_components_whatsappsessions_tsx_1_issues",
-      "confidence_score": 1.0
+      "target": "backend_laporan_sonar_backend_src_db_js_1_issues"
     },
     {
       "relation": "contains",
@@ -24911,9 +24831,9 @@
       "source_file": "backend/laporan_sonar.md",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "backend_laporan_sonar_top_affected_files",
-      "target": "backend_laporan_sonar_frontend_vite_config_ts_1_issues",
-      "confidence_score": 1.0
+      "target": "backend_laporan_sonar_frontend_vite_config_ts_1_issues"
     },
     {
       "relation": "contains",

@@ -176,13 +176,27 @@ describe('WhatsApp Service', () => {
       db.getSetting.mockResolvedValue('key-from-db');
       mockGenerateContent.mockResolvedValueOnce({
         response: {
-          text: () => '  Transkripsi Hasil Suara  '
+          text: () => '  Transkripsi Hasil Suara  ',
+          usageMetadata: {
+            promptTokenCount: 80,
+            candidatesTokenCount: 20,
+            cachedContentTokenCount: 0
+          }
         }
       });
 
       const text = await whatsapp.transcribeAudio(Buffer.from('audio-data'), 'audio/ogg', mockLog);
       expect(text).toBe('Transkripsi Hasil Suara');
       expect(mockGetGenerativeModel).toHaveBeenCalledWith({ model: 'gemini-3.1-flash-lite' });
+
+      // Assert Gemini API usage logging occurred
+      expect(db.saveUsageLog).toHaveBeenCalledWith({
+        feature: 'audio_transcription',
+        modelName: 'gemini-3.1-flash-lite',
+        inputTokens: 80,
+        outputTokens: 20,
+        cachedTokens: 0
+      });
     });
 
     test('retries and transcribes with fallback model on primary failure', async () => {
@@ -191,7 +205,12 @@ describe('WhatsApp Service', () => {
         .mockRejectedValueOnce(new Error('Quota Exceeded on Lite'))
         .mockResolvedValueOnce({
           response: {
-            text: () => 'Fallback Result'
+            text: () => 'Fallback Result',
+            usageMetadata: {
+              promptTokenCount: 90,
+              candidatesTokenCount: 25,
+              cachedContentTokenCount: 0
+            }
           }
         });
 
@@ -199,6 +218,15 @@ describe('WhatsApp Service', () => {
       expect(text).toBe('Fallback Result');
       expect(mockGetGenerativeModel).toHaveBeenCalledWith({ model: 'gemini-3.5-flash' });
       expect(mockLog.warn).toHaveBeenCalledWith(expect.stringContaining('Transcription failed with gemini-3.1-flash-lite'));
+
+      // Assert Gemini API usage logging occurred for fallback model
+      expect(db.saveUsageLog).toHaveBeenCalledWith({
+        feature: 'audio_transcription',
+        modelName: 'gemini-3.5-flash',
+        inputTokens: 90,
+        outputTokens: 25,
+        cachedTokens: 0
+      });
     });
 
     test('throws if both primary and fallback transcription fail', async () => {

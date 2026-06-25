@@ -108,12 +108,38 @@ async function transcribeAudio(audioBuffer, mimeType, log = console) {
     log.info(`🤖 Attempting transcription with configured model: ${configuredModel}...`);
     const model = genAI.getGenerativeModel({ model: configuredModel });
     const result = await model.generateContent([audioPart, prompt]);
+
+    // Log Gemini usage
+    const usage = result.response.usageMetadata;
+    if (usage) {
+      await db.saveUsageLog({
+        feature: 'audio_transcription',
+        modelName: configuredModel,
+        inputTokens: usage.promptTokenCount,
+        outputTokens: usage.candidatesTokenCount,
+        cachedTokens: usage.cachedContentTokenCount
+      });
+    }
+
     return result.response.text().trim();
   } catch (err) {
     log.warn(`⚠️ Transcription failed with ${configuredModel}: ${err.message}. Retrying with gemini-3.5-flash fallback...`);
     try {
       const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
       const result = await fallbackModel.generateContent([audioPart, prompt]);
+
+      // Log Gemini usage for fallback
+      const usage = result.response.usageMetadata;
+      if (usage) {
+        await db.saveUsageLog({
+          feature: 'audio_transcription',
+          modelName: 'gemini-3.5-flash',
+          inputTokens: usage.promptTokenCount,
+          outputTokens: usage.candidatesTokenCount,
+          cachedTokens: usage.cachedContentTokenCount
+        });
+      }
+
       return result.response.text().trim();
     } catch (fallbackErr) {
       log.error(`❌ Fallback transcription failed: ${fallbackErr.message}`);

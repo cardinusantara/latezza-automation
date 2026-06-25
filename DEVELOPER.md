@@ -209,7 +209,7 @@ known keys in settings table:
 ```sql
 id                  SERIAL PRIMARY KEY
 timestamp           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-feature             VARCHAR(50) NOT NULL         -- e.g., 'chatbot', 'followup', 'creative', 'ads', 'summary'
+feature             VARCHAR(50) NOT NULL         -- e.g., 'whatsapp_chat', 'followup', 'creative_analysis', 'ads_analysis', 'message_summary', 'audio_transcription'
 model_name          VARCHAR(100) NOT NULL        -- e.g., 'gemini-3.1-flash-lite'
 input_tokens        INT DEFAULT 0
 output_tokens       INT DEFAULT 0

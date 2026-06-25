@@ -88,6 +88,19 @@ ${batchMessagesText}
       const res = await model.generateContent({
         contents: [{ role: 'user', parts: [{ text: batchPrompt }] }]
       });
+
+      // Log Gemini usage
+      const usage = res.response.usageMetadata;
+      if (usage) {
+        await db.saveUsageLog({
+          feature: 'message_summary',
+          modelName: modelName,
+          inputTokens: usage.promptTokenCount,
+          outputTokens: usage.candidatesTokenCount,
+          cachedTokens: usage.cachedContentTokenCount
+        });
+      }
+
       return res.response.text();
     } catch (err) {
       log.warn(`Batch ${index + 1} failed with model ${modelName}: ${err.message}`);
@@ -339,6 +352,24 @@ async function generateStreamWithRetry(genAI, modelName, prompt, onProgress, log
           onProgress({ type: 'chunk', text: chunkText });
         }
       }
+
+      // Log Gemini usage
+      try {
+        const response = await result.response;
+        const usage = response.usageMetadata;
+        if (usage) {
+          await db.saveUsageLog({
+            feature: 'message_summary',
+            modelName: modelName,
+            inputTokens: usage.promptTokenCount,
+            outputTokens: usage.candidatesTokenCount,
+            cachedTokens: usage.cachedContentTokenCount
+          });
+        }
+      } catch (usageErr) {
+        log.warn(`Failed to log usage for summary stream: ${usageErr.message}`);
+      }
+
       return textResult;
     } catch (err) {
       log.warn(`Attempt ${i + 1} failed for ${modelName}: ${err.message}`);

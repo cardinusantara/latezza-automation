@@ -6,6 +6,7 @@ jest.mock('../db', () => {
   return {
     getSetting: jest.fn(),
     setSetting: jest.fn(),
+    saveUsageLog: jest.fn(() => Promise.resolve()),
     pool: {
       query: jest.fn()
     }
@@ -57,6 +58,7 @@ describe('summary.js service', () => {
   });
 
   test('successfully generates summary using Gemini when messages exist', async () => {
+    process.env.GEMINI_MODEL = 'gemini-1.5-flash';
     db.getSetting.mockImplementation(async (key) => {
       if (key === 'gemini_api_key') return 'mock-key';
       if (key === 'gemini_model') return 'gemini-1.5-flash';
@@ -70,10 +72,15 @@ describe('summary.js service', () => {
       ]
     });
 
-    // Mock first pass (batch summary generation)
+    // Mock first pass (batch summary generation) - not called because messages < 100
     mockGenerateContent.mockResolvedValueOnce({
       response: {
-        text: () => 'Batch 1 summary content'
+        text: () => 'Batch 1 summary content',
+        usageMetadata: {
+          promptTokenCount: 100,
+          candidatesTokenCount: 50,
+          cachedContentTokenCount: 0
+        }
       }
     });
 
@@ -90,7 +97,14 @@ describe('summary.js service', () => {
     mockGenerateContentStream.mockResolvedValueOnce({
       stream: (async function* () {
         yield { text: () => mockJsonResult };
-      })()
+      })(),
+      response: Promise.resolve({
+        usageMetadata: {
+          promptTokenCount: 200,
+          candidatesTokenCount: 100,
+          cachedContentTokenCount: 50
+        }
+      })
     });
 
     const onProgress = jest.fn();
@@ -101,5 +115,15 @@ describe('summary.js service', () => {
     expect(report.summary.topProducts).toContain('Kue Cokelat');
     expect(db.setSetting).toHaveBeenCalledWith('message_summary_report', expect.any(String));
     expect(onProgress).toHaveBeenCalledWith(expect.objectContaining({ type: 'chunk' }));
+
+    // Assert Gemini API usage logging occurred for the single-pass stream
+    expect(db.saveUsageLog).toHaveBeenCalledTimes(1);
+    expect(db.saveUsageLog).toHaveBeenCalledWith({
+      feature: 'message_summary',
+      modelName: 'gemini-1.5-flash',
+      inputTokens: 200,
+      outputTokens: 100,
+      cachedTokens: 50
+    });
   });
 });

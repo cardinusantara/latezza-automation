@@ -5,6 +5,15 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-25
 
+### Gemini API Usage and Cost Tracking Integration
+- **Implemented Missing Usage Logging**:
+  - Integrated `db.saveUsageLog` calls in `backend/src/services/summary.js` inside `summarizeBatch` (non-stream) and `generateStreamWithRetry` (stream) under the feature name `message_summary`.
+  - Integrated `db.saveUsageLog` calls in `backend/src/services/whatsapp.js` inside `transcribeAudio` for both primary (`gemini-3.1-flash-lite`) and fallback (`gemini-3.5-flash`) attempts under the feature name `audio_transcription`.
+- **Refactored Frontend Usage Display**:
+  - Updated `getFeatureLabel` in `frontend/src/components/Overview.tsx` to map backend feature names cleanly, displaying `'Conversation Summary'` for `message_summary` and `'Audio Transcription'` for `audio_transcription`, while ensuring existing features (`whatsapp_chat` -> `'Chatbot WhatsApp'`, `creative_analysis` -> `'Creative Ad Ideas'`, `ads_analysis` -> `'Meta Ads Analysis'`) map correctly in the breakdown.
+- **Added Unit Tests**:
+  - Wrote and updated unit tests in `backend/src/__tests__/summary.test.js` and `backend/src/__tests__/whatsapp.test.js` to mock `usageMetadata` and verify `db.saveUsageLog` gets called with correct parameters.
+
 ### Achieved 100% SonarQube Quality Gate Compliance
 - **Satisfied Quality Gate Targets**:
   - **Overall Code Coverage**: **92.4%** (Target: >90%).

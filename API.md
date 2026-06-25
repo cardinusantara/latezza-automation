@@ -685,7 +685,7 @@ Mengambil data akumulasi penggunaan token (input, output, cached) dan perhitunga
     ],
     "featureBreakdown": [
       {
-        "feature": "chatbot",
+        "feature": "whatsapp_chat",
         "input_tokens": 120000,
         "output_tokens": 60000,
         "cached_tokens": 40000,
@@ -693,12 +693,28 @@ Mengambil data akumulasi penggunaan token (input, output, cached) dan perhitunga
         "request_count": 110
       },
       {
-        "feature": "ads",
+        "feature": "ads_analysis",
         "input_tokens": 30000,
         "output_tokens": 25000,
         "cached_tokens": 5000,
         "cost_idr": 785.31,
         "request_count": 15
+      },
+      {
+        "feature": "message_summary",
+        "input_tokens": 15000,
+        "output_tokens": 10000,
+        "cached_tokens": 2000,
+        "cost_idr": 350.0,
+        "request_count": 8
+      },
+      {
+        "feature": "audio_transcription",
+        "input_tokens": 8000,
+        "output_tokens": 4000,
+        "cached_tokens": 0,
+        "cost_idr": 175.0,
+        "request_count": 12
       }
     ]
   }
