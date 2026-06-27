@@ -384,7 +384,7 @@ export default function Settings({ showToast }: Readonly<SettingsProps>) {
                   className={inputClasses}
                 />
                 <span className="text-[10px] text-muted-foreground">
-                  Jumlah pesan maksimum yang diijinkan dari satu pengirim sebelum diblokir/diabaikan.
+                  Jumlah pesan maksimum yang diijinkan dari satu pengirim sebelum diabaikan.
                 </span>
               </div>
 

@@ -5,8 +5,8 @@
     "semantic_hash": "39548690bb4e71065df0b7fa69903082"
   },
   "backend/ads-analysis/automation.js": {
-    "mtime": 1782314793.611639,
-    "ast_hash": "e6f8009bc579d04b3485f58694d9bdf3",
+    "mtime": 1782574299.6756496,
+    "ast_hash": "5fdc0cd58daaa3b69e60e817e4a909ec",
     "semantic_hash": ""
   },
   "backend/ads-analysis/package.json": {
@@ -85,13 +85,13 @@
     "semantic_hash": ""
   },
   "backend/src/routes.js": {
-    "mtime": 1782383401.928541,
-    "ast_hash": "50fca52710fb65089ee3495425fe7cbb",
+    "mtime": 1782405258.630172,
+    "ast_hash": "8d2bb7e0ec0a885c614ce4766db55f49",
     "semantic_hash": ""
   },
   "backend/src/services/ads.js": {
-    "mtime": 1782364991.4081974,
-    "ast_hash": "c136fef33881800bd82c149ebad71de1",
+    "mtime": 1782574311.4790752,
+    "ast_hash": "eea60d28224c259381c4e6c124db7431",
     "semantic_hash": ""
   },
   "backend/src/services/creative.js": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "frontend/src/App.tsx": {
-    "mtime": 1782384545.8287923,
-    "ast_hash": "76d3af397194874ecfe12cf0bae9d761",
+    "mtime": 1782563920.9122846,
+    "ast_hash": "6d9e0b3f88abfb21045d9468c471ad8c",
     "semantic_hash": ""
   },
   "frontend/src/components/Actions.tsx": {
@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/CreativeReport.tsx": {
-    "mtime": 1782365173.2779815,
-    "ast_hash": "f7247356499f1047e1e32a8a1c1f78bc",
+    "mtime": 1782564387.9213579,
+    "ast_hash": "ec0a2a7daf050f02888902eeb6bd247d",
     "semantic_hash": ""
   },
   "frontend/src/components/Overview.tsx": {
@@ -375,13 +375,13 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1782392888.9611392,
-    "ast_hash": "22a8988944a006738e9d3f3119f241f7",
+    "mtime": 1782583717.6954367,
+    "ast_hash": "04ea9cefdbb0c06679b0f46e33f28827",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
-    "mtime": 1782383457.0295854,
-    "ast_hash": "d020ab77fd26ba4ee0f8c513ac7cfdb9",
+    "mtime": 1782583724.1365416,
+    "ast_hash": "ff90d32ddce14c40a7f631b7a90eb5f6",
     "semantic_hash": ""
   },
   "ISSUES.md": {
@@ -6449,11 +6449,6 @@
     "ast_hash": "efdd5408fc23ed2e3188d9a5e3562543",
     "semantic_hash": ""
   },
-  "backend/whatsapp-sessions/default/pre-key-797.json": {
-    "mtime": 1781974771.2185774,
-    "ast_hash": "e9efeb92d9cbff1f2fb4d2f80dc0accd",
-    "semantic_hash": ""
-  },
   "backend/whatsapp-sessions/default/pre-key-798.json": {
     "mtime": 1781974771.2185774,
     "ast_hash": "70fe90b59355a5420dcbb9d1fefc5d89",
@@ -6724,11 +6719,6 @@
     "ast_hash": "7bf68a555d51dd2ff502bb0a3c7130ba",
     "semantic_hash": ""
   },
-  "ignore-this.md": {
-    "mtime": 1782053949.7583935,
-    "ast_hash": "65b7043a3b48c9afe6c2cf90fd40a1fa",
-    "semantic_hash": ""
-  },
   "backend/src/services/summary.js": {
     "mtime": 1782368309.6644237,
     "ast_hash": "16515661aaa18a83d9824ec6f2391ad9",
@@ -6885,23 +6875,23 @@
     "semantic_hash": ""
   },
   "backend/src/__tests__/broadcast.test.js": {
-    "mtime": 1782404028.364441,
-    "ast_hash": "4bd96b994c92eec977b54a4cf0aab5f6",
+    "mtime": 1782405838.3899207,
+    "ast_hash": "44c8bf9335fd36a4a888fbb720281547",
     "semantic_hash": ""
   },
   "backend/src/services/broadcast.js": {
-    "mtime": 1782404025.87278,
-    "ast_hash": "30210cde3c96019e01cc3cbc5cead099",
+    "mtime": 1782582073.3419068,
+    "ast_hash": "0cba63529cefebe30a48ba1dd13e2f3b",
     "semantic_hash": ""
   },
   "frontend/src/components/Broadcast.tsx": {
-    "mtime": 1782404109.795811,
-    "ast_hash": "202c38be94440562893075a29c60982e",
+    "mtime": 1782583521.135214,
+    "ast_hash": "12f3ea5f26c1e7112de844441eafc549",
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/Broadcast.test.tsx": {
-    "mtime": 1782394530.9667485,
-    "ast_hash": "bb845105be1e6075ab78297eb4ae83f8",
+    "mtime": 1782404151.129819,
+    "ast_hash": "ffefa132a400ef738149ff45287f076d",
     "semantic_hash": ""
   }
 }

@@ -314,4 +314,44 @@ describe('ChatInbox Component', () => {
 
     vi.useRealTimers();
   });
+
+  test('handles transitioning to CRM view on mobile UI when CRM button is clicked', async () => {
+    const originalInnerWidth = window.innerWidth;
+    // Mock mobile viewport width
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 500 });
+
+    render(
+      <ChatInbox
+        customers={mockCustomers}
+        products={mockProducts}
+        onRefreshData={onRefreshDataMock}
+        showToast={showToastMock}
+        selectedJid="62812345678@s.whatsapp.net"
+        setSelectedJid={setSelectedJidMock}
+        selectedCustName="Alice Cooper"
+        setSelectedCustName={setSelectedCustNameMock}
+        selectedSessionId="default"
+        setSelectedSessionId={setSelectedSessionIdMock}
+        sessions={mockSessions}
+      />
+    );
+
+    await waitFor(() => expect(screen.getByText('Halo, ready brownies?')).toBeInTheDocument());
+
+    const crmButton = screen.getByTitle('Toggle CRM Sidebar');
+    fireEvent.click(crmButton);
+
+    // Wait for CRM panel title to be rendered
+    await waitFor(() => expect(screen.getByText('Customer CRM')).toBeInTheDocument());
+
+    // Verify it is on mobile view where "Kembali" button should be displayed
+    const backBtn = screen.getByText('Kembali');
+    expect(backBtn).toBeInTheDocument();
+
+    // Click back button to transition back to chat view
+    fireEvent.click(backBtn);
+
+    // Clean up window.innerWidth mock
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: originalInnerWidth });
+  });
 });

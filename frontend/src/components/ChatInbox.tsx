@@ -555,8 +555,18 @@ function ConversationBoxPanel({
             <div className="flex items-center gap-2">
               <button 
                 type="button"
-                onClick={() => setShowCrmPanel(!showCrmPanel)}
-                className={`p-2 rounded-lg transition-colors hover:bg-accent ${showCrmPanel ? 'text-primary' : 'text-muted-foreground'}`}
+                onClick={() => {
+                  if (window.innerWidth >= 1024) {
+                    setShowCrmPanel(!showCrmPanel);
+                  } else {
+                    setMobileView('crm');
+                  }
+                }}
+                className={`p-2 rounded-lg transition-colors hover:bg-accent ${
+                  (window.innerWidth >= 1024 ? showCrmPanel : mobileView === 'crm') 
+                    ? 'text-primary' 
+                    : 'text-muted-foreground'
+                }`}
                 title="Toggle CRM Sidebar"
               >
                 <IconNotebook size={18} />

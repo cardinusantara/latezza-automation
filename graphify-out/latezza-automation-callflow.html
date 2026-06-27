@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>latezza-automation — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 1126 nodes, 1504 edges, 105 communities. Commit: 7bc520a</p>
+<p class="subtitle">Generated from graphify knowledge graph: 1128 nodes, 1506 edges, 106 communities. Commit: ca7252b</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -75,9 +75,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#community-20">Community 20</a>
     <a href="#community-23">Community 23</a>
     <a href="#community-90">Community 90</a>
+    <a href="#community-62">Community 62</a>
     <a href="#community-22">Community 22</a>
     <a href="#community-26">Community 26</a>
-    <a href="#community-27">Community 27</a>
     <a href="#other">Other</a>
 </div>
 
@@ -90,15 +90,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     BUILD_GRAPH_321CBB04("Graph Build<br/><small>185 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
-    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>37 nodes</small>")
+    ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>68 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
-    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>87 nodes</small>")
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>89 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
     INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>15 nodes</small>")
     class INGEST_CACHE_UPDATE_FF457338 module;
     SERVE_API_35EC8E86("Serving API<br/><small>107 nodes</small>")
     class SERVE_API_35EC8E86 module;
-    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>427 nodes</small>")
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>394 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
     COMMUNITY_13_E329587C("Community 13<br/><small>30 nodes</small>")
     class COMMUNITY_13_E329587C module;
@@ -110,25 +110,25 @@ flowchart LR
     class COMMUNITY_23_58D9DE5D module;
     COMMUNITY_90_9F2E858A("Community 90<br/><small>12 nodes</small>")
     class COMMUNITY_90_9F2E858A module;
+    COMMUNITY_62_3F1ABE2C("Community 62<br/><small>11 nodes</small>")
+    class COMMUNITY_62_3F1ABE2C module;
     COMMUNITY_22_65038249("Community 22<br/><small>10 nodes</small>")
     class COMMUNITY_22_65038249 module;
     COMMUNITY_26_029F571A("Community 26<br/><small>9 nodes</small>")
     class COMMUNITY_26_029F571A module;
-    COMMUNITY_27_99AD9ED4("Community 27<br/><small>9 nodes</small>")
-    class COMMUNITY_27_99AD9ED4 module;
     OTHER_D0941E68("Other<br/><small>159 nodes</small>")
     class OTHER_D0941E68 module;
     TESTS_FIXTURES_B84B1DCC -->|imports x14| COMMUNITY_13_E329587C
-    COMMUNITY_13_E329587C -->|contains x10| OTHER_D0941E68
+    TESTS_FIXTURES_B84B1DCC -->|imports x11| ANALYSIS_CLUSTERING_C79796DA
+    COMMUNITY_13_E329587C -->|contains x11| OTHER_D0941E68
+    COMMUNITY_62_3F1ABE2C -->|contains x8| OTHER_D0941E68
     OTHER_D0941E68 -->|imports x6| COMMUNITY_13_E329587C
     CLI_SKILLS_9964CBB8 -->|contains x6| OTHER_D0941E68
-    ANALYSIS_CLUSTERING_C79796DA -->|imports x4| TESTS_FIXTURES_B84B1DCC
-    COMMUNITY_13_E329587C -->|imports x4| TESTS_FIXTURES_B84B1DCC
-    TESTS_FIXTURES_B84B1DCC -->|imports x3| ANALYSIS_CLUSTERING_C79796DA
+    ANALYSIS_CLUSTERING_C79796DA -->|imports x3| OTHER_D0941E68
+    TESTS_FIXTURES_B84B1DCC -->|imports x3| OTHER_D0941E68
+    COMMUNITY_13_E329587C -->|imports x3| ANALYSIS_CLUSTERING_C79796DA
+    COMMUNITY_13_E329587C -->|imports x3| TESTS_FIXTURES_B84B1DCC
     TESTS_FIXTURES_B84B1DCC -->|imports x3| CLI_SKILLS_9964CBB8
-    ANALYSIS_CLUSTERING_C79796DA -->|imports x2| OTHER_D0941E68
-    TESTS_FIXTURES_B84B1DCC -->|imports x2| OTHER_D0941E68
-    COMMUNITY_13_E329587C -->|imports x2| ANALYSIS_CLUSTERING_C79796DA
     CLI_SKILLS_9964CBB8 -->|contains x2| BUILD_GRAPH_321CBB04
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -146,19 +146,19 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Graph Build</td><td>185</td><td><code>12, 10, 11, 2, 14, 32, 6, 25, 77, 78, 34, 79, 76</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>37</td><td><code>28, 21, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>87</td><td><code>15, 4, 8, 18, 59, 35, 75, 60</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>15</td><td><code>33, 82, 49</code></td></tr><tr><td>Serving API</td><td>107</td><td><code>0, 5, 3, 100, 101, 104, 98, 105, 106, 107, 108</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>427</td><td><code>7, 9, 16, 17, 83, 31, 24, 85, 55, 88, 37, 64, 96, 67, 43, 45, 46, 58, 70, 71</code></td></tr><tr><td>Community 13</td><td>30</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 90</td><td>12</td><td><code>90</code></td></tr><tr><td>Community 22</td><td>10</td><td><code>22</code></td></tr><tr><td>Community 26</td><td>9</td><td><code>26</code></td></tr><tr><td>Community 27</td><td>9</td><td><code>27</code></td></tr><tr><td>Other</td><td>159</td><td><code>56, 62, 81, 89, 29, 63, 99, 1, 65, 80, 103, 36, 66, 91, 92, 102, 38, 39, 68, 93, 40, 41, 42, 44, 47, 57, 94, 109, 48, 50, 95, 97, 51, 52, 53, 54, 69, 72, 73</code></td></tr>
+      <tr><td>Graph Build</td><td>185</td><td><code>12, 10, 11, 2, 14, 32, 6, 25, 77, 78, 34, 79, 76</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>68</td><td><code>16, 28, 21, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>89</td><td><code>15, 4, 8, 18, 59, 35, 75, 60, 70</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>15</td><td><code>33, 82, 49</code></td></tr><tr><td>Serving API</td><td>107</td><td><code>0, 5, 3, 100, 101, 104, 98, 105, 106, 107, 108</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>394</td><td><code>7, 9, 17, 83, 31, 24, 85, 61, 55, 88, 37, 64, 96, 67, 43, 45, 46, 58, 71</code></td></tr><tr><td>Community 13</td><td>30</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 90</td><td>12</td><td><code>90</code></td></tr><tr><td>Community 62</td><td>11</td><td><code>62</code></td></tr><tr><td>Community 22</td><td>10</td><td><code>22</code></td></tr><tr><td>Community 26</td><td>9</td><td><code>26</code></td></tr><tr><td>Other</td><td>159</td><td><code>27, 56, 81, 89, 29, 63, 99, 1, 65, 80, 103, 36, 66, 91, 92, 102, 38, 39, 68, 93, 40, 41, 42, 44, 47, 57, 94, 109, 48, 50, 95, 97, 51, 52, 53, 54, 69, 72, 73</code></td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Core Flow</h4>
-    <div class="arrow-chain">Ingestion &amp; Updates -&gt; Graph Build -&gt; Analysis &amp; Clustering -&gt; Tests &amp; Fixtures -&gt; Community 13 -&gt; Other -&gt; Serving API</div>
+    <div class="arrow-chain">Ingestion &amp; Updates -&gt; Graph Build -&gt; Analysis &amp; Clustering -&gt; Other -&gt; Community 13 -&gt; Tests &amp; Fixtures -&gt; CLI &amp; Skill Installers</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>1126 nodes · 1504 edges · 105 communities (86 shown, 19 thin omitted)</li>
+      <li>1128 nodes · 1506 edges · 106 communities (87 shown, 19 thin omitted)</li>
       <li>Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `cn()` - 78 edges</li>
@@ -516,61 +516,71 @@ flowchart LR
 
 <!-- ====== 3. Analysis & Clustering ====== -->
 <h2 id="analysis-clustering">3. Analysis &amp; Clustering</h2>
-<p>Analysis &amp; Clustering groups implementation around backend, routesjs, gatewayjs, adsjs, mostly in backend/src/routes.js, backend/gateway.js, src/services/ads.js. This section covers 37 nodes and 40 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Analysis &amp; Clustering groups implementation around backend, services, whatsappjs, routesjs, mostly in src/services/whatsapp.js, backend/src/routes.js, backend/gateway.js. This section covers 68 nodes and 88 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Analysis &amp; Clustering (37 nodes, 40 edges)
-    subgraph analysis_clustering_backend_gateway_js_c377dab2["backend/gateway.js"]
-        backend_gateway_a3b89d76("gateway.js")
-        backend_gateway_fastify_29120033("Fastify<br/><small>backend/gateway.js</small>")
-        backend_gateway_adsservice_dd1e09f3("adsService<br/><small>backend/gateway.js</small>")
-        backend_gateway_cron_425f1cd1("cron<br/><small>backend/gateway.js</small>")
-        backend_gateway_db_559ccf3d("db<br/><small>backend/gateway.js</small>")
-        backend_gateway_followupservice_981b990c("followupService<br/><small>backend/gateway.js</small>")
-        backend_gateway_fs_b4cbd300("fs<br/><small>backend/gateway.js</small>")
-        backend_gateway_path_ebc3624a("path<br/><small>backend/gateway.js</small>")
-        backend_gateway_registerroutes_ea99b391("registerRoutes<br/><small>backend/gateway.js</small>")
-        backend_gateway_start_49799ce2("start()<br/><small>backend/gateway.js</small>")
-        backend_gateway_uploadsdir_172d1a06("uploadsDir<br/><small>backend/gateway.js</small>")
+    %% Section: Analysis &amp; Clustering (68 nodes, 88 edges)
+    subgraph analysis_clustering_src_services_whatsapp_js_1dc5ec74["src/services/whatsapp.js"]
+        services_whatsapp_downloadandsaveimage_9fec142b("downloadAndSaveImage()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_downloadandsaveaudio_e15748ef("downloadAndSaveAudio()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_shouldignoremessage_546fc80c("shouldIgnoreMessage()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_processdebouncedmessage_2cabbd0a("processDebouncedMessage()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_sendmessage_23393338("sendMessage()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_isratelimited_296ffc5b("isRateLimited()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_transcribeaudio_56d1dd53("transcribeAudio()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_handleincomingmessagesupsert_68655631("handleIncomingMessagesUpsert()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_processincomingmessage_716ff711("processIncomingMessage()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_downloadincomingmedia_d604f38c("downloadIncomingMedia()<br/><small>src/services/whatsapp.js</small>")
+        services_whatsapp_extractmessagetext_973aeeac("extractMessageText()<br/><small>src/services/whatsapp.js</small>")
+    end
+    subgraph analysis_clustering_backend_src_routes_js_a3873807["backend/src/routes.js"]
+        src_routes_29c1622e("routes.js")
+        src_routes_convertwebmtoogg_f36c9260("convertWebmToOgg()<br/><small>backend/src/routes.js</small>")
+        src_routes_handlemanualaudiomessage_d1b07eac("handleManualAudioMessage()<br/><small>backend/src/routes.js</small>")
     end
     subgraph analysis_clustering_src_services_ads_js_3ccfb7f5["src/services/ads.js"]
         services_ads_execpromise_d71c25a6("execPromise<br/><small>src/services/ads.js</small>")
         services_ads_runanalysisandsendreport_09be4fbf("runAnalysisAndSendReport()<br/><small>src/services/ads.js</small>")
         services_ads_runanalysisraw_cb7ed376("runAnalysisRaw()<br/><small>src/services/ads.js</small>")
-        services_ads_037a1ad6("ads.js")
     end
-    subgraph analysis_clustering_backend_src_routes_js_a3873807["backend/src/routes.js"]
-        src_routes_convertwebmtoogg_f36c9260("convertWebmToOgg()<br/><small>backend/src/routes.js</small>")
-        src_routes_29c1622e("routes.js")
-        src_routes_handlemanualaudiomessage_d1b07eac("handleManualAudioMessage()<br/><small>backend/src/routes.js</small>")
-    end
+    backend_gateway_a3b89d76("gateway.js")
     src_routes_convertwebmtoogg_f36c9260 -->|calls| src_routes_handlemanualaudiomessage_d1b07eac
     services_ads_execpromise_d71c25a6 -->|calls| services_ads_runanalysisandsendreport_09be4fbf
     services_ads_execpromise_d71c25a6 -->|calls| services_ads_runanalysisraw_cb7ed376
-    backend_gateway_a3b89d76 -->|imports| services_ads_037a1ad6
+    services_whatsapp_processdebouncedmessage_2cabbd0a -->|calls| services_whatsapp_sendmessage_23393338
+    services_whatsapp_isratelimited_296ffc5b -->|calls| services_whatsapp_shouldignoremessage_546fc80c
+    services_whatsapp_transcribeaudio_56d1dd53 -->|calls| services_whatsapp_downloadandsaveaudio_e15748ef
+    services_whatsapp_shouldignoremessage_546fc80c -->|calls| services_whatsapp_handleincomingmessagesupsert_68655631
+    services_whatsapp_shouldignoremessage_546fc80c -->|calls| services_whatsapp_processincomingmessage_716ff711
+    services_whatsapp_downloadandsaveimage_9fec142b -->|calls| services_whatsapp_downloadincomingmedia_d604f38c
+    services_whatsapp_downloadandsaveimage_9fec142b -->|calls| services_whatsapp_handleincomingmessagesupsert_68655631
+    services_whatsapp_downloadandsaveaudio_e15748ef -->|calls| services_whatsapp_downloadincomingmedia_d604f38c
+    services_whatsapp_downloadandsaveaudio_e15748ef -->|calls| services_whatsapp_handleincomingmessagesupsert_68655631
+    services_whatsapp_extractmessagetext_973aeeac -->|calls| services_whatsapp_processincomingmessage_716ff711
+    services_whatsapp_downloadincomingmedia_d604f38c -->|calls| services_whatsapp_processincomingmessage_716ff711
+    services_whatsapp_processincomingmessage_716ff711 -->|calls| services_whatsapp_handleincomingmessagesupsert_68655631
     backend_gateway_a3b89d76 -->|imports| src_routes_29c1622e
-    src_routes_29c1622e -->|imports| services_ads_037a1ad6
-    %% Omitted for readability: 19 nodes, 0 edges
-    class backend_gateway_a3b89d76 module;
-    class backend_gateway_fastify_29120033 klass;
-    class backend_gateway_adsservice_dd1e09f3 async;
-    class backend_gateway_cron_425f1cd1 function;
-    class backend_gateway_db_559ccf3d function;
-    class backend_gateway_followupservice_981b990c function;
-    class backend_gateway_fs_b4cbd300 function;
-    class backend_gateway_path_ebc3624a function;
-    class backend_gateway_registerroutes_ea99b391 api;
-    class backend_gateway_start_49799ce2 function;
-    class backend_gateway_uploadsdir_172d1a06 function;
+    %% Omitted for readability: 50 nodes, 0 edges
+    class services_whatsapp_downloadandsaveimage_9fec142b function;
+    class services_whatsapp_downloadandsaveaudio_e15748ef function;
+    class services_whatsapp_shouldignoremessage_546fc80c function;
+    class services_whatsapp_processdebouncedmessage_2cabbd0a function;
+    class services_whatsapp_sendmessage_23393338 function;
+    class services_whatsapp_isratelimited_296ffc5b function;
+    class services_whatsapp_transcribeaudio_56d1dd53 function;
+    class services_whatsapp_handleincomingmessagesupsert_68655631 function;
+    class services_whatsapp_processincomingmessage_716ff711 function;
+    class services_whatsapp_downloadincomingmedia_d604f38c function;
+    class services_whatsapp_extractmessagetext_973aeeac function;
+    class src_routes_29c1622e api;
+    class src_routes_convertwebmtoogg_f36c9260 function;
+    class src_routes_handlemanualaudiomessage_d1b07eac function;
     class services_ads_execpromise_d71c25a6 function;
     class services_ads_runanalysisandsendreport_09be4fbf function;
     class services_ads_runanalysisraw_cb7ed376 function;
-    class services_ads_037a1ad6 module;
-    class src_routes_convertwebmtoogg_f36c9260 function;
-    class src_routes_29c1622e api;
-    class src_routes_handlemanualaudiomessage_d1b07eac function;
+    class backend_gateway_a3b89d76 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -594,243 +604,253 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>routes.js</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-endpoint">API</span></td>
-  <td><code>gateway.js</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
-  <td><code>ads.js</code><br><small style="color:var(--muted)">src/services/ads.js</small></td>
-  <td>routes.js node in backend/src/routes.js.</td>
+  <td><code>whatsapp.js</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>ads.js</code><br><small style="color:var(--muted)">src/services/ads.js</small><br><code>gateway.js</code><br><small style="color:var(--muted)">backend/gateway.js</small><br><code>routes.js</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>whatsapp.js node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>fs</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td><code>{
+  default: makeWASocket,
+  useMultiFileAuthState,
+  DisconnectReason,
+  downloadMediaMessage
+}</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>fs node in backend/src/routes.js.</td>
+  <td>{
+  default: makeWASocket,
+  useMultiFileAuthState,
+  DisconnectReason,
+  downloadMediaMessage
+} node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>path</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td><code>path</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>path node in backend/src/routes.js.</td>
+  <td>path node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>crypto</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td><code>fs</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>crypto node in backend/src/routes.js.</td>
+  <td>fs node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>{ execFile }</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td><code>db</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>{ execFile } node in backend/src/routes.js.</td>
+  <td>db node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>db</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td><code>agent</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>db node in backend/src/routes.js.</td>
+  <td>agent node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>agent</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td><code>{ GoogleGenerativeAI }</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>agent node in backend/src/routes.js.</td>
+  <td>{ GoogleGenerativeAI } node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>whatsappService</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>whatsappService node in backend/src/routes.js.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>followupService</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>followupService node in backend/src/routes.js.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>adsService</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-async">Async</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>adsService node in backend/src/routes.js.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>broadcastService</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>broadcastService node in backend/src/routes.js.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>convertWebmToOgg()</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>handleManualAudioMessage()</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td>convertWebmToOgg() node in backend/src/routes.js.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>handleManualAudioMessage()</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>convertWebmToOgg()</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td>No direct outbound edge</td>
-  <td>handleManualAudioMessage() node in backend/src/routes.js.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>registerRoutes()</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td><span class="tag tag-endpoint">API</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>registerRoutes() node in backend/src/routes.js.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>gateway.js</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>ads.js</code><br><small style="color:var(--muted)">src/services/ads.js</small><br><code>routes.js</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
-  <td>gateway.js node in backend/gateway.js.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>path</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>path node in backend/gateway.js.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>Fastify</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>SESSION_BASE_DIR</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Fastify node in backend/gateway.js.</td>
+  <td>SESSION_BASE_DIR node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>sessions</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>sessions node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>rateLimitCache</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Caches analysis results or computes cache keys.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>debounceCache</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Caches analysis results or computes cache keys.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>DEBOUNCE_DELAY_MS</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DEBOUNCE_DELAY_MS node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>processDebouncedMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>sendMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>processDebouncedMessage() node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>isRateLimited()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>shouldIgnoreMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>isRateLimited() node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>transcribeAudio()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>downloadAndSaveAudio()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>transcribeAudio() node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>shouldIgnoreMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>isRateLimited()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><code>handleIncomingMessagesUpsert()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>processIncomingMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>shouldIgnoreMessage() node in src/services/whatsapp.js.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>downloadAndSaveImage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>downloadIncomingMedia()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>handleIncomingMessagesUpsert()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>downloadAndSaveImage() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>cron</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>downloadAndSaveAudio()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>cron node in backend/gateway.js.</td>
+  <td><code>transcribeAudio()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><code>downloadIncomingMedia()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>handleIncomingMessagesUpsert()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>downloadAndSaveAudio() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>db</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>handleConnectionUpdate()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>db node in backend/gateway.js.</td>
+  <td>handleConnectionUpdate() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>whatsappService</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>extractMessageText()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>whatsappService node in backend/gateway.js.</td>
+  <td><code>processIncomingMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>extractMessageText() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>followupService</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>downloadIncomingMedia()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>followupService node in backend/gateway.js.</td>
+  <td><code>downloadAndSaveAudio()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>downloadAndSaveImage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><code>processIncomingMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>downloadIncomingMedia() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>adsService</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
-  <td><span class="tag tag-async">Async</span></td>
+  <td><code>resolveCustomerAndPresence()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>adsService node in backend/gateway.js.</td>
+  <td><code>processIncomingMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>resolveCustomerAndPresence() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>registerRoutes</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
-  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>addMessageToDebounceBuffer()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>registerRoutes node in backend/gateway.js.</td>
+  <td><code>processIncomingMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>addMessageToDebounceBuffer() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>fs</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>processIncomingMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>fs node in backend/gateway.js.</td>
+  <td><code>addMessageToDebounceBuffer()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>downloadIncomingMedia()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>extractMessageText()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br>+2 more</td>
+  <td><code>handleIncomingMessagesUpsert()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>processIncomingMessage() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>uploadsDir</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>handleIncomingMessagesUpsert()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>downloadAndSaveAudio()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>downloadAndSaveImage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br><code>processIncomingMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small><br>+1 more</td>
   <td>No direct outbound edge</td>
-  <td>uploadsDir node in backend/gateway.js.</td>
+  <td>handleIncomingMessagesUpsert() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>start()</code><br><small style="color:var(--muted)">backend/gateway.js</small></td>
+  <td><code>connectSession()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>start() node in backend/gateway.js.</td>
+  <td><code>connectToWhatsApp()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td>connectSession() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>ads.js</code><br><small style="color:var(--muted)">src/services/ads.js</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>gateway.js</code><br><small style="color:var(--muted)">backend/gateway.js</small><br><code>routes.js</code><br><small style="color:var(--muted)">backend/src/routes.js</small></td>
+  <td><code>disconnectSession()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>ads.js node in src/services/ads.js.</td>
+  <td>disconnectSession() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>{ exec }</code><br><small style="color:var(--muted)">src/services/ads.js</small></td>
+  <td><code>connectToWhatsApp()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>connectSession()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td>No direct outbound edge</td>
-  <td>{ exec } node in src/services/ads.js.</td>
+  <td>connectToWhatsApp() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>path</code><br><small style="color:var(--muted)">src/services/ads.js</small></td>
+  <td><code>isReady()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>path node in src/services/ads.js.</td>
+  <td>isReady() node in src/services/whatsapp.js.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>util</code><br><small style="color:var(--muted)">src/services/ads.js</small></td>
+  <td><code>sendMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>processDebouncedMessage()</code><br><small style="color:var(--muted)">src/services/whatsapp.js</small></td>
   <td>No direct outbound edge</td>
-  <td>util node in src/services/ads.js.</td>
+  <td>sendMessage() node in src/services/whatsapp.js.</td>
 </tr>
 </table>
 
@@ -839,26 +859,27 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>backend/src/routes.js</code></td><td>14 nodes</td></tr>
+      <tr><td><code>src/services/whatsapp.js</code></td><td>31 nodes</td></tr>
+<tr><td><code>backend/src/routes.js</code></td><td>14 nodes</td></tr>
 <tr><td><code>backend/gateway.js</code></td><td>12 nodes</td></tr>
 <tr><td><code>src/services/ads.js</code></td><td>11 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x34, imports x3, calls x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x64, calls x18, imports x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 4. CLI & Skill Installers ====== -->
 <h2 id="cli-skills">4. CLI &amp; Skill Installers</h2>
-<p>CLI &amp; Skill Installers groups implementation around agents, skills, skillmd, shadcn, mostly in skills/shadcn/SKILL.md, DEVELOPER.md, skills/gemini-api-dev/SKILL.md. This section covers 87 nodes and 84 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>CLI &amp; Skill Installers groups implementation around agents, skills, skillmd, shadcn, mostly in skills/shadcn/SKILL.md, DEVELOPER.md, skills/gemini-api-dev/SKILL.md. This section covers 89 nodes and 85 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: CLI &amp; Skill Installers (87 nodes, 84 edges)
+    %% Section: CLI &amp; Skill Installers (89 nodes, 85 edges)
     subgraph cli_skills_src_components_theme_provider_tsx_1521e98e["src/components/theme-provider.tsx"]
         components_theme_provider_17ac69f2("theme-provider.tsx")
         components_theme_provider_themeprovider_c1783996("ThemeProvider()<br/><small>src/components/theme-provider.tsx</small>")
@@ -887,7 +908,7 @@ flowchart LR
     src_main_3231ff52("main.tsx")
     components_theme_provider_17ac69f2 -->|imports| src_main_3231ff52
     components_theme_provider_themeprovider_c1783996 -->|imports| src_main_3231ff52
-    %% Omitted for readability: 69 nodes, 0 edges
+    %% Omitted for readability: 71 nodes, 0 edges
     class components_theme_provider_17ac69f2 ui;
     class components_theme_provider_themeprovider_c1783996 ui;
     class components_theme_provider_resolvedtheme_2e1a014a ui;
@@ -1180,13 +1201,13 @@ flowchart LR
 <tr><td><code>src/components/theme-provider.tsx</code></td><td>13 nodes</td></tr>
 <tr><td><code>AGENTS.md</code></td><td>10 nodes</td></tr>
 <tr><td><code>.opencode/opencode.json</code></td><td>3 nodes</td></tr>
+<tr><td><code>skills/update-docs/SKILL.md</code></td><td>2 nodes</td></tr>
 <tr><td><code>.opencode/plugins/graphify.js</code></td><td>2 nodes</td></tr>
-<tr><td><code>components/ui/sonner.tsx</code></td><td>2 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x71, references x10, imports x1, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x72, references x10, imports x1, imports x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1748,12 +1769,12 @@ flowchart LR
 
 <!-- ====== 7. Tests & Fixtures ====== -->
 <h2 id="tests-fixtures">7. Tests &amp; Fixtures</h2>
-<p>Tests &amp; Fixtures groups implementation around frontend, components, backend, services, mostly in src/services/whatsapp.js, components/ui/sidebar.tsx, src/components/ChatInbox.tsx. This section covers 427 nodes and 775 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Tests &amp; Fixtures groups implementation around frontend, components, backend, tests, mostly in components/ui/sidebar.tsx, src/components/ChatInbox.tsx, src/services/creative.js. This section covers 394 nodes and 721 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Tests &amp; Fixtures (427 nodes, 775 edges)
+    %% Section: Tests &amp; Fixtures (394 nodes, 721 edges)
     subgraph tests_fixtures_backend_ads_analysis_automation_j_614edd30["backend/ads-analysis/automation.js"]
         ads_analysis_automation_fetchmetainsightsrange_a819936a("fetchMetaInsightsRange()<br/><small>backend/ads-analysis/automation.js</small>")
         ads_analysis_automation_main_a60f30fe("main()<br/><small>backend/ads-analysis/automation.js</small>")
@@ -1790,7 +1811,7 @@ flowchart LR
     src_app_46efd68e -->|imports| components_products_8a62dc64
     src_app_46efd68e -->|imports| components_settings_d2cd85a2
     src_app_46efd68e -->|imports| components_whatsappsessions_c49ec77f
-    %% Omitted for readability: 409 nodes, 0 edges
+    %% Omitted for readability: 376 nodes, 0 edges
     class ads_analysis_automation_fetchmetainsightsrange_a819936a function;
     class ads_analysis_automation_main_a60f30fe function;
     class ads_analysis_automation_normalizemetainsights_7aea1c59 function;
@@ -2077,19 +2098,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>src/services/whatsapp.js</code></td><td>31 nodes</td></tr>
-<tr><td><code>components/ui/sidebar.tsx</code></td><td>28 nodes</td></tr>
+      <tr><td><code>components/ui/sidebar.tsx</code></td><td>28 nodes</td></tr>
 <tr><td><code>src/components/ChatInbox.tsx</code></td><td>27 nodes</td></tr>
 <tr><td><code>src/services/creative.js</code></td><td>24 nodes</td></tr>
 <tr><td><code>backend/ads-analysis/automation.js</code></td><td>22 nodes</td></tr>
 <tr><td><code>src/components/AdsReport.tsx</code></td><td>20 nodes</td></tr>
 <tr><td><code>src/services/broadcast.js</code></td><td>18 nodes</td></tr>
 <tr><td><code>src/components/Overview.tsx</code></td><td>17 nodes</td></tr>
+<tr><td><code>src/services/summary.js</code></td><td>13 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x364, calls x157, imports x146, imports x105. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x333, imports x146, calls x142, imports x97. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -3175,8 +3196,174 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 13. Community 22 ====== -->
-<h2 id="community-22">13. Community 22</h2>
+<!-- ====== 13. Community 62 ====== -->
+<h2 id="community-62">13. Community 62</h2>
+<p>Community 62 groups implementation around changelogmd, whatsapp, 2026, message, mostly in CHANGELOG.md. This section covers 11 nodes and 10 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 62 (11 nodes, 10 edges)
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1("CHANGELOG — Latezza Cake WhatsApp AI Agent<br/><small>CHANGELOG.md</small>")
+    changelog_2026_06_20_a339d9e5("2026-06-20<br/><small>CHANGELOG.md</small>")
+    changelog_2026_06_22_3fefc843("2026-06-22<br/><small>CHANGELOG.md</small>")
+    changelog_46e2bfdf("CHANGELOG.md")
+    changelog_2026_06_28_22f2e2a2("2026-06-28<br/><small>CHANGELOG.md</small>")
+    changelog_data_notes_78b39404("DATA NOTES<br/><small>CHANGELOG.md</small>")
+    changelog_broadcast_campaign_live_monitor_ui_red_d61c4dda("Broadcast Campaign Live Monitor UI Rede...<br/><small>CHANGELOG.md</small>")
+    changelog_optimized_creative_analysis_sourcing_c_f7878ecc("Optimized Creative Analysis Sourcing &amp;...<br/><small>CHANGELOG.md</small>")
+    changelog_voice_message_comprehension_audio_play_a53fbd10("Voice Message Comprehension &amp; Audio Player<br/><small>CHANGELOG.md</small>")
+    changelog_whatsapp_message_debouncing_abuse_prev_8218cee2("WhatsApp Message Debouncing &amp; Abuse Pre...<br/><small>CHANGELOG.md</small>")
+    changelog_whatsapp_multi_session_qr_scanner_dash_52f80bac("WhatsApp Multi-Session &amp; QR Scanner Das...<br/><small>CHANGELOG.md</small>")
+    changelog_46e2bfdf -->|contains| changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_20_a339d9e5
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_22_3fefc843
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_28_22f2e2a2
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_data_notes_78b39404
+    changelog_2026_06_28_22f2e2a2 -->|contains| changelog_broadcast_campaign_live_monitor_ui_red_d61c4dda
+    changelog_2026_06_22_3fefc843 -->|contains| changelog_optimized_creative_analysis_sourcing_c_f7878ecc
+    changelog_2026_06_22_3fefc843 -->|contains| changelog_whatsapp_message_debouncing_abuse_prev_8218cee2
+    changelog_2026_06_20_a339d9e5 -->|contains| changelog_voice_message_comprehension_audio_play_a53fbd10
+    changelog_2026_06_20_a339d9e5 -->|contains| changelog_whatsapp_multi_session_qr_scanner_dash_52f80bac
+    class changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 concept;
+    class changelog_2026_06_20_a339d9e5 concept;
+    class changelog_2026_06_22_3fefc843 concept;
+    class changelog_46e2bfdf concept;
+    class changelog_2026_06_28_22f2e2a2 concept;
+    class changelog_data_notes_78b39404 concept;
+    class changelog_broadcast_campaign_live_monitor_ui_red_d61c4dda concept;
+    class changelog_optimized_creative_analysis_sourcing_c_f7878ecc concept;
+    class changelog_voice_message_comprehension_audio_play_a53fbd10 concept;
+    class changelog_whatsapp_message_debouncing_abuse_prev_8218cee2 concept;
+    class changelog_whatsapp_multi_session_qr_scanner_dash_52f80bac concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>CHANGELOG.md</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing CHANGELOG.md.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>CHANGELOG — Latezza Cake WhatsApp AI Agent</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing CHANGELOG — Latezza Cake WhatsApp AI Agent.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>2026-06-28</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2026-06-28.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Broadcast Campaign Live Monitor UI Redesign</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Broadcast Campaign Live Monitor UI Redesign.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>2026-06-22</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2026-06-22.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Optimized Creative Analysis Sourcing &amp; CSV Context</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Optimized Creative Analysis Sourcing &amp; CSV Context.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>WhatsApp Message Debouncing &amp; Abuse Prevention</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing WhatsApp Message Debouncing &amp; Abuse Prevention.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>2026-06-20</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2026-06-20.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Voice Message Comprehension &amp; Audio Player</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Voice Message Comprehension &amp; Audio Player.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>WhatsApp Multi-Session &amp; QR Scanner Dashboard</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing WhatsApp Multi-Session &amp; QR Scanner Dashboard.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>DATA NOTES</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing DATA NOTES.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>11 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 14. Community 22 ====== -->
+<h2 id="community-22">14. Community 22</h2>
 <p>Community 22 groups implementation around developermd, api, routes, reference, mostly in DEVELOPER.md. This section covers 10 nodes and 9 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3330,8 +3517,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 14. Community 26 ====== -->
-<h2 id="community-26">14. Community 26</h2>
+<!-- ====== 15. Community 26 ====== -->
+<h2 id="community-26">15. Community 26</h2>
 <p>Community 26 groups implementation around base, agents, skills, shadcn, mostly in shadcn/rules/base-vs-radix.md. This section covers 9 nodes and 8 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3474,35 +3661,69 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 15. Community 27 ====== -->
-<h2 id="community-27">15. Community 27</h2>
-<p>Community 27 groups implementation around schedulerjs, backend, services, cron, mostly in src/services/scheduler.js. This section covers 9 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<!-- ====== 16. Other ====== -->
+<h2 id="other">16. Other</h2>
+<p>Other groups implementation around backend, changelogmd, developermd, agents, mostly in CHANGELOG.md, DEVELOPER.md, src/services/scheduler.js. This section covers 159 nodes and 126 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Community 27 (9 nodes, 11 edges)
-    services_scheduler_setupscheduledjobs_0bc1a7a3("setupScheduledJobs()<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_builddailycronexpression_5ef5ac48("buildDailyCronExpression()<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_reloadschedules_8201352f("reloadSchedules()<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_stopalljobs_b16f673c("stopAllJobs()<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_adsservice_facc4466("adsService<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_cron_493a947f("cron<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_db_95bd067a("db<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_followupservice_5057388b("followupService<br/><small>src/services/scheduler.js</small>")
-    services_scheduler_60494f56("scheduler.js")
+    %% Section: Other (159 nodes, 126 edges)
+    subgraph other_backend_src_db_js_e9c82801["backend/src/db.js"]
+        src_db_getsetting_16db62de("getSetting()<br/><small>backend/src/db.js</small>")
+        src_db_initdb_23909900("initDb()<br/><small>backend/src/db.js</small>")
+        src_db_backfillproductembeddings_8246a303("backfillProductEmbeddings()<br/><small>backend/src/db.js</small>")
+        src_db_loadallsettings_3cc9756d("loadAllSettings()<br/><small>backend/src/db.js</small>")
+        src_db_searchproducts_0d466a1a("searchProducts()<br/><small>backend/src/db.js</small>")
+        src_db_getcustomer_0ad8b434("getCustomer()<br/><small>backend/src/db.js</small>")
+        src_db_createorupdatecustomer_94e09932("createOrUpdateCustomer()<br/><small>backend/src/db.js</small>")
+        src_db_searchproductsfallback_2ddb7dc8("searchProductsFallback()<br/><small>backend/src/db.js</small>")
+        src_db_generateembedding_94b42922("generateEmbedding()<br/><small>backend/src/db.js</small>")
+    end
+    subgraph other_src_services_scheduler_js_f11a8ac8["src/services/scheduler.js"]
+        services_scheduler_setupscheduledjobs_0bc1a7a3("setupScheduledJobs()<br/><small>src/services/scheduler.js</small>")
+        services_scheduler_builddailycronexpression_5ef5ac48("buildDailyCronExpression()<br/><small>src/services/scheduler.js</small>")
+        services_scheduler_reloadschedules_8201352f("reloadSchedules()<br/><small>src/services/scheduler.js</small>")
+        services_scheduler_stopalljobs_b16f673c("stopAllJobs()<br/><small>src/services/scheduler.js</small>")
+        services_scheduler_60494f56("scheduler.js")
+    end
+    subgraph other_src_services_followup_js_b29a4db7["src/services/followup.js"]
+        services_followup_96686713("followup.js")
+        services_followup_processsinglefollowup_743d1981("processSingleFollowUp()<br/><small>src/services/followup.js</small>")
+        services_followup_runproactivefollowups_0936efa4("runProactiveFollowUps()<br/><small>src/services/followup.js</small>")
+    end
+    latezza_automation_light_dark_mode_71242d66("Light/Dark Mode Theme<br/><small>CHANGELOG.md</small>")
+    src_db_initdb_23909900 -->|calls| src_db_backfillproductembeddings_8246a303
+    src_db_initdb_23909900 -->|calls| src_db_loadallsettings_3cc9756d
+    src_db_getsetting_16db62de -->|calls| src_db_backfillproductembeddings_8246a303
+    src_db_getsetting_16db62de -->|calls| src_db_searchproducts_0d466a1a
+    src_db_getcustomer_0ad8b434 -->|calls| src_db_createorupdatecustomer_94e09932
+    src_db_searchproductsfallback_2ddb7dc8 -->|calls| src_db_searchproducts_0d466a1a
+    src_db_generateembedding_94b42922 -->|calls| src_db_backfillproductembeddings_8246a303
+    services_followup_processsinglefollowup_743d1981 -->|calls| services_followup_runproactivefollowups_0936efa4
     services_scheduler_builddailycronexpression_5ef5ac48 -->|calls| services_scheduler_setupscheduledjobs_0bc1a7a3
     services_scheduler_setupscheduledjobs_0bc1a7a3 -->|calls| services_scheduler_reloadschedules_8201352f
     services_scheduler_setupscheduledjobs_0bc1a7a3 -->|calls| services_scheduler_stopalljobs_b16f673c
+    services_followup_96686713 -->|imports| services_scheduler_60494f56
+    %% Omitted for readability: 141 nodes, 0 edges
+    class src_db_getsetting_16db62de function;
+    class src_db_initdb_23909900 function;
+    class src_db_backfillproductembeddings_8246a303 function;
+    class src_db_loadallsettings_3cc9756d function;
+    class src_db_searchproducts_0d466a1a function;
+    class src_db_getcustomer_0ad8b434 function;
+    class src_db_createorupdatecustomer_94e09932 function;
+    class src_db_searchproductsfallback_2ddb7dc8 function;
+    class src_db_generateembedding_94b42922 function;
     class services_scheduler_setupscheduledjobs_0bc1a7a3 function;
     class services_scheduler_builddailycronexpression_5ef5ac48 function;
     class services_scheduler_reloadschedules_8201352f function;
     class services_scheduler_stopalljobs_b16f673c function;
-    class services_scheduler_adsservice_facc4466 async;
-    class services_scheduler_cron_493a947f function;
-    class services_scheduler_db_95bd067a function;
-    class services_scheduler_followupservice_5057388b function;
     class services_scheduler_60494f56 module;
+    class services_followup_96686713 module;
+    class services_followup_processsinglefollowup_743d1981 function;
+    class services_followup_runproactivefollowups_0936efa4 function;
+    class latezza_automation_light_dark_mode_71242d66 klass;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -3528,7 +3749,7 @@ flowchart LR
   <td>1</td>
   <td><code>scheduler.js</code><br><small style="color:var(--muted)">src/services/scheduler.js</small></td>
   <td><span class="tag tag-class">Module</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>followup.js</code><br><small style="color:var(--muted)">src/services/followup.js</small></td>
   <td>No direct outbound edge</td>
   <td>scheduler.js node in src/services/scheduler.js.</td>
 </tr>
@@ -3596,109 +3817,8 @@ flowchart LR
   <td>No direct outbound edge</td>
   <td>reloadSchedules() node in src/services/scheduler.js.</td>
 </tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>src/services/scheduler.js</code></td><td>9 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x8, calls x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 16. Other ====== -->
-<h2 id="other">16. Other</h2>
-<p>Other groups implementation around changelogmd, backend, developermd, agents, mostly in CHANGELOG.md, DEVELOPER.md, backend/laporan_sonar.md. This section covers 159 nodes and 130 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Other (159 nodes, 130 edges)
-    subgraph other_backend_src_db_js_e9c82801["backend/src/db.js"]
-        src_db_getsetting_16db62de("getSetting()<br/><small>backend/src/db.js</small>")
-        src_db_initdb_23909900("initDb()<br/><small>backend/src/db.js</small>")
-        src_db_generateembedding_94b42922("generateEmbedding()<br/><small>backend/src/db.js</small>")
-        src_db_getcustomer_0ad8b434("getCustomer()<br/><small>backend/src/db.js</small>")
-        src_db_searchproductsfallback_2ddb7dc8("searchProductsFallback()<br/><small>backend/src/db.js</small>")
-        src_db_backfillproductembeddings_8246a303("backfillProductEmbeddings()<br/><small>backend/src/db.js</small>")
-        src_db_loadallsettings_3cc9756d("loadAllSettings()<br/><small>backend/src/db.js</small>")
-        src_db_searchproducts_0d466a1a("searchProducts()<br/><small>backend/src/db.js</small>")
-        src_db_createorupdatecustomer_94e09932("createOrUpdateCustomer()<br/><small>backend/src/db.js</small>")
-    end
-    subgraph other_CHANGELOG_md_536ea415["CHANGELOG.md"]
-        latezza_automation_light_dark_mode_71242d66("Light/Dark Mode Theme<br/><small>CHANGELOG.md</small>")
-        latezza_automation_shadcn_ui_4a06c5cf("shadcn/ui Component Library<br/><small>CHANGELOG.md</small>")
-    end
-    subgraph other_DEVELOPER_md_14d93c66["DEVELOPER.md"]
-        latezza_automation_fastify_backend_6256943c("Fastify Backend Server<br/><small>DEVELOPER.md</small>")
-        latezza_automation_react_frontend_eb7d19ee("React Vite Frontend SPA<br/><small>DEVELOPER.md</small>")
-    end
-    subgraph other_backend_scratch_approve_hotspots_js_10069d3b["backend/scratch/approve_hotspots.js"]
-        scratch_approve_hotspots_approvehotspots_f5023303("approveHotspots()<br/><small>backend/scratch/approve_hotspots.js</small>")
-        scratch_approve_hotspots_bbdd1a33("approve_hotspots.js")
-    end
-    subgraph other_src_services_followup_js_b29a4db7["src/services/followup.js"]
-        services_followup_processsinglefollowup_743d1981("processSingleFollowUp()<br/><small>src/services/followup.js</small>")
-        services_followup_runproactivefollowups_0936efa4("runProactiveFollowUps()<br/><small>src/services/followup.js</small>")
-    end
-    backend_jest_config_a51150b9("jest.config.js")
-    src_db_initdb_23909900 -->|calls| src_db_backfillproductembeddings_8246a303
-    src_db_initdb_23909900 -->|calls| src_db_loadallsettings_3cc9756d
-    src_db_getsetting_16db62de -->|calls| src_db_backfillproductembeddings_8246a303
-    src_db_getsetting_16db62de -->|calls| src_db_searchproducts_0d466a1a
-    src_db_getcustomer_0ad8b434 -->|calls| src_db_createorupdatecustomer_94e09932
-    src_db_searchproductsfallback_2ddb7dc8 -->|calls| src_db_searchproducts_0d466a1a
-    src_db_generateembedding_94b42922 -->|calls| src_db_backfillproductembeddings_8246a303
-    services_followup_processsinglefollowup_743d1981 -->|calls| services_followup_runproactivefollowups_0936efa4
-    %% Omitted for readability: 141 nodes, 0 edges
-    class src_db_getsetting_16db62de function;
-    class src_db_initdb_23909900 function;
-    class src_db_generateembedding_94b42922 function;
-    class src_db_getcustomer_0ad8b434 function;
-    class src_db_searchproductsfallback_2ddb7dc8 function;
-    class src_db_backfillproductembeddings_8246a303 function;
-    class src_db_loadallsettings_3cc9756d function;
-    class src_db_searchproducts_0d466a1a function;
-    class src_db_createorupdatecustomer_94e09932 function;
-    class latezza_automation_light_dark_mode_71242d66 klass;
-    class latezza_automation_shadcn_ui_4a06c5cf ui;
-    class latezza_automation_fastify_backend_6256943c klass;
-    class latezza_automation_react_frontend_eb7d19ee klass;
-    class scratch_approve_hotspots_approvehotspots_f5023303 function;
-    class scratch_approve_hotspots_bbdd1a33 module;
-    class services_followup_processsinglefollowup_743d1981 function;
-    class services_followup_runproactivefollowups_0936efa4 function;
-    class backend_jest_config_a51150b9 module;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
 <tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
+  <td>10</td>
   <td><code>2026-06-21</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3706,7 +3826,7 @@ flowchart LR
   <td>Documentation node describing 2026-06-21.</td>
 </tr>
 <tr>
-  <td>2</td>
+  <td>11</td>
   <td><code>Comprehensive Test Cases &amp; Automated Testing Pipeline</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3714,7 +3834,7 @@ flowchart LR
   <td>Documentation node describing Comprehensive Test Cases &amp; Automated Testing Pipeline.</td>
 </tr>
 <tr>
-  <td>3</td>
+  <td>12</td>
   <td><code>AI Insights, Timeframe KPIs, and Custom Prompts for Creative Analysis</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3722,7 +3842,7 @@ flowchart LR
   <td>Documentation node describing AI Insights, Timeframe KPIs, and Custom Prompts for Creative Analysis.</td>
 </tr>
 <tr>
-  <td>4</td>
+  <td>13</td>
   <td><code>Overview Session Filter, Navigation, and Immediate WhatsApp AI Status Updates</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3730,7 +3850,7 @@ flowchart LR
   <td>Documentation node describing Overview Session Filter, Navigation, and Immediate WhatsApp AI Status Updates.</td>
 </tr>
 <tr>
-  <td>5</td>
+  <td>14</td>
   <td><code>Meta Ads Analysis UI/UX &amp; Real-time Progress Streaming</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3738,7 +3858,7 @@ flowchart LR
   <td>Documentation node describing Meta Ads Analysis UI/UX &amp; Real-time Progress Streaming.</td>
 </tr>
 <tr>
-  <td>6</td>
+  <td>15</td>
   <td><code>Meta Ads CSV Date Range Filtering &amp; Proportional Projections Bugfix</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3746,7 +3866,7 @@ flowchart LR
   <td>Documentation node describing Meta Ads CSV Date Range Filtering &amp; Proportional Projections Bugfix.</td>
 </tr>
 <tr>
-  <td>7</td>
+  <td>16</td>
   <td><code>Meta Ads Analysis Refactor: Custom Date Range &amp; Projection Removal</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3754,7 +3874,7 @@ flowchart LR
   <td>Documentation node describing Meta Ads Analysis Refactor: Custom Date Range &amp; Projection Removal.</td>
 </tr>
 <tr>
-  <td>8</td>
+  <td>17</td>
   <td><code>Audio Playback, Transcoding, and Database Metadata Fixes</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -3762,84 +3882,12 @@ flowchart LR
   <td>Documentation node describing Audio Playback, Transcoding, and Database Metadata Fixes.</td>
 </tr>
 <tr>
-  <td>9</td>
+  <td>18</td>
   <td><code>Dashboard Outgoing Voice Message Recording &amp; Transcribing</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
   <td>Documentation node describing Dashboard Outgoing Voice Message Recording &amp; Transcribing.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>CHANGELOG.md</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing CHANGELOG.md.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>CHANGELOG — Latezza Cake WhatsApp AI Agent</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing CHANGELOG — Latezza Cake WhatsApp AI Agent.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>2026-06-22</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2026-06-22.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>Optimized Creative Analysis Sourcing &amp; CSV Context</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Optimized Creative Analysis Sourcing &amp; CSV Context.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>WhatsApp Message Debouncing &amp; Abuse Prevention</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing WhatsApp Message Debouncing &amp; Abuse Prevention.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>2026-06-20</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2026-06-20.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>Voice Message Comprehension &amp; Audio Player</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Voice Message Comprehension &amp; Audio Player.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>WhatsApp Multi-Session &amp; QR Scanner Dashboard</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing WhatsApp Multi-Session &amp; QR Scanner Dashboard.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>DATA NOTES</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing DATA NOTES.</td>
 </tr>
 <tr>
   <td>19</td>
@@ -3944,19 +3992,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>CHANGELOG.md</code></td><td>55 nodes</td></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>46 nodes</td></tr>
 <tr><td><code>DEVELOPER.md</code></td><td>24 nodes</td></tr>
 <tr><td><code>backend/laporan_sonar.md</code></td><td>9 nodes</td></tr>
 <tr><td><code>backend/src/db.js</code></td><td>9 nodes</td></tr>
+<tr><td><code>src/services/scheduler.js</code></td><td>9 nodes</td></tr>
 <tr><td><code>shadcn/rules/forms.md</code></td><td>8 nodes</td></tr>
 <tr><td><code>src/services/followup.js</code></td><td>6 nodes</td></tr>
 <tr><td><code>shadcn/rules/icons.md</code></td><td>5 nodes</td></tr>
-<tr><td><code>backend/scratch/list-models.js</code></td><td>4 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x116, calls x8, references x2, shares data with x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x108, calls x11, references x2, shares data with x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4003,17 +4051,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>1126</td></tr>
-      <tr><td>Edges</td><td>1504</td></tr>
+      <tr><td>Nodes</td><td>1128</td></tr>
+      <tr><td>Edges</td><td>1506</td></tr>
       <tr><td>Hyperedges</td><td>3</td></tr>
-      <tr><td>Communities</td><td>105</td></tr>
+      <tr><td>Communities</td><td>106</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>1498</td></tr>
+      <tr><td>EXTRACTED</td><td>1500</td></tr>
       <tr><td>INFERRED</td><td>6</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -4022,7 +4070,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>latezza-automation — Architecture Documentation</p>
-  <p>Generated: 2026-06-27 17:55 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-06-27 18:13 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

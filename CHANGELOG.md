@@ -2,8 +2,19 @@
 
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
+## 2026-06-28
+
+### Broadcast Campaign Live Monitor UI Redesign
+- **Redesigned Live Monitor Modal UI/UX**:
+  - Expanded Dialog size from `max-w-4xl h-[75vh]` to a spacious `max-w-5xl md:max-w-6xl w-[95vw] h-[85vh]` to prevent text/column compression and add breathing room.
+  - Redesigned the Dialog Header with a green pulsing real-time connection indicator when the campaign is active (`processing`), a clean Tabler icon layout, and modern pill-shaped control buttons.
+  - Added a visual completion progress bar showing the percentage of processed targets `(sent_count + failed_count) / total_targets` with smooth animations and state-colored progress fills (e.g. green for completed, red for failed).
+  - Split campaign stats into four distinct metrics cards (Status, Total Target, Sukses, Gagal) featuring border transitions, custom background highlights, and clear indicators.
+  - Implemented interactive status filtering tabs (All, Pending, Mengirim, Sukses, Gagal) with dynamic count badges, allowing users to filter queue items in real-time.
+  - Expanded and styled the Queue Table with spacious padding, clean monospace numbers, clear badge designs, and detailed warning highlights for delivery errors.
 
 ## 2026-06-25
+
 
 ### Chat Scroll and Conversation Inbox Usability Bug Fix
 - **Fixed Chat Scroll Resetting to Top on Polling**:

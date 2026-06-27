@@ -3,7 +3,7 @@
 project: WhatsApp AI Agent + Admin Dashboard
 client: Latezza Cake
 stack: Fastify (Node.js) + React (Vite + Tailwind CSS v4 + shadcn/ui) + PostgreSQL + Baileys + Gemini API
-last_updated: 2026-06-24
+last_updated: 2026-06-28
 
 ---
 

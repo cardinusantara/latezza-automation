@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/ChatInbox.tsx": {
-    "mtime": 1782392438.7627773,
-    "ast_hash": "675ed4b01077db3e9a4b8c99c103de06",
+    "mtime": 1782583803.4291334,
+    "ast_hash": "6ab75006a9f0cc296a27cdf691aac499",
     "semantic_hash": ""
   },
   "frontend/src/components/CreativeReport.tsx": {
@@ -375,13 +375,13 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1782392888.9611392,
-    "ast_hash": "22a8988944a006738e9d3f3119f241f7",
+    "mtime": 1782583717.6954367,
+    "ast_hash": "04ea9cefdbb0c06679b0f46e33f28827",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
-    "mtime": 1782383457.0295854,
-    "ast_hash": "d020ab77fd26ba4ee0f8c513ac7cfdb9",
+    "mtime": 1782583724.1365416,
+    "ast_hash": "ff90d32ddce14c40a7f631b7a90eb5f6",
     "semantic_hash": ""
   },
   "ISSUES.md": {
@@ -6799,11 +6799,6 @@
     "ast_hash": "eaca65229bbe074fe322772a4b353674",
     "semantic_hash": ""
   },
-  ".agents/rules/write-tests.md": {
-    "mtime": 1782060659.0049355,
-    "ast_hash": "2ec20ba762d9a2364ea891f51eb35b96",
-    "semantic_hash": ""
-  },
   ".agents/workflows/write-tests.md": {
     "mtime": 1782060663.905347,
     "ast_hash": "a50561f698ed82112b09bc2f344907a6",
@@ -6865,8 +6860,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/ChatInbox.test.tsx": {
-    "mtime": 1782392746.275524,
-    "ast_hash": "ef21a202c17860d0166c1a75b06f80b3",
+    "mtime": 1782583963.5249805,
+    "ast_hash": "19908f30105ab4357f204ac93d5fd498",
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/WhatsappSessions.test.tsx": {
@@ -6885,13 +6880,18 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Broadcast.tsx": {
-    "mtime": 1782405258.632782,
-    "ast_hash": "9dcf2fd53cbb122462d152c2c8662036",
+    "mtime": 1782583521.135214,
+    "ast_hash": "12f3ea5f26c1e7112de844441eafc549",
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/Broadcast.test.tsx": {
     "mtime": 1782404151.129819,
     "ast_hash": "ffefa132a400ef738149ff45287f076d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/update-docs/SKILL.md": {
+    "mtime": 1782583934.5559468,
+    "ast_hash": "a137120de761998b1b17a3960d8b48f3",
     "semantic_hash": ""
   }
 }

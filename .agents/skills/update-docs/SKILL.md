@@ -1,6 +1,6 @@
 ---
-trigger: always_on
-description: Rule to enforce writing and updating unit tests for any new or modified code/features.
+name: update project docs
+description: Use this skill when user ask for update the docs.
 ---
 
 ## write-tests

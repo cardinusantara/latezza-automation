@@ -70,6 +70,7 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [campaignQueue, setCampaignQueue] = useState<QueueItem[]>([]);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
+  const [queueFilter, setQueueFilter] = useState<'all' | 'pending' | 'sending' | 'sent' | 'failed'>('all');
 
   // Composer Form States
   const [formName, setFormName] = useState('');
@@ -557,6 +558,7 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
                               onClick={() => {
                                 setSelectedCampaign(c);
                                 setCampaignQueue([]);
+                                setQueueFilter('all');
                                 setIsDetailOpen(true);
                                 fetchCampaignDetail(c.id);
                               }}
@@ -909,19 +911,27 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
 
       {/* 4. Dialog: Campaign Queue Monitor (Detail View) */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-4xl h-[75vh] flex flex-col p-0 overflow-hidden border border-border/80 bg-card">
-          <DialogHeader className="p-5 border-b border-border/40">
+        <DialogContent className="max-w-5xl md:max-w-6xl w-[95vw] h-[85vh] flex flex-col p-0 overflow-hidden border border-border/80 bg-card/95 backdrop-blur-md rounded-2xl shadow-2xl transition-all duration-300">
+          <DialogHeader className="px-6 py-5 border-b border-border/40 bg-accent/5">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-              <div>
-                <DialogTitle className="text-base font-bold flex items-center gap-2">
-                  <IconSpeakerphone className="h-5 w-5 text-primary" />
-                  Live Monitor: {selectedCampaign?.name}
+              <div className="space-y-1">
+                <DialogTitle className="text-lg font-bold flex items-center gap-2.5">
+                  <div className="p-1.5 bg-primary/10 rounded-lg text-primary">
+                    <IconSpeakerphone className="h-5 w-5" />
+                  </div>
+                  <span className="tracking-tight">Live Monitor: {selectedCampaign?.name}</span>
+                  {selectedCampaign?.status === 'processing' && (
+                    <span className="flex h-2.5 w-2.5 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                  )}
                 </DialogTitle>
-                <DialogDescription className="text-[11px]">
-                  Pantau real-time pengiriman pesan asinkronus Anti-Ban
+                <DialogDescription className="text-xs text-muted-foreground pl-9">
+                  Pantau real-time status antrean dan metrik pengiriman kampanye siaran massal Anda.
                 </DialogDescription>
               </div>
-              <div className="flex items-center gap-2 self-start sm:self-auto">
+              <div className="flex items-center gap-2 self-start sm:self-auto sm:pl-0 pl-9">
                 {/* Control Campaign within Details */}
                 {selectedCampaign && (
                   <>
@@ -929,20 +939,20 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
                       <Button
                         size="sm"
                         onClick={() => handleControlCampaign(selectedCampaign.id, 'start')}
-                        className="h-8 bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-1 text-xs"
+                        className="h-9 px-4 bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 text-xs font-medium rounded-lg shadow-sm shadow-emerald-600/10 transition-colors"
                       >
                         <IconPlayerPlay size={14} />
-                        Mulai
+                        Mulai Siaran
                       </Button>
                     )}
                     {selectedCampaign.status === 'processing' && (
                       <Button
                         size="sm"
                         onClick={() => handleControlCampaign(selectedCampaign.id, 'pause')}
-                        className="h-8 bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1 text-xs"
+                        className="h-9 px-4 bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1.5 text-xs font-medium rounded-lg shadow-sm shadow-amber-500/10 transition-colors"
                       >
                         <IconPlayerPause size={14} />
-                        Jeda
+                        Jeda Siaran
                       </Button>
                     )}
                     {(selectedCampaign.status === 'processing' || selectedCampaign.status === 'queued' || selectedCampaign.status === 'paused') && (
@@ -950,7 +960,7 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
                         size="sm"
                         variant="destructive"
                         onClick={() => handleControlCampaign(selectedCampaign.id, 'cancel')}
-                        className="h-8 flex items-center gap-1 text-xs"
+                        className="h-9 px-4 flex items-center gap-1.5 text-xs font-medium rounded-lg shadow-sm transition-colors"
                       >
                         <IconSquareX size={14} />
                         Batalkan Sisa
@@ -963,87 +973,231 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
           </DialogHeader>
 
           {/* Details & Queue List Area */}
-          <div className="flex-grow overflow-y-auto p-5 space-y-5">
+          <div className="flex-grow overflow-y-auto p-6 space-y-6">
             {/* Campaign Summary & Progress Indicators */}
-            {selectedCampaign && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 border border-border/40 rounded-xl p-4 bg-accent/10">
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">Status</span>
-                  <div className="mt-1">{renderStatusBadge(selectedCampaign.status)}</div>
-                </div>
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">Terkirim / Target</span>
-                  <div className="text-sm font-bold mt-1 text-foreground">
-                    {selectedCampaign.sent_count + selectedCampaign.failed_count} / {selectedCampaign.total_targets}
+            {selectedCampaign && (() => {
+              const processedCount = selectedCampaign.sent_count + selectedCampaign.failed_count;
+              const total = selectedCampaign.total_targets;
+              const progressPercent = total > 0 ? Math.round((processedCount / total) * 100) : 0;
+              
+              return (
+                <div className="space-y-4">
+                  {/* Visual Progress Bar Section */}
+                  <div className="border border-border/40 rounded-xl p-5 bg-accent/5 backdrop-blur-sm space-y-3">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-foreground/80 flex items-center gap-1.5">
+                        Progres Siaran
+                        {selectedCampaign.status === 'processing' && (
+                          <span className="text-[10px] bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded-full animate-pulse">
+                            Mengirim
+                          </span>
+                        )}
+                      </span>
+                      <span className="font-mono font-bold text-primary">
+                        {progressPercent}% ({processedCount} / {total} terproses)
+                      </span>
+                    </div>
+                    <div className="w-full bg-accent/40 rounded-full h-3 overflow-hidden border border-border/10">
+                      <div 
+                        className={`h-full transition-all duration-500 ease-out rounded-full ${
+                          selectedCampaign.status === 'completed' 
+                            ? 'bg-emerald-500' 
+                            : selectedCampaign.status === 'failed' 
+                            ? 'bg-destructive' 
+                            : 'bg-primary'
+                        }`}
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* 4 Stats Cards Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="border border-border/40 rounded-xl p-4 bg-card hover:border-border/60 transition-all flex flex-col justify-between h-24 shadow-sm">
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Status Kampanye</span>
+                      <div className="mt-1 flex items-center gap-2">
+                        {renderStatusBadge(selectedCampaign.status)}
+                      </div>
+                    </div>
+                    
+                    <div className="border border-border/40 rounded-xl p-4 bg-card hover:border-border/60 transition-all flex flex-col justify-between h-24 shadow-sm">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Total Target</span>
+                        <IconMessage className="h-4 w-4 text-muted-foreground/60" />
+                      </div>
+                      <div>
+                        <div className="text-xl font-bold text-foreground font-mono">{total}</div>
+                        <span className="text-[10px] text-muted-foreground">penerima terdaftar</span>
+                      </div>
+                    </div>
+
+                    <div className="border border-border/40 rounded-xl p-4 bg-emerald-500/[0.02] border-emerald-500/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between h-24 shadow-sm">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] text-emerald-600/80 uppercase font-bold tracking-wider">Terkirim (Sukses)</span>
+                        <IconCircleCheck className="h-4 w-4 text-emerald-500" />
+                      </div>
+                      <div>
+                        <div className="text-xl font-bold text-emerald-500 font-mono">{selectedCampaign.sent_count}</div>
+                        <span className="text-[10px] text-muted-foreground">berhasil diterima</span>
+                      </div>
+                    </div>
+
+                    <div className="border border-border/40 rounded-xl p-4 bg-destructive/[0.02] border-destructive/10 hover:border-destructive/30 transition-all flex flex-col justify-between h-24 shadow-sm">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] text-destructive/80 uppercase font-bold tracking-wider">Gagal Kirim</span>
+                        <IconCircleX className="h-4 w-4 text-destructive" />
+                      </div>
+                      <div>
+                        <div className="text-xl font-bold text-destructive font-mono">{selectedCampaign.failed_count}</div>
+                        <span className="text-[10px] text-muted-foreground">kontak bermasalah</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">Sukses</span>
-                  <div className="text-sm font-bold text-emerald-500 mt-1">{selectedCampaign.sent_count}</div>
-                </div>
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">Gagal</span>
-                  <div className="text-sm font-bold text-destructive mt-1">{selectedCampaign.failed_count}</div>
-                </div>
-              </div>
-            )}
+              );
+            })()}
 
-            {/* Queue Table */}
-            <div className="border border-border/40 rounded-lg overflow-hidden">
-              {isDetailLoading ? (
-                <div className="flex items-center justify-center py-12 text-sm text-muted-foreground gap-2">
-                  <IconLoader className="h-4 w-4 animate-spin text-primary" />
-                  Loading detail antrean...
-                </div>
-              ) : campaignQueue.length === 0 ? (
-                <div className="text-center py-12 text-xs text-muted-foreground">Tidak ada antrean terdaftar untuk kampanye ini</div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader className="bg-accent/20">
-                      <TableRow>
-                        <TableHead className="text-[10px] font-semibold uppercase text-muted-foreground py-2.5">No Penerima</TableHead>
-                        <TableHead className="text-[10px] font-semibold uppercase text-muted-foreground py-2.5">Status</TableHead>
-                        <TableHead className="text-[10px] font-semibold uppercase text-muted-foreground py-2.5">Isi Pesan Terpersonalisasi</TableHead>
-                        <TableHead className="text-[10px] font-semibold uppercase text-muted-foreground py-2.5">Catatan Error</TableHead>
-                        <TableHead className="text-[10px] font-semibold uppercase text-muted-foreground py-2.5">Waktu Kirim</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {campaignQueue.map((item) => (
-                        <TableRow key={item.id} className="hover:bg-accent/10 border-b border-border/40">
-                          <TableCell className="py-3 font-semibold text-xs font-mono">
-                            {item.phone_number.split('@')[0]}
-                          </TableCell>
-                          <TableCell className="py-3">
-                            {item.status === 'pending' && <Badge variant="outline" className="bg-card text-muted-foreground text-[9px] px-1.5 py-0">Pending</Badge>}
-                            {item.status === 'sending' && <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-[9px] px-1.5 py-0 animate-pulse">Sending</Badge>}
-                            {item.status === 'sent' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] px-1.5 py-0">Sent</Badge>}
-                            {item.status === 'failed' && <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 text-[9px] px-1.5 py-0">Failed</Badge>}
-                          </TableCell>
-                          <TableCell className="py-3 text-xs max-w-[250px] truncate" title={item.personalized_message}>
-                            {item.personalized_message}
-                          </TableCell>
-                          <TableCell className="py-3 text-[10px] text-destructive max-w-[150px] truncate" title={item.error_message || ''}>
-                            {item.error_message || <span className="text-muted-foreground/30">-</span>}
-                          </TableCell>
-                          <TableCell className="py-3 text-[10px] text-muted-foreground">
-                            {item.sent_at ? formatDate(item.sent_at) : <span className="text-muted-foreground/30">-</span>}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+            {/* Queue Filter Tabs & Header */}
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                  <span>Daftar Antrean Penerima</span>
+                  <span className="text-xs font-normal text-muted-foreground">({campaignQueue.length} total)</span>
+                </h3>
+                
+                {/* Filter Pills */}
+                {campaignQueue.length > 0 && (
+                  <div className="flex flex-wrap gap-1 p-1 bg-accent/20 rounded-lg border border-border/20 self-start sm:self-auto">
+                    {[
+                      { key: 'all', label: 'Semua', count: campaignQueue.length },
+                      { key: 'pending', label: 'Pending', count: campaignQueue.filter(i => i.status === 'pending').length },
+                      { key: 'sending', label: 'Mengirim', count: campaignQueue.filter(i => i.status === 'sending').length },
+                      { key: 'sent', label: 'Sukses', count: campaignQueue.filter(i => i.status === 'sent').length },
+                      { key: 'failed', label: 'Gagal', count: campaignQueue.filter(i => i.status === 'failed').length }
+                    ].map(tab => (
+                      <button
+                        key={tab.key}
+                        onClick={() => setQueueFilter(tab.key as 'all' | 'pending' | 'sending' | 'sent' | 'failed')}
+                        className={`px-3 py-1 text-[11px] font-medium rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
+                          queueFilter === tab.key
+                            ? 'bg-card text-foreground shadow-sm border border-border/40'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-accent/30 border border-transparent'
+                        }`}
+                      >
+                        <span>{tab.label}</span>
+                        <span className={`px-1 py-0.2 rounded-full text-[9px] font-bold ${
+                          queueFilter === tab.key 
+                            ? 'bg-primary/10 text-primary' 
+                            : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {tab.count}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Queue Table */}
+              <div className="border border-border/40 rounded-xl overflow-hidden bg-card/50 shadow-inner">
+                {isDetailLoading ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-sm text-muted-foreground gap-3">
+                    <IconLoader className="h-6 w-6 animate-spin text-primary" />
+                    <span>Loading detail antrean kampanye...</span>
+                  </div>
+                ) : campaignQueue.length === 0 ? (
+                  <div className="text-center py-16 text-sm text-muted-foreground">
+                    Tidak ada antrean terdaftar untuk kampanye ini.
+                  </div>
+                ) : (() => {
+                  const filteredQueue = campaignQueue.filter(item => {
+                    if (queueFilter === 'all') return true;
+                    return item.status === queueFilter;
+                  });
+
+                  if (filteredQueue.length === 0) {
+                    return (
+                      <div className="text-center py-16 text-sm text-muted-foreground bg-card">
+                        Tidak ada antrean dengan status "{queueFilter}"
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader className="bg-accent/35">
+                          <TableRow className="hover:bg-transparent">
+                            <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 py-3.5 pl-6 w-[160px]">No Penerima</TableHead>
+                            <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 py-3.5 w-[110px]">Status</TableHead>
+                            <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 py-3.5 max-w-[320px]">Isi Pesan Terpersonalisasi</TableHead>
+                            <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 py-3.5 max-w-[200px]">Catatan Error</TableHead>
+                            <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 py-3.5 pr-6 w-[180px]">Waktu Kirim</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredQueue.map((item) => (
+                            <TableRow key={item.id} className="hover:bg-accent/15 border-b border-border/30 transition-colors">
+                              <TableCell className="py-3.5 pl-6 font-semibold text-xs font-mono text-foreground/90">
+                                {item.phone_number.split('@')[0]}
+                              </TableCell>
+                              <TableCell className="py-3.5">
+                                {item.status === 'pending' && (
+                                  <Badge variant="outline" className="bg-muted/40 text-muted-foreground border-border text-[10px] px-2 py-0.5 font-medium rounded-md">
+                                    Pending
+                                  </Badge>
+                                )}
+                                {item.status === 'sending' && (
+                                  <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[10px] px-2 py-0.5 font-medium rounded-md animate-pulse">
+                                    Sending
+                                  </Badge>
+                                )}
+                                {item.status === 'sent' && (
+                                  <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] px-2 py-0.5 font-medium rounded-md">
+                                    Sent
+                                  </Badge>
+                                )}
+                                {item.status === 'failed' && (
+                                  <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 text-[10px] px-2 py-0.5 font-medium rounded-md">
+                                    Failed
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell className="py-3.5 text-xs max-w-[320px] truncate font-normal text-foreground/85" title={item.personalized_message}>
+                                {item.personalized_message}
+                              </TableCell>
+                              <TableCell className="py-3.5 text-xs text-destructive max-w-[200px] truncate font-medium" title={item.error_message || ''}>
+                                {item.error_message ? (
+                                  <span className="flex items-center gap-1.5 text-destructive/90">
+                                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
+                                    {item.error_message}
+                                  </span>
+                                ) : (
+                                  <span className="text-muted-foreground/30">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell className="py-3.5 text-xs text-muted-foreground/90 pr-6">
+                                {item.sent_at ? formatDate(item.sent_at) : <span className="text-muted-foreground/30">-</span>}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  );
+                })()}
+              </div>
             </div>
           </div>
 
-          <DialogFooter className="p-5 border-t border-border/40 bg-accent/10">
+          <DialogFooter className="px-6 py-4 border-t border-border/40 bg-accent/5 flex items-center justify-between sm:justify-between">
+            <span className="text-[11px] text-muted-foreground/80 hidden sm:inline-block">
+              *Monitor diperbarui secara asinkronus setiap perubahan status antrean.
+            </span>
             <Button
               type="button"
               onClick={() => setIsDetailOpen(false)}
-              className="h-9 text-xs bg-primary text-primary-foreground"
+              className="h-9 px-5 text-xs bg-primary text-primary-foreground hover:bg-primary/95 transition-colors font-semibold rounded-lg shadow-sm"
             >
               Tutup Monitor
             </Button>
