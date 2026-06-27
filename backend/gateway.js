@@ -69,6 +69,10 @@ async function start() {
     // Initialize dynamic scheduler (Ads report, Creative analysis, Hourly followups)
     const scheduler = require('./src/services/scheduler');
     await scheduler.setupScheduledJobs(fastify.log);
+
+    // Initialize Broadcast Queue Manager
+    const broadcastService = require('./src/services/broadcast');
+    await broadcastService.startQueueWorker(fastify.log);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

@@ -26,7 +26,8 @@ latezza-automation/
 │   │       ├── ads.js            # Meta Ads script execution, group broadcast, and spawning progress stream
 │   │       ├── creative.js       # AI creative ad content analysis (copywriting audit & ideation)
 │   │       ├── summary.js        # AI message summary service (hierarchical batching & synthesis)
-│   │       └── scheduler.js      # Dynamic background scheduler (node-cron wrapper with database-driven reload)
+│   │       ├── scheduler.js      # Dynamic background scheduler (node-cron wrapper with database-driven reload)
+│   │       └── broadcast.js      # WhatsApp Broadcast queue worker, spintax and personalization engine
 │   ├── scripts/                  # Developer tools and test utilities (e.g., debug-followup.js, seed-test-followup.js)
 │   ├── ads-analysis/
 │   │   ├── automation.js         # Meta Ads fetcher + Gemini NLP summarizer + report.html generator
@@ -216,6 +217,38 @@ output_tokens       INT DEFAULT 0
 cached_input_tokens INT DEFAULT 0
 cost_usd            NUMERIC(12, 6) DEFAULT 0     -- Calculated using standard ($0.25/1M), cached ($0.025/1M), and output ($1.50/1M) pricing
 cost_idr            NUMERIC(14, 2) DEFAULT 0     -- Converted using fixed exchange rate (Rp 17.500)
+```
+
+### broadcast_campaigns
+```sql
+id               SERIAL PRIMARY KEY
+name             VARCHAR(100) NOT NULL
+session_id       VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE SET NULL
+message_template TEXT NOT NULL
+media_type       VARCHAR(20) DEFAULT 'text'   -- 'text' | 'image' | 'video'
+media_url        TEXT
+status           VARCHAR(20) DEFAULT 'draft'  -- 'draft' | 'queued' | 'processing' | 'completed' | 'paused' | 'failed'
+total_targets    INT DEFAULT 0
+sent_count       INT DEFAULT 0
+failed_count     INT DEFAULT 0
+scheduled_at     TIMESTAMP
+created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+### broadcast_queue
+```sql
+id                   SERIAL PRIMARY KEY
+campaign_id          INT REFERENCES broadcast_campaigns(id) ON DELETE CASCADE
+phone_number         VARCHAR(50) NOT NULL
+session_id           VARCHAR(50) NOT NULL
+personalized_message TEXT NOT NULL
+status               VARCHAR(20) DEFAULT 'pending' -- 'pending' | 'sending' | 'sent' | 'failed'
+error_message        TEXT
+sent_at              TIMESTAMP
+created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+FOREIGN KEY (phone_number, session_id) REFERENCES customers(phone_number, session_id) ON DELETE CASCADE
 ```
 
 ---
@@ -433,6 +466,23 @@ threshold: `0.35` (minimum similarity to be considered a match, maximum top 5 re
 
 ---
 
+## WHATSAPP ENTERPRISE BROADCAST SYSTEM
+
+implemented in: `backend/src/services/broadcast.js`, `backend/src/routes.js`
+daemon worker: sequential processing loop initialized at server startup in `gateway.js`
+
+### Key Architectural Pillars:
+1. **Polymorphic Spintax Parser**: Fully parses Spintax formatting (e.g. `{Halo|Hai}`) while preserving placeholder double curly braces (`{{name}}`) using a specialized non-greedy regex `/{([^{}]+?\|[^{}]+?)}/g`.
+2. **Dynamic Personalization**: Replaces customer variables (`{{name}}`, `{{phone}}`, `{{status}}`, `{{notes}}`) per queue item prior to sending.
+3. **Enterprise-Grade Anti-Ban Mechanisms**:
+   - **Pre-flight verification**: Checks WhatsApp registration via `sock.onWhatsApp` before sending.
+   - **Presence simulation**: Simulates typing status (`composing`) for a dynamic duration based on character length.
+   - **Cooldown jitter**: Implements a randomized cooldown delay (e.g. 20-35s) between message transmissions to replicate human speed.
+   - **Graceful Opt-Out**: Automatic listening for customer responses of "9" or "STOP" to flag their profile as `opt_out` and clear active queues, avoiding spam reports.
+4. **AI Gemini Integration**: Leverages Gemini (`gemini-3.1-flash-lite`) to generate 3 copywriting variations with tone modifiers (casual, formal, FOMO) and embedded opt-out guidelines.
+
+---
+
 ## API ROUTES REFERENCE
 
 > [!NOTE]
@@ -483,6 +533,14 @@ implemented in: `backend/src/routes.js`
 ### follow-up (internal/testing)
 - POST `/api/trigger-followups`          → manually trigger follow-ups (bypasses hour threshold check)
 - POST `/run-followup`                   → same as above, runs in background
+
+### broadcasts
+- GET  `/api/broadcasts/campaigns`       → list all broadcast campaigns
+- GET  `/api/broadcasts/campaigns/:id`   → single campaign detail including queue items
+- POST `/api/broadcasts/campaigns`       → create campaign and generate personalized queue items
+- POST `/api/broadcasts/campaigns/:id/control` → control campaign (start, pause, cancel)
+- POST `/api/broadcasts/upload`          → upload broadcast media (image or video)
+- POST `/api/broadcasts/generate-content` → generate AI copywriting variations using Gemini
 
 ---
 

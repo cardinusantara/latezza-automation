@@ -782,6 +782,7 @@ async function main() {
       isApiFetchSuccess = true;
     } catch (err) {
       console.error(`Error: Meta Ads API fetch failed: ${err.message}`);
+      console.log('::JSON_RESULT::' + JSON.stringify({ error: err.message, custom: { summary: '', dateRange: displayDateRange }, usage: null }));
       process.exit(1);
     }
   }
@@ -792,6 +793,7 @@ async function main() {
 
     if (!fs.existsSync(csvPath)) {
       console.error(`Error: Fallback CSV file not found at ${csvPath}`);
+      console.log('::JSON_RESULT::' + JSON.stringify({ error: `CSV not found: ${csvPath}`, custom: { summary: '', dateRange: displayDateRange }, usage: null }));
       process.exit(1);
     }
 
@@ -832,6 +834,11 @@ async function main() {
     html = html.replace('{DASHBOARD_DATA_PLACEHOLDER}', JSON.stringify(emptyStateJson, null, 2));
     fs.writeFileSync(outputPath, html, 'utf8');
     console.log(`Empty-state report.html created successfully.`);
+    console.log('::JSON_RESULT::' + JSON.stringify({
+      custom: { summary: emptyStateJson.timeframes.custom.whatsAppSummary, dateRange: displayDateRange },
+      usage: null,
+      isEmpty: true
+    }));
     process.exit(0);
   }
 

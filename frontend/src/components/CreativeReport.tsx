@@ -267,7 +267,7 @@ export default function CreativeReport() {
               </CardHeader>
               <CardContent className="pt-5">
                 <ul className="flex flex-col gap-3.5 list-none pl-0">
-                  {data.audit.winningElements.map((el, i) => (
+                  {(data.audit?.winningElements ?? []).map((el, i) => (
                     <li key={`${el}-${i}`} className="text-xs text-foreground/90 flex items-start gap-2.5 leading-relaxed">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
                       <span>{el}</span>
@@ -292,7 +292,7 @@ export default function CreativeReport() {
               </CardHeader>
               <CardContent className="pt-5">
                 <ul className="flex flex-col gap-3.5 list-none pl-0">
-                  {data.audit.losingElements.map((el, i) => (
+                  {(data.audit?.losingElements ?? []).map((el, i) => (
                     <li key={`${el}-${i}`} className="text-xs text-foreground/90 flex items-start gap-2.5 leading-relaxed">
                       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0"></div>
                       <span>{el}</span>
@@ -311,7 +311,7 @@ export default function CreativeReport() {
             </div>
             
             <div className="grid grid-cols-1 gap-6">
-              {data.ideas.map((idea, idx) => (
+              {(data.ideas ?? []).map((idea, idx) => (
                 <Card 
                   key={`${idea.title}-${idx}`} 
                   className="bg-card/40 border-border hover:border-emerald-500/20 transition-all duration-300 shadow-sm relative overflow-hidden group flex flex-col"

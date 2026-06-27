@@ -8,6 +8,7 @@ import Settings from '@/components/Settings';
 import AdsReport from '@/components/AdsReport';
 import CreativeReport from '@/components/CreativeReport';
 import WhatsappSessions from '@/components/WhatsappSessions';
+import Broadcast from '@/components/Broadcast';
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { API_BASE_URL } from '@/config';
@@ -36,7 +37,16 @@ interface Stats {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const VALID_TABS = ['overview', 'whatsapp-sessions', 'inbox', 'broadcast', 'products', 'actions', 'settings', 'ads-report', 'creative-ideas'];
+  const [activeTab, setActiveTab] = useState(() => {
+    const saved = localStorage.getItem('activeTab');
+    return saved && VALID_TABS.includes(saved) ? saved : 'overview';
+  });
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    localStorage.setItem('activeTab', tab);
+  };
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('theme');
@@ -222,7 +232,7 @@ export default function App() {
     }
     setSelectedJid(phone_number);
     setSelectedCustName(name);
-    setActiveTab('inbox');
+    handleTabChange('inbox');
   };
 
   // Initial load
@@ -270,6 +280,8 @@ export default function App() {
         return { title: 'WhatsApp Sessions', subtitle: 'Manage multiple WhatsApp numbers, agents, and QR codes' };
       case 'inbox':
         return { title: 'Conversations Inbox', subtitle: 'WhatsApp Live Chat console and lead updates' };
+      case 'broadcast':
+        return { title: 'WhatsApp Broadcasts', subtitle: 'Manage mass broadcast campaigns with polymorphic Spintax & AI' };
       case 'products':
         return { title: 'Product Catalog', subtitle: 'List of items from PostgreSQL products table' };
       case 'actions':
@@ -318,7 +330,7 @@ export default function App() {
       {/* Sidebar */}
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={handleTabChange} 
         isMobileOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
         sidebarWidth={sidebarWidth}
@@ -391,6 +403,10 @@ export default function App() {
                 setSelectedSessionId={setSelectedSessionId}
                 sessions={sessions}
               />
+            )}
+
+            {activeTab === 'broadcast' && (
+              <Broadcast showToast={showToast} sessions={sessions} />
             )}
             
             {activeTab === 'products' && (

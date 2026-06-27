@@ -110,6 +110,42 @@ async function initDb() {
       );
     `);
 
+    // 7. Broadcast Campaigns Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS broadcast_campaigns (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        session_id VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE SET NULL,
+        message_template TEXT NOT NULL,
+        media_type VARCHAR(20) DEFAULT 'text',
+        media_url TEXT,
+        status VARCHAR(20) DEFAULT 'draft',
+        total_targets INT DEFAULT 0,
+        sent_count INT DEFAULT 0,
+        failed_count INT DEFAULT 0,
+        scheduled_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // 8. Broadcast Queue Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS broadcast_queue (
+        id SERIAL PRIMARY KEY,
+        campaign_id INT REFERENCES broadcast_campaigns(id) ON DELETE CASCADE,
+        phone_number VARCHAR(50) NOT NULL,
+        session_id VARCHAR(50) NOT NULL,
+        personalized_message TEXT NOT NULL,
+        status VARCHAR(20) DEFAULT 'pending',
+        error_message TEXT,
+        sent_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (phone_number, session_id) REFERENCES customers(phone_number, session_id) ON DELETE CASCADE
+      );
+    `);
+
     // Perform database migrations (add columns if they don't exist)
     await client.query(`
       ALTER TABLE customers ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(20);
@@ -163,6 +199,7 @@ async function initDb() {
     // Create indexes for optimization
     await client.query(`CREATE INDEX IF NOT EXISTS idx_chat_histories_phone_session ON chat_histories(phone_number, session_id);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_products_name ON products(product_name);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_broadcast_queue_status ON broadcast_queue(status, created_at);`);
 
     console.log('✅ PostgreSQL database tables initialized successfully.');
     
@@ -589,6 +626,125 @@ async function saveUsageLog({ feature, modelName, inputTokens = 0, outputTokens 
   }
 }
 
+async function createCampaign({ name, sessionId, messageTemplate, mediaType, mediaUrl, scheduledAt }) {
+  const res = await pool.query(
+    `INSERT INTO broadcast_campaigns (name, session_id, message_template, media_type, media_url, scheduled_at, status)
+     VALUES ($1, $2, $3, $4, $5, $6, 'draft')
+     RETURNING *`,
+    [name, sessionId, messageTemplate, mediaType, mediaUrl, scheduledAt]
+  );
+  return res.rows[0];
+}
+
+async function getCampaigns() {
+  const res = await pool.query('SELECT * FROM broadcast_campaigns ORDER BY created_at DESC');
+  return res.rows;
+}
+
+async function getCampaignById(id) {
+  const res = await pool.query('SELECT * FROM broadcast_campaigns WHERE id = $1', [id]);
+  return res.rows[0];
+}
+
+async function updateCampaignStatus(id, status) {
+  const res = await pool.query(
+    'UPDATE broadcast_campaigns SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+    [status, id]
+  );
+  return res.rows[0];
+}
+
+async function incrementCampaignStats(id, field) {
+  if (field !== 'sent_count' && field !== 'failed_count') {
+    throw new Error('Invalid stat field for increment');
+  }
+  const res = await pool.query(
+    `UPDATE broadcast_campaigns 
+     SET ${field} = ${field} + 1, updated_at = NOW() 
+     WHERE id = $1 RETURNING *`,
+    [id]
+  );
+  return res.rows[0];
+}
+
+async function updateCampaignTotalTargets(id, total) {
+  const res = await pool.query(
+    'UPDATE broadcast_campaigns SET total_targets = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+    [total, id]
+  );
+  return res.rows[0];
+}
+
+async function addQueueItem({ campaignId, phoneNumber, sessionId, personalizedMessage }) {
+  const res = await pool.query(
+    `INSERT INTO broadcast_queue (campaign_id, phone_number, session_id, personalized_message, status)
+     VALUES ($1, $2, $3, $4, 'pending')
+     RETURNING *`,
+    [campaignId, phoneNumber, sessionId, personalizedMessage]
+  );
+  return res.rows[0];
+}
+
+async function getNextPendingQueueItem() {
+  const res = await pool.query(
+    `SELECT q.* 
+     FROM broadcast_queue q
+     JOIN broadcast_campaigns c ON q.campaign_id = c.id
+     WHERE q.status = 'pending' AND c.status = 'processing'
+     ORDER BY q.created_at ASC
+     LIMIT 1`
+  );
+  return res.rows[0];
+}
+
+async function updateQueueItemStatus(id, status, errorMessage = null) {
+  const query = `
+    UPDATE broadcast_queue 
+    SET status = $1, error_message = $2, sent_at = ${status === 'sent' ? 'NOW()' : 'sent_at'}, updated_at = NOW() 
+    WHERE id = $3 
+    RETURNING *
+  `;
+  const res = await pool.query(query, [status, errorMessage, id]);
+  return res.rows[0];
+}
+
+async function getQueueByCampaignId(campaignId) {
+  const res = await pool.query(
+    'SELECT * FROM broadcast_queue WHERE campaign_id = $1 ORDER BY id ASC',
+    [campaignId]
+  );
+  return res.rows;
+}
+
+async function getPendingQueueCount(campaignId) {
+  const res = await pool.query(
+    "SELECT COUNT(*)::int as count FROM broadcast_queue WHERE campaign_id = $1 AND status = 'pending'",
+    [campaignId]
+  );
+  return res.rows[0].count;
+}
+
+async function getBroadcastTargets(sessionId, filter, selectedPhones = []) {
+  let query = 'SELECT * FROM customers WHERE status != \'opt_out\' AND session_id = $1';
+  let params = [sessionId];
+
+  if (filter === 'leads') {
+    query += ' AND status = \'lead\'';
+  } else if (filter === 'dormant') {
+    query += ' AND status = \'dormant\'';
+  } else if (filter === 'needs_follow_up') {
+    query += ' AND needs_follow_up = TRUE';
+  } else if (filter === 'manual' && Array.isArray(selectedPhones) && selectedPhones.length > 0) {
+    query = 'SELECT * FROM customers WHERE phone_number = ANY($1) AND session_id = $2';
+    params = [selectedPhones, sessionId];
+  } else if (filter === 'manual') {
+    return [];
+  }
+
+  const res = await pool.query(query, params);
+  return res.rows;
+}
+
 module.exports = {
   pool,
   initDb,
@@ -611,5 +767,17 @@ module.exports = {
   updateSessionStatus,
   updateSessionQR,
   updateSessionConnected,
-  saveUsageLog
+  saveUsageLog,
+  createCampaign,
+  getCampaigns,
+  getCampaignById,
+  updateCampaignStatus,
+  incrementCampaignStats,
+  updateCampaignTotalTargets,
+  addQueueItem,
+  getNextPendingQueueItem,
+  updateQueueItemStatus,
+  getQueueByCampaignId,
+  getPendingQueueCount,
+  getBroadcastTargets
 };

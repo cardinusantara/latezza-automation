@@ -1,16 +1,16 @@
-# Graph Report - latezza-automation  (2026-06-28)
+# Graph Report - latezza-automation  (2026-06-25)
 
 ## Corpus Check
-- 123 files · ~97,894 words
+- 124 files · ~97,569 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1126 nodes · 1504 edges · 105 communities (86 shown, 19 thin omitted)
+- 1122 nodes · 1496 edges · 107 communities (88 shown, 19 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7bc520ab`
+- Built from commit: `cd8546c5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -79,6 +79,7 @@
 - [[_COMMUNITY_Community 68|Community 68]]
 - [[_COMMUNITY_Community 70|Community 70]]
 - [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 74|Community 74]]
 - [[_COMMUNITY_Community 75|Community 75]]
 - [[_COMMUNITY_Community 76|Community 76]]
 - [[_COMMUNITY_Community 77|Community 77]]
@@ -142,7 +143,7 @@
 - **Meta Ads Automation Pipeline** — latezza_automation_meta_ads_reporting, latezza_automation_creative_ad_analysis, latezza_automation_meta_graph_api, latezza_automation_dynamic_scheduler [EXTRACTED 0.95]
 - **RAG Product Search Pipeline** — latezza_automation_rag_semantic_search, latezza_automation_gemini_embedding_2, latezza_automation_cosine_similarity, latezza_automation_products_table [EXTRACTED 0.95]
 
-## Communities (105 total, 19 thin omitted)
+## Communities (107 total, 19 thin omitted)
 
 ### Community 0 - "WhatsApp CRM & Follow-up"
 Cohesion: 0.06
@@ -169,8 +170,8 @@ Cohesion: 0.17
 Nodes (12): 2026-06-18, AI response formatting — natural plaintext guardrails, backend layered refactoring — architecture overhaul, environment separation — independent backend & frontend, follow-up instruction — smart prompt wrapping (3 modes), follow-up system — confirmed working end-to-end, follow-up system — prompt quality fix, follow-up time safeguard — manual trigger bypass & hourly cron (+4 more)
 
 ### Community 6 - "SSE Streaming API"
-Cohesion: 0.12
-Nodes (17): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+9 more)
+Cohesion: 0.17
+Nodes (12): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode, `info` — Project information (+4 more)
 
 ### Community 7 - "UI Actions Component"
 Cohesion: 0.05
@@ -210,7 +211,7 @@ Nodes (18): CLI, Component Docs, Examples, and Usage, Component Selection, Compo
 
 ### Community 16 - "Community 16"
 Cohesion: 0.06
-Nodes (44): canSendToBroadcastTarget(), checkAndCompleteCampaign(), createCampaignAndQueue(), db, fs, { GoogleGenerativeAI }, isLidJid(), parseSpintax() (+36 more)
+Nodes (39): checkAndCompleteCampaign(), createCampaignAndQueue(), db, { GoogleGenerativeAI }, parseSpintax(), personalizeMessage(), runWorkerLoop(), sleep() (+31 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.07
@@ -336,6 +337,10 @@ Nodes (4): db, Fastify, registerRoutes, whatsappService
 Cohesion: 0.50
 Nodes (4): 2026-06-17 (afternoon), Products CRUD — full database-backed, project restructure — monorepo split, shadcn/ui migration
 
+### Community 74 - "Community 74"
+Cohesion: 0.40
+Nodes (5): Contents, Presets, shadcn CLI Reference, Switching Presets, Templates
+
 ### Community 77 - "Community 77"
 Cohesion: 0.22
 Nodes (9): Address Schemes, Build and Verify, GitHub Registries, Include, Item Definitions, Mental Model, Registry Authoring and Addresses, Registry Dependencies (+1 more)
@@ -445,7 +450,7 @@ Cohesion: 0.67
 Nodes (3): 9. Kategori: AI Message Summary (Ringkasan Pesan), GET `/api/message-summary`, GET `/api/trigger-message-summary-stream`
 
 ## Knowledge Gaps
-- **622 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+617 more)
+- **620 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+615 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -453,13 +458,13 @@ Nodes (3): 9. Kategori: AI Message Summary (Ringkasan Pesan), GET `/api/message-
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `getDateRangeLabel()` connect `Community 55` to `UI Actions Component`?**
-  _High betweenness centrality (0.119) - this node is a cross-community bridge._
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
 - **Why does `Overview()` connect `UI Actions Component` to `Community 55`?**
-  _High betweenness centrality (0.119) - this node is a cross-community bridge._
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
 - **Why does `cn()` connect `Mobile Hook` to `Community 83`, `UI Actions Component`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugin`, `@opencode-ai/plugin` to the rest of the system?**
-  _626 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _624 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**

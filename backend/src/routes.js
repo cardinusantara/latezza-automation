@@ -8,6 +8,7 @@ const agent = require('./agent');
 const whatsappService = require('./services/whatsapp');
 const followupService = require('./services/followup');
 const adsService = require('./services/ads');
+const broadcastService = require('./services/broadcast');
 
 function convertWebmToOgg(inputPath, outputPath) {
   return new Promise((resolve, reject) => {
@@ -1207,6 +1208,184 @@ function registerRoutes(fastify) {
       return { status: 'error', message: err.message };
     }
   });
+
+  // === BROADCAST API ENDPOINTS ===
+
+  // 1. GET: List all campaigns
+  fastify.get('/api/broadcasts/campaigns', async (request, reply) => {
+    try {
+      const campaigns = await db.getCampaigns();
+      return campaigns;
+    } catch (err) {
+      fastify.log.error(`Failed to fetch campaigns: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // 2. GET: Fetch campaign detail including queue items
+  fastify.get('/api/broadcasts/campaigns/:id', async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const campaign = await db.getCampaignById(id);
+      if (!campaign) {
+        reply.status(404);
+        return { status: 'error', message: 'Kampanye tidak ditemukan.' };
+      }
+      const queue = await db.getQueueByCampaignId(id);
+      return { campaign, queue };
+    } catch (err) {
+      fastify.log.error(`Failed to fetch campaign detail: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // 3. POST: Create campaign and queue targets
+  fastify.post('/api/broadcasts/campaigns', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['name', 'template'],
+        properties: {
+          name: { type: 'string' },
+          sessionId: { type: 'string', default: 'default' },
+          template: { type: 'string' },
+          mediaType: { type: 'string', enum: ['text', 'image', 'video'], default: 'text' },
+          mediaUrl: { type: 'string', nullable: true },
+          targetFilter: { type: 'string', enum: ['all', 'leads', 'dormant', 'needs_follow_up', 'manual'], default: 'all' },
+          selectedPhones: { type: 'array', items: { type: 'string' }, default: [] }
+        }
+      }
+    },
+    handler: async (request, reply) => {
+      const { name, sessionId, template, mediaType, mediaUrl, targetFilter, selectedPhones } = request.body;
+      try {
+        fastify.log.info(`Creating campaign "${name}" with target filter "${targetFilter}"...`);
+        const campaign = await broadcastService.createCampaignAndQueue({
+          name,
+          sessionId,
+          template,
+          mediaType,
+          mediaUrl,
+          targetFilter,
+          selectedPhones
+        });
+        return { status: 'success', campaign };
+      } catch (err) {
+        fastify.log.error(`Failed to create campaign: ${err.message}`);
+        reply.status(err.message.includes('Tidak ada target') ? 400 : 500);
+        return { status: 'error', message: err.message };
+      }
+    }
+  });
+
+  // 4. POST: Control campaign (start / pause / cancel)
+  fastify.post('/api/broadcasts/campaigns/:id/control', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['action'],
+        properties: {
+          action: { type: 'string', enum: ['start', 'pause', 'cancel'] }
+        }
+      }
+    },
+    handler: async (request, reply) => {
+      const { id } = request.params;
+      const { action } = request.body;
+      try {
+        const campaign = await db.getCampaignById(id);
+        if (!campaign) {
+          reply.status(404);
+          return { status: 'error', message: 'Kampanye tidak ditemukan.' };
+        }
+
+        fastify.log.info(`Control campaign ${id} action: ${action}`);
+
+        if (action === 'start') {
+          if (!whatsappService.isReady(campaign.session_id)) {
+            reply.status(400);
+            return { status: 'error', message: 'Session WhatsApp tidak terhubung. Silakan sambungkan sebelum memulai.' };
+          }
+          await db.updateCampaignStatus(id, 'processing');
+        } else if (action === 'pause') {
+          await db.updateCampaignStatus(id, 'paused');
+        } else if (action === 'cancel') {
+          await db.updateCampaignStatus(id, 'failed');
+          // Mark all remaining pending queue items for this campaign as failed
+          await db.pool.query(
+            "UPDATE broadcast_queue SET status = 'failed', error_message = 'Dibatalkan oleh admin' WHERE campaign_id = $1 AND status = 'pending'",
+            [id]
+          );
+        }
+
+        const updatedCampaign = await db.getCampaignById(id);
+        return { status: 'success', campaign: updatedCampaign };
+      } catch (err) {
+        fastify.log.error(`Failed to control campaign ${id}: ${err.message}`);
+        reply.status(500);
+        return { status: 'error', message: err.message };
+      }
+    }
+  });
+
+  // 5. POST: File upload for broadcast media (images/videos)
+  fastify.post('/api/broadcasts/upload', async (request, reply) => {
+    try {
+      const data = await request.file();
+      if (!data) {
+        reply.status(400);
+        return { status: 'error', message: 'Tidak ada file yang diunggah.' };
+      }
+
+      const filename = `broadcast_${Date.now()}_${data.filename.replace(/\s+/g, '_')}`;
+      const savePath = path.join(__dirname, '../public/uploads', filename);
+      
+      const util = require('util');
+      const { pipeline } = require('stream');
+      const pump = util.promisify(pipeline);
+      
+      await pump(data.file, fs.createWriteStream(savePath));
+      
+      const fileUrl = `/uploads/${filename}`;
+      return { status: 'success', url: fileUrl };
+    } catch (err) {
+      fastify.log.error(`Broadcast upload failed: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: 'Gagal mengunggah file: ' + err.message };
+    }
+  });
+
+  // 6. POST: AI copywriting generator via Gemini
+  fastify.post('/api/broadcasts/generate-content', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['prompt'],
+        properties: {
+          prompt: { type: 'string' },
+          customerContext: { type: 'string', default: '' }
+        }
+      }
+    },
+    handler: async (request, reply) => {
+      const { prompt, customerContext } = request.body;
+      try {
+        fastify.log.info(`Generating AI copywriting variations for broadcast...`);
+        const result = await broadcastService.generateAICopywriting({
+          prompt,
+          customerContext
+        });
+        return { status: 'success', variations: result.variations || [] };
+      } catch (err) {
+        fastify.log.error(`AI copywriting generation failed: ${err.message}`);
+        reply.status(500);
+        return { status: 'error', message: err.message };
+      }
+    }
+  });
 }
 
 module.exports = registerRoutes;
+

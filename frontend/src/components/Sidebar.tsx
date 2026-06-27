@@ -9,7 +9,8 @@ import {
   IconX,
   IconChevronLeft,
   IconChevronRight,
-  IconBrandWhatsapp
+  IconBrandWhatsapp,
+  IconSpeakerphone
 } from '@tabler/icons-react';
 
 interface SidebarProps {
@@ -37,6 +38,7 @@ export default function Sidebar({
     { id: 'overview', label: 'Overview', icon: <IconDashboard size={18} /> },
     { id: 'whatsapp-sessions', label: 'WA Sessions', icon: <IconBrandWhatsapp size={18} /> },
     { id: 'inbox', label: 'Chat Inbox', icon: <IconMessageDots size={18} /> },
+    { id: 'broadcast', label: 'Broadcasts', icon: <IconSpeakerphone size={18} /> },
     { id: 'products', label: 'Product Catalog', icon: <IconCookie size={18} /> },
     { id: 'ads-report', label: 'Ads Report', icon: <IconChartLine size={18} /> },
     { id: 'creative-ideas', label: 'Creative Ideas', icon: <IconSparkles size={18} /> },

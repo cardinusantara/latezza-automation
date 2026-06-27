@@ -5,6 +5,48 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-06-25
 
+### Chat Scroll and Conversation Inbox Usability Bug Fix
+- **Fixed Chat Scroll Resetting to Top on Polling**:
+  - Identified and resolved a usability bug in `frontend/src/components/ChatInbox.tsx` where the chat scroll position would repeatedly reset to the top of the conversation every 4 seconds.
+  - The bug occurred because background polling triggered the `loadingChat` spinner state. This spinner unmounted the entire chat message list from the DOM, causing the container's height to collapse to 0 and resetting the scroll position. When the fetch resolved, the list remounted at the top.
+  - Added an `isSilent` parameter to `fetchChatHistory` to bypass toggling `loadingChat` to `true` during background updates.
+  - Updated the 4-second polling interval in the `useEffect` block to call `fetchChatHistory(selectedJid, true)` silently, preserving the DOM elements, their layout, and the user's scroll position.
+  - Added a dedicated frontend unit test `polling does not show loading spinner during background refresh` in `frontend/src/components/__tests__/ChatInbox.test.tsx` to verify that silent updates prevent the loading state from triggering.
+- **Hardened Chat Polling Unit Test**:
+  - Resolved a timing-related Vitest failure in `frontend/src/components/__tests__/ChatInbox.test.tsx` by enabling fake timers *before* mounting the component and utilizing modern async fake timer methods (`runOnlyPendingTimersAsync` and `advanceTimersByTimeAsync`) instead of `waitFor`. This ensures the polling interval is correctly registered and advanced on the fake clock, resolving test timeout flakes.
+
+### WhatsApp Enterprise Broadcast Message Feature (Anti-Ban & AI-Enabled)
+- **Redesigned Campaign Composer UI/UX**:
+  - Expanded the composer dialog canvas from `max-w-5xl h-[85vh]` to a spacious `max-w-6xl h-[90vh]` to improve legibility and reduce visual crowding.
+  - Replaced the vertical toggle with a modern tabbed layout on the right-hand preview panel: **Pratinjau Pesan** (Message Preview) vs **Asisten Gemini AI** (Gemini copywriter inputs and results).
+  - Increased font sizes and padding across inputs, textareas, buttons, and select fields to ensure high readability.
+  - Built a realistic simulated WhatsApp interface inside the preview pane featuring a green mock header, participant avatar, animated "online" indicator, subtle background theme, and an authentic chat bubble with the classic tail and double blue ticks.
+  - Polished AI output variations into individual cards, each with an interactive "Gunakan & Lihat Pratinjau" action button that copies the copywriting variation and instantly switches the tab to preview the result.
+- **Implemented Database Schema & Migrations**:
+  - Created table `broadcast_campaigns` to track campaigns, session, templates, status, targets, and stats.
+  - Created table `broadcast_queue` to handle asynchronous message queues, personalized messages, delivery status, and error logs.
+  - Created a performance index `idx_broadcast_queue_status` on `broadcast_queue(status, created_at)` to optimize queue polling.
+  - Registered all new tables in `backend/src/db.js` within the `initDb()` bootstrap sequence to ensure auto-creation and migration.
+  - Created database helper functions: `createCampaign`, `getCampaigns`, `getCampaignById`, `updateCampaignStatus`, `incrementCampaignStats`, `updateCampaignTotalTargets`, `addQueueItem`, `getNextPendingQueueItem`, `updateQueueItemStatus`, `getQueueByCampaignId`, `getPendingQueueCount`, and `getBroadcastTargets`.
+- **Created Broadcast Service & Queue Daemon**:
+  - Implemented `backend/src/services/broadcast.js` containing:
+    - **Spintax Parser**: Fully supports Spintax format (e.g. `{Halo|Hai}`) while ignoring placeholder double curly braces (`{{name}}`) using a refined regex `/\{([^{}]+?\|[^{}]+?)\}/g`.
+    - **Personalization Engine**: Replaces variables like `{{name}}`, `{{phone}}`, `{{status}}`, and `{{notes}}` with customer data.
+    - **Queue Generator**: Resolves target filters (`all`, `leads`, `dormant`, `needs_follow_up`, `manual`) and populates `broadcast_queue` with personalized content.
+    - **Anti-Ban Queue Worker**: Sequential queue runner featuring dynamic cooldown delays (jitter), WhatsApp presence simulation (`composing` typing state), and pre-flight deliverability verification (`sock.onWhatsApp`).
+    - **AI Copywriting Generator**: Integrated Gemini API to write and refine promotional broadcast drafts in 3 different tones (casual, professional, FOMO) with automatic opt-out instructions.
+- **Registered REST API Routes**:
+  - Registered all broadcast endpoints in `backend/src/routes.js`:
+    - `GET /api/broadcasts/campaigns` and `GET /api/broadcasts/campaigns/:id` for listing and detail retrieval.
+    - `POST /api/broadcasts/campaigns` to create a campaign and queue targets.
+    - `POST /api/broadcasts/campaigns/:id/control` to control campaign status (start, pause, cancel).
+    - `POST /api/broadcasts/upload` to handle media uploads (images and videos) for broadcasts.
+    - `POST /api/broadcasts/generate-content` for AI-assisted writing.
+  - Created a complete, fully mocked test suite in `backend/src/__tests__/broadcast.test.js` covering Spintax parsing, personalization, queue generation, and worker loop timing. Overrode timing environment variables (`BROADCAST_MIN_TYPING_MS`, `BROADCAST_POLL_INTERVAL_MS`, etc.) to `1ms` to guarantee fast, leak-free Jest execution. All tests pass with 100% green status.
+- **Fixed Polling Infinite Loop Bug**:
+  - Resolved an infinite re-render loop in `frontend/src/components/Broadcast.tsx` by decoupling the polling interval from the reactive state values.
+  - Implemented React `useRef` handles (`campaignsRef`, `isDetailOpenRef`, `selectedCampaignRef`) to hold stable references to active state, allowing the polling interval to run on a single mount (`[]`) without triggering repeated effects or immediate `setTimeout(..., 0)` executions.
+
 ### Gemini API Usage and Cost Tracking Integration
 - **Implemented Missing Usage Logging**:
   - Integrated `db.saveUsageLog` calls in `backend/src/services/summary.js` inside `summarizeBatch` (non-stream) and `generateStreamWithRetry` (stream) under the feature name `message_summary`.

@@ -50,6 +50,12 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 33 | Follow-Up | POST | `/run-followup` | Memicu pengiriman pesan follow-up manual (latar belakang). |
 | 34 | AI Message Summary | GET | `/api/message-summary` | Mengambil laporan ringkasan pesan AI terbaru. |
 | 35 | AI Message Summary | GET | `/api/trigger-message-summary-stream` | Memicu pembuatan ringkasan pesan AI dan melakukan streaming progress (SSE). |
+| 36 | Broadcast | GET | `/api/broadcasts/campaigns` | Mendapatkan daftar seluruh kampanye siaran (*broadcast*). |
+| 37 | Broadcast | GET | `/api/broadcasts/campaigns/:id` | Mendapatkan detail satu kampanye beserta seluruh antrean target pengiriman. |
+| 38 | Broadcast | POST | `/api/broadcasts/campaigns` | Membuat kampanye siaran baru dan menjadwalkan antrean pengiriman secara personal. |
+| 39 | Broadcast | POST | `/api/broadcasts/campaigns/:id/control` | Mengontrol jalannya siaran (*start*, *pause*, atau *cancel*). |
+| 40 | Broadcast | POST | `/api/broadcasts/upload` | Mengunggah media (gambar/video) khusus untuk kebutuhan siaran. |
+| 41 | Broadcast | POST | `/api/broadcasts/generate-content` | Meminta Gemini AI menulis/memoles draf kalimat siaran personal dalam berbagai nada bahasa. |
 
 ---
 
@@ -1057,3 +1063,238 @@ Memicu eksekusi summarization pesan secara manual menggunakan Gemini AI dengan s
       "message": "Missing active Gemini API key. Cannot run AI analysis."
     }
     ```
+
+---
+
+## 11. Kategori: Broadcast (Siaran Massal)
+
+Kategori ini mencakup seluruh fungsionalitas pembuatan, pengiriman, dan manajemen kampanye siaran pesan massal WhatsApp yang dilengkapi dengan sistem rekayasa Anti-Ban, pemrosesan asinkronus, serta bantuan penulisan berbasis kecerdasan buatan (Gemini).
+
+### GET `/api/broadcasts/campaigns`
+Mengambil daftar seluruh kampanye broadcast yang pernah dibuat, diurutkan berdasarkan waktu pembuatan terbaru.
+
+- **Request Headers**: `None`
+- **Response (200 OK)**:
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "Promosi Kue Cokelat Ramadhan",
+      "session_id": "default",
+      "message_template": "{Halo|Hai} {{name}}, dapatkan diskon khusus...",
+      "media_type": "image",
+      "media_url": "/uploads/broadcast_1719290000_promo.jpg",
+      "status": "completed",
+      "total_targets": 45,
+      "sent_count": 43,
+      "failed_count": 2,
+      "scheduled_at": null,
+      "created_at": "2026-06-25T10:00:00.000Z",
+      "updated_at": "2026-06-25T10:15:00.000Z"
+    }
+  ]
+  ```
+
+---
+
+### GET `/api/broadcasts/campaigns/:id`
+Mendapatkan detail dari satu kampanye tertentu beserta daftar antrean pengiriman (*queue*) untuk setiap target customer.
+
+- **Response (200 OK)**:
+  ```json
+  {
+    "campaign": {
+      "id": 1,
+      "name": "Promosi Kue Cokelat Ramadhan",
+      "session_id": "default",
+      "message_template": "{Halo|Hai} {{name}}...",
+      "media_type": "image",
+      "media_url": "/uploads/broadcast_1719290000_promo.jpg",
+      "status": "processing",
+      "total_targets": 2,
+      "sent_count": 1,
+      "failed_count": 0,
+      "scheduled_at": null,
+      "created_at": "2026-06-25T10:00:00.000Z",
+      "updated_at": "2026-06-25T10:01:00.000Z"
+    },
+    "queue": [
+      {
+        "id": 10,
+        "campaign_id": 1,
+        "phone_number": "628123456789@s.whatsapp.net",
+        "session_id": "default",
+        "personalized_message": "Halo Kak Ahmad, dapatkan diskon...",
+        "status": "sent",
+        "error_message": null,
+        "sent_at": "2026-06-25T10:00:45.000Z",
+        "created_at": "2026-06-25T10:00:00.000Z",
+        "updated_at": "2026-06-25T10:00:45.000Z"
+      },
+      {
+        "id": 11,
+        "campaign_id": 1,
+        "phone_number": "628987654321@s.whatsapp.net",
+        "session_id": "default",
+        "personalized_message": "Hai Kak Siti, dapatkan diskon...",
+        "status": "pending",
+        "error_message": null,
+        "sent_at": null,
+        "created_at": "2026-06-25T10:00:00.000Z",
+        "updated_at": "2026-06-25T10:00:00.000Z"
+      }
+    ]
+  }
+  ```
+- **Response (404 Not Found)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Kampanye tidak ditemukan."
+  }
+  ```
+
+---
+
+### POST `/api/broadcasts/campaigns`
+Membuat kampanye siaran baru, memfilter target penerima secara dinamis, melakukan personalisasi pesan (termasuk Spintax), dan menjadwalkan baris antrean di database dengan status `pending`.
+
+- **Request Body**:
+  ```json
+  {
+    "name": "Promo Akhir Pekan Cokelat",
+    "sessionId": "default",
+    "template": "{Halo|Hai} {{name}}! Spesial akhir pekan ini, nikmati kue cokelat kami dengan harga khusus. Info detail di toko kami ya!",
+    "mediaType": "image",
+    "mediaUrl": "/uploads/broadcast_1719290000_promo.jpg",
+    "targetFilter": "leads",
+    "selectedPhones": []
+  }
+  ```
+  *Keterangan parameter:*
+  - `targetFilter` (string, wajib): Pilihan penyaringan target:
+    - `'all'`: Seluruh customer yang aktif (mengecualikan yang melakukan `opt_out`).
+    - `'leads'`: Hanya customer dengan status `'lead'`.
+    - `'dormant'`: Hanya customer dengan status `'dormant'`.
+    - `'needs_follow_up'`: Hanya customer dengan flag `needs_follow_up = TRUE`.
+    - `'manual'`: Menggunakan daftar kustom nomor telepon yang diberikan di parameter `selectedPhones`.
+  - `selectedPhones` (array of string, opsional): Daftar JID WhatsApp target customer jika `targetFilter` bernilai `'manual'`.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "campaign": {
+      "id": 2,
+      "name": "Promo Akhir Pekan Cokelat",
+      "session_id": "default",
+      "message_template": "{Halo|Hai} {{name}}!...",
+      "media_type": "image",
+      "media_url": "/uploads/broadcast_1719290000_promo.jpg",
+      "status": "queued",
+      "total_targets": 24,
+      "sent_count": 0,
+      "failed_count": 0,
+      "scheduled_at": null,
+      "created_at": "2026-06-25T10:20:00.000Z",
+      "updated_at": "2026-06-25T10:20:01.000Z"
+    }
+  }
+  ```
+- **Response (400 Bad Request)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Tidak ada target customer yang cocok dengan filter yang dipilih."
+  }
+  ```
+
+---
+
+### POST `/api/broadcasts/campaigns/:id/control`
+Mengontrol jalannya eksekusi pengiriman kampanye siaran (memulai pengiriman, menjeda sementara, atau membatalkan secara permanen).
+
+- **Request Body**:
+  ```json
+  {
+    "action": "start"
+  }
+  ```
+  *Keterangan parameter:*
+  - `action` (string, wajib): Pilihan kendali:
+    - `'start'`: Mengubah status kampanye menjadi `'processing'` untuk mulai diproses oleh queue worker. (Sesi WhatsApp harus terhubung/ready).
+    - `'pause'`: Mengubah status kampanye menjadi `'paused'` agar diabaikan sementara oleh worker.
+    - `'cancel'`: Mengubah status kampanye menjadi `'failed'` secara permanen dan menandai seluruh sisa antrean yang masih `pending` sebagai `failed` dengan alasan `'Dibatalkan oleh admin'`.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "campaign": {
+      "id": 2,
+      "name": "Promo Akhir Pekan Cokelat",
+      "status": "processing",
+      "total_targets": 24,
+      "sent_count": 0,
+      "failed_count": 0,
+      "updated_at": "2026-06-25T10:21:00.000Z"
+    }
+  }
+  ```
+- **Response (400 Bad Request)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Session WhatsApp tidak terhubung. Silakan sambungkan sebelum memulai."
+  }
+  ```
+
+---
+
+### POST `/api/broadcasts/upload`
+Mengunggah berkas media (gambar atau video) menggunakan format `multipart/form-data` untuk digunakan sebagai konten penunjang visual pesan siaran.
+
+- **Request Headers**: `Content-Type: multipart/form-data`
+- **Request Body (Multipart)**:
+  - `file` (Binary File): Berkas gambar (`.jpg`, `.png`) atau video (`.mp4`) berukuran maksimal 10MB.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "url": "/uploads/broadcast_1719290500_promo_kue.jpg"
+  }
+  ```
+- **Response (500 Internal Server Error)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Gagal mengunggah file: [Penjelasan Error]"
+  }
+  ```
+
+---
+
+### POST `/api/broadcasts/generate-content`
+Meminta asisten AI (Gemini) untuk menulis atau memoles kalimat draf promosi broadcast. AI akan mengembalikan 3 alternatif variasi draf (guna keperluan Anti-Ban Polymorphism) dengan gaya bahasa dan nada yang disesuaikan.
+
+- **Request Body**:
+  ```json
+  {
+    "prompt": "promo beli 1 gratis 1 untuk roll cake pandan khusus hari jumat ini",
+    "tone": "casual",
+    "customerContext": "Kue dibuat dari daun pandan asli tanpa pengawet"
+  }
+  ```
+  *Keterangan parameter:*
+  - `prompt` (string, wajib): Ide kasar kalimat/penawaran promosi.
+  - `tone` (string, opsional): Gaya penulisan. Contoh: `'casual'` (santai & akrab), `'formal'` (sopan & elegan), `'urgent'` (FOMO, mendesak). Default: `'casual'`.
+  - `customerContext` (string, opsional): Detail bahan produk atau instruksi khusus tambahan.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "variations": [
+      "Halo {{name}}! Spesial buat kamu di hari Jumat manis ini, Latezza Cake ada promo Beli 1 Gratis 1 untuk Roll Cake Pandan asli, lho! 🌿 Dibuat langsung dari perasan daun pandan murni tanpa bahan pengawet. Yuk, langsung serbu sebelum kehabisan! Ketik 9 untuk berhenti menerima pesan ini.",
+      "Selamat pagi {{name}}! Selamat menikmati hari Jumat. Jangan lewatkan penawaran istimewa hari ini: setiap pembelian 1 Roll Cake Pandan wangi (100% pandan asli tanpa pengawet), dapatkan gratis 1 loyang lagi! Khusus pemesanan hari ini ya. Ketik 9 untuk berhenti menerima pesan ini.",
+      "Hai {{name}}! Siap-siap buat Jumat ceria! Hanya hari ini, beli 1 Roll Cake Pandan premium gratis 1 roll tambahan. 💚 Dibuat homemade dengan pandan segar tanpa pengawet. Buruan chat admin sekarang buat amankan slot kamu! Ketik 9 untuk berhenti menerima pesan ini."
+    ]
+  }
+  ```
