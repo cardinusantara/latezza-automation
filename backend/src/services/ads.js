@@ -42,11 +42,23 @@ async function runAnalysisAndSendReport(dateFrom = null, dateTo = null, log = co
   const targetJid = await db.getSetting('whatsapp_group_jid') || process.env.WHATSAPP_GROUP_JID || '120363427625298309@g.us';
 
   try {
-    const { stdout } = await execPromise(`node "${scriptPath}"`, { env: envVars });
+    let stdout = '';
+    let stderr = '';
+    try {
+      const result = await execPromise(`node "${scriptPath}"`, { env: envVars });
+      stdout = result.stdout;
+      stderr = result.stderr;
+    } catch (execErr) {
+      // execPromise rejects on non-zero exit code, but stdout may still contain ::JSON_RESULT::
+      stdout = execErr.stdout || '';
+      stderr = execErr.stderr || execErr.message;
+    }
+
     const lines = stdout.split('\n');
     const resultLine = lines.find(l => l.startsWith('::JSON_RESULT::'));
     if (!resultLine) {
-      throw new Error('Could not find ::JSON_RESULT:: in stdout');
+      const detail = stderr ? `\nScript stderr: ${stderr.trim()}` : '';
+      throw new Error(`Could not find ::JSON_RESULT:: in stdout${detail}`);
     }
     const data = JSON.parse(resultLine.replace('::JSON_RESULT::', ''));
 
