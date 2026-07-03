@@ -2,7 +2,43 @@
 
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
+## 2026-06-29
+
+### Multi-Business SaaS & Tenant Navigation (Phase 3 & 4)
+- **Completed Multi-Business SaaS Front-to-Back Flow**:
+  - Implemented Fastify business REST endpoints (`GET /api/businesses`, `GET /api/businesses/:id`, `POST /api/businesses`, and `PUT /api/businesses/:id` in [routes.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/src/routes.js)) to expose tenant management functionality.
+  - Linked campaign, product, session, and stats routes to process incoming `business_id` parameters and body fields.
+  - Added dynamic workspace selector dropdowns in both Desktop and Mobile Header bars in [App.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/App.tsx) allowing users to switch contexts or register new workspaces.
+  - Scoped data loading operations (`loadStats`, `loadCustomers`, `loadProducts`, `loadSessions`) and polling hooks to refresh context-specific dashboard state automatically when the selected workspace changes.
+  - Refactored [Products.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Products.tsx), [Broadcast.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Broadcast.tsx), and [WhatsappSessions.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/WhatsappSessions.tsx) to accept `businessId` as props and pass it during resource creation.
+- **Unified Profile & AI Settings View**:
+  - Added a dedicated "Profil Bisnis & AI Workspace" tab section to the settings panel in [Settings.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Settings.tsx) allowing updates to business metadata (name, website, tone, short description, custom prompts, handoff rules, follow-up rules).
+- **Dynamic Guardrails & Tool Settings**:
+  - Disabled the raw, global system instructions editor panel to prevent formatting and jailbreak safety breaks. General guardrails (jailbreak prevention, communication rules, formatting constraints) are now hardcoded and secure.
+  - Dynamically injects business profile and customized tool rules (`handoff_rules` and `followup_rules`) from the business settings JSON payload into the AI prompt template on the fly.
+- **Bug Fix: Multi-tenant Conversation Inbox Resolution**:
+  - Resolved an issue in [ChatInbox.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/ChatInbox.tsx) where history/details API requests used the globally selected session filter (defaulting to `'default'`) instead of looking up the active customer's specific session ID.
+  - Dynamically retrieves the customer's actual active `session_id` from the customer listing data, falling back to the selected filter if unavailable.
+- **Hardened Quality Assurance**:
+  - Updated mock configurations and assertions in unit test suites (`broadcast.test.js`, `Broadcast.test.tsx`, `Products.test.tsx`, `Settings.test.tsx`, `ChatInbox.test.tsx`, and `WhatsappSessions.test.tsx`) to supply the required multi-tenant parameters and mock fields.
+  - Verified compilation: all 30 frontend Vitest tests and all 80 backend Jest tests passed with 100% success rate.
+
 ## 2026-06-28
+
+### Multi-Business SaaS Foundation (Phase 1 & 2)
+- **Implemented Multi-Tenant Database Schema**:
+  - Added `businesses` table storing business details, website address, contact phone, social links, and specific AI parameters.
+  - Seeding: Added auto-migration logic to seed a default "Latezza Cake Hampers" business record (ID = 1) on server startup.
+  - Linked `whatsapp_sessions`, `customers`, `products`, `chat_histories`, and `broadcast_campaigns` tables to `businesses` using a `business_id` foreign key.
+  - Backward Compatibility: Defaulted the `business_id` column to `1` across all existing tables to guarantee zero downtime or schema break for the existing Latezza deployment.
+  - Scoped Product Constraints: Redefined product name uniqueness to be scoped per business (`unique_product_per_business`) instead of globally unique.
+  - Added database helper functions: `createBusiness`, `getBusinesses`, `getBusinessById`, `getBusinessBySlug`, and `updateBusiness`.
+- **Dynamic AI Agent Prompting & Execution**:
+  - Asynchronized system instruction builder `buildSystemInstructions` to retrieve business profile parameters and custom prompt strings dynamically from the database using the active `business_id` of the WhatsApp session.
+  - Scoped agent visual/text search tool execution (`search_products`) to query the exact catalog records associated with the message session's business context.
+- **Hardened Test Coverage**:
+  - Added 5 new unit test cases covering business data operations in `backend/src/__tests__/db.test.js`.
+  - Updated mock configurations in `backend/src/__tests__/agent.test.js` to simulate multi-tenant session queries, ensuring the Jest test suites pass.
 
 ### Broadcast Campaign Live Monitor UI Redesign
 - **Redesigned Live Monitor Modal UI/UX**:

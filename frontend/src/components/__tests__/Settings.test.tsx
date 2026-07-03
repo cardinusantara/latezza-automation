@@ -28,12 +28,12 @@ describe('Settings component', () => {
   });
 
   test('loads and displays current settings', async () => {
-    render(<Settings showToast={showToastMock} />);
+    render(<Settings showToast={showToastMock} businessId={1} activeBusiness={{ id: 1, name: 'Latezza' }} onRefreshBusinesses={vi.fn()} />);
 
     // Wait for the loading state to finish
     await waitFor(() => expect(screen.queryByText('Loading settings...')).not.toBeInTheDocument());
 
     // Should display settings once loaded
-    expect(screen.getByDisplayValue('Initial instructions')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Latezza')).toBeInTheDocument();
   });
 });

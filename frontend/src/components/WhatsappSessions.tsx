@@ -33,7 +33,11 @@ interface WhatsAppSession {
   updated_at: string;
 }
 
-export default function WhatsappSessions() {
+interface WhatsappSessionsProps {
+  businessId: number;
+}
+
+export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessionsProps>) {
   const [sessions, setSessions] = useState<WhatsAppSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -53,7 +57,7 @@ export default function WhatsappSessions() {
   const fetchSessions = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions`);
+      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions?business_id=${businessId}`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setSessions(data);
@@ -66,16 +70,13 @@ export default function WhatsappSessions() {
     }
   };
 
-  // Poll sessions list when page is active (every 3 seconds to fetch QR updates/connection statuses)
   useEffect(() => {
-    setTimeout(() => {
-      fetchSessions();
-    }, 0);
+    fetchSessions();
     const interval = setInterval(() => {
       fetchSessions(true);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [businessId]);
 
   // Handle Add Session
   const handleAddSession = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -97,7 +98,7 @@ export default function WhatsappSessions() {
       const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: formattedId, name: form.name.trim() })
+        body: JSON.stringify({ id: formattedId, name: form.name.trim(), business_id: businessId })
       });
       const data = await res.json();
       if (data.status === 'success') {

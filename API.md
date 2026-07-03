@@ -56,6 +56,10 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 39 | Broadcast | POST | `/api/broadcasts/campaigns/:id/control` | Mengontrol jalannya siaran (*start*, *pause*, atau *cancel*). |
 | 40 | Broadcast | POST | `/api/broadcasts/upload` | Mengunggah media (gambar/video) khusus untuk kebutuhan siaran. |
 | 41 | Broadcast | POST | `/api/broadcasts/generate-content` | Meminta Gemini AI menulis/memoles draf kalimat siaran personal dalam berbagai nada bahasa. |
+| 42 | Workspace | GET | `/api/businesses` | Mendapatkan daftar seluruh entitas bisnis / tenant workspaces. |
+| 43 | Workspace | GET | `/api/businesses/:id` | Mendapatkan informasi detail profil satu workspace bisnis. |
+| 44 | Workspace | POST | `/api/businesses` | Mendaftarkan entitas bisnis / tenant workspace baru. |
+| 45 | Workspace | PUT | `/api/businesses/:id` | Memperbarui profil, alamat, dan AI settings (tone & custom prompt). |
 
 ---
 
@@ -1296,5 +1300,142 @@ Meminta asisten AI (Gemini) untuk menulis atau memoles kalimat draf promosi broa
       "Selamat pagi {{name}}! Selamat menikmati hari Jumat. Jangan lewatkan penawaran istimewa hari ini: setiap pembelian 1 Roll Cake Pandan wangi (100% pandan asli tanpa pengawet), dapatkan gratis 1 loyang lagi! Khusus pemesanan hari ini ya. Ketik 9 untuk berhenti menerima pesan ini.",
       "Hai {{name}}! Siap-siap buat Jumat ceria! Hanya hari ini, beli 1 Roll Cake Pandan premium gratis 1 roll tambahan. 💚 Dibuat homemade dengan pandan segar tanpa pengawet. Buruan chat admin sekarang buat amankan slot kamu! Ketik 9 untuk berhenti menerima pesan ini."
     ]
+  }
+  ```
+
+---
+
+## 9. Kategori: Multi-Business Workspaces
+
+### GET `/api/businesses`
+Mendapatkan daftar seluruh entitas bisnis / tenant workspaces yang terdaftar pada sistem.
+
+- **Request Headers**: `None`
+- **Response (200 OK)**:
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "Latezza Cake Hampers",
+      "slug": "latezza-cake",
+      "short_description": "Toko kue premium hampers custom cake",
+      "contact_phone": "+62812345678",
+      "address": "Jl. Kue No. 10, Jakarta",
+      "website": "https://latezza.id",
+      "social_media": [],
+      "ai_settings": {
+        "tone": "friendly and polite",
+        "custom_prompt": ""
+      },
+      "created_at": "2026-06-27T18:00:00.000Z",
+      "updated_at": "2026-06-27T18:00:00.000Z"
+    }
+  ]
+  ```
+
+---
+
+### GET `/api/businesses/:id`
+Mendapatkan informasi detail satu workspace bisnis berdasarkan ID numeriknya.
+
+- **Response (200 OK)**:
+  ```json
+  {
+    "id": 1,
+    "name": "Latezza Cake Hampers",
+    "slug": "latezza-cake",
+    "short_description": "Toko kue premium hampers custom cake",
+    "contact_phone": "+62812345678",
+    "address": "Jl. Kue No. 10, Jakarta",
+    "website": "https://latezza.id",
+    "social_media": [],
+    "ai_settings": {
+      "tone": "friendly and polite",
+      "custom_prompt": ""
+    },
+    "created_at": "2026-06-27T18:00:00.000Z",
+    "updated_at": "2026-06-27T18:00:00.000Z"
+  }
+  ```
+- **Response (404 Not Found)**:
+  ```json
+  {
+    "status": "error",
+    "message": "Business not found"
+  }
+  ```
+
+---
+
+### POST `/api/businesses`
+Mendaftarkan entitas bisnis / tenant workspace baru pada sistem.
+
+- **Request Body**:
+  ```json
+  {
+    "name": "Kopi Kenangan",
+    "slug": "kopi-kenangan",
+    "shortDescription": "Toko kopi susu kekinian"
+  }
+  ```
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "business": {
+      "id": 2,
+      "name": "Kopi Kenangan",
+      "slug": "kopi-kenangan",
+      "short_description": "Toko kopi susu kekinian",
+      "contact_phone": "",
+      "address": "",
+      "website": "",
+      "social_media": [],
+      "ai_settings": {},
+      "created_at": "2026-06-29T09:00:00.000Z",
+      "updated_at": "2026-06-29T09:00:00.000Z"
+    }
+  }
+  ```
+
+---
+
+### PUT `/api/businesses/:id`
+Memperbarui profil, data alamat, tautan, dan AI settings (tone & custom prompt) dari workspace bisnis yang sudah ada.
+
+- **Request Body**:
+  ```json
+  {
+    "name": "Kopi Kenangan Group",
+    "shortDescription": "Toko kopi susu kekinian, specialty beans",
+    "contactPhone": "+62822222222",
+    "address": "Gedung Kopi Lt 3, Jakarta",
+    "website": "https://kopikenangan.com",
+    "aiSettings": {
+      "tone": "casual and energetic",
+      "custom_prompt": "Jangan tawarkan menu es kopi susu di hari libur."
+    }
+  }
+  ```
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "business": {
+      "id": 2,
+      "name": "Kopi Kenangan Group",
+      "slug": "kopi-kenangan",
+      "short_description": "Toko kopi susu kekinian, specialty beans",
+      "contact_phone": "+62822222222",
+      "address": "Gedung Kopi Lt 3, Jakarta",
+      "website": "https://kopikenangan.com",
+      "social_media": [],
+      "ai_settings": {
+        "tone": "casual and energetic",
+        "custom_prompt": "Jangan tawarkan menu es kopi susu di hari libur."
+      },
+      "created_at": "2026-06-29T09:00:00.000Z",
+      "updated_at": "2026-06-29T09:30:00.000Z"
+    }
   }
   ```

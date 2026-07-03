@@ -52,6 +52,7 @@ interface QueueItem {
 interface BroadcastProps {
   showToast: (msg: string) => void;
   sessions: { id: string; name: string; status: string }[];
+  businessId: number;
 }
 
 interface Customer {
@@ -60,7 +61,7 @@ interface Customer {
   status?: string;
 }
 
-export default function Broadcast({ showToast, sessions }: Readonly<BroadcastProps>) {
+export default function Broadcast({ showToast, sessions, businessId }: Readonly<BroadcastProps>) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -95,7 +96,7 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
   const fetchCampaigns = async (silent = false) => {
     if (!silent && !isLoading) setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/broadcasts/campaigns`);
+      const res = await fetch(`${API_BASE_URL}/api/broadcasts/campaigns?business_id=${businessId}`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setCampaigns(data);
@@ -185,7 +186,7 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [businessId]);
 
   // Handle media file upload
   const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -274,7 +275,8 @@ export default function Broadcast({ showToast, sessions }: Readonly<BroadcastPro
           mediaType: formMediaType,
           mediaUrl: formMediaUrl || null,
           targetFilter: formTargetFilter,
-          selectedPhones: formTargetFilter === 'manual' ? selectedCustomers : []
+          selectedPhones: formTargetFilter === 'manual' ? selectedCustomers : [],
+          business_id: businessId
         })
       });
       const data = await res.json();

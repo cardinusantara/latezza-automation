@@ -6,10 +6,9 @@ import {
   IconKey, 
   IconBrandWhatsapp, 
   IconShieldLock, 
-  IconMessageCode,
-  IconLoader,
-  IconClockHour4,
-  IconSparkles,
+  IconLoader, 
+  IconClockHour4, 
+  IconSparkles, 
   IconInfoCircle
 } from '@tabler/icons-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,14 +41,80 @@ interface SettingsState {
 
 interface SettingsProps {
   showToast: (message: string) => void;
+  businessId: number;
+  activeBusiness: any;
+  onRefreshBusinesses: () => void;
 }
 
-export default function Settings({ showToast }: Readonly<SettingsProps>) {
+export default function Settings({ showToast, businessId, activeBusiness, onRefreshBusinesses }: Readonly<SettingsProps>) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<'api' | 'security' | 'schedules' | 'followup' | 'persona'>('api');
+  const [activeCategory, setActiveCategory] = useState<'api' | 'security' | 'schedules' | 'followup' | 'persona' | 'business'>('business');
   const [groups, setGroups] = useState<{ jid: string; subject: string }[]>([]);
   const [isManualGroup, setIsManualGroup] = useState(false);
+  
+  const [businessForm, setBusinessForm] = useState({
+    name: '',
+    shortDescription: '',
+    contactPhone: '',
+    address: '',
+    website: '',
+    tone: 'friendly and polite',
+    customPrompt: '',
+    handoffRules: '',
+    followupRules: ''
+  });
+
+  useEffect(() => {
+    if (activeBusiness) {
+      setBusinessForm({
+        name: activeBusiness.name || '',
+        shortDescription: activeBusiness.short_description || '',
+        contactPhone: activeBusiness.contact_phone || '',
+        address: activeBusiness.address || '',
+        website: activeBusiness.website || '',
+        tone: activeBusiness.ai_settings?.tone || 'friendly and polite',
+        customPrompt: activeBusiness.ai_settings?.custom_prompt || '',
+        handoffRules: activeBusiness.ai_settings?.handoff_rules || '',
+        followupRules: activeBusiness.ai_settings?.followup_rules || ''
+      });
+    }
+  }, [activeBusiness]);
+
+  const handleSaveBusinessProfile = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/businesses/${businessId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: businessForm.name,
+          shortDescription: businessForm.shortDescription,
+          contactPhone: businessForm.contactPhone,
+          address: businessForm.address,
+          website: businessForm.website,
+          aiSettings: {
+            tone: businessForm.tone,
+            custom_prompt: businessForm.customPrompt,
+            handoff_rules: businessForm.handoffRules,
+            followup_rules: businessForm.followupRules
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        showToast('Profil dan AI settings bisnis berhasil diperbarui!');
+        onRefreshBusinesses();
+      } else {
+        showToast('Gagal memperbarui bisnis: ' + data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Koneksi gagal saat memperbarui profil bisnis.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const [settings, setSettings] = useState<SettingsState>({
     gemini_api_key: '',
@@ -160,26 +225,6 @@ export default function Settings({ showToast }: Readonly<SettingsProps>) {
     }
   };
 
-  // Restore Default System Prompt
-  const handleRestoreDefaultPrompt = async () => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/settings/default-system-prompt`);
-      const data = await res.json();
-      if (data?.default_system_prompt) {
-        setSettings(prev => ({
-          ...prev,
-          system_instruction: data.default_system_prompt
-        }));
-        showToast('Prompt default dimuat. Klik "Simpan" untuk menerapkan.');
-      } else {
-        showToast('Gagal mengambil prompt default.');
-      }
-    } catch (err) {
-      // Logged and handled by displaying failure toast to user
-      console.error(err);
-      showToast('Koneksi gagal saat memuat prompt default.');
-    }
-  };
 
   // Reset follow-up instruction to default (empty = use system default)
   const handleResetFollowupInstruction = () => {
@@ -201,16 +246,16 @@ export default function Settings({ showToast }: Readonly<SettingsProps>) {
       {/* Mobile Tab Selector */}
       <div className="flex md:hidden overflow-x-auto gap-2 pb-2 -mx-4 px-4 scrollbar-none snap-x shrink-0">
         {[
+          { id: 'business', label: 'Profil Bisnis' },
           { id: 'api', label: 'API Keys' },
           { id: 'security', label: 'Security' },
           { id: 'schedules', label: 'Schedules' },
-          { id: 'followup', label: 'Follow-ups' },
-          { id: 'persona', label: 'AI Prompt' }
+          { id: 'followup', label: 'Follow-ups' }
         ].map(cat => (
           <button
             key={cat.id}
             type="button"
-            onClick={() => setActiveCategory(cat.id as 'api' | 'security' | 'schedules' | 'followup' | 'persona')}
+            onClick={() => setActiveCategory(cat.id as any)}
             className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border shrink-0 transition-colors snap-center ${
               activeCategory === cat.id
                 ? 'bg-primary text-primary-foreground border-primary'
@@ -220,6 +265,136 @@ export default function Settings({ showToast }: Readonly<SettingsProps>) {
             {cat.label}
           </button>
         ))}
+      </div>
+
+      {/* Row: Profil Bisnis */}
+      <div className={`${activeCategory === 'business' ? 'block' : 'hidden md:block'} w-full`}>
+        <Card className="bg-card border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
+              <IconInfoCircle size={18} />
+              <span>Profil Bisnis & AI Workspace ({businessForm.name || 'Workspace'})</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">Nama Bisnis</label>
+                <input
+                  type="text"
+                  value={businessForm.name}
+                  onChange={(e) => setBusinessForm(prev => ({ ...prev, name: e.target.value }))}
+                  className={inputClasses}
+                  placeholder="Nama Bisnis / Toko"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">Nomor WhatsApp Kontak</label>
+                <input
+                  type="text"
+                  value={businessForm.contactPhone}
+                  onChange={(e) => setBusinessForm(prev => ({ ...prev, contactPhone: e.target.value }))}
+                  className={inputClasses}
+                  placeholder="Contoh: +62811..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">Website</label>
+                <input
+                  type="text"
+                  value={businessForm.website}
+                  onChange={(e) => setBusinessForm(prev => ({ ...prev, website: e.target.value }))}
+                  className={inputClasses}
+                  placeholder="https://..."
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">Gaya Komunikasi AI (Tone)</label>
+                <select
+                  value={businessForm.tone}
+                  onChange={(e) => setBusinessForm(prev => ({ ...prev, tone: e.target.value }))}
+                  className="h-9 w-full rounded-4xl border border-input bg-input/30 px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring bg-card/30 border-border"
+                >
+                  <option value="friendly and polite">Friendly & Polite (Ramah & Sopan)</option>
+                  <option value="casual and energetic">Casual & Energetic (Santai & Ceria)</option>
+                  <option value="professional and formal">Professional & Formal (Resmi & Baku)</option>
+                  <option value="helpful and humorous">Helpful & Humorous (Membantu & Jenaka)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">Alamat Toko / Kantor</label>
+              <textarea
+                value={businessForm.address}
+                onChange={(e) => setBusinessForm(prev => ({ ...prev, address: e.target.value }))}
+                className={textareaClasses}
+                placeholder="Alamat fisik toko kue atau kantor..."
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">Deskripsi Singkat Bisnis (Untuk AI context)</label>
+              <textarea
+                value={businessForm.shortDescription}
+                onChange={(e) => setBusinessForm(prev => ({ ...prev, shortDescription: e.target.value }))}
+                className={textareaClasses}
+                placeholder="Tulis ringkasan tentang bisnis, spesialisasi, jam buka, dan info penting..."
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">Instruksi Tambahan AI Khusus (Custom Prompt)</label>
+              <textarea
+                value={businessForm.customPrompt}
+                onChange={(e) => setBusinessForm(prev => ({ ...prev, customPrompt: e.target.value }))}
+                className={`${textareaClasses} font-mono`}
+                placeholder="Tulis aturan tambahan khusus bisnis ini (contoh: 'Jangan terima order custom cake di hari Minggu', 'Ingatkan customer tentang batas waktu transfer 2 jam')..."
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">Kondisi AI Harus Melakukan Handoff ke Admin (Handoff Rules)</label>
+              <textarea
+                value={businessForm.handoffRules}
+                onChange={(e) => setBusinessForm(prev => ({ ...prev, handoffRules: e.target.value }))}
+                className={textareaClasses}
+                placeholder="Contoh: kustomer ingin memesan custom cake (desain khusus), komplain, minta diskon khusus, atau minta bicara dengan manusia..."
+              />
+              <span className="text-[10px] text-muted-foreground">
+                Mendefinisikan kondisi spesifik kapan AI harus memanggil tool handoff dan menyerahkan chat ke admin manusia.
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">Kondisi AI Harus Meminta Follow Up Otomatis (Follow-up Rules)</label>
+              <textarea
+                value={businessForm.followupRules}
+                onChange={(e) => setBusinessForm(prev => ({ ...prev, followupRules: e.target.value }))}
+                className={textareaClasses}
+                placeholder="Contoh: kustomer menunjukkan minat tinggi (tanya ongkir, stock, shopee) tapi percakapan terhenti..."
+              />
+              <span className="text-[10px] text-muted-foreground">
+                Mendefinisikan kondisi kapan AI harus memicu request follow-up otomatis pada kustomer tersebut keesokan harinya.
+              </span>
+            </div>
+            
+            <div className="flex justify-end mt-2">
+              <Button
+                type="button"
+                onClick={handleSaveBusinessProfile}
+                disabled={saving}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-9 px-4 text-xs gap-1.5"
+              >
+                {saving ? <IconLoader size={14} className="animate-spin" /> : <IconDeviceFloppy size={14} />}
+                <span>Simpan Profil Bisnis</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Row 1: API Keys & Security + Rate Limits */}
@@ -641,42 +816,7 @@ export default function Settings({ showToast }: Readonly<SettingsProps>) {
         </Card>
       </div>
 
-      {/* Row 3: AI Core System Instructions */}
-      <div className={`${activeCategory === 'persona' ? 'block' : 'hidden md:block'} w-full`}>
-        <Card className="bg-card border-border shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
-              <IconMessageCode size={18} /> 
-              <span>AI Agent System Instructions</span>
-            </CardTitle>
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={handleRestoreDefaultPrompt}
-              className="text-xs gap-1 border-primary/20 text-primary hover:bg-primary/10 h-8 px-3"
-            >
-              <IconRefresh size={12} /> 
-              <span>Load Default Prompt</span>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-1.5">
-              <textarea 
-                id="system_instruction"
-                name="system_instruction"
-                aria-label="AI Agent System Instructions"
-                placeholder="Tulis kepribadian AI Agent, info toko kue, dan guardrails di sini..."
-                value={settings.system_instruction}
-                onChange={handleChange}
-                className={`${textareaClasses} min-h-[250px] font-mono`}
-              />
-              <span className="text-[10px] text-muted-foreground mt-1">
-                Petunjuk sistem utama yang mendefinisikan persona bot, detail harga custom cake, rules handoff admin, link Shopee catalog, dan parameter anti-jailbreak.
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+
 
       {/* Action Buttons */}
       <div className="flex justify-end gap-4 pt-4 border-t border-border">

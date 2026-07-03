@@ -89,6 +89,9 @@ export default function ChatInbox({
   const [custPhone, setCustPhone] = useState('');
   const [savingDetails, setSavingDetails] = useState(false);
   
+  const selectedCustomer = customers.find(c => c.phone_number === selectedJid);
+  const activeSessionId = (selectedCustomer && selectedCustomer.session_id) ? selectedCustomer.session_id : selectedSessionId;
+  
   // Audio recording hook
   const { 
     isRecording, 
@@ -131,7 +134,7 @@ export default function ChatInbox({
   // Fetch active customer details and history
   const fetchCustomerDetails = async (jid: string) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}?session_id=${selectedSessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}?session_id=${activeSessionId}`);
       const data = await res.json();
       if (data) {
         setAiEnabled(data.ai_enabled !== false);
@@ -148,7 +151,7 @@ export default function ChatInbox({
   const fetchChatHistory = async (jid: string, isSilent = false) => {
     if (!isSilent) setLoadingChat(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}/history?session_id=${selectedSessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}/history?session_id=${activeSessionId}`);
       const data = await res.json();
       setChatHistory(data || []);
     } catch (err) {
@@ -167,7 +170,7 @@ export default function ChatInbox({
       }, 0);
       return () => clearTimeout(timer);
     }
-  }, [selectedJid, selectedSessionId]);
+  }, [selectedJid, activeSessionId]);
 
   // Scroll to bottom when history changes under correct UX conditions
   useEffect(() => {
@@ -203,7 +206,7 @@ export default function ChatInbox({
       fetchCustomerDetails(selectedJid);
     }, 4000);
     return () => clearInterval(interval);
-  }, [selectedJid, selectedSessionId]);
+  }, [selectedJid, activeSessionId]);
 
 
 
@@ -213,7 +216,7 @@ export default function ChatInbox({
     await executeAudioUpload({
       blob,
       selectedJid,
-      selectedSessionId,
+      selectedSessionId: activeSessionId,
       showToast,
       setChatHistory,
       setAiEnabled,
@@ -236,7 +239,7 @@ export default function ChatInbox({
   const handleToggleAi = async () => {
     if (!selectedJid) return;
     const nextState = !aiEnabled;
-    await executeToggleAi(nextState, selectedJid, selectedSessionId, setAiEnabled, showToast, onRefreshData);
+    await executeToggleAi(nextState, selectedJid, activeSessionId, setAiEnabled, showToast, onRefreshData);
   };
 
   // Send message manual
@@ -246,7 +249,7 @@ export default function ChatInbox({
     setMessageText(''); // Clear input
     await executeSendMessage({
       selectedJid,
-      selectedSessionId,
+      selectedSessionId: activeSessionId,
       textToSend,
       showToast,
       setChatHistory,
@@ -266,7 +269,7 @@ export default function ChatInbox({
       const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/update-details`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: custStatus, notes: custNotes, session_id: selectedSessionId })
+        body: JSON.stringify({ status: custStatus, notes: custNotes, session_id: activeSessionId })
       });
       const data = await res.json();
       if (data.status === 'success') {

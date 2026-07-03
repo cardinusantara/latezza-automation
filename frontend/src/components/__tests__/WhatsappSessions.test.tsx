@@ -68,7 +68,7 @@ describe('WhatsappSessions Component', () => {
   });
 
   test('loads and displays whatsapp sessions and status badges', async () => {
-    render(<WhatsappSessions />);
+    render(<WhatsappSessions businessId={1} />);
 
     // Should show loading state first
     expect(screen.getByText('Memuat sesi WhatsApp...')).toBeInTheDocument();
@@ -92,7 +92,7 @@ describe('WhatsappSessions Component', () => {
   });
 
   test('handles adding a new session', async () => {
-    render(<WhatsappSessions />);
+    render(<WhatsappSessions businessId={1} />);
     await waitFor(() => expect(screen.queryByText('Memuat sesi WhatsApp...')).not.toBeInTheDocument());
 
     // Click "Tambah Sesi Baru" to open dialog
@@ -121,7 +121,7 @@ describe('WhatsappSessions Component', () => {
         expect.stringContaining('/api/whatsapp/sessions'),
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ id: 'cs-hampers--2026-', name: 'CS Hampers' })
+          body: JSON.stringify({ id: 'cs-hampers--2026-', name: 'CS Hampers', business_id: 1 })
         })
       );
     });
@@ -130,7 +130,7 @@ describe('WhatsappSessions Component', () => {
   });
 
   test('handles regenerating a session', async () => {
-    render(<WhatsappSessions />);
+    render(<WhatsappSessions businessId={1} />);
     await waitFor(() => expect(screen.queryByText('Memuat sesi WhatsApp...')).not.toBeInTheDocument());
 
     // Click "Disconnect & Reset" on default session
@@ -150,7 +150,7 @@ describe('WhatsappSessions Component', () => {
   });
 
   test('handles deleting a session', async () => {
-    render(<WhatsappSessions />);
+    render(<WhatsappSessions businessId={1} />);
     await waitFor(() => expect(screen.queryByText('Memuat sesi WhatsApp...')).not.toBeInTheDocument());
 
     // Click trash button on default session

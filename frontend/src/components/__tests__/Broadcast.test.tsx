@@ -34,7 +34,7 @@ describe('Broadcast component', () => {
 
   test('renders campaign list header and composer trigger button', async () => {
     const handleToast = vi.fn();
-    render(<Broadcast showToast={handleToast} sessions={mockSessions} />);
+    render(<Broadcast showToast={handleToast} sessions={mockSessions} businessId={1} />);
 
     expect(screen.getByText('Daftar Kampanye Siaran')).toBeInTheDocument();
     expect(screen.getByText('Buat Broadcast baru')).toBeInTheDocument();
@@ -49,7 +49,7 @@ describe('Broadcast component', () => {
   test('opens the composer dialog with a roomier layout', async () => {
     const user = userEvent.setup();
     const handleToast = vi.fn();
-    render(<Broadcast showToast={handleToast} sessions={mockSessions} />);
+    render(<Broadcast showToast={handleToast} sessions={mockSessions} businessId={1} />);
 
     await user.click(screen.getByRole('button', { name: 'Buat Broadcast baru' }));
 

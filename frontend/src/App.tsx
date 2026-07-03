@@ -12,8 +12,11 @@ import Broadcast from '@/components/Broadcast';
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { API_BASE_URL } from '@/config';
-import { IconSun, IconMoon, IconMenu2 } from '@tabler/icons-react';
+import { IconSun, IconMoon, IconMenu2, IconPlus, IconDeviceFloppy } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Lead {
   phone_number: string;
@@ -42,6 +45,17 @@ export default function App() {
     const saved = localStorage.getItem('activeTab');
     return saved && VALID_TABS.includes(saved) ? saved : 'overview';
   });
+
+  // Multi-tenant businesses state
+  const [businesses, setBusinesses] = useState<{ id: number; name: string; slug: string; short_description?: string; contact_phone?: string; address?: string; website?: string; social_media?: any; ai_settings?: any }[]>([]);
+  const [currentBusinessId, setCurrentBusinessId] = useState<number>(() => {
+    const saved = localStorage.getItem('currentBusinessId');
+    return saved ? Number.parseInt(saved, 10) : 1;
+  });
+  const [isNewBusinessModalOpen, setIsNewBusinessModalOpen] = useState(false);
+  const [newBusinessData, setNewBusinessData] = useState({ name: '', slug: '', shortDescription: '' });
+
+  const activeBusiness = businesses.find(b => b.id === currentBusinessId) || null;
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -150,9 +164,21 @@ export default function App() {
     toast(message);
   };
 
+  const loadBusinesses = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/businesses`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setBusinesses(data);
+      }
+    } catch (err) {
+      console.error('Failed to load businesses:', err);
+    }
+  };
+
   const loadSessions = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions`);
+      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions?business_id=${currentBusinessId}`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setSessions(data);
@@ -164,7 +190,7 @@ export default function App() {
 
   const loadStats = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/stats?session_id=${overviewSessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/stats?session_id=${overviewSessionId}&business_id=${currentBusinessId}`);
       const data = await res.json();
       setStats(data);
     } catch (err) {
@@ -174,7 +200,7 @@ export default function App() {
 
   const loadCustomers = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers?session_id=${selectedSessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/customers?session_id=${selectedSessionId}&business_id=${currentBusinessId}`);
       const data = await res.json();
       setCustomers(data || []);
     } catch (err) {
@@ -184,11 +210,44 @@ export default function App() {
 
   const loadProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/products`);
+      const res = await fetch(`${API_BASE_URL}/api/products?business_id=${currentBusinessId}`);
       const data = await res.json();
       setProducts(data || []);
     } catch (err) {
       console.error('Failed to load products:', err);
+    }
+  };
+
+  const handleCreateBusiness = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBusinessData.name || !newBusinessData.slug) {
+      showToast('Nama dan Slug wajib diisi!');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/businesses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newBusinessData.name.trim(),
+          slug: newBusinessData.slug.trim(),
+          shortDescription: newBusinessData.shortDescription.trim()
+        })
+      });
+      const data = await res.json();
+      if (data.status === 'success' && data.business) {
+        showToast(`Workspace "${data.business.name}" berhasil dibuat!`);
+        setIsNewBusinessModalOpen(false);
+        setNewBusinessData({ name: '', slug: '', shortDescription: '' });
+        await loadBusinesses();
+        setCurrentBusinessId(data.business.id);
+        localStorage.setItem('currentBusinessId', String(data.business.id));
+      } else {
+        showToast('Gagal membuat bisnis: ' + (data.message || 'Error tidak diketahui'));
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Koneksi gagal saat membuat bisnis.');
     }
   };
 
@@ -235,14 +294,21 @@ export default function App() {
     handleTabChange('inbox');
   };
 
-  // Initial load
+  // Initial load: fetch businesses list first
   useEffect(() => {
-    const timer = setTimeout(() => {
-      loadSessions();
-      loadProducts();
-    }, 0);
-    return () => clearTimeout(timer);
+    loadBusinesses();
   }, []);
+
+  // Sync state and load initial data when currentBusinessId changes
+  useEffect(() => {
+    setOverviewSessionId('all');
+    setSelectedSessionId('default');
+    
+    loadSessions();
+    loadStats();
+    loadCustomers();
+    loadProducts();
+  }, [currentBusinessId]);
 
   // Reload stats when overview session changes
   useEffect(() => {
@@ -250,7 +316,7 @@ export default function App() {
       loadStats();
     }, 0);
     return () => clearTimeout(timer);
-  }, [overviewSessionId]);
+  }, [overviewSessionId, currentBusinessId]);
 
   // Reload customers when selected session changes
   useEffect(() => {
@@ -258,7 +324,7 @@ export default function App() {
       loadCustomers();
     }, 0);
     return () => clearTimeout(timer);
-  }, [selectedSessionId]);
+  }, [selectedSessionId, currentBusinessId]);
 
   // Poll stats and customer lists every 8 seconds
   useEffect(() => {
@@ -269,7 +335,7 @@ export default function App() {
     }, 8000);
 
     return () => clearInterval(interval);
-  }, [selectedSessionId, overviewSessionId]);
+  }, [selectedSessionId, overviewSessionId, currentBusinessId]);
 
   // Sync header metadata based on tab
   const getHeaderInfo = () => {
@@ -312,7 +378,26 @@ export default function App() {
           >
             <IconMenu2 size={24} />
           </Button>
-          <span className="font-sans font-bold text-base tracking-wider text-primary">Latezza Agent</span>
+          <select
+            value={currentBusinessId}
+            onChange={(e) => {
+              const id = Number.parseInt(e.target.value, 10);
+              if (id === -1) {
+                setIsNewBusinessModalOpen(true);
+              } else {
+                setCurrentBusinessId(id);
+                localStorage.setItem('currentBusinessId', String(id));
+              }
+            }}
+            className="h-8 max-w-[140px] rounded-xl border border-border bg-card px-2 text-[10px] font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          >
+            {businesses.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+            <option value="-1">+ Tambah...</option>
+          </select>
         </div>
         <div className="flex items-center gap-2">
           {/* Light/Dark Toggle */}
@@ -352,6 +437,31 @@ export default function App() {
               <p className="text-xs md:text-sm text-muted-foreground">{header.subtitle}</p>
             </div>
             <div className="flex items-center gap-3 self-start sm:self-auto">
+              {/* Workspace Selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground font-medium hidden lg:inline">Workspace:</span>
+                <select
+                  value={currentBusinessId}
+                  onChange={(e) => {
+                    const id = Number.parseInt(e.target.value, 10);
+                    if (id === -1) {
+                      setIsNewBusinessModalOpen(true);
+                    } else {
+                      setCurrentBusinessId(id);
+                      localStorage.setItem('currentBusinessId', String(id));
+                    }
+                  }}
+                  className="h-9 rounded-xl border border-border bg-card px-3 text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  {businesses.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                  <option value="-1">+ Tambah Bisnis Baru...</option>
+                </select>
+              </div>
+
               {/* Light/Dark Toggle (Desktop only) */}
               <Button
                 variant="outline"
@@ -386,7 +496,7 @@ export default function App() {
             )}
 
             {activeTab === 'whatsapp-sessions' && (
-              <WhatsappSessions />
+              <WhatsappSessions businessId={currentBusinessId} />
             )}
             
             {activeTab === 'inbox' && (
@@ -406,11 +516,11 @@ export default function App() {
             )}
 
             {activeTab === 'broadcast' && (
-              <Broadcast showToast={showToast} sessions={sessions} />
+              <Broadcast showToast={showToast} sessions={sessions} businessId={currentBusinessId} />
             )}
             
             {activeTab === 'products' && (
-              <Products products={products} onRefreshData={loadProducts} />
+              <Products products={products} onRefreshData={loadProducts} businessId={currentBusinessId} />
             )}
             
             {activeTab === 'actions' && (
@@ -421,7 +531,12 @@ export default function App() {
             )}
             
             {activeTab === 'settings' && (
-              <Settings showToast={showToast} />
+              <Settings 
+                showToast={showToast} 
+                businessId={currentBusinessId}
+                activeBusiness={activeBusiness}
+                onRefreshBusinesses={loadBusinesses}
+              />
             )}
 
             {activeTab === 'ads-report' && (
@@ -434,6 +549,65 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      {/* Dialog: Tambah Bisnis Baru */}
+      <Dialog open={isNewBusinessModalOpen} onOpenChange={setIsNewBusinessModalOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-card border-border text-foreground">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold flex items-center gap-2">
+              <IconPlus className="text-primary" size={20} />
+              <span>Daftarkan Bisnis Baru</span>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Buat workspace multi-tenant baru. Ini akan memiliki sesi WhatsApp, database produk, dan stats tersendiri.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleCreateBusiness} className="space-y-4 py-2">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="biz-name" className="text-xs font-semibold text-muted-foreground">Nama Bisnis</label>
+              <Input
+                id="biz-name"
+                value={newBusinessData.name}
+                onChange={(e) => setNewBusinessData(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Contoh: Kopi Kenangan"
+                required
+                className="bg-card border-border text-sm"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="biz-slug" className="text-xs font-semibold text-muted-foreground">URL Slug (Unik)</label>
+              <Input
+                id="biz-slug"
+                value={newBusinessData.slug}
+                onChange={(e) => setNewBusinessData(prev => ({ ...prev, slug: e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '-') }))}
+                placeholder="Contoh: kopi-kenangan"
+                required
+                className="bg-card border-border text-sm"
+              />
+              <span className="text-[10px] text-muted-foreground">Hanya huruf kecil, angka, strip, dan underscore.</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="biz-desc" className="text-xs font-semibold text-muted-foreground">Deskripsi Singkat (Opsional)</label>
+              <Textarea
+                id="biz-desc"
+                value={newBusinessData.shortDescription}
+                onChange={(e) => setNewBusinessData(prev => ({ ...prev, shortDescription: e.target.value }))}
+                placeholder="Toko kopi susu kekinian..."
+                className="bg-card border-border text-sm min-h-[60px]"
+              />
+            </div>
+            <DialogFooter className="pt-2">
+              <Button type="button" variant="outline" onClick={() => setIsNewBusinessModalOpen(false)}>
+                Batal
+              </Button>
+              <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-1.5">
+                <IconDeviceFloppy size={16} />
+                <span>Simpan</span>
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* sonner Toaster */}
       <Toaster />

@@ -1,7 +1,7 @@
 # Graph Report - latezza-automation  (2026-06-29)
 
 ## Corpus Check
-- 123 files · ~102,716 words
+- 123 files · ~102,639 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

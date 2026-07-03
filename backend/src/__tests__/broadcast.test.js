@@ -125,7 +125,8 @@ describe('Broadcast Service', () => {
         messageTemplate: 'Halo {{name}}!',
         mediaType: 'text',
         mediaUrl: null,
-        scheduledAt: null
+        scheduledAt: null,
+        businessId: 1
       });
       expect(db.addQueueItem).toHaveBeenCalledTimes(2);
       expect(campaign.total_targets).toBe(2);

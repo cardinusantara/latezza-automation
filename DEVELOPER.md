@@ -3,7 +3,7 @@
 project: WhatsApp AI Agent + Admin Dashboard
 client: Latezza Cake
 stack: Fastify (Node.js) + React (Vite + Tailwind CSS v4 + shadcn/ui) + PostgreSQL + Baileys + Gemini API
-last_updated: 2026-06-28
+last_updated: 2026-06-29
 
 ---
 
@@ -131,10 +131,26 @@ VITE_API_URL=http://localhost:3001
 
 All tables are created automatically on server start in `src/db.js` using `CREATE TABLE IF NOT EXISTS`. Migrations (add column if not exists) also run on every startup.
 
+### businesses
+```sql
+id                SERIAL PRIMARY KEY
+name              VARCHAR(100) NOT NULL
+slug              VARCHAR(100) UNIQUE NOT NULL  -- e.g., 'latezza-cake'
+short_description TEXT
+contact_phone     VARCHAR(50)
+address           TEXT
+website           VARCHAR(255)
+social_media      JSONB DEFAULT '[]'::jsonb
+ai_settings       JSONB DEFAULT '{"temperature": 0.3, "max_output_tokens": 800, "tone": "friendly and polite", "custom_prompt": ""}'::jsonb
+created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
 ### whatsapp_sessions
 ```sql
 id           VARCHAR(50) PRIMARY KEY
 name         VARCHAR(100) NOT NULL
+business_id  INT NOT NULL REFERENCES businesses(id) ON DELETE CASCADE
 phone_number VARCHAR(50)
 status       VARCHAR(20) DEFAULT 'disconnected' -- values: disconnected | connecting | connected | qr_received
 qr_code      TEXT
@@ -146,6 +162,7 @@ updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```sql
 phone_number    VARCHAR(50)
 session_id      VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE CASCADE
+business_id     INT NOT NULL REFERENCES businesses(id) ON DELETE CASCADE
 name            VARCHAR(100)
 status          VARCHAR(20) DEFAULT 'lead'   -- values: lead | customer | dormant | opt_out
 notes           TEXT
@@ -164,6 +181,7 @@ PRIMARY KEY (phone_number, session_id)
 id           SERIAL PRIMARY KEY
 phone_number VARCHAR(50)
 session_id   VARCHAR(50) DEFAULT 'default'
+business_id  INT NOT NULL REFERENCES businesses(id) ON DELETE CASCADE
 role         VARCHAR(20) NOT NULL         -- 'user' | 'model'
 content      TEXT NOT NULL
 timestamp    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -173,13 +191,15 @@ FOREIGN KEY (phone_number, session_id) REFERENCES customers(phone_number, sessio
 ### products
 ```sql
 id           SERIAL PRIMARY KEY
-product_name VARCHAR(255) UNIQUE NOT NULL
+business_id  INT NOT NULL REFERENCES businesses(id) ON DELETE CASCADE
+product_name VARCHAR(255) NOT NULL
 price        NUMERIC DEFAULT 0
 description  TEXT DEFAULT ''
 image_url    TEXT DEFAULT ''
 shopee_link  TEXT DEFAULT ''
 embedding    JSONB                        -- Stores the 768-dimensional embedding vector from gemini-embedding-2
 created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+UNIQUE (product_name, business_id)
 ```
 
 ### settings (key-value store)
@@ -198,7 +218,7 @@ known keys in settings table:
 - rate_limit_max              -- max messages per window per sender (default 5)
 - rate_limit_window           -- window in ms (default 60000)
 - followup_hours              -- hours of inactivity before proactive follow-up fires (default 24)
-- system_instruction          -- full system prompt for the AI agent
+- system_instruction          -- (Deprecated/Override) Global override system prompt for the AI agent; normally resolved dynamically per business.
 - followup_instruction        -- custom instruction for follow-up message generation (see FOLLOW-UP section)
 - ads_analysis_frequency      -- frequency of ads report execution in days (default: 1)
 - ads_analysis_time           -- hour and minute to trigger ads report (default: '09:00')
@@ -224,6 +244,7 @@ cost_idr            NUMERIC(14, 2) DEFAULT 0     -- Converted using fixed exchan
 id               SERIAL PRIMARY KEY
 name             VARCHAR(100) NOT NULL
 session_id       VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE SET NULL
+business_id      INT NOT NULL REFERENCES businesses(id) ON DELETE CASCADE
 message_template TEXT NOT NULL
 media_type       VARCHAR(20) DEFAULT 'text'   -- 'text' | 'image' | 'video'
 media_url        TEXT

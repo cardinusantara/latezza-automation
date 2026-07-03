@@ -45,9 +45,10 @@ interface Product {
 interface ProductsProps {
   products: Product[];
   onRefreshData: () => void;
+  businessId: number;
 }
 
-export default function Products({ products, onRefreshData }: Readonly<ProductsProps>) {
+export default function Products({ products, onRefreshData, businessId }: Readonly<ProductsProps>) {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Dialog Open States
@@ -121,7 +122,8 @@ export default function Products({ products, onRefreshData }: Readonly<ProductsP
           price: Number.parseFloat(form.price),
           description: form.description,
           image_url: form.image_url,
-          shopee_link: form.shopee_link
+          shopee_link: form.shopee_link,
+          business_id: businessId
         })
       });
       const data = await res.json();

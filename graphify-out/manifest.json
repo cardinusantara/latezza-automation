@@ -75,18 +75,18 @@
     "semantic_hash": "13b94b3128eb04c356606c7c7db44907"
   },
   "backend/src/agent.js": {
-    "mtime": 1782364021.9822576,
-    "ast_hash": "aa80dbbd5a5a073b32b57de86e39e20f",
+    "mtime": 1782702198.3670936,
+    "ast_hash": "e6de60fcb25c683b92532af2c3319b24",
     "semantic_hash": ""
   },
   "backend/src/db.js": {
-    "mtime": 1782383082.7656424,
-    "ast_hash": "d21b46359e15d51572f64d732b6d96e8",
+    "mtime": 1782699623.583932,
+    "ast_hash": "940ddd9850d814554053c1db6938259a",
     "semantic_hash": ""
   },
   "backend/src/routes.js": {
-    "mtime": 1782405258.630172,
-    "ast_hash": "8d2bb7e0ec0a885c614ce4766db55f49",
+    "mtime": 1782700052.4263737,
+    "ast_hash": "62814e9846516cfcead80c4ccc866a43",
     "semantic_hash": ""
   },
   "backend/src/services/ads.js": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "frontend/src/App.tsx": {
-    "mtime": 1782563920.9122846,
-    "ast_hash": "6d9e0b3f88abfb21045d9468c471ad8c",
+    "mtime": 1782700245.0523283,
+    "ast_hash": "34536356a59aaebd4a3fc8b95e525621",
     "semantic_hash": ""
   },
   "frontend/src/components/Actions.tsx": {
@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/ChatInbox.tsx": {
-    "mtime": 1782583803.4291334,
-    "ast_hash": "6ab75006a9f0cc296a27cdf691aac499",
+    "mtime": 1782716036.544716,
+    "ast_hash": "e88f575ab9e80b595dc3a838a42dfdbe",
     "semantic_hash": ""
   },
   "frontend/src/components/CreativeReport.tsx": {
@@ -165,13 +165,13 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Products.tsx": {
-    "mtime": 1782365943.8639069,
-    "ast_hash": "921792ca9555c0167b19da929ccc02cb",
+    "mtime": 1782700105.1848202,
+    "ast_hash": "22a6f6875d42b4a7522d86828e08dd78",
     "semantic_hash": ""
   },
   "frontend/src/components/Settings.tsx": {
-    "mtime": 1782365956.6414416,
-    "ast_hash": "69eafca9ed95dd4dd76ee3b831c023cd",
+    "mtime": 1782701174.3291698,
+    "ast_hash": "9d458b64f276895d16d4c7d5e1d5ae79",
     "semantic_hash": ""
   },
   "frontend/src/components/Sidebar.tsx": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/WhatsappSessions.tsx": {
-    "mtime": 1782365962.1117775,
-    "ast_hash": "ad34958e92a8f1d2915c2b3763012d32",
+    "mtime": 1782700108.9180648,
+    "ast_hash": "44315253f4d50ee2ec826566df905654",
     "semantic_hash": ""
   },
   "frontend/src/components/theme-provider.tsx": {
@@ -370,18 +370,18 @@
     "semantic_hash": "1873b34282624ef89b08d3d9263bf98d"
   },
   "API.md": {
-    "mtime": 1782383471.8074808,
-    "ast_hash": "0ac43a6e247c0cc6cd7b67b1a1528105",
+    "mtime": 1782700385.5785835,
+    "ast_hash": "a3d1ded37aebc766911693ec8051e77f",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1782583717.6954367,
-    "ast_hash": "04ea9cefdbb0c06679b0f46e33f28827",
+    "mtime": 1782701997.3160853,
+    "ast_hash": "a52c94d556732abc5de42511f9387682",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
-    "mtime": 1782583724.1365416,
-    "ast_hash": "ff90d32ddce14c40a7f631b7a90eb5f6",
+    "mtime": 1782700371.7464986,
+    "ast_hash": "0b55d7a66f0110d47c6800243f1d7028",
     "semantic_hash": ""
   },
   "ISSUES.md": {
@@ -6735,8 +6735,8 @@
     "semantic_hash": ""
   },
   "backend/src/__tests__/agent.test.js": {
-    "mtime": 1782060795.1609235,
-    "ast_hash": "95b2650efef3273b83fa321f4703d29a",
+    "mtime": 1782664050.3036501,
+    "ast_hash": "7ffa69e292e24d05f14eb0e320cf62e3",
     "semantic_hash": ""
   },
   "backend/src/__tests__/creative.test.js": {
@@ -6745,8 +6745,8 @@
     "semantic_hash": ""
   },
   "backend/src/__tests__/db.test.js": {
-    "mtime": 1782317292.8687375,
-    "ast_hash": "938c8910620dcb0039a0d2942cf5b76a",
+    "mtime": 1782664053.6435785,
+    "ast_hash": "310eaa932660f27933561acde0cc5da6",
     "semantic_hash": ""
   },
   "backend/src/__tests__/routes.test.js": {
@@ -6770,13 +6770,13 @@
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/Products.test.tsx": {
-    "mtime": 1782060880.104061,
-    "ast_hash": "cdfda861b5a7a2202e874ecd60855ed2",
+    "mtime": 1782700253.1189036,
+    "ast_hash": "04048e525a08183155baf7cf12958f27",
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/Settings.test.tsx": {
-    "mtime": 1782232757.8867638,
-    "ast_hash": "82246bad56b5b1d46b0efa1ab8f84c76",
+    "mtime": 1782701121.6641867,
+    "ast_hash": "52ffa9a9bf397d0e0d4bcea8d27a856f",
     "semantic_hash": ""
   },
   "frontend/src/hooks/__tests__/use-mobile.test.ts": {
@@ -6865,28 +6865,28 @@
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/WhatsappSessions.test.tsx": {
-    "mtime": 1782364576.234885,
-    "ast_hash": "3f3dad910b679acd5faa9658321c3f0a",
+    "mtime": 1782700261.5543432,
+    "ast_hash": "c81ca72885ac37ffad3f59c7b1e6a0ac",
     "semantic_hash": ""
   },
   "backend/src/__tests__/broadcast.test.js": {
-    "mtime": 1782405838.3899207,
-    "ast_hash": "44c8bf9335fd36a4a888fbb720281547",
+    "mtime": 1782700065.965739,
+    "ast_hash": "7ae6b9e30083e84a0dbdba65e97acdfc",
     "semantic_hash": ""
   },
   "backend/src/services/broadcast.js": {
-    "mtime": 1782582073.3419068,
-    "ast_hash": "0cba63529cefebe30a48ba1dd13e2f3b",
+    "mtime": 1782700013.065289,
+    "ast_hash": "ffa447d2e00e9bdb343e758d02ab4565",
     "semantic_hash": ""
   },
   "frontend/src/components/Broadcast.tsx": {
-    "mtime": 1782583521.135214,
-    "ast_hash": "12f3ea5f26c1e7112de844441eafc549",
+    "mtime": 1782700125.7232103,
+    "ast_hash": "b75e35a5da159cf1071f819e8d714499",
     "semantic_hash": ""
   },
   "frontend/src/components/__tests__/Broadcast.test.tsx": {
-    "mtime": 1782404151.129819,
-    "ast_hash": "ffefa132a400ef738149ff45287f076d",
+    "mtime": 1782700249.6008356,
+    "ast_hash": "f6d97f3c3a36db501791d064d2493240",
     "semantic_hash": ""
   },
   ".agents/skills/update-docs/SKILL.md": {

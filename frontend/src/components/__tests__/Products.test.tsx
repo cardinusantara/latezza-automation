@@ -10,7 +10,7 @@ const mockProducts = [
 describe('Products component', () => {
   test('renders products list table', () => {
     const handleRefresh = vi.fn();
-    render(<Products products={mockProducts} onRefreshData={handleRefresh} />);
+    render(<Products products={mockProducts} onRefreshData={handleRefresh} businessId={1} />);
 
     expect(screen.getByText('Kue Cokelat Lumer')).toBeInTheDocument();
     expect(screen.getByText('Korean Custom Cake')).toBeInTheDocument();
@@ -20,7 +20,7 @@ describe('Products component', () => {
 
   test('filters products based on search input query', () => {
     const handleRefresh = vi.fn();
-    render(<Products products={mockProducts} onRefreshData={handleRefresh} />);
+    render(<Products products={mockProducts} onRefreshData={handleRefresh} businessId={1} />);
 
     const searchInput = screen.getByPlaceholderText(/Cari nama produk atau deskripsi/i);
     fireEvent.change(searchInput, { target: { value: 'Korean' } });

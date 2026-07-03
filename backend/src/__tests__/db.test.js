@@ -91,24 +91,106 @@ describe('db.js module', () => {
 
   test('createOrUpdateCustomer inserts new customer if not exists', async () => {
     db.pool.query.mockResolvedValueOnce({ rows: [] }); // getCustomer SELECT returns empty
+    db.pool.query.mockResolvedValueOnce({ rows: [{ id: 'default', business_id: 1 }] }); // getSession SELECT returns session
     const mockCustomer = { phone_number: '123456', name: 'New Customer' };
     db.pool.query.mockResolvedValueOnce({ rows: [mockCustomer] }); // INSERT returns customer
 
     const customer = await db.createOrUpdateCustomer('123456', 'New Customer', { status: 'lead' }, 'default');
     expect(customer).toEqual(mockCustomer);
-    expect(db.pool.query).toHaveBeenCalledTimes(2);
-    expect(db.pool.query.mock.calls[1][0]).toContain('INSERT INTO customers');
+    expect(db.pool.query).toHaveBeenCalledTimes(3);
+    expect(db.pool.query.mock.calls[2][0]).toContain('INSERT INTO customers');
   });
 
   test('createOrUpdateCustomer updates existing customer if exists', async () => {
     const existingCustomer = { phone_number: '123456', name: 'Old Customer' };
     db.pool.query.mockResolvedValueOnce({ rows: [existingCustomer] }); // getCustomer SELECT returns existing
+    db.pool.query.mockResolvedValueOnce({ rows: [{ id: 'default', business_id: 1 }] }); // getSession SELECT returns session
     const updatedCustomer = { phone_number: '123456', name: 'Updated Customer' };
     db.pool.query.mockResolvedValueOnce({ rows: [updatedCustomer] }); // UPDATE returns updated customer
 
     const customer = await db.createOrUpdateCustomer('123456', 'Updated Customer', { status: 'customer' }, 'default');
     expect(customer).toEqual(updatedCustomer);
-    expect(db.pool.query).toHaveBeenCalledTimes(2);
-    expect(db.pool.query.mock.calls[1][0]).toContain('UPDATE customers SET');
+    expect(db.pool.query).toHaveBeenCalledTimes(3);
+    expect(db.pool.query.mock.calls[2][0]).toContain('UPDATE customers SET');
+  });
+
+  test('createBusiness correctly inserts a business', async () => {
+    const mockBusiness = { id: 2, name: 'New Business', slug: 'new-business' };
+    db.pool.query.mockResolvedValueOnce({ rows: [mockBusiness] });
+
+    const business = await db.createBusiness({
+      name: 'New Business',
+      slug: 'new-business',
+      shortDescription: 'Desc',
+      contactPhone: '12345',
+      address: 'Addr',
+      website: 'Web',
+      socialMedia: [{ type: 'instagram', value: 'ig' }],
+      aiSettings: { temperature: 0.5 }
+    });
+
+    expect(business).toEqual(mockBusiness);
+    expect(db.pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO businesses'),
+      [
+        'New Business',
+        'new-business',
+        'Desc',
+        '12345',
+        'Addr',
+        'Web',
+        JSON.stringify([{ type: 'instagram', value: 'ig' }]),
+        JSON.stringify({ temperature: 0.5 })
+      ]
+    );
+  });
+
+  test('getBusinesses fetches all businesses', async () => {
+    const mockList = [{ id: 1, name: 'Biz A' }, { id: 2, name: 'Biz B' }];
+    db.pool.query.mockResolvedValueOnce({ rows: mockList });
+
+    const list = await db.getBusinesses();
+    expect(list).toEqual(mockList);
+    expect(db.pool.query).toHaveBeenCalledWith(expect.stringContaining('SELECT * FROM businesses ORDER BY name ASC'));
+  });
+
+  test('getBusinessById fetches single business', async () => {
+    const mockBusiness = { id: 1, name: 'Biz A' };
+    db.pool.query.mockResolvedValueOnce({ rows: [mockBusiness] });
+
+    const business = await db.getBusinessById(1);
+    expect(business).toEqual(mockBusiness);
+    expect(db.pool.query).toHaveBeenCalledWith('SELECT * FROM businesses WHERE id = $1', [1]);
+  });
+
+  test('getBusinessBySlug fetches single business', async () => {
+    const mockBusiness = { id: 1, name: 'Biz A', slug: 'biz-a' };
+    db.pool.query.mockResolvedValueOnce({ rows: [mockBusiness] });
+
+    const business = await db.getBusinessBySlug('biz-a');
+    expect(business).toEqual(mockBusiness);
+    expect(db.pool.query).toHaveBeenCalledWith('SELECT * FROM businesses WHERE slug = $1', ['biz-a']);
+  });
+
+  test('updateBusiness executes correct UPDATE query', async () => {
+    const mockUpdated = { id: 1, name: 'Updated Biz' };
+    db.pool.query.mockResolvedValueOnce({ rows: [mockUpdated] });
+
+    const business = await db.updateBusiness(1, {
+      name: 'Updated Biz',
+      contactPhone: '98765',
+      aiSettings: { temperature: 0.4 }
+    });
+
+    expect(business).toEqual(mockUpdated);
+    expect(db.pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('UPDATE businesses'),
+      [
+        'Updated Biz',
+        '98765',
+        JSON.stringify({ temperature: 0.4 }),
+        1
+      ]
+    );
   });
 });

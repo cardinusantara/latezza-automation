@@ -1,6 +1,6 @@
 {
   "title": "Laporan Performa Iklan Multi-Brand",
-  "subtitle": "Periode: 1 Juni 2026 – 25 Juni 2026",
+  "subtitle": "Periode: 1 Juni 2026 – 3 Juli 2026",
   "theme": {
     "primary": "#3B82F6"
   },
@@ -28,8 +28,8 @@
   },
   "timeframes": {
     "custom": {
-      "label": "Periode: 1 Juni 2026 – 25 Juni 2026",
-      "dateRange": "1 Juni 2026 – 25 Juni 2026",
+      "label": "Periode: 1 Juni 2026 – 3 Juli 2026",
+      "dateRange": "1 Juni 2026 – 3 Juli 2026",
       "widgets": [
         {
           "type": "kpi_grid",
@@ -560,40 +560,40 @@
           "title": "Insight Utama",
           "items": [
             {
-              "headline": "Juara Konversi",
-              "body": "Kampanye 'Surganya Korean Cake' mendominasi dengan 436 konversi dan CPR terendah Rp6.098. Tingkatkan budget sebesar 20-30% untuk kampanye ini.",
+              "headline": "Juara Efisiensi Iklan",
+              "body": "Konten 'Surganya Korean Cake (Admin 2)' mencatatkan performa terbaik dengan 436 konversi dan CPR hanya Rp6.098. Segera tingkatkan budget pada ad set ini karena efisiensi biayanya melampaui rata-rata campaign lainnya.",
               "icon": "ti ti-trophy",
               "color": "#10b981"
             },
             {
-              "headline": "Evaluasi Budget GPO",
-              "body": "Konten 3 GPO menghabiskan Rp2,9 juta dengan CPR Rp15.541. Perlu pengujian materi kreatif baru karena CPR saat ini masih cukup tinggi dibandingkan rata-rata.",
-              "icon": "ti ti-flame",
+              "headline": "Overspending pada Konten GPO",
+              "body": "Konten 3 GPO menyerap budget terbesar Rp2.968.238 namun menghasilkan CPR Rp15.541. Perlu evaluasi kreatif atau landing page chat agar biaya per konversi tidak terus menggerus margin.",
+              "icon": "ti ti-alert-triangle",
               "color": "#f59e0b"
             },
             {
-              "headline": "Kill Underperformers",
-              "body": "Segera matikan iklan 'Konten 2 GPO' dengan CPR Rp28.687 dan 'Bouquet & Cake 295' dengan CPR Rp17.157 untuk menghemat efisiensi pengeluaran.",
-              "icon": "ti ti-alert-triangle",
-              "color": "#f43f5e"
+              "headline": "Perlu Pemangkasan Budget",
+              "body": "Ad 'Konten 2 GPO' memiliki performa sangat buruk dengan CPR Rp28.687 untuk 1 konversi. Segera matikan iklan ini dan alihkan budget ke konten yang memiliki CPR di bawah Rp10.000.",
+              "icon": "ti ti-flame",
+              "color": "#e11d48"
             },
             {
-              "headline": "Efisiensi Reach",
-              "body": "Gaby Florist (Korean Bouquet) memiliki reach tertinggi yaitu 204.665. Gunakan hook yang sama pada konten lain untuk menjaga impresi tetap luas.",
-              "icon": "ti ti-users",
+              "headline": "Peluang Optimasi Kreatif",
+              "body": "Konten 'Korean Bouquet' memiliki reach tinggi (204.665) namun CPR Rp9.523. Fokuskan untuk memperbaiki hook video guna meningkatkan rasio konversi dari traffic yang sudah besar tersebut.",
+              "icon": "ti ti-chart-line",
               "color": "#6366f1"
             },
             {
-              "headline": "Optimasi Copywriting",
-              "body": "Data menunjukkan audiens sangat responsif pada tema 'Korean Cake'. Fokuskan narasi iklan berikutnya pada keunikan visual produk tersebut.",
-              "icon": "ti ti-bulb",
-              "color": "#8b5cf6"
+              "headline": "Validasi Minat Pasar",
+              "body": "Data menunjukkan minat tinggi pada produk Korean Cake dibandingkan paket hampers buah. Fokuskan strategi konten bulan depan pada visual yang lebih mengedepankan detail produk kue untuk menarik audiens serupa.",
+              "icon": "ti ti-users",
+              "color": "#3b82f6"
             },
             {
-              "headline": "Tren Konversi",
-              "body": "Dengan 1.582 total konversi dari 1,2 juta impresi, rata-rata CTR dan Conversion Rate masih sehat. Pertahankan ritme postingan untuk menjaga stabilitas.",
-              "icon": "ti ti-chart-line",
-              "color": "#0ea5e9"
+              "headline": "Strategi Penawaran",
+              "body": "Iklan 'Bouquet & Cake 295' menunjukkan performa lemah dengan CPR Rp17.157. Coba lakukan penyesuaian pada penawaran (bundle) atau ganti angle komunikasi untuk meningkatkan minat calon pembeli di chat.",
+              "icon": "ti ti-bulb",
+              "color": "#f59e0b"
             }
           ]
         },
@@ -1435,7 +1435,7 @@
           ]
         }
       ],
-      "whatsAppSummary": "Laporan performa iklan 1-25 Juni 2026 mencatatkan total spend Rp12.179.224 dengan 1.582 konversi chat. Kategori Cake/Florist (Gaby Florist & Cake Admin 2) menjadi penyumbang performa terbaik, khususnya kampanye 'Surganya Korean Cake' yang mencetak CPR efisien di angka Rp6.098. Sebagai optimalisasi, segera hentikan budget pada konten underperforming seperti 'Konten 2 GPO' yang memiliki CPR Rp28.687 dan realokasikan sisa budget ke kampanye dengan CPR di bawah Rp10.000 untuk memaksimalkan jumlah chat."
+      "whatsAppSummary": "Laporan performa periode 1 Juni - 3 Juli 2026 menunjukkan total spend Rp12.179.224 dengan 1.582 konversi chat. 'Surganya Korean Cake (Admin 2)' muncul sebagai bintang utama dengan CPR paling efisien di angka Rp6.098. Secara keseluruhan, campaign berada pada track yang baik, namun kami menyarankan untuk melakukan realokasi budget dari konten dengan CPR di atas Rp15.000 (seperti 'Konten 3 GPO') menuju konten dengan CPR rendah untuk memaksimalkan jumlah chat masuk tanpa menambah total spend."
     }
   },
   "ads": [

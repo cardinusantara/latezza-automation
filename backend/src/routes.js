@@ -127,7 +127,8 @@ function registerRoutes(fastify) {
   // API: Stats Endpoint
   fastify.get('/api/stats', async (request, reply) => {
     try {
-      const { session_id } = request.query;
+      const { session_id, business_id } = request.query;
+      const parsedBusinessId = business_id ? Number.parseInt(business_id, 10) : null;
       
       let leadsCountRes, followupsCountRes, recentLeadsRes;
       let incomingLast24h, incomingLast7d, incomingLast30d;
@@ -135,21 +136,35 @@ function registerRoutes(fastify) {
       let status;
 
       if (session_id === 'all') {
-        const sessions = await db.getSessions();
+        const sessions = await db.getSessions(parsedBusinessId);
         const anyReady = sessions.some(s => whatsappService.isReady(s.id));
         status = anyReady ? 'connected' : 'disconnected';
 
-        leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers');
-        followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE');
-        recentLeadsRes = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC LIMIT 5');
+        if (parsedBusinessId) {
+          leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE business_id = $1', [parsedBusinessId]);
+          followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE AND business_id = $1', [parsedBusinessId]);
+          recentLeadsRes = await db.pool.query('SELECT * FROM customers WHERE business_id = $1 ORDER BY last_interaction DESC LIMIT 5', [parsedBusinessId]);
 
-        incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '24 hours'");
-        incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '7 days'");
-        incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '30 days'");
+          incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND business_id = $1 AND timestamp >= NOW() - INTERVAL '24 hours'", [parsedBusinessId]);
+          incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND business_id = $1 AND timestamp >= NOW() - INTERVAL '7 days'", [parsedBusinessId]);
+          incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND business_id = $1 AND timestamp >= NOW() - INTERVAL '30 days'", [parsedBusinessId]);
 
-        newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '24 hours'");
-        newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '7 days'");
-        newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '30 days'");
+          newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE business_id = $1 AND created_at >= NOW() - INTERVAL '24 hours'", [parsedBusinessId]);
+          newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE business_id = $1 AND created_at >= NOW() - INTERVAL '7 days'", [parsedBusinessId]);
+          newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE business_id = $1 AND created_at >= NOW() - INTERVAL '30 days'", [parsedBusinessId]);
+        } else {
+          leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers');
+          followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE');
+          recentLeadsRes = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC LIMIT 5');
+
+          incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '24 hours'");
+          incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '7 days'");
+          incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '30 days'");
+
+          newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '24 hours'");
+          newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '7 days'");
+          newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '30 days'");
+        }
       } else {
         const targetSessionId = session_id || 'default';
         status = whatsappService.isReady(targetSessionId) ? 'connected' : 'disconnected';
@@ -167,10 +182,17 @@ function registerRoutes(fastify) {
         newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE session_id = $1 AND created_at >= NOW() - INTERVAL '30 days'", [targetSessionId]);
       }
       
+      let productsCountRes;
+      if (parsedBusinessId) {
+        productsCountRes = await db.pool.query('SELECT COUNT(*) FROM products WHERE business_id = $1', [parsedBusinessId]);
+      } else {
+        productsCountRes = await db.pool.query('SELECT COUNT(*) FROM products');
+      }
+      
       return {
         status,
         totalLeads: Number.parseInt(leadsCountRes.rows[0].count, 10),
-        totalProducts: Number.parseInt((await db.pool.query('SELECT COUNT(*) FROM products')).rows[0].count, 10),
+        totalProducts: Number.parseInt(productsCountRes.rows[0].count, 10),
         pendingFollowUps: Number.parseInt(followupsCountRes.rows[0].count, 10),
         incomingMessages: {
           last24h: Number.parseInt(incomingLast24h.rows[0].count, 10),
@@ -194,7 +216,11 @@ function registerRoutes(fastify) {
   // API: Customers List
   fastify.get('/api/customers', async (request, reply) => {
     try {
-      const { session_id } = request.query;
+      const { session_id, business_id } = request.query;
+      if (business_id) {
+        const res = await db.pool.query('SELECT * FROM customers WHERE business_id = $1 ORDER BY last_interaction DESC', [Number.parseInt(business_id, 10)]);
+        return res.rows;
+      }
       const targetSessionId = session_id || 'default';
       const res = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC', [targetSessionId]);
       return res.rows;
@@ -243,6 +269,11 @@ function registerRoutes(fastify) {
   // API: Products List
   fastify.get('/api/products', async (request, reply) => {
     try {
+      const { business_id } = request.query;
+      if (business_id) {
+        const res = await db.pool.query('SELECT * FROM products WHERE business_id = $1 ORDER BY id ASC', [Number.parseInt(business_id, 10)]);
+        return res.rows;
+      }
       const res = await db.pool.query('SELECT * FROM products ORDER BY id ASC');
       return res.rows;
     } catch (err) {
@@ -263,19 +294,21 @@ function registerRoutes(fastify) {
           price: { type: 'number' },
           description: { type: 'string' },
           image_url: { type: 'string' },
-          shopee_link: { type: 'string' }
+          shopee_link: { type: 'string' },
+          business_id: { type: 'integer' }
         }
       }
     },
     handler: async (request, reply) => {
-      const { product_name, price, description, image_url, shopee_link } = request.body;
+      const { product_name, price, description, image_url, shopee_link, business_id } = request.body;
+      const finalBusinessId = business_id ? Number.parseInt(business_id, 10) : 1;
       try {
-        fastify.log.info(`Creating product: ${product_name}`);
+        fastify.log.info(`Creating product: ${product_name} for business ${finalBusinessId}`);
         const res = await db.pool.query(
-          `INSERT INTO products (product_name, price, description, image_url, shopee_link)
-           VALUES ($1, $2, $3, $4, $5)
+          `INSERT INTO products (product_name, price, description, image_url, shopee_link, business_id)
+           VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING *`,
-          [product_name, price, description || '', image_url || '', shopee_link || '']
+          [product_name, price, description || '', image_url || '', shopee_link || '', finalBusinessId]
         );
         const product = res.rows[0];
 
@@ -1093,7 +1126,9 @@ function registerRoutes(fastify) {
   // API: Get all WhatsApp sessions
   fastify.get('/api/whatsapp/sessions', async (request, reply) => {
     try {
-      const sessions = await db.getSessions();
+      const { business_id } = request.query;
+      const parsedBusinessId = business_id ? Number.parseInt(business_id, 10) : null;
+      const sessions = await db.getSessions(parsedBusinessId);
       const pool = whatsappService.sessions;
       const enriched = sessions.map(s => {
         const active = pool.get(s.id);
@@ -1120,17 +1155,19 @@ function registerRoutes(fastify) {
         required: ['id', 'name'],
         properties: {
           id: { type: 'string', pattern: '^[a-zA-Z0-9_-]+$' },
-          name: { type: 'string' }
+          name: { type: 'string' },
+          business_id: { type: 'integer' }
         }
       }
     },
     handler: async (request, reply) => {
-      const { id, name } = request.body;
+      const { id, name, business_id } = request.body;
+      const finalBusinessId = business_id ? Number.parseInt(business_id, 10) : 1;
       try {
-        fastify.log.info(`Creating new WhatsApp session: ${name} (${id})`);
+        fastify.log.info(`Creating new WhatsApp session: ${name} (${id}) for business ${finalBusinessId}`);
         
         // 1. Insert into DB
-        const session = await db.createSession(id, name);
+        const session = await db.createSession(id, name, finalBusinessId);
         
         // 2. Initialize connection in background
         whatsappService.connectSession(id, name, fastify.log).catch(err => {
@@ -1214,7 +1251,9 @@ function registerRoutes(fastify) {
   // 1. GET: List all campaigns
   fastify.get('/api/broadcasts/campaigns', async (request, reply) => {
     try {
-      const campaigns = await db.getCampaigns();
+      const { business_id } = request.query;
+      const parsedBusinessId = business_id ? Number.parseInt(business_id, 10) : null;
+      const campaigns = await db.getCampaigns(parsedBusinessId);
       return campaigns;
     } catch (err) {
       fastify.log.error(`Failed to fetch campaigns: ${err.message}`);
@@ -1254,14 +1293,16 @@ function registerRoutes(fastify) {
           mediaType: { type: 'string', enum: ['text', 'image', 'video'], default: 'text' },
           mediaUrl: { type: 'string', nullable: true },
           targetFilter: { type: 'string', enum: ['all', 'leads', 'dormant', 'needs_follow_up', 'manual'], default: 'all' },
-          selectedPhones: { type: 'array', items: { type: 'string' }, default: [] }
+          selectedPhones: { type: 'array', items: { type: 'string' }, default: [] },
+          business_id: { type: 'integer' }
         }
       }
     },
     handler: async (request, reply) => {
-      const { name, sessionId, template, mediaType, mediaUrl, targetFilter, selectedPhones } = request.body;
+      const { name, sessionId, template, mediaType, mediaUrl, targetFilter, selectedPhones, business_id } = request.body;
+      const finalBusinessId = business_id ? Number.parseInt(business_id, 10) : 1;
       try {
-        fastify.log.info(`Creating campaign "${name}" with target filter "${targetFilter}"...`);
+        fastify.log.info(`Creating campaign "${name}" with target filter "${targetFilter}" for business ${finalBusinessId}...`);
         const campaign = await broadcastService.createCampaignAndQueue({
           name,
           sessionId,
@@ -1269,7 +1310,8 @@ function registerRoutes(fastify) {
           mediaType,
           mediaUrl,
           targetFilter,
-          selectedPhones
+          selectedPhones,
+          businessId: finalBusinessId
         });
         return { status: 'success', campaign };
       } catch (err) {
@@ -1380,6 +1422,94 @@ function registerRoutes(fastify) {
         return { status: 'success', variations: result.variations || [] };
       } catch (err) {
         fastify.log.error(`AI copywriting generation failed: ${err.message}`);
+        reply.status(500);
+        return { status: 'error', message: err.message };
+      }
+    }
+  });
+
+  // 7. GET: List all businesses
+  fastify.get('/api/businesses', async (request, reply) => {
+    try {
+      const list = await db.getBusinesses();
+      return list;
+    } catch (err) {
+      fastify.log.error(`Failed to fetch businesses: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // GET: Single business details
+  fastify.get('/api/businesses/:id', async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const business = await db.getBusinessById(Number.parseInt(id, 10));
+      if (!business) {
+        reply.status(404);
+        return { status: 'error', message: 'Business not found' };
+      }
+      return business;
+    } catch (err) {
+      fastify.log.error(`Failed to fetch business by ID: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
+  // POST: Create a new business
+  fastify.post('/api/businesses', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['name', 'slug'],
+        properties: {
+          name: { type: 'string' },
+          slug: { type: 'string' },
+          shortDescription: { type: 'string', default: '' },
+          contactPhone: { type: 'string', default: '' },
+          address: { type: 'string', default: '' },
+          website: { type: 'string', default: '' },
+          socialMedia: { type: 'array', default: [] },
+          aiSettings: { type: 'object', default: {} }
+        }
+      }
+    },
+    handler: async (request, reply) => {
+      try {
+        const business = await db.createBusiness(request.body);
+        return { status: 'success', business };
+      } catch (err) {
+        fastify.log.error(`Failed to create business: ${err.message}`);
+        reply.status(500);
+        return { status: 'error', message: err.message };
+      }
+    }
+  });
+
+  // PUT: Update an existing business
+  fastify.put('/api/businesses/:id', {
+    schema: {
+      body: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          shortDescription: { type: 'string' },
+          contactPhone: { type: 'string' },
+          address: { type: 'string' },
+          website: { type: 'string' },
+          socialMedia: { type: 'array' },
+          aiSettings: { type: 'object' }
+        }
+      }
+    },
+    handler: async (request, reply) => {
+      const { id } = request.params;
+      try {
+        const business = await db.updateBusiness(Number.parseInt(id, 10), request.body);
+        return { status: 'success', business };
+      } catch (err) {
+        fastify.log.error(`Failed to update business: ${err.message}`);
         reply.status(500);
         return { status: 'error', message: err.message };
       }

@@ -77,7 +77,7 @@ function personalizeMessage(template, customer) {
 /**
  * Creates a campaign and generates its corresponding queue items
  */
-async function createCampaignAndQueue({ name, sessionId = 'default', template, mediaType = 'text', mediaUrl = null, targetFilter = 'all', selectedPhones = [] }) {
+async function createCampaignAndQueue({ name, sessionId = 'default', template, mediaType = 'text', mediaUrl = null, targetFilter = 'all', selectedPhones = [], businessId = 1 }) {
   // 1. Fetch target customers based on filter
   const targets = await db.getBroadcastTargets(sessionId, targetFilter, selectedPhones);
   if (targets.length === 0) {
@@ -91,7 +91,8 @@ async function createCampaignAndQueue({ name, sessionId = 'default', template, m
     messageTemplate: template,
     mediaType,
     mediaUrl,
-    scheduledAt: null
+    scheduledAt: null,
+    businessId
   });
 
   // 3. Generate queue items with personalized messages

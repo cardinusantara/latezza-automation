@@ -22,11 +22,31 @@ const settingsCache = new Map();
 async function initDb() {
   const client = await pool.connect();
   try {
+    // 0. Businesses Table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS businesses (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        slug VARCHAR(100) UNIQUE NOT NULL,
+        short_description TEXT,
+        contact_phone VARCHAR(50),
+        address TEXT,
+        website VARCHAR(255),
+        social_media JSONB DEFAULT '[]'::jsonb,
+        ai_settings JSONB DEFAULT '{"temperature": 0.3, "max_output_tokens": 800, "tone": "friendly and polite", "custom_prompt": ""}'::jsonb,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // (Default business will be seeded at the end of the initDb block after migrations)
+
     // 1. WhatsApp Sessions Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS whatsapp_sessions (
         id VARCHAR(50) PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
+        business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE,
         phone_number VARCHAR(50),
         status VARCHAR(20) DEFAULT 'disconnected', -- 'disconnected', 'connecting', 'connected', 'qr_received'
         qr_code TEXT,
@@ -35,18 +55,14 @@ async function initDb() {
       );
     `);
 
-    // Insert default session if it doesn't exist
-    await client.query(`
-      INSERT INTO whatsapp_sessions (id, name, status)
-      VALUES ('default', 'Default Agent', 'disconnected')
-      ON CONFLICT (id) DO NOTHING;
-    `);
+    // (Default session will be seeded at the end of the initDb block after migrations)
 
     // 2. Customers Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS customers (
         phone_number VARCHAR(50),
         session_id VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE CASCADE,
+        business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE,
         name VARCHAR(100),
         status VARCHAR(20) DEFAULT 'lead',
         notes TEXT,
@@ -65,7 +81,8 @@ async function initDb() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS products (
         id SERIAL PRIMARY KEY,
-        product_name VARCHAR(255) UNIQUE NOT NULL,
+        business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE,
+        product_name VARCHAR(255) NOT NULL,
         price NUMERIC DEFAULT 0,
         description TEXT DEFAULT '',
         image_url TEXT DEFAULT '',
@@ -80,6 +97,7 @@ async function initDb() {
         id SERIAL PRIMARY KEY,
         phone_number VARCHAR(50),
         session_id VARCHAR(50) DEFAULT 'default',
+        business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE,
         role VARCHAR(20) NOT NULL, -- 'user' or 'model'
         content TEXT NOT NULL,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -116,6 +134,7 @@ async function initDb() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         session_id VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE SET NULL,
+        business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE,
         message_template TEXT NOT NULL,
         media_type VARCHAR(20) DEFAULT 'text',
         media_url TEXT,
@@ -166,6 +185,36 @@ async function initDb() {
       ALTER TABLE chat_histories ADD COLUMN IF NOT EXISTS session_id VARCHAR(50) DEFAULT 'default';
     `);
 
+    // Multi-tenant additions migrations
+    await client.query(`
+      ALTER TABLE whatsapp_sessions ADD COLUMN IF NOT EXISTS business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE;
+    `);
+    await client.query(`
+      ALTER TABLE customers ADD COLUMN IF NOT EXISTS business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE;
+    `);
+    await client.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE;
+    `);
+    await client.query(`
+      ALTER TABLE chat_histories ADD COLUMN IF NOT EXISTS business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE;
+    `);
+    await client.query(`
+      ALTER TABLE broadcast_campaigns ADD COLUMN IF NOT EXISTS business_id INT NOT NULL DEFAULT 1 REFERENCES businesses(id) ON DELETE CASCADE;
+    `);
+
+    // Adjust unique constraints for multi-tenant product name
+    await client.query(`
+      ALTER TABLE products DROP CONSTRAINT IF EXISTS products_product_name_key;
+    `);
+    const checkProductConstraint = await client.query(`
+      SELECT conname FROM pg_constraint WHERE conrelid = 'products'::regclass AND conname = 'unique_product_per_business';
+    `);
+    if (checkProductConstraint.rows.length === 0) {
+      await client.query(`
+        ALTER TABLE products ADD CONSTRAINT unique_product_per_business UNIQUE (product_name, business_id);
+      `);
+    }
+
     // Dynamic PK Migration check
     const pkCheck = await client.query(`
       SELECT a.attname
@@ -200,6 +249,33 @@ async function initDb() {
     await client.query(`CREATE INDEX IF NOT EXISTS idx_chat_histories_phone_session ON chat_histories(phone_number, session_id);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_products_name ON products(product_name);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_broadcast_queue_status ON broadcast_queue(status, created_at);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_products_business ON products(business_id);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_sessions_business ON whatsapp_sessions(business_id);`);
+
+    // --- SEED DEFAULT DATA ---
+    // Insert default business if it doesn't exist
+    await client.query(`
+      INSERT INTO businesses (id, name, slug, short_description)
+      VALUES (
+        1,
+        'Latezza Cake Hampers',
+        'latezza-cake',
+        'Latezza Cake & Hampers adalah toko kue yang berlokasi di Jakarta, yang telah berdiri sejak tahun 2019. Toko ini berfokus pada produk kue bertema Korean cake yang cenderung bergaya cantik dan minimalis, serta menyediakan berbagai pilihan custom cake dan hampers untuk berbagai acara.'
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `);
+
+    // Adjust sequence
+    await client.query(`
+      SELECT setval('businesses_id_seq', COALESCE((SELECT MAX(id) FROM businesses), 1));
+    `);
+
+    // Insert default session if it doesn't exist
+    await client.query(`
+      INSERT INTO whatsapp_sessions (id, name, status, business_id)
+      VALUES ('default', 'Default Agent', 'disconnected', 1)
+      ON CONFLICT (id) DO NOTHING;
+    `);
 
     console.log('✅ PostgreSQL database tables initialized successfully.');
     
@@ -285,6 +361,8 @@ async function getCustomer(phoneNumber, sessionId = 'default') {
  */
 async function createOrUpdateCustomer(phoneNumber, name, updates = {}, sessionId = 'default') {
   const existing = await getCustomer(phoneNumber, sessionId);
+  const session = await getSession(sessionId);
+  const businessId = session ? session.business_id : 1;
   
   if (existing) {
     // Update existing customer fields that are passed
@@ -323,8 +401,8 @@ async function createOrUpdateCustomer(phoneNumber, name, updates = {}, sessionId
     return res.rows[0];
   } else {
     const res = await pool.query(
-      `INSERT INTO customers (phone_number, session_id, name, status, notes, needs_follow_up, follow_up_reason, contact_phone, ai_enabled, needs_admin, last_interaction)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())
+      `INSERT INTO customers (phone_number, session_id, name, status, notes, needs_follow_up, follow_up_reason, contact_phone, ai_enabled, needs_admin, last_interaction, business_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), $11)
        RETURNING *`,
       [
         phoneNumber,
@@ -336,7 +414,8 @@ async function createOrUpdateCustomer(phoneNumber, name, updates = {}, sessionId
         updates.follow_up_reason || null,
         updates.contact_phone || null,
         updates.ai_enabled ?? true,
-        updates.needs_admin ?? false
+        updates.needs_admin ?? false,
+        businessId
       ]
     );
     return res.rows[0];
@@ -347,9 +426,11 @@ async function createOrUpdateCustomer(phoneNumber, name, updates = {}, sessionId
  * Save chat message to database
  */
 async function saveChatMessage(phoneNumber, role, content, sessionId = 'default') {
+  const session = await getSession(sessionId);
+  const businessId = session ? session.business_id : 1;
   await pool.query(
-    'INSERT INTO chat_histories (phone_number, session_id, role, content, timestamp) VALUES ($1, $2, $3, $4, NOW())',
-    [phoneNumber, sessionId, role, content]
+    'INSERT INTO chat_histories (phone_number, session_id, role, content, timestamp, business_id) VALUES ($1, $2, $3, $4, NOW(), $5)',
+    [phoneNumber, sessionId, role, content, businessId]
   );
 }
 
@@ -368,14 +449,14 @@ async function getChatHistory(phoneNumber, limit = 10, sessionId = 'default') {
 /**
  * Search products by keyword (fallback)
  */
-async function searchProductsFallback(queryStr) {
+async function searchProductsFallback(queryStr, businessId = 1) {
   const formattedQuery = `%${queryStr}%`;
   const res = await pool.query(
     `SELECT product_name, price, description, image_url, shopee_link 
      FROM products 
-     WHERE product_name ILIKE $1 OR description ILIKE $1 
+     WHERE business_id = $2 AND (product_name ILIKE $1 OR description ILIKE $1) 
      LIMIT 5`,
-    [formattedQuery]
+    [formattedQuery, businessId]
   );
   return res.rows;
 }
@@ -383,11 +464,11 @@ async function searchProductsFallback(queryStr) {
 /**
  * Search products by semantic similarity, falling back to ILIKE if key/model fails
  */
-async function searchProducts(queryStr) {
+async function searchProducts(queryStr, businessId = 1) {
   const apiKey = await getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
   if (!apiKey) {
     console.warn('⚠️ Gemini API key is missing. Falling back to ILIKE search.');
-    return await searchProductsFallback(queryStr);
+    return await searchProductsFallback(queryStr, businessId);
   }
 
   try {
@@ -401,7 +482,8 @@ async function searchProducts(queryStr) {
     }
 
     const res = await pool.query(
-      'SELECT product_name, price, description, image_url, shopee_link, embedding FROM products'
+      'SELECT product_name, price, description, image_url, shopee_link, embedding FROM products WHERE business_id = $1',
+      [businessId]
     );
     const products = res.rows;
     const scoredProducts = [];
@@ -454,25 +536,25 @@ async function searchProducts(queryStr) {
 
     if (matches.length === 0) {
       console.log(`Semantic search found 0 results above threshold ${threshold} for: "${queryStr}". Falling back to ILIKE.`);
-      return await searchProductsFallback(queryStr);
+      return await searchProductsFallback(queryStr, businessId);
     }
 
     console.log(`Semantic search found ${matches.length} matches for: "${queryStr}". Best: ${matches[0].product_name} (${matches[0].similarity.toFixed(4)})`);
     return matches;
   } catch (err) {
     console.error('❌ Semantic search failed:', err.message);
-    return await searchProductsFallback(queryStr);
+    return await searchProductsFallback(queryStr, businessId);
   }
 }
 
 /**
  * Upsert product into catalog
  */
-async function upsertProduct(productName, price, description, imageUrl, shopeeLink) {
+async function upsertProduct(productName, price, description, imageUrl, shopeeLink, businessId = 1) {
   const query = `
-    INSERT INTO products (product_name, price, description, image_url, shopee_link)
-    VALUES ($1, $2, $3, $4, $5)
-    ON CONFLICT (product_name) DO UPDATE 
+    INSERT INTO products (product_name, price, description, image_url, shopee_link, business_id)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    ON CONFLICT (product_name, business_id) DO UPDATE 
     SET price = EXCLUDED.price,
         description = EXCLUDED.description,
         image_url = EXCLUDED.image_url,
@@ -482,7 +564,7 @@ async function upsertProduct(productName, price, description, imageUrl, shopeeLi
         END
     RETURNING *;
   `;
-  const res = await pool.query(query, [productName, price, description, imageUrl, shopeeLink]);
+  const res = await pool.query(query, [productName, price, description, imageUrl, shopeeLink, businessId]);
   return res.rows[0];
 }
 
@@ -554,7 +636,11 @@ async function backfillProductEmbeddings() {
 /**
  * WhatsApp Session management DB functions
  */
-async function getSessions() {
+async function getSessions(businessId = null) {
+  if (businessId) {
+    const res = await pool.query('SELECT * FROM whatsapp_sessions WHERE business_id = $1 ORDER BY created_at ASC', [businessId]);
+    return res.rows;
+  }
   const res = await pool.query('SELECT * FROM whatsapp_sessions ORDER BY created_at ASC');
   return res.rows;
 }
@@ -564,12 +650,12 @@ async function getSession(id) {
   return res.rows[0] || null;
 }
 
-async function createSession(id, name) {
+async function createSession(id, name, businessId = 1) {
   const res = await pool.query(
-    `INSERT INTO whatsapp_sessions (id, name, status) 
-     VALUES ($1, $2, 'disconnected') 
+    `INSERT INTO whatsapp_sessions (id, name, status, business_id) 
+     VALUES ($1, $2, 'disconnected', $3) 
      RETURNING *`,
-    [id, name]
+    [id, name, businessId]
   );
   return res.rows[0];
 }
@@ -626,17 +712,21 @@ async function saveUsageLog({ feature, modelName, inputTokens = 0, outputTokens 
   }
 }
 
-async function createCampaign({ name, sessionId, messageTemplate, mediaType, mediaUrl, scheduledAt }) {
+async function createCampaign({ name, sessionId, messageTemplate, mediaType, mediaUrl, scheduledAt, businessId = 1 }) {
   const res = await pool.query(
-    `INSERT INTO broadcast_campaigns (name, session_id, message_template, media_type, media_url, scheduled_at, status)
-     VALUES ($1, $2, $3, $4, $5, $6, 'draft')
+    `INSERT INTO broadcast_campaigns (name, session_id, message_template, media_type, media_url, scheduled_at, status, business_id)
+     VALUES ($1, $2, $3, $4, $5, $6, 'draft', $7)
      RETURNING *`,
-    [name, sessionId, messageTemplate, mediaType, mediaUrl, scheduledAt]
+    [name, sessionId, messageTemplate, mediaType, mediaUrl, scheduledAt, businessId]
   );
   return res.rows[0];
 }
 
-async function getCampaigns() {
+async function getCampaigns(businessId = null) {
+  if (businessId) {
+    const res = await pool.query('SELECT * FROM broadcast_campaigns WHERE business_id = $1 ORDER BY created_at DESC', [businessId]);
+    return res.rows;
+  }
   const res = await pool.query('SELECT * FROM broadcast_campaigns ORDER BY created_at DESC');
   return res.rows;
 }
@@ -745,6 +835,80 @@ async function getBroadcastTargets(sessionId, filter, selectedPhones = []) {
   return res.rows;
 }
 
+async function createBusiness({ name, slug, shortDescription, contactPhone, address, website, socialMedia, aiSettings }) {
+  const query = `
+    INSERT INTO businesses (name, slug, short_description, contact_phone, address, website, social_media, ai_settings)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING *
+  `;
+  const res = await pool.query(query, [
+    name,
+    slug,
+    shortDescription || '',
+    contactPhone || '',
+    address || '',
+    website || '',
+    JSON.stringify(socialMedia || []),
+    JSON.stringify(aiSettings || { temperature: 0.3, max_output_tokens: 800, tone: 'friendly and polite', custom_prompt: '' })
+  ]);
+  return res.rows[0];
+}
+
+async function getBusinesses() {
+  const res = await pool.query('SELECT * FROM businesses ORDER BY name ASC');
+  return res.rows;
+}
+
+async function getBusinessById(id) {
+  const res = await pool.query('SELECT * FROM businesses WHERE id = $1', [id]);
+  return res.rows[0];
+}
+
+async function getBusinessBySlug(slug) {
+  const res = await pool.query('SELECT * FROM businesses WHERE slug = $1', [slug]);
+  return res.rows[0];
+}
+
+async function updateBusiness(id, updates) {
+  const fields = [];
+  const params = [];
+  let idx = 1;
+
+  const mappings = {
+    name: 'name',
+    shortDescription: 'short_description',
+    contactPhone: 'contact_phone',
+    address: 'address',
+    website: 'website',
+    socialMedia: 'social_media',
+    aiSettings: 'ai_settings'
+  };
+
+  for (const [key, fieldName] of Object.entries(mappings)) {
+    if (updates[key] !== undefined) {
+      fields.push(`${fieldName} = $${idx}`);
+      if (key === 'socialMedia' || key === 'aiSettings') {
+        params.push(JSON.stringify(updates[key]));
+      } else {
+        params.push(updates[key]);
+      }
+      idx++;
+    }
+  }
+
+  if (fields.length === 0) return null;
+
+  params.push(id);
+  const query = `
+    UPDATE businesses
+    SET ${fields.join(', ')}, updated_at = NOW()
+    WHERE id = $${idx}
+    RETURNING *
+  `;
+  const res = await pool.query(query, params);
+  return res.rows[0];
+}
+
 module.exports = {
   pool,
   initDb,
@@ -779,5 +943,10 @@ module.exports = {
   updateQueueItemStatus,
   getQueueByCampaignId,
   getPendingQueueCount,
-  getBroadcastTargets
+  getBroadcastTargets,
+  createBusiness,
+  getBusinesses,
+  getBusinessById,
+  getBusinessBySlug,
+  updateBusiness
 };

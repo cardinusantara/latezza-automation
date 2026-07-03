@@ -8,7 +8,9 @@ jest.mock('../db', () => ({
   getChatHistory: jest.fn(() => Promise.resolve([])),
   searchProducts: jest.fn(),
   createOrUpdateCustomer: jest.fn(),
-  getCustomer: jest.fn()
+  getCustomer: jest.fn(),
+  getBusinessById: jest.fn(() => Promise.resolve({ id: 1, name: 'Latezza Cake Hampers' })),
+  getSession: jest.fn(() => Promise.resolve({ id: 'default', business_id: 1 }))
 }));
 
 // Mock generative AI SDK
@@ -31,8 +33,8 @@ describe('agent.js module', () => {
     jest.clearAllMocks();
   });
 
-  test('buildSystemInstructions generates valid plain text prompt', () => {
-    const prompt = buildSystemInstructions();
+  test('buildSystemInstructions generates valid plain text prompt', async () => {
+    const prompt = await buildSystemInstructions();
     expect(prompt).toContain('WhatsApp AI Agent');
     expect(prompt).toContain('GAYA KOMUNIKASI');
     expect(prompt).toContain('ATURAN PENTING & KEAMANAN');
@@ -96,7 +98,7 @@ describe('agent.js module', () => {
     const reply = await handleIncomingMessage('123456@s.whatsapp.net', 'Cari kue cokelat dong', 'default');
 
     expect(reply).toBe(mockFinalReply);
-    expect(db.searchProducts).toHaveBeenCalledWith('kue cokelat');
+    expect(db.searchProducts).toHaveBeenCalledWith('kue cokelat', 1);
     expect(mockSendMessage).toHaveBeenCalledTimes(2);
     expect(mockSendMessage).toHaveBeenLastCalledWith([
       {
