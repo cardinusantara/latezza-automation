@@ -33,6 +33,7 @@ interface Customer {
   ai_enabled?: boolean;
   needs_admin?: boolean;
   last_interaction?: string;
+  session_id?: string;
 }
 
 interface Product {

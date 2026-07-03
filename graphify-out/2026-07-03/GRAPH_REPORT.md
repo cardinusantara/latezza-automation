@@ -1,11 +1,11 @@
 # Graph Report - latezza-automation  (2026-07-03)
 
 ## Corpus Check
-- 123 files · ~102,825 words
+- 123 files · ~102,997 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1143 nodes · 1534 edges · 108 communities (90 shown, 18 thin omitted)
+- 1146 nodes · 1537 edges · 108 communities (90 shown, 18 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
@@ -119,7 +119,7 @@
 3. `DEVELOPER.md — Latezza Cake WhatsApp AI Agent` - 18 edges
 4. `Button()` - 16 edges
 5. `compilerOptions` - 16 edges
-6. `CHANGELOG — Latezza Cake WhatsApp AI Agent` - 15 edges
+6. `CHANGELOG — Latezza Cake WhatsApp AI Agent` - 16 edges
 7. `Dokumentasi API Backend` - 14 edges
 8. `runCreativeAnalysis()` - 13 edges
 9. `Component Composition` - 13 edges
@@ -176,8 +176,8 @@ Cohesion: 0.12
 Nodes (17): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+9 more)
 
 ### Community 7 - "UI Actions Component"
-Cohesion: 0.06
-Nodes (58): Actions(), ActionsProps, Broadcast(), BroadcastProps, Campaign, Customer, QueueItem, CreativeIdea (+50 more)
+Cohesion: 0.05
+Nodes (60): Actions(), ActionsProps, Broadcast(), BroadcastProps, Campaign, Customer, QueueItem, CreativeIdea (+52 more)
 
 ### Community 8 - "Theme Provider"
 Cohesion: 0.13
@@ -185,7 +185,7 @@ Nodes (9): ResolvedTheme, Theme, THEME_VALUES, ThemeProvider(), ThemeProviderCon
 
 ### Community 9 - "Mobile Hook"
 Cohesion: 0.06
-Nodes (51): useIsMobile(), cn(), CardAction(), CardFooter(), Separator(), Sheet(), SheetContent(), SheetDescription() (+43 more)
+Nodes (52): useIsMobile(), cn(), CardAction(), CardFooter(), DialogOverlay(), Separator(), Sheet(), SheetContent() (+44 more)
 
 ### Community 10 - "Utility Functions"
 Cohesion: 0.09
@@ -305,8 +305,8 @@ Cohesion: 0.50
 Nodes (3): Adding components, React + TypeScript + Vite + shadcn/ui, Using components
 
 ### Community 55 - "Community 55"
-Cohesion: 0.14
-Nodes (20): buildKpis(), getDateRangeLabel(), Overview(), buildEmptySummaryReport(), buildSummaryQuery(), db, generateMessageSummary(), generateStreamWithRetry() (+12 more)
+Cohesion: 0.18
+Nodes (17): buildEmptySummaryReport(), buildSummaryQuery(), db, generateMessageSummary(), generateStreamWithRetry(), getDateRangeLabel(), { GoogleGenerativeAI }, parseGeminiJson() (+9 more)
 
 ### Community 56 - "Community 56"
 Cohesion: 0.22
@@ -321,8 +321,8 @@ Cohesion: 0.13
 Nodes (18): canSendToBroadcastTarget(), checkAndCompleteCampaign(), createCampaignAndQueue(), db, fs, { GoogleGenerativeAI }, isLidJid(), parseSpintax() (+10 more)
 
 ### Community 62 - "Community 62"
-Cohesion: 0.18
-Nodes (10): 2026-06-22, 2026-06-28, 2026-06-29, Broadcast Campaign Live Monitor UI Redesign, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Multi-Business SaaS Foundation (Phase 1 & 2), Multi-Business SaaS & Tenant Navigation (Phase 3 & 4) (+2 more)
+Cohesion: 0.15
+Nodes (12): 2026-06-20, 2026-06-28, 2026-06-29, 2026-07-03, Broadcast Campaign Live Monitor UI Redesign, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Docker Integration & Deployment Optimization (+4 more)
 
 ### Community 63 - "Community 63"
 Cohesion: 0.29
@@ -382,15 +382,15 @@ Nodes (25): AudioUploadParams, ChatInbox(), ChatInboxProps, ChatMessage, ChatMes
 
 ### Community 84 - "Community 84"
 Cohesion: 0.67
-Nodes (3): 2026-06-20, Voice Message Comprehension & Audio Player, WhatsApp Multi-Session & QR Scanner Dashboard
+Nodes (3): 2026-06-22, Optimized Creative Analysis Sourcing & CSV Context, WhatsApp Message Debouncing & Abuse Prevention
 
 ### Community 85 - "Community 85"
 Cohesion: 0.10
 Nodes (14): AdsReport(), AdsReportControlsProps, AdsReportHeaderProps, AdsReportViewPanelProps, calculatePresetDates(), CsvMetadata, CsvStatus, getLocalDateString() (+6 more)
 
 ### Community 88 - "Community 88"
-Cohesion: 0.22
-Nodes (9): Backend Env (`backend/.env`), Backend Tests (Jest), env files, Frontend Env (`frontend/.env`), Frontend Tests (Vitest), HOW TO RUN, local dev (two terminals), production (+1 more)
+Cohesion: 0.20
+Nodes (10): Backend Env (`backend/.env`), Backend Tests (Jest), env files, Frontend Env (`frontend/.env`), Frontend Tests (Vitest), HOW TO RUN, local dev (two terminals), production (+2 more)
 
 ### Community 89 - "Community 89"
 Cohesion: 0.20
@@ -469,24 +469,24 @@ Cohesion: 0.50
 Nodes (4): createOrUpdateCustomer(), getCustomer(), getSession(), saveChatMessage()
 
 ## Knowledge Gaps
-- **631 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+626 more)
+- **633 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+628 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Overview()` connect `Community 55` to `UI Actions Component`?**
+- **Why does `getDateRangeLabel()` connect `Community 55` to `UI Actions Component`?**
+  _High betweenness centrality (0.113) - this node is a cross-community bridge._
+- **Why does `Overview()` connect `UI Actions Component` to `Community 55`?**
   _High betweenness centrality (0.113) - this node is a cross-community bridge._
 - **Why does `cn()` connect `Mobile Hook` to `Community 83`, `UI Actions Component`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugin`, `@opencode-ai/plugin` to the rest of the system?**
-  _635 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _637 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
 - **Should `Scheduler & Settings` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
-- **Should `SSE Streaming API` be split into smaller, more focused modules?**
-  _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
