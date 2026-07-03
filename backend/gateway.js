@@ -24,8 +24,12 @@ const fastify = Fastify({
 });
 
 // Register CORS to allow cross-origin requests from frontend
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:5174']
+  : true;
+
 fastify.register(require('@fastify/cors'), {
-  origin: true,
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 });
 

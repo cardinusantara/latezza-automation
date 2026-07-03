@@ -1,7 +1,7 @@
 # Graph Report - latezza-automation  (2026-07-03)
 
 ## Corpus Check
-- 123 files · ~102,999 words
+- 123 files · ~103,009 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `76a521c1`
+- Built from commit: `38cc95ad`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -321,8 +321,8 @@ Cohesion: 0.13
 Nodes (18): canSendToBroadcastTarget(), checkAndCompleteCampaign(), createCampaignAndQueue(), db, fs, { GoogleGenerativeAI }, isLidJid(), parseSpintax() (+10 more)
 
 ### Community 62 - "Community 62"
-Cohesion: 0.15
-Nodes (12): 2026-06-20, 2026-06-28, 2026-06-29, 2026-07-03, Broadcast Campaign Live Monitor UI Redesign, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Docker Integration & Deployment Optimization (+4 more)
+Cohesion: 0.14
+Nodes (13): 2026-06-17 (afternoon), 2026-06-22, 2026-06-29, 2026-07-03, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Docker Integration & Deployment Optimization, Multi-Business SaaS & Tenant Navigation (Phase 3 & 4) (+5 more)
 
 ### Community 63 - "Community 63"
 Cohesion: 0.29
@@ -345,8 +345,8 @@ Cohesion: 0.40
 Nodes (4): db, Fastify, registerRoutes, whatsappService
 
 ### Community 68 - "Community 68"
-Cohesion: 0.50
-Nodes (4): 2026-06-17 (afternoon), Products CRUD — full database-backed, project restructure — monorepo split, shadcn/ui migration
+Cohesion: 0.67
+Nodes (3): 2026-06-20, Voice Message Comprehension & Audio Player, WhatsApp Multi-Session & QR Scanner Dashboard
 
 ### Community 74 - "Community 74"
 Cohesion: 0.40
@@ -382,7 +382,7 @@ Nodes (25): AudioUploadParams, ChatInbox(), ChatInboxProps, ChatMessage, ChatMes
 
 ### Community 84 - "Community 84"
 Cohesion: 0.67
-Nodes (3): 2026-06-22, Optimized Creative Analysis Sourcing & CSV Context, WhatsApp Message Debouncing & Abuse Prevention
+Nodes (3): 2026-06-28, Broadcast Campaign Live Monitor UI Redesign, Multi-Business SaaS Foundation (Phase 1 & 2)
 
 ### Community 85 - "Community 85"
 Cohesion: 0.10

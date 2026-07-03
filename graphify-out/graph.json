@@ -543,7 +543,7 @@
       "label": "fs",
       "file_type": "code",
       "source_file": "backend/gateway.js",
-      "source_location": "L40",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "backend_gateway_fs",
       "community": 21,
@@ -553,7 +553,7 @@
       "label": "uploadsDir",
       "file_type": "code",
       "source_file": "backend/gateway.js",
-      "source_location": "L41",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "backend_gateway_uploadsdir",
       "community": 21,
@@ -563,7 +563,7 @@
       "label": "start()",
       "file_type": "code",
       "source_file": "backend/gateway.js",
-      "source_location": "L58",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "backend_gateway_start",
       "community": 21,
@@ -9656,7 +9656,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "changelog_2026_06_28",
-      "community": 62,
+      "community": 84,
       "norm_label": "2026-06-28"
     },
     {
@@ -9666,7 +9666,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "changelog_multi_business_saas_foundation_phase_1_2",
-      "community": 62,
+      "community": 84,
       "norm_label": "multi-business saas foundation (phase 1 & 2)"
     },
     {
@@ -9676,7 +9676,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "changelog_broadcast_campaign_live_monitor_ui_redesign",
-      "community": 62,
+      "community": 84,
       "norm_label": "broadcast campaign live monitor ui redesign"
     },
     {
@@ -9816,7 +9816,7 @@
       "source_location": "L249",
       "_origin": "ast",
       "id": "changelog_2026_06_22",
-      "community": 84,
+      "community": 62,
       "norm_label": "2026-06-22"
     },
     {
@@ -9826,7 +9826,7 @@
       "source_location": "L251",
       "_origin": "ast",
       "id": "changelog_optimized_creative_analysis_sourcing_csv_context",
-      "community": 84,
+      "community": 62,
       "norm_label": "optimized creative analysis sourcing & csv context"
     },
     {
@@ -9836,7 +9836,7 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "changelog_whatsapp_message_debouncing_abuse_prevention",
-      "community": 84,
+      "community": 62,
       "norm_label": "whatsapp message debouncing & abuse prevention"
     },
     {
@@ -9936,7 +9936,7 @@
       "source_location": "L339",
       "_origin": "ast",
       "id": "changelog_2026_06_20",
-      "community": 62,
+      "community": 68,
       "norm_label": "2026-06-20"
     },
     {
@@ -9946,7 +9946,7 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "changelog_voice_message_comprehension_audio_player",
-      "community": 62,
+      "community": 68,
       "norm_label": "voice message comprehension & audio player"
     },
     {
@@ -9956,7 +9956,7 @@
       "source_location": "L350",
       "_origin": "ast",
       "id": "changelog_whatsapp_multi_session_qr_scanner_dashboard",
-      "community": 62,
+      "community": 68,
       "norm_label": "whatsapp multi-session & qr scanner dashboard"
     },
     {
@@ -10196,7 +10196,7 @@
       "source_location": "L506",
       "_origin": "ast",
       "id": "changelog_2026_06_17_afternoon",
-      "community": 68,
+      "community": 62,
       "norm_label": "2026-06-17 (afternoon)"
     },
     {
@@ -10206,7 +10206,7 @@
       "source_location": "L508",
       "_origin": "ast",
       "id": "changelog_products_crud_full_database_backed",
-      "community": 68,
+      "community": 62,
       "norm_label": "products crud \u2014 full database-backed"
     },
     {
@@ -10216,7 +10216,7 @@
       "source_location": "L514",
       "_origin": "ast",
       "id": "changelog_shadcn_ui_migration",
-      "community": 68,
+      "community": 62,
       "norm_label": "shadcn/ui migration"
     },
     {
@@ -10226,7 +10226,7 @@
       "source_location": "L520",
       "_origin": "ast",
       "id": "changelog_project_restructure_monorepo_split",
-      "community": 68,
+      "community": 62,
       "norm_label": "project restructure \u2014 monorepo split"
     },
     {
@@ -27522,5 +27522,5 @@
       "source_file": "DEVELOPER.md"
     }
   ],
-  "built_at_commit": "76a521c1898388b4579340357412b6f7fdba81bc"
+  "built_at_commit": "38cc95ada6cb667d0c162d1a893be55c14e35e2f"
 }

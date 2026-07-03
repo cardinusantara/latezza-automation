@@ -15,8 +15,8 @@
     "semantic_hash": "a1038a7472b72ed4323dd40861ccde91"
   },
   "backend/gateway.js": {
-    "mtime": 1782383366.8314066,
-    "ast_hash": "cd83783f3f724a6e5ba1d5b9401b9065",
+    "mtime": 1783076741.145252,
+    "ast_hash": "8ecf40882638a4f45a80c877fda01114",
     "semantic_hash": ""
   },
   "backend/package.json": {
