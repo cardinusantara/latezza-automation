@@ -2,6 +2,17 @@
 
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
+## 2026-07-03
+
+### Docker Integration & Deployment Optimization
+- **Upgraded Node.js Base Image in Dockerfile**:
+  - Upgraded base image from `node:18-alpine` to `node:20-alpine` in [Dockerfile](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/Dockerfile) to satisfy engine requirements for `@whiskeysockets/baileys` and other modern libraries.
+- **Hardened Docker Compose Configuration**:
+  - Updated [docker-compose.yml](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/docker-compose.yml) to point to the correct, plural WhatsApp session directory (`./backend/whatsapp-sessions:/usr/src/app/whatsapp-sessions`) instead of singular, ensuring WhatsApp sessions persist properly between container restarts.
+  - Corrected `.env` volume mapping to use `./backend/.env` as the host source instead of `./.env`, preventing empty host directory creation bugs.
+  - Removed the unused `./frontend/dist` volume mount to streamline container deployment and prevent lock-ups when starting without pre-compiled frontend code.
+  - Exposed Meta Ads integration variables (`META_ACCESS_TOKEN`, `META_AD_ACCOUNT_ID`, `PUBLIC_REPORT_URL`) in the Docker environment context for production flexibility.
+
 ## 2026-06-29
 
 ### Multi-Business SaaS & Tenant Navigation (Phase 3 & 4)

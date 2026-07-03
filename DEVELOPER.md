@@ -83,6 +83,24 @@ npm start            # serves API on port 3001 (frontend must be built/served se
 # open http://localhost:3001/dashboard (redirects to FRONTEND_URL)
 ```
 
+### running with Docker (backend & database)
+
+To run the backend gateway and database in Docker containers:
+
+1. Build and start the services:
+   ```bash
+   docker compose up -d --build
+   ```
+2. Verify service logs:
+   ```bash
+   docker compose logs -f whatsapp-gateway
+   ```
+3. Stop the containers:
+   ```bash
+   docker compose down
+   ```
+
+
 ### RUNNING UNIT TESTS
 
 Unit tests are implemented for both backend and frontend. They are fully mocked and run in isolation (no real PostgreSQL database or Gemini API keys needed).
