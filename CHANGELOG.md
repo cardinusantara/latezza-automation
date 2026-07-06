@@ -2,6 +2,15 @@
 
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
+## 2026-07-06
+
+### Environment Variables & Docker Compose Refactoring
+- **Dynamic Docker Compose Configuration**:
+  - Refactored [docker-compose.yml](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/docker-compose.yml) to remove all hardcoded environment values for PostgreSQL database (`DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`), backend gateway config, and rate limits.
+  - Mapped all settings to variable expansions (e.g., `${DB_USER:-postgres}`) to run dynamically off the `.env` configuration file.
+- **Removed Obsolete Business Profile Settings**:
+  - Removed `BUSINESS_PROFILE_PATH` and `BUSINESS_PROFILE_KEY` from the environment block and removed the `./business-profile.json` volume mount, as the system now manages business settings and prompts dynamically through the database.
+
 ## 2026-07-03
 
 ### Docker Integration & Deployment Optimization

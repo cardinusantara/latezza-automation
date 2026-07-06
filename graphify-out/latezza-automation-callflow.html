@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>latezza-automation — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 1146 nodes, 1537 edges, 108 communities. Commit: 38cc95a</p>
+<p class="subtitle">Generated from graphify knowledge graph: 1148 nodes, 1539 edges, 109 communities. Commit: 6acc999</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -72,9 +72,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
     <a href="#community-13">Community 13</a>
     <a href="#community-19">Community 19</a>
-    <a href="#community-62">Community 62</a>
     <a href="#community-20">Community 20</a>
     <a href="#community-23">Community 23</a>
+    <a href="#community-62">Community 62</a>
     <a href="#community-90">Community 90</a>
     <a href="#community-22">Community 22</a>
     <a href="#community-89">Community 89</a>
@@ -104,24 +104,24 @@ flowchart LR
     class COMMUNITY_13_E329587C module;
     COMMUNITY_19_9462A0B9("Community 19<br/><small>14 nodes</small>")
     class COMMUNITY_19_9462A0B9 module;
-    COMMUNITY_62_3F1ABE2C("Community 62<br/><small>14 nodes</small>")
-    class COMMUNITY_62_3F1ABE2C module;
     COMMUNITY_20_C86C0F59("Community 20<br/><small>13 nodes</small>")
     class COMMUNITY_20_C86C0F59 module;
     COMMUNITY_23_58D9DE5D("Community 23<br/><small>12 nodes</small>")
     class COMMUNITY_23_58D9DE5D module;
+    COMMUNITY_62_3F1ABE2C("Community 62<br/><small>12 nodes</small>")
+    class COMMUNITY_62_3F1ABE2C module;
     COMMUNITY_90_9F2E858A("Community 90<br/><small>12 nodes</small>")
     class COMMUNITY_90_9F2E858A module;
     COMMUNITY_22_65038249("Community 22<br/><small>10 nodes</small>")
     class COMMUNITY_22_65038249 module;
     COMMUNITY_89_1BAD06D4("Community 89<br/><small>10 nodes</small>")
     class COMMUNITY_89_1BAD06D4 module;
-    OTHER_D0941E68("Other<br/><small>163 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>167 nodes</small>")
     class OTHER_D0941E68 module;
     TESTS_FIXTURES_B84B1DCC -->|imports x14| COMMUNITY_13_E329587C
     COMMUNITY_13_E329587C -->|contains x13| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|imports x11| ANALYSIS_CLUSTERING_C79796DA
-    COMMUNITY_62_3F1ABE2C -->|contains x9| OTHER_D0941E68
+    COMMUNITY_62_3F1ABE2C -->|contains x10| OTHER_D0941E68
     OTHER_D0941E68 -->|imports x6| COMMUNITY_13_E329587C
     CLI_SKILLS_9964CBB8 -->|contains x6| OTHER_D0941E68
     ANALYSIS_CLUSTERING_C79796DA -->|imports x3| OTHER_D0941E68
@@ -146,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Graph Build</td><td>185</td><td><code>12, 10, 11, 2, 14, 32, 6, 25, 77, 78, 34, 79, 76</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>68</td><td><code>16, 28, 21, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>89</td><td><code>15, 4, 8, 18, 59, 35, 75, 60, 70</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>15</td><td><code>33, 82, 49</code></td></tr><tr><td>Serving API</td><td>112</td><td><code>0, 5, 3, 100, 101, 104, 98, 105, 106, 107, 74, 108</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>396</td><td><code>7, 9, 17, 83, 31, 24, 85, 61, 55, 88, 37, 64, 96, 67, 43, 45, 46, 58, 71</code></td></tr><tr><td>Community 13</td><td>33</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 62</td><td>14</td><td><code>62</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 90</td><td>12</td><td><code>90</code></td></tr><tr><td>Community 22</td><td>10</td><td><code>22</code></td></tr><tr><td>Community 89</td><td>10</td><td><code>89</code></td></tr><tr><td>Other</td><td>163</td><td><code>26, 27, 56, 81, 29, 63, 99, 1, 65, 80, 103, 36, 66, 91, 92, 102, 109, 38, 39, 93, 40, 41, 42, 44, 47, 57, 68, 84, 94, 48, 50, 95, 97, 51, 52, 53, 54, 69, 72, 73</code></td></tr>
+      <tr><td>Graph Build</td><td>185</td><td><code>12, 10, 11, 2, 14, 32, 6, 25, 77, 78, 34, 79, 76</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>68</td><td><code>16, 28, 21, 30</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>89</td><td><code>15, 4, 8, 18, 59, 35, 75, 60, 70</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>15</td><td><code>33, 82, 49</code></td></tr><tr><td>Serving API</td><td>112</td><td><code>0, 5, 3, 100, 101, 104, 98, 105, 106, 107, 74, 108</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>396</td><td><code>7, 9, 17, 83, 31, 24, 85, 61, 55, 88, 37, 64, 96, 67, 43, 45, 46, 58, 71</code></td></tr><tr><td>Community 13</td><td>33</td><td><code>13</code></td></tr><tr><td>Community 19</td><td>14</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>13</td><td><code>20</code></td></tr><tr><td>Community 23</td><td>12</td><td><code>23</code></td></tr><tr><td>Community 62</td><td>12</td><td><code>62</code></td></tr><tr><td>Community 90</td><td>12</td><td><code>90</code></td></tr><tr><td>Community 22</td><td>10</td><td><code>22</code></td></tr><tr><td>Community 89</td><td>10</td><td><code>89</code></td></tr><tr><td>Other</td><td>167</td><td><code>26, 27, 56, 81, 29, 63, 99, 1, 65, 80, 103, 36, 66, 91, 92, 102, 109, 38, 39, 84, 93, 40, 41, 42, 44, 47, 57, 68, 86, 94, 48, 50, 95, 97, 51, 52, 53, 54, 69, 72, 73</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -158,7 +158,7 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>1146 nodes · 1537 edges · 108 communities (90 shown, 18 thin omitted)</li>
+      <li>1148 nodes · 1539 edges · 109 communities (91 shown, 18 thin omitted)</li>
       <li>Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `cn()` - 78 edges</li>
@@ -2654,207 +2654,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 10. Community 62 ====== -->
-<h2 id="community-62">10. Community 62</h2>
-<p>Community 62 groups implementation around changelogmd, 2026, whatsapp, changelog, mostly in CHANGELOG.md. This section covers 14 nodes and 13 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Community 62 (14 nodes, 13 edges)
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1("CHANGELOG — Latezza Cake WhatsApp AI Agent<br/><small>CHANGELOG.md</small>")
-    changelog_2026_06_17_afternoon_fd89baba("2026-06-17 (afternoon)<br/><small>CHANGELOG.md</small>")
-    changelog_2026_06_22_3fefc843("2026-06-22<br/><small>CHANGELOG.md</small>")
-    changelog_46e2bfdf("CHANGELOG.md")
-    changelog_2026_06_29_aa601e8e("2026-06-29<br/><small>CHANGELOG.md</small>")
-    changelog_2026_07_03_8fe45121("2026-07-03<br/><small>CHANGELOG.md</small>")
-    changelog_data_notes_78b39404("DATA NOTES<br/><small>CHANGELOG.md</small>")
-    changelog_docker_integration_deployment_optimiza_9207ebc9("Docker Integration &amp; Deployment Optimiz...<br/><small>CHANGELOG.md</small>")
-    changelog_multi_business_saas_tenant_navigation_c7db9a3a("Multi-Business SaaS &amp; Tenant Navigation...<br/><small>CHANGELOG.md</small>")
-    changelog_optimized_creative_analysis_sourcing_c_f7878ecc("Optimized Creative Analysis Sourcing &amp;...<br/><small>CHANGELOG.md</small>")
-    changelog_products_crud_full_database_backed_8c5724fc("Products CRUD — full database-backed<br/><small>CHANGELOG.md</small>")
-    changelog_whatsapp_message_debouncing_abuse_prev_8218cee2("WhatsApp Message Debouncing &amp; Abuse Pre...<br/><small>CHANGELOG.md</small>")
-    changelog_project_restructure_monorepo_split_c54b9c44("project restructure — monorepo split<br/><small>CHANGELOG.md</small>")
-    changelog_shadcn_ui_migration_64b74347("shadcn/ui migration<br/><small>CHANGELOG.md</small>")
-    changelog_46e2bfdf -->|contains| changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_17_afternoon_fd89baba
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_22_3fefc843
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_29_aa601e8e
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_07_03_8fe45121
-    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_data_notes_78b39404
-    changelog_2026_07_03_8fe45121 -->|contains| changelog_docker_integration_deployment_optimiza_9207ebc9
-    changelog_2026_06_29_aa601e8e -->|contains| changelog_multi_business_saas_tenant_navigation_c7db9a3a
-    changelog_2026_06_22_3fefc843 -->|contains| changelog_optimized_creative_analysis_sourcing_c_f7878ecc
-    changelog_2026_06_22_3fefc843 -->|contains| changelog_whatsapp_message_debouncing_abuse_prev_8218cee2
-    changelog_2026_06_17_afternoon_fd89baba -->|contains| changelog_products_crud_full_database_backed_8c5724fc
-    changelog_2026_06_17_afternoon_fd89baba -->|contains| changelog_project_restructure_monorepo_split_c54b9c44
-    changelog_2026_06_17_afternoon_fd89baba -->|contains| changelog_shadcn_ui_migration_64b74347
-    class changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 concept;
-    class changelog_2026_06_17_afternoon_fd89baba concept;
-    class changelog_2026_06_22_3fefc843 concept;
-    class changelog_46e2bfdf concept;
-    class changelog_2026_06_29_aa601e8e concept;
-    class changelog_2026_07_03_8fe45121 concept;
-    class changelog_data_notes_78b39404 concept;
-    class changelog_docker_integration_deployment_optimiza_9207ebc9 concept;
-    class changelog_multi_business_saas_tenant_navigation_c7db9a3a concept;
-    class changelog_optimized_creative_analysis_sourcing_c_f7878ecc concept;
-    class changelog_products_crud_full_database_backed_8c5724fc concept;
-    class changelog_whatsapp_message_debouncing_abuse_prev_8218cee2 concept;
-    class changelog_project_restructure_monorepo_split_c54b9c44 concept;
-    class changelog_shadcn_ui_migration_64b74347 concept;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>CHANGELOG.md</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing CHANGELOG.md.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>CHANGELOG — Latezza Cake WhatsApp AI Agent</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing CHANGELOG — Latezza Cake WhatsApp AI Agent.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>2026-07-03</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2026-07-03.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>Docker Integration &amp; Deployment Optimization</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Docker Integration &amp; Deployment Optimization.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>2026-06-29</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2026-06-29.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>Multi-Business SaaS &amp; Tenant Navigation (Phase 3 &amp; 4)</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Multi-Business SaaS &amp; Tenant Navigation (Phase 3 &amp; 4).</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>2026-06-22</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2026-06-22.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>Optimized Creative Analysis Sourcing &amp; CSV Context</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Optimized Creative Analysis Sourcing &amp; CSV Context.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>WhatsApp Message Debouncing &amp; Abuse Prevention</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing WhatsApp Message Debouncing &amp; Abuse Prevention.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>2026-06-17 (afternoon)</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2026-06-17 (afternoon).</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>Products CRUD — full database-backed</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Products CRUD — full database-backed.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>shadcn/ui migration</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing shadcn/ui migration.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>project restructure — monorepo split</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing project restructure — monorepo split.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>DATA NOTES</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing DATA NOTES.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>CHANGELOG.md</code></td><td>14 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x13. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 11. Community 20 ====== -->
-<h2 id="community-20">11. Community 20</h2>
+<!-- ====== 10. Community 20 ====== -->
+<h2 id="community-20">10. Community 20</h2>
 <p>Community 20 groups implementation around agents, skills, shadcn, rules, mostly in shadcn/rules/composition.md. This section covers 13 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3041,8 +2842,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 12. Community 23 ====== -->
-<h2 id="community-23">12. Community 23</h2>
+<!-- ====== 11. Community 23 ====== -->
+<h2 id="community-23">11. Community 23</h2>
 <p>Community 23 groups implementation around mcpmd, shadcn, agents, skills, mostly in skills/shadcn/mcp.md. This section covers 12 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3209,6 +3010,183 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>skills/shadcn/mcp.md</code></td><td>12 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x11. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 12. Community 62 ====== -->
+<h2 id="community-62">12. Community 62</h2>
+<p>Community 62 groups implementation around changelogmd, 2026, docker, multi, mostly in CHANGELOG.md. This section covers 12 nodes and 11 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 62 (12 nodes, 11 edges)
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1("CHANGELOG — Latezza Cake WhatsApp AI Agent<br/><small>CHANGELOG.md</small>")
+    changelog_2026_06_28_22f2e2a2("2026-06-28<br/><small>CHANGELOG.md</small>")
+    changelog_46e2bfdf("CHANGELOG.md")
+    changelog_2026_06_29_aa601e8e("2026-06-29<br/><small>CHANGELOG.md</small>")
+    changelog_2026_07_03_8fe45121("2026-07-03<br/><small>CHANGELOG.md</small>")
+    changelog_2026_07_06_05e5b562("2026-07-06<br/><small>CHANGELOG.md</small>")
+    changelog_broadcast_campaign_live_monitor_ui_red_d61c4dda("Broadcast Campaign Live Monitor UI Rede...<br/><small>CHANGELOG.md</small>")
+    changelog_data_notes_78b39404("DATA NOTES<br/><small>CHANGELOG.md</small>")
+    changelog_docker_integration_deployment_optimiza_9207ebc9("Docker Integration &amp; Deployment Optimiz...<br/><small>CHANGELOG.md</small>")
+    changelog_environment_variables_docker_compose_r_b9b8a432("Environment Variables &amp; Docker Compose...<br/><small>CHANGELOG.md</small>")
+    changelog_multi_business_saas_tenant_navigation_c7db9a3a("Multi-Business SaaS &amp; Tenant Navigation...<br/><small>CHANGELOG.md</small>")
+    changelog_multi_business_saas_foundation_phase_1_12a7e78d("Multi-Business SaaS Foundation (Phase 1...<br/><small>CHANGELOG.md</small>")
+    changelog_46e2bfdf -->|contains| changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_28_22f2e2a2
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_06_29_aa601e8e
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_07_03_8fe45121
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_2026_07_06_05e5b562
+    changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 -->|contains| changelog_data_notes_78b39404
+    changelog_2026_07_06_05e5b562 -->|contains| changelog_environment_variables_docker_compose_r_b9b8a432
+    changelog_2026_07_03_8fe45121 -->|contains| changelog_docker_integration_deployment_optimiza_9207ebc9
+    changelog_2026_06_29_aa601e8e -->|contains| changelog_multi_business_saas_tenant_navigation_c7db9a3a
+    changelog_2026_06_28_22f2e2a2 -->|contains| changelog_broadcast_campaign_live_monitor_ui_red_d61c4dda
+    changelog_2026_06_28_22f2e2a2 -->|contains| changelog_multi_business_saas_foundation_phase_1_12a7e78d
+    class changelog_changelog_latezza_cake_whatsapp_ai_age_50037de1 concept;
+    class changelog_2026_06_28_22f2e2a2 concept;
+    class changelog_46e2bfdf concept;
+    class changelog_2026_06_29_aa601e8e concept;
+    class changelog_2026_07_03_8fe45121 concept;
+    class changelog_2026_07_06_05e5b562 concept;
+    class changelog_broadcast_campaign_live_monitor_ui_red_d61c4dda concept;
+    class changelog_data_notes_78b39404 concept;
+    class changelog_docker_integration_deployment_optimiza_9207ebc9 concept;
+    class changelog_environment_variables_docker_compose_r_b9b8a432 concept;
+    class changelog_multi_business_saas_tenant_navigation_c7db9a3a concept;
+    class changelog_multi_business_saas_foundation_phase_1_12a7e78d concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>CHANGELOG.md</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing CHANGELOG.md.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>CHANGELOG — Latezza Cake WhatsApp AI Agent</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing CHANGELOG — Latezza Cake WhatsApp AI Agent.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>2026-07-06</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2026-07-06.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Environment Variables &amp; Docker Compose Refactoring</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Environment Variables &amp; Docker Compose Refactoring.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>2026-07-03</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2026-07-03.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Docker Integration &amp; Deployment Optimization</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Docker Integration &amp; Deployment Optimization.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>2026-06-29</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2026-06-29.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Multi-Business SaaS &amp; Tenant Navigation (Phase 3 &amp; 4)</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Multi-Business SaaS &amp; Tenant Navigation (Phase 3 &amp; 4).</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>2026-06-28</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2026-06-28.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Multi-Business SaaS Foundation (Phase 1 &amp; 2)</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Multi-Business SaaS Foundation (Phase 1 &amp; 2).</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Broadcast Campaign Live Monitor UI Redesign</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Broadcast Campaign Live Monitor UI Redesign.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>DATA NOTES</code><br><small style="color:var(--muted)">CHANGELOG.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing DATA NOTES.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>12 nodes</td></tr>
     </table>
   </div>
   <div class="card">
@@ -3707,12 +3685,12 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around backend, changelogmd, agents, shadcn, mostly in CHANGELOG.md, DEVELOPER.md, backend/src/db.js. This section covers 163 nodes and 129 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around backend, changelogmd, agents, shadcn, mostly in CHANGELOG.md, DEVELOPER.md, backend/src/db.js. This section covers 167 nodes and 132 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (163 nodes, 129 edges)
+    %% Section: Other (167 nodes, 132 edges)
     subgraph other_backend_src_db_js_e9c82801["backend/src/db.js"]
         src_db_getsetting_16db62de("getSetting()<br/><small>backend/src/db.js</small>")
         src_db_initdb_23909900("initDb()<br/><small>backend/src/db.js</small>")
@@ -3750,7 +3728,7 @@ flowchart LR
     services_scheduler_builddailycronexpression_5ef5ac48 -->|calls| services_scheduler_setupscheduledjobs_0bc1a7a3
     services_scheduler_setupscheduledjobs_0bc1a7a3 -->|calls| services_scheduler_reloadschedules_8201352f
     services_scheduler_setupscheduledjobs_0bc1a7a3 -->|calls| services_scheduler_stopalljobs_b16f673c
-    %% Omitted for readability: 145 nodes, 0 edges
+    %% Omitted for readability: 149 nodes, 0 edges
     class src_db_getsetting_16db62de function;
     class src_db_initdb_23909900 function;
     class src_db_backfillproductembeddings_8246a303 function;
@@ -4037,7 +4015,7 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>CHANGELOG.md</code></td><td>48 nodes</td></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>52 nodes</td></tr>
 <tr><td><code>DEVELOPER.md</code></td><td>15 nodes</td></tr>
 <tr><td><code>backend/src/db.js</code></td><td>11 nodes</td></tr>
 <tr><td><code>shadcn/rules/base-vs-radix.md</code></td><td>9 nodes</td></tr>
@@ -4049,7 +4027,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x109, calls x13, references x2, shares data with x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x112, calls x13, references x2, shares data with x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4096,17 +4074,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>1146</td></tr>
-      <tr><td>Edges</td><td>1537</td></tr>
+      <tr><td>Nodes</td><td>1148</td></tr>
+      <tr><td>Edges</td><td>1539</td></tr>
       <tr><td>Hyperedges</td><td>3</td></tr>
-      <tr><td>Communities</td><td>108</td></tr>
+      <tr><td>Communities</td><td>109</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>1531</td></tr>
+      <tr><td>EXTRACTED</td><td>1533</td></tr>
       <tr><td>INFERRED</td><td>6</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -4115,7 +4093,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>latezza-automation — Architecture Documentation</p>
-  <p>Generated: 2026-07-03 11:06 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-07-06 07:25 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

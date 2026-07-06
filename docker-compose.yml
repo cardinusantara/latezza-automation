@@ -6,11 +6,11 @@ services:
     container_name: whatsapp_ai_db
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: fardhan123
-      POSTGRES_DB: latezzacake
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-fardhan123}
+      POSTGRES_DB: ${DB_NAME:-latezzacake}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -21,30 +21,26 @@ services:
     container_name: whatsapp_ai_gateway
     restart: always
     ports:
-      - "3001:3001"
+      - "${WHATSAPP_PORT:-3001}:3001"
     depends_on:
       - db
     environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=fardhan123
-      - DB_NAME=latezzacake
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      - META_ACCESS_TOKEN=${META_ACCESS_TOKEN:-}
-      - META_AD_ACCOUNT_ID=${META_AD_ACCOUNT_ID:-}
-      - PUBLIC_REPORT_URL=${PUBLIC_REPORT_URL:-}
-      - BUSINESS_PROFILE_PATH=/usr/src/app/business-profile.json
-      - BUSINESS_PROFILE_KEY=latezza_cake_hampers_profile
-      - SHOPEE_DEFAULT_SEARCH_URL=https://shopee.co.id/search?keyword=
-      - MAX_HISTORY_MESSAGES=10
-      - GEMINI_MODEL=gemini-3.1-flash-lite
-      - WHATSAPP_PORT=3001
-      - RATE_LIMIT_MAX_MSG=5
-      - RATE_LIMIT_WINDOW_MS=60000
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-fardhan123}
+      - DB_NAME=${DB_NAME:-latezzacake}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - META_ACCESS_TOKEN=${META_ACCESS_TOKEN}
+      - META_AD_ACCOUNT_ID=${META_AD_ACCOUNT_ID}
+      - PUBLIC_REPORT_URL=${PUBLIC_REPORT_URL}
+      - SHOPEE_DEFAULT_SEARCH_URL=${SHOPEE_DEFAULT_SEARCH_URL:-https://shopee.co.id/search?keyword=}
+      - MAX_HISTORY_MESSAGES=${MAX_HISTORY_MESSAGES:-10}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.1-flash-lite}
+      - WHATSAPP_PORT=${WHATSAPP_PORT:-3001}
+      - RATE_LIMIT_MAX_MSG=${RATE_LIMIT_MAX_MSG:-5}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
     volumes:
-      # Mount the parent business-profile.json inside the app folder
-      - ./business-profile.json:/usr/src/app/business-profile.json
       # Persist the authenticated WhatsApp sessions across container restarts
       - ./backend/whatsapp-sessions:/usr/src/app/whatsapp-sessions
       # Bind local backend .env as optional overrides

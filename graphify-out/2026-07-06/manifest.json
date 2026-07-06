@@ -375,8 +375,8 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1783322714.4580867,
-    "ast_hash": "fc3baac416ad06e993b5af3dd4105a04",
+    "mtime": 1783071403.1489449,
+    "ast_hash": "911960913a73477716da8e9001cb3ba0",
     "semantic_hash": ""
   },
   "DEVELOPER.md": {
@@ -405,8 +405,8 @@
     "semantic_hash": ""
   },
   "docker-compose.yml": {
-    "mtime": 1783322697.9696815,
-    "ast_hash": "afe7344046944fdb26be4e59243daee6",
+    "mtime": 1783070406.0947306,
+    "ast_hash": "ed768c63fab804a3870ab3a76eab9fad",
     "semantic_hash": ""
   },
   "frontend/README.md": {

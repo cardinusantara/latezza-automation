@@ -1,16 +1,16 @@
-# Graph Report - latezza-automation  (2026-07-06)
+# Graph Report - latezza-automation  (2026-07-03)
 
 ## Corpus Check
-- 123 files · ~103,081 words
+- 123 files · ~103,009 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1148 nodes · 1539 edges · 109 communities (91 shown, 18 thin omitted)
+- 1146 nodes · 1537 edges · 108 communities (90 shown, 18 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6acc9998`
+- Built from commit: `38cc95ad`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -92,7 +92,6 @@
 - [[_COMMUNITY_Community 83|Community 83]]
 - [[_COMMUNITY_Community 84|Community 84]]
 - [[_COMMUNITY_Community 85|Community 85]]
-- [[_COMMUNITY_Community 86|Community 86]]
 - [[_COMMUNITY_Community 88|Community 88]]
 - [[_COMMUNITY_Community 89|Community 89]]
 - [[_COMMUNITY_Community 90|Community 90]]
@@ -118,9 +117,9 @@
 1. `cn()` - 78 edges
 2. `compilerOptions` - 19 edges
 3. `DEVELOPER.md — Latezza Cake WhatsApp AI Agent` - 18 edges
-4. `CHANGELOG — Latezza Cake WhatsApp AI Agent` - 17 edges
-5. `Button()` - 16 edges
-6. `compilerOptions` - 16 edges
+4. `Button()` - 16 edges
+5. `compilerOptions` - 16 edges
+6. `CHANGELOG — Latezza Cake WhatsApp AI Agent` - 16 edges
 7. `Dokumentasi API Backend` - 14 edges
 8. `runCreativeAnalysis()` - 13 edges
 9. `Component Composition` - 13 edges
@@ -146,7 +145,7 @@
 - **Meta Ads Automation Pipeline** — latezza_automation_meta_ads_reporting, latezza_automation_creative_ad_analysis, latezza_automation_meta_graph_api, latezza_automation_dynamic_scheduler [EXTRACTED 0.95]
 - **RAG Product Search Pipeline** — latezza_automation_rag_semantic_search, latezza_automation_gemini_embedding_2, latezza_automation_cosine_similarity, latezza_automation_products_table [EXTRACTED 0.95]
 
-## Communities (109 total, 18 thin omitted)
+## Communities (108 total, 18 thin omitted)
 
 ### Community 0 - "WhatsApp CRM & Follow-up"
 Cohesion: 0.06
@@ -322,8 +321,8 @@ Cohesion: 0.13
 Nodes (18): canSendToBroadcastTarget(), checkAndCompleteCampaign(), createCampaignAndQueue(), db, fs, { GoogleGenerativeAI }, isLidJid(), parseSpintax() (+10 more)
 
 ### Community 62 - "Community 62"
-Cohesion: 0.17
-Nodes (11): 2026-06-28, 2026-06-29, 2026-07-03, 2026-07-06, Broadcast Campaign Live Monitor UI Redesign, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Docker Integration & Deployment Optimization (+3 more)
+Cohesion: 0.14
+Nodes (13): 2026-06-17 (afternoon), 2026-06-22, 2026-06-29, 2026-07-03, CHANGELOG — Latezza Cake WhatsApp AI Agent, DATA NOTES, Docker Integration & Deployment Optimization, Multi-Business SaaS & Tenant Navigation (Phase 3 & 4) (+5 more)
 
 ### Community 63 - "Community 63"
 Cohesion: 0.29
@@ -382,16 +381,12 @@ Cohesion: 0.07
 Nodes (25): AudioUploadParams, ChatInbox(), ChatInboxProps, ChatMessage, ChatMessageBubbleProps, ConversationBoxPanel(), ConversationBoxPanelProps, ConversationListPanelProps (+17 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.50
-Nodes (4): 2026-06-17 (afternoon), Products CRUD — full database-backed, project restructure — monorepo split, shadcn/ui migration
+Cohesion: 0.67
+Nodes (3): 2026-06-28, Broadcast Campaign Live Monitor UI Redesign, Multi-Business SaaS Foundation (Phase 1 & 2)
 
 ### Community 85 - "Community 85"
 Cohesion: 0.10
 Nodes (14): AdsReport(), AdsReportControlsProps, AdsReportHeaderProps, AdsReportViewPanelProps, calculatePresetDates(), CsvMetadata, CsvStatus, getLocalDateString() (+6 more)
-
-### Community 86 - "Community 86"
-Cohesion: 0.67
-Nodes (3): 2026-06-22, Optimized Creative Analysis Sourcing & CSV Context, WhatsApp Message Debouncing & Abuse Prevention
 
 ### Community 88 - "Community 88"
 Cohesion: 0.20
@@ -474,7 +469,7 @@ Cohesion: 0.50
 Nodes (4): createOrUpdateCustomer(), getCustomer(), getSession(), saveChatMessage()
 
 ## Knowledge Gaps
-- **634 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+629 more)
+- **633 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+628 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -488,7 +483,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `cn()` connect `Mobile Hook` to `Community 83`, `UI Actions Component`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugin`, `@opencode-ai/plugin` to the rest of the system?**
-  _638 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _637 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**
