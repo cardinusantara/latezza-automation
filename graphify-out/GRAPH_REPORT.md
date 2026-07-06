@@ -1,16 +1,16 @@
 # Graph Report - latezza-automation  (2026-07-06)
 
 ## Corpus Check
-- 123 files · ~103,081 words
+- 124 files · ~103,285 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1148 nodes · 1539 edges · 109 communities (91 shown, 18 thin omitted)
+- 1151 nodes · 1542 edges · 111 communities (92 shown, 19 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6acc9998`
+- Built from commit: `0d7790e9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -93,6 +93,7 @@
 - [[_COMMUNITY_Community 84|Community 84]]
 - [[_COMMUNITY_Community 85|Community 85]]
 - [[_COMMUNITY_Community 86|Community 86]]
+- [[_COMMUNITY_Community 87|Community 87]]
 - [[_COMMUNITY_Community 88|Community 88]]
 - [[_COMMUNITY_Community 89|Community 89]]
 - [[_COMMUNITY_Community 90|Community 90]]
@@ -113,6 +114,7 @@
 - [[_COMMUNITY_Community 107|Community 107]]
 - [[_COMMUNITY_Community 108|Community 108]]
 - [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 78 edges
@@ -146,7 +148,7 @@
 - **Meta Ads Automation Pipeline** — latezza_automation_meta_ads_reporting, latezza_automation_creative_ad_analysis, latezza_automation_meta_graph_api, latezza_automation_dynamic_scheduler [EXTRACTED 0.95]
 - **RAG Product Search Pipeline** — latezza_automation_rag_semantic_search, latezza_automation_gemini_embedding_2, latezza_automation_cosine_similarity, latezza_automation_products_table [EXTRACTED 0.95]
 
-## Communities (109 total, 18 thin omitted)
+## Communities (111 total, 19 thin omitted)
 
 ### Community 0 - "WhatsApp CRM & Follow-up"
 Cohesion: 0.06
@@ -173,12 +175,12 @@ Cohesion: 0.17
 Nodes (12): 2026-06-18, AI response formatting — natural plaintext guardrails, backend layered refactoring — architecture overhaul, environment separation — independent backend & frontend, follow-up instruction — smart prompt wrapping (3 modes), follow-up system — confirmed working end-to-end, follow-up system — prompt quality fix, follow-up time safeguard — manual trigger bypass & hourly cron (+4 more)
 
 ### Community 6 - "SSE Streaming API"
-Cohesion: 0.12
-Nodes (17): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+9 more)
+Cohesion: 0.17
+Nodes (12): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode, `info` — Project information (+4 more)
 
 ### Community 7 - "UI Actions Component"
 Cohesion: 0.05
-Nodes (60): Actions(), ActionsProps, Broadcast(), BroadcastProps, Campaign, Customer, QueueItem, CreativeIdea (+52 more)
+Nodes (63): Actions(), ActionsProps, Broadcast(), BroadcastProps, Campaign, Customer, QueueItem, CreativeIdea (+55 more)
 
 ### Community 8 - "Theme Provider"
 Cohesion: 0.13
@@ -186,7 +188,7 @@ Nodes (9): ResolvedTheme, Theme, THEME_VALUES, ThemeProvider(), ThemeProviderCon
 
 ### Community 9 - "Mobile Hook"
 Cohesion: 0.06
-Nodes (52): useIsMobile(), cn(), CardAction(), CardFooter(), DialogOverlay(), Separator(), Sheet(), SheetContent() (+44 more)
+Nodes (51): useIsMobile(), cn(), CardAction(), CardFooter(), DialogOverlay(), Separator(), Sheet(), SheetContent() (+43 more)
 
 ### Community 10 - "Utility Functions"
 Cohesion: 0.09
@@ -378,8 +380,8 @@ Cohesion: 0.40
 Nodes (4): fs, generateReport(), getRatingLabel(), path
 
 ### Community 83 - "Community 83"
-Cohesion: 0.07
-Nodes (25): AudioUploadParams, ChatInbox(), ChatInboxProps, ChatMessage, ChatMessageBubbleProps, ConversationBoxPanel(), ConversationBoxPanelProps, ConversationListPanelProps (+17 more)
+Cohesion: 0.08
+Nodes (23): AudioUploadParams, ChatInbox(), ChatInboxProps, ChatMessage, ChatMessageBubbleProps, ConversationBoxPanel(), ConversationBoxPanelProps, ConversationListPanelProps (+15 more)
 
 ### Community 84 - "Community 84"
 Cohesion: 0.50
@@ -392,6 +394,10 @@ Nodes (14): AdsReport(), AdsReportControlsProps, AdsReportHeaderProps, AdsReport
 ### Community 86 - "Community 86"
 Cohesion: 0.67
 Nodes (3): 2026-06-22, Optimized Creative Analysis Sourcing & CSV Context, WhatsApp Message Debouncing & Abuse Prevention
+
+### Community 87 - "Community 87"
+Cohesion: 0.40
+Nodes (5): Contents, Presets, shadcn CLI Reference, Switching Presets, Templates
 
 ### Community 88 - "Community 88"
 Cohesion: 0.20
@@ -474,21 +480,21 @@ Cohesion: 0.50
 Nodes (4): createOrUpdateCustomer(), getCustomer(), getSession(), saveChatMessage()
 
 ## Knowledge Gaps
-- **634 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+629 more)
+- **635 isolated node(s):** `$schema`, `plugin`, `@opencode-ai/plugin`, `fs`, `path` (+630 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `getDateRangeLabel()` connect `Community 55` to `UI Actions Component`?**
-  _High betweenness centrality (0.113) - this node is a cross-community bridge._
 - **Why does `Overview()` connect `UI Actions Component` to `Community 55`?**
-  _High betweenness centrality (0.113) - this node is a cross-community bridge._
-- **Why does `cn()` connect `Mobile Hook` to `Community 83`, `UI Actions Component`?**
-  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+  _High betweenness centrality (0.111) - this node is a cross-community bridge._
+- **Why does `getDateRangeLabel()` connect `Community 55` to `UI Actions Component`?**
+  _High betweenness centrality (0.110) - this node is a cross-community bridge._
+- **Why does `cn()` connect `Mobile Hook` to `UI Actions Component`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugin`, `@opencode-ai/plugin` to the rest of the system?**
-  _638 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _639 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `WhatsApp CRM & Follow-up` be split into smaller, more focused modules?**
   _Cohesion score 0.06025641025641026 - nodes in this community are weakly interconnected._
 - **Should `RAG Product Search` be split into smaller, more focused modules?**

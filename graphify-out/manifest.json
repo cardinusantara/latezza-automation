@@ -80,13 +80,13 @@
     "semantic_hash": ""
   },
   "backend/src/db.js": {
-    "mtime": 1782699623.583932,
-    "ast_hash": "940ddd9850d814554053c1db6938259a",
+    "mtime": 1783326169.2156134,
+    "ast_hash": "2836875b38d88a03db9597d73da23454",
     "semantic_hash": ""
   },
   "backend/src/routes.js": {
-    "mtime": 1782700052.4263737,
-    "ast_hash": "62814e9846516cfcead80c4ccc866a43",
+    "mtime": 1783326377.8388295,
+    "ast_hash": "65810274dbd41addf2e1badcffb0bbf1",
     "semantic_hash": ""
   },
   "backend/src/services/ads.js": {
@@ -170,8 +170,8 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Settings.tsx": {
-    "mtime": 1782701174.3291698,
-    "ast_hash": "9d458b64f276895d16d4c7d5e1d5ae79",
+    "mtime": 1783326370.299324,
+    "ast_hash": "5094c14d6930a07b9383e442579e21bf",
     "semantic_hash": ""
   },
   "frontend/src/components/Sidebar.tsx": {
@@ -6867,6 +6867,11 @@
   ".agents/skills/update-docs/SKILL.md": {
     "mtime": 1782583934.5559468,
     "ast_hash": "a137120de761998b1b17a3960d8b48f3",
+    "semantic_hash": ""
+  },
+  "backend/scripts/migrate-shopee-links.js": {
+    "mtime": 1783326209.8157973,
+    "ast_hash": "d72d1c7f190c3ee921f0d51009b75753",
     "semantic_hash": ""
   }
 }

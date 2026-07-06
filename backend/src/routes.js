@@ -302,13 +302,17 @@ function registerRoutes(fastify) {
     handler: async (request, reply) => {
       const { product_name, price, description, image_url, shopee_link, business_id } = request.body;
       const finalBusinessId = business_id ? Number.parseInt(business_id, 10) : 1;
+      const finalShopeeLink = (shopee_link && shopee_link.includes('shop=657336422') && shopee_link.includes('keyword='))
+        ? shopee_link
+        : `https://shopee.co.id/search?keyword=${encodeURIComponent(product_name)}&shop=657336422`;
+
       try {
         fastify.log.info(`Creating product: ${product_name} for business ${finalBusinessId}`);
         const res = await db.pool.query(
           `INSERT INTO products (product_name, price, description, image_url, shopee_link, business_id)
            VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING *`,
-          [product_name, price, description || '', image_url || '', shopee_link || '', finalBusinessId]
+          [product_name, price, description || '', image_url || '', finalShopeeLink, finalBusinessId]
         );
         const product = res.rows[0];
 
@@ -316,15 +320,15 @@ function registerRoutes(fastify) {
         const apiKey = await db.getSetting('gemini_api_key') || process.env.GEMINI_API_KEY;
         if (apiKey) {
           db.generateEmbedding(apiKey, product_name, description || '')
-            .then(async (embedding) => {
-              if (embedding) {
-                await db.pool.query('UPDATE products SET embedding = $1 WHERE id = $2', [JSON.stringify(embedding), product.id]);
-                fastify.log.info(`✅ Generated embedding for new product: ${product_name}`);
-              }
-            })
-            .catch(err => {
-              fastify.log.error(`Failed to generate embedding for new product "${product_name}": ${err.message}`);
-            });
+             .then(async (embedding) => {
+               if (embedding) {
+                 await db.pool.query('UPDATE products SET embedding = $1 WHERE id = $2', [JSON.stringify(embedding), product.id]);
+                 fastify.log.info(`✅ Generated embedding for new product: ${product_name}`);
+               }
+             })
+             .catch(err => {
+               fastify.log.error(`Failed to generate embedding for new product "${product_name}": ${err.message}`);
+             });
         }
 
         return product;
@@ -354,6 +358,10 @@ function registerRoutes(fastify) {
     handler: async (request, reply) => {
       const { id } = request.params;
       const { product_name, price, description, image_url, shopee_link } = request.body;
+      const finalShopeeLink = (shopee_link && shopee_link.includes('shop=657336422') && shopee_link.includes('keyword='))
+        ? shopee_link
+        : `https://shopee.co.id/search?keyword=${encodeURIComponent(product_name)}&shop=657336422`;
+
       try {
         fastify.log.info(`Updating product ID: ${id}`);
         const res = await db.pool.query(
@@ -361,7 +369,7 @@ function registerRoutes(fastify) {
            SET product_name = $1, price = $2, description = $3, image_url = $4, shopee_link = $5
            WHERE id = $6
            RETURNING *`,
-          [product_name, price, description || '', image_url || '', shopee_link || '', id]
+          [product_name, price, description || '', image_url || '', finalShopeeLink, id]
         );
         if (res.rows.length === 0) {
           reply.status(404);
@@ -561,7 +569,8 @@ function registerRoutes(fastify) {
         ads_analysis_time: await db.getSetting('ads_analysis_time') || '09:00',
         creative_analysis_enabled: await db.getSetting('creative_analysis_enabled') || 'true',
         creative_analysis_frequency: await db.getSetting('creative_analysis_frequency') || '7',
-        creative_analysis_time: await db.getSetting('creative_analysis_time') || '09:00'
+        creative_analysis_time: await db.getSetting('creative_analysis_time') || '09:00',
+        shopee_shop_id: await db.getSetting('shopee_shop_id') || '657336422'
       };
     } catch (err) {
       fastify.log.error(`GET settings error: ${err.message}`);
@@ -588,7 +597,8 @@ function registerRoutes(fastify) {
           ads_analysis_frequency: { type: 'string' },
           ads_analysis_time: { type: 'string' },
           creative_analysis_frequency: { type: 'string' },
-          creative_analysis_time: { type: 'string' }
+          creative_analysis_time: { type: 'string' },
+          shopee_shop_id: { type: 'string' }
         }
       }
     },
@@ -610,7 +620,8 @@ function registerRoutes(fastify) {
           'ads_analysis_time',
           'creative_analysis_enabled',
           'creative_analysis_frequency',
-          'creative_analysis_time'
+          'creative_analysis_time',
+          'shopee_shop_id'
         ];
 
         for (const key of standardKeys) {

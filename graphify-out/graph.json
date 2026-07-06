@@ -1110,6 +1110,36 @@
       "norm_label": "debugfollowup()"
     },
     {
+      "label": "migrate-shopee-links.js",
+      "file_type": "code",
+      "source_file": "backend/scripts/migrate-shopee-links.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scripts_migrate_shopee_links",
+      "community": 110,
+      "norm_label": "migrate-shopee-links.js"
+    },
+    {
+      "label": "db",
+      "file_type": "code",
+      "source_file": "backend/scripts/migrate-shopee-links.js",
+      "source_location": "L2",
+      "_origin": "ast",
+      "id": "scripts_migrate_shopee_links_db",
+      "community": 110,
+      "norm_label": "db"
+    },
+    {
+      "label": "migrate()",
+      "file_type": "code",
+      "source_file": "backend/scripts/migrate-shopee-links.js",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "scripts_migrate_shopee_links_migrate",
+      "community": 110,
+      "norm_label": "migrate()"
+    },
+    {
       "label": "seed-test-followup.js",
       "file_type": "code",
       "source_file": "backend/scripts/seed-test-followup.js",
@@ -2163,7 +2193,7 @@
       "label": "getCustomersForFollowUp()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L574",
+      "source_location": "L575",
       "_origin": "ast",
       "id": "src_db_getcustomersforfollowup",
       "community": 13,
@@ -2173,7 +2203,7 @@
       "label": "generateEmbedding()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L590",
+      "source_location": "L591",
       "_origin": "ast",
       "id": "src_db_generateembedding",
       "community": 99,
@@ -2183,7 +2213,7 @@
       "label": "backfillProductEmbeddings()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L607",
+      "source_location": "L608",
       "_origin": "ast",
       "id": "src_db_backfillproductembeddings",
       "community": 99,
@@ -2193,7 +2223,7 @@
       "label": "getSessions()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L639",
+      "source_location": "L640",
       "_origin": "ast",
       "id": "src_db_getsessions",
       "community": 13,
@@ -2203,7 +2233,7 @@
       "label": "getSession()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L648",
+      "source_location": "L649",
       "_origin": "ast",
       "id": "src_db_getsession",
       "community": 109,
@@ -2213,7 +2243,7 @@
       "label": "createSession()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L653",
+      "source_location": "L654",
       "_origin": "ast",
       "id": "src_db_createsession",
       "community": 13,
@@ -2223,7 +2253,7 @@
       "label": "deleteSession()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L663",
+      "source_location": "L664",
       "_origin": "ast",
       "id": "src_db_deletesession",
       "community": 13,
@@ -2233,7 +2263,7 @@
       "label": "updateSessionStatus()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L667",
+      "source_location": "L668",
       "_origin": "ast",
       "id": "src_db_updatesessionstatus",
       "community": 13,
@@ -2243,7 +2273,7 @@
       "label": "updateSessionQR()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L674",
+      "source_location": "L675",
       "_origin": "ast",
       "id": "src_db_updatesessionqr",
       "community": 13,
@@ -2253,7 +2283,7 @@
       "label": "updateSessionConnected()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L681",
+      "source_location": "L682",
       "_origin": "ast",
       "id": "src_db_updatesessionconnected",
       "community": 13,
@@ -2263,7 +2293,7 @@
       "label": "saveUsageLog()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L691",
+      "source_location": "L692",
       "_origin": "ast",
       "id": "src_db_saveusagelog",
       "community": 13,
@@ -2273,7 +2303,7 @@
       "label": "createCampaign()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L715",
+      "source_location": "L716",
       "_origin": "ast",
       "id": "src_db_createcampaign",
       "community": 13,
@@ -2283,7 +2313,7 @@
       "label": "getCampaigns()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L725",
+      "source_location": "L726",
       "_origin": "ast",
       "id": "src_db_getcampaigns",
       "community": 13,
@@ -2293,7 +2323,7 @@
       "label": "getCampaignById()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L734",
+      "source_location": "L735",
       "_origin": "ast",
       "id": "src_db_getcampaignbyid",
       "community": 13,
@@ -2303,7 +2333,7 @@
       "label": "updateCampaignStatus()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L739",
+      "source_location": "L740",
       "_origin": "ast",
       "id": "src_db_updatecampaignstatus",
       "community": 13,
@@ -2313,7 +2343,7 @@
       "label": "incrementCampaignStats()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L747",
+      "source_location": "L748",
       "_origin": "ast",
       "id": "src_db_incrementcampaignstats",
       "community": 13,
@@ -2323,7 +2353,7 @@
       "label": "updateCampaignTotalTargets()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L760",
+      "source_location": "L761",
       "_origin": "ast",
       "id": "src_db_updatecampaigntotaltargets",
       "community": 13,
@@ -2333,7 +2363,7 @@
       "label": "addQueueItem()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L768",
+      "source_location": "L769",
       "_origin": "ast",
       "id": "src_db_addqueueitem",
       "community": 13,
@@ -2343,7 +2373,7 @@
       "label": "getNextPendingQueueItem()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L778",
+      "source_location": "L779",
       "_origin": "ast",
       "id": "src_db_getnextpendingqueueitem",
       "community": 13,
@@ -2353,7 +2383,7 @@
       "label": "updateQueueItemStatus()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L790",
+      "source_location": "L791",
       "_origin": "ast",
       "id": "src_db_updatequeueitemstatus",
       "community": 13,
@@ -2363,7 +2393,7 @@
       "label": "getQueueByCampaignId()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L801",
+      "source_location": "L802",
       "_origin": "ast",
       "id": "src_db_getqueuebycampaignid",
       "community": 13,
@@ -2373,7 +2403,7 @@
       "label": "getPendingQueueCount()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L809",
+      "source_location": "L810",
       "_origin": "ast",
       "id": "src_db_getpendingqueuecount",
       "community": 13,
@@ -2383,7 +2413,7 @@
       "label": "getBroadcastTargets()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L817",
+      "source_location": "L818",
       "_origin": "ast",
       "id": "src_db_getbroadcasttargets",
       "community": 13,
@@ -2393,7 +2423,7 @@
       "label": "createBusiness()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L838",
+      "source_location": "L839",
       "_origin": "ast",
       "id": "src_db_createbusiness",
       "community": 13,
@@ -2403,7 +2433,7 @@
       "label": "getBusinesses()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L857",
+      "source_location": "L858",
       "_origin": "ast",
       "id": "src_db_getbusinesses",
       "community": 13,
@@ -2413,7 +2443,7 @@
       "label": "getBusinessById()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L862",
+      "source_location": "L863",
       "_origin": "ast",
       "id": "src_db_getbusinessbyid",
       "community": 13,
@@ -2423,7 +2453,7 @@
       "label": "getBusinessBySlug()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L867",
+      "source_location": "L868",
       "_origin": "ast",
       "id": "src_db_getbusinessbyslug",
       "community": 13,
@@ -2433,7 +2463,7 @@
       "label": "updateBusiness()",
       "file_type": "code",
       "source_file": "backend/src/db.js",
-      "source_location": "L872",
+      "source_location": "L873",
       "_origin": "ast",
       "id": "src_db_updatebusiness",
       "community": 13,
@@ -5333,7 +5363,7 @@
       "label": "SettingsProps",
       "file_type": "code",
       "source_file": "frontend/src/components/Settings.tsx",
-      "source_location": "L42",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "components_settings_settingsprops",
       "community": 7,
@@ -5343,7 +5373,7 @@
       "label": "Settings()",
       "file_type": "code",
       "source_file": "frontend/src/components/Settings.tsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "components_settings_settings",
       "community": 7,
@@ -5746,7 +5776,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_badge",
-      "community": 83,
+      "community": 7,
       "norm_label": "badge.tsx"
     },
     {
@@ -5756,7 +5786,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "ui_badge_badgevariants",
-      "community": 83,
+      "community": 7,
       "norm_label": "badgevariants"
     },
     {
@@ -5766,7 +5796,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "ui_badge_badge",
-      "community": 83,
+      "community": 7,
       "norm_label": "badge()"
     },
     {
@@ -6466,7 +6496,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ui_switch",
-      "community": 9,
+      "community": 7,
       "norm_label": "switch.tsx"
     },
     {
@@ -6476,7 +6506,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ui_switch_switch",
-      "community": 9,
+      "community": 7,
       "norm_label": "switch()"
     },
     {
@@ -6766,7 +6796,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_utils",
-      "community": 9,
+      "community": 7,
       "norm_label": "utils.ts"
     },
     {
@@ -7666,7 +7696,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "shadcn_cli_shadcn_cli_reference",
-      "community": 6,
+      "community": 87,
       "norm_label": "shadcn cli reference"
     },
     {
@@ -7676,7 +7706,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "shadcn_cli_contents",
-      "community": 6,
+      "community": 87,
       "norm_label": "contents"
     },
     {
@@ -7806,7 +7836,7 @@
       "source_location": "L256",
       "_origin": "ast",
       "id": "shadcn_cli_templates",
-      "community": 6,
+      "community": 87,
       "norm_label": "templates"
     },
     {
@@ -7816,7 +7846,7 @@
       "source_location": "L271",
       "_origin": "ast",
       "id": "shadcn_cli_presets",
-      "community": 6,
+      "community": 87,
       "norm_label": "presets"
     },
     {
@@ -7826,7 +7856,7 @@
       "source_location": "L282",
       "_origin": "ast",
       "id": "shadcn_cli_switching_presets",
-      "community": 6,
+      "community": 87,
       "norm_label": "switching presets"
     },
     {
@@ -12843,6 +12873,37 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "scripts_debug_followup",
+      "target": "src_db"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/scripts/migrate-shopee-links.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "scripts_migrate_shopee_links",
+      "target": "scripts_migrate_shopee_links_db"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/scripts/migrate-shopee-links.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "scripts_migrate_shopee_links",
+      "target": "scripts_migrate_shopee_links_migrate"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/scripts/migrate-shopee-links.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "scripts_migrate_shopee_links",
       "target": "src_db"
     },
     {
@@ -25722,9 +25783,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_changelog_latezza_cake_whatsapp_ai_agent",
-      "target": "changelog_2026_07_06",
-      "confidence_score": 1.0
+      "target": "changelog_2026_07_06"
     },
     {
       "relation": "contains",
@@ -25742,9 +25803,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_2026_07_06",
-      "target": "changelog_environment_variables_docker_compose_refactoring",
-      "confidence_score": 1.0
+      "target": "changelog_environment_variables_docker_compose_refactoring"
     },
     {
       "relation": "contains",
@@ -27562,5 +27623,5 @@
       "source_file": "DEVELOPER.md"
     }
   ],
-  "built_at_commit": "6acc999898faaf55c6a75f7ad2b7d5272f63bf43"
+  "built_at_commit": "0d7790e91e4ec332a87c4717cc78f9747867d559"
 }

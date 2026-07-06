@@ -551,6 +551,10 @@ async function searchProducts(queryStr, businessId = 1) {
  * Upsert product into catalog
  */
 async function upsertProduct(productName, price, description, imageUrl, shopeeLink, businessId = 1) {
+  const finalShopeeLink = (shopeeLink && shopeeLink.includes('shop=657336422') && shopeeLink.includes('keyword='))
+    ? shopeeLink
+    : `https://shopee.co.id/search?keyword=${encodeURIComponent(productName)}&shop=657336422`;
+
   const query = `
     INSERT INTO products (product_name, price, description, image_url, shopee_link, business_id)
     VALUES ($1, $2, $3, $4, $5, $6)
@@ -558,13 +562,10 @@ async function upsertProduct(productName, price, description, imageUrl, shopeeLi
     SET price = EXCLUDED.price,
         description = EXCLUDED.description,
         image_url = EXCLUDED.image_url,
-        shopee_link = CASE 
-          WHEN products.shopee_link = '' OR products.shopee_link IS NULL THEN EXCLUDED.shopee_link
-          ELSE products.shopee_link 
-        END
+        shopee_link = EXCLUDED.shopee_link
     RETURNING *;
   `;
-  const res = await pool.query(query, [productName, price, description, imageUrl, shopeeLink, businessId]);
+  const res = await pool.query(query, [productName, price, description, imageUrl, finalShopeeLink, businessId]);
   return res.rows[0];
 }
 

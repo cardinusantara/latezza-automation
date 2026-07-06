@@ -37,6 +37,7 @@ interface SettingsState {
   creative_analysis_enabled: string;
   creative_analysis_frequency: string;
   creative_analysis_time: string;
+  shopee_shop_id: string;
 }
 
 interface SettingsProps {
@@ -132,7 +133,8 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
     ads_analysis_time: '09:00',
     creative_analysis_enabled: 'true',
     creative_analysis_frequency: '7',
-    creative_analysis_time: '09:00'
+    creative_analysis_time: '09:00',
+    shopee_shop_id: '657336422'
   });
 
   // Fetch connected groups list
@@ -531,6 +533,22 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
                 )}
                 <span className="text-[10px] text-muted-foreground">
                   Target grup tujuan pengiriman laporan analitik Ads harian otomatis.
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1.5 mt-2">
+                <label htmlFor="shopee_shop_id" className="text-xs font-semibold text-foreground/80">Shopee Shop ID</label>
+                <input 
+                  id="shopee_shop_id"
+                  type="text" 
+                  name="shopee_shop_id"
+                  placeholder="Masukkan Shopee Shop ID (e.g. 657336422)..."
+                  value={settings.shopee_shop_id || ''}
+                  onChange={handleChange}
+                  className={inputClasses}
+                />
+                <span className="text-[10px] text-muted-foreground">
+                  ID Toko Shopee Anda. Digunakan untuk membuat link Shopee pada katalog secara otomatis.
                 </span>
               </div>
             </CardContent>
