@@ -13,7 +13,7 @@ async function migrate() {
     let updatedCount = 0;
 
     for (const product of products) {
-      const targetLink = `https://shopee.co.id/search?keyword=${encodeURIComponent(product.product_name)}&shop=657336422`;
+      const targetLink = `https://shopee.co.id/search?keyword=${encodeURIComponent(product.product_name)}&shop=479628817`;
 
       // Check if the current link is already correct to avoid unnecessary updates
       if (product.shopee_link !== targetLink) {

@@ -78,5 +78,6 @@ describe('routes.js endpoint registration', () => {
     const body = JSON.parse(response.payload);
     expect(body.gemini_api_key).toBe('key-1234...-key');
     expect(body.system_instruction).toBe('some prompt');
+    expect(body.shopee_shop_id).toBe('479628817');
   });
 });

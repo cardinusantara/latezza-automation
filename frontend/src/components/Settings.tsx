@@ -134,7 +134,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
     creative_analysis_enabled: 'true',
     creative_analysis_frequency: '7',
     creative_analysis_time: '09:00',
-    shopee_shop_id: '657336422'
+    shopee_shop_id: '479628817'
   });
 
   // Fetch connected groups list
@@ -542,7 +542,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
                   id="shopee_shop_id"
                   type="text" 
                   name="shopee_shop_id"
-                  placeholder="Masukkan Shopee Shop ID (e.g. 657336422)..."
+                  placeholder="Masukkan Shopee Shop ID (e.g. 479628817)..."
                   value={settings.shopee_shop_id || ''}
                   onChange={handleChange}
                   className={inputClasses}

@@ -551,9 +551,9 @@ async function searchProducts(queryStr, businessId = 1) {
  * Upsert product into catalog
  */
 async function upsertProduct(productName, price, description, imageUrl, shopeeLink, businessId = 1) {
-  const finalShopeeLink = (shopeeLink && shopeeLink.includes('shop=657336422') && shopeeLink.includes('keyword='))
+  const finalShopeeLink = (shopeeLink && shopeeLink.includes('shop=479628817') && shopeeLink.includes('keyword='))
     ? shopeeLink
-    : `https://shopee.co.id/search?keyword=${encodeURIComponent(productName)}&shop=657336422`;
+    : `https://shopee.co.id/search?keyword=${encodeURIComponent(productName)}&shop=479628817`;
 
   const query = `
     INSERT INTO products (product_name, price, description, image_url, shopee_link, business_id)

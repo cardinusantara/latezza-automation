@@ -302,9 +302,9 @@ function registerRoutes(fastify) {
     handler: async (request, reply) => {
       const { product_name, price, description, image_url, shopee_link, business_id } = request.body;
       const finalBusinessId = business_id ? Number.parseInt(business_id, 10) : 1;
-      const finalShopeeLink = (shopee_link && shopee_link.includes('shop=657336422') && shopee_link.includes('keyword='))
+      const finalShopeeLink = (shopee_link && shopee_link.includes('shop=479628817') && shopee_link.includes('keyword='))
         ? shopee_link
-        : `https://shopee.co.id/search?keyword=${encodeURIComponent(product_name)}&shop=657336422`;
+        : `https://shopee.co.id/search?keyword=${encodeURIComponent(product_name)}&shop=479628817`;
 
       try {
         fastify.log.info(`Creating product: ${product_name} for business ${finalBusinessId}`);
@@ -358,9 +358,9 @@ function registerRoutes(fastify) {
     handler: async (request, reply) => {
       const { id } = request.params;
       const { product_name, price, description, image_url, shopee_link } = request.body;
-      const finalShopeeLink = (shopee_link && shopee_link.includes('shop=657336422') && shopee_link.includes('keyword='))
+      const finalShopeeLink = (shopee_link && shopee_link.includes('shop=479628817') && shopee_link.includes('keyword='))
         ? shopee_link
-        : `https://shopee.co.id/search?keyword=${encodeURIComponent(product_name)}&shop=657336422`;
+        : `https://shopee.co.id/search?keyword=${encodeURIComponent(product_name)}&shop=479628817`;
 
       try {
         fastify.log.info(`Updating product ID: ${id}`);
@@ -570,7 +570,7 @@ function registerRoutes(fastify) {
         creative_analysis_enabled: await db.getSetting('creative_analysis_enabled') || 'true',
         creative_analysis_frequency: await db.getSetting('creative_analysis_frequency') || '7',
         creative_analysis_time: await db.getSetting('creative_analysis_time') || '09:00',
-        shopee_shop_id: await db.getSetting('shopee_shop_id') || '657336422'
+        shopee_shop_id: await db.getSetting('shopee_shop_id') || '479628817'
       };
     } catch (err) {
       fastify.log.error(`GET settings error: ${err.message}`);

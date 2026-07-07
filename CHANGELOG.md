@@ -2,6 +2,16 @@
 
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
+## 2026-07-07
+
+### Shopee Shop ID Correction
+- **Updated Default Shopee Shop Code**:
+  - Replaced incorrect default Shopee shop ID `657336422` with the correct ID `479628817` across the codebase, including [migrate-shopee-links.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/scripts/migrate-shopee-links.js), [db.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/src/db.js), [routes.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/src/routes.js), and [Settings.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Settings.tsx).
+- **Database Migration**:
+  - Created and executed a database migration script [update-shopee-database.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/scripts/update-shopee-database.js) to replace all occurrences of `shop=657336422` with `shop=479628817` in the `products` table's `shopee_link` column (72 rows updated).
+- **Unit Testing**:
+  - Added new unit tests in [db.test.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/src/__tests__/db.test.js) and [routes.test.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/src/__tests__/routes.test.js) to assert correct default Shopee link structure and fallback behavior using the updated shop ID.
+
 ## 2026-07-06
 
 ### Environment Variables & Docker Compose Refactoring

@@ -193,4 +193,43 @@ describe('db.js module', () => {
       ]
     );
   });
+
+  test('upsertProduct defaults shopee_link correctly', async () => {
+    const mockProduct = { id: 1, product_name: 'Cake A', price: 10000, shopee_link: 'https://shopee.co.id/search?keyword=Cake%20A&shop=479628817' };
+    db.pool.query.mockResolvedValueOnce({ rows: [mockProduct] });
+
+    const product = await db.upsertProduct('Cake A', 10000, 'Delicious Cake', 'img.png', '', 1);
+    expect(product).toEqual(mockProduct);
+    expect(db.pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO products'),
+      [
+        'Cake A',
+        10000,
+        'Delicious Cake',
+        'img.png',
+        'https://shopee.co.id/search?keyword=Cake%20A&shop=479628817',
+        1
+      ]
+    );
+  });
+
+  test('upsertProduct preserves already correct shopee_link', async () => {
+    const correctLink = 'https://shopee.co.id/search?keyword=Cake%20B&shop=479628817';
+    const mockProduct = { id: 2, product_name: 'Cake B', price: 10000, shopee_link: correctLink };
+    db.pool.query.mockResolvedValueOnce({ rows: [mockProduct] });
+
+    const product = await db.upsertProduct('Cake B', 10000, 'Delicious Cake', 'img.png', correctLink, 1);
+    expect(product).toEqual(mockProduct);
+    expect(db.pool.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO products'),
+      [
+        'Cake B',
+        10000,
+        'Delicious Cake',
+        'img.png',
+        correctLink,
+        1
+      ]
+    );
+  });
 });
