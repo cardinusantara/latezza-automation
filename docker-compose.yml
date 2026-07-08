@@ -31,6 +31,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-fardhan123}
       - DB_NAME=${DB_NAME:-latezzacake}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - FRONTEND_URL=${FRONTEND_URL:-latezza-automation.vercel.app}
       - META_ACCESS_TOKEN=${META_ACCESS_TOKEN}
       - META_AD_ACCOUNT_ID=${META_AD_ACCOUNT_ID}
       - PUBLIC_REPORT_URL=${PUBLIC_REPORT_URL}
