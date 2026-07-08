@@ -460,7 +460,7 @@ async function saveChatMessage(phoneNumber, role, content, sessionId = 'default'
  */
 async function getChatHistory(phoneNumber, limit = 10, sessionId = 'default') {
   const res = await pool.query(
-    'SELECT role, content FROM chat_histories WHERE phone_number = $1 AND session_id = $2 ORDER BY timestamp DESC LIMIT $3',
+    'SELECT role, content, timestamp FROM chat_histories WHERE phone_number = $1 AND session_id = $2 ORDER BY timestamp DESC LIMIT $3',
     [phoneNumber, sessionId, limit]
   );
   // Return in chronological order

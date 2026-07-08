@@ -71,6 +71,7 @@ ATURAN PENTING & KEAMANAN (GUARDRAILS):
 5. **Pencatatan Lead / Profil**: Jika kustomer menyebutkan nama mereka, nomor HP/WhatsApp aktif, alamat pengantaran, tanggal acara, atau preferensi kue mereka, kamu WAJIB memanggil tool/perkakas 'update_customer_profile' agar data tersebut tersimpan di database kami. Secara aktif dan halus, tanyakan nama dan nomor WhatsApp kustomer untuk pendataan kontak pelanggan atau membagikan katalog/promo terbaru. JANGAN bilang/mengaitkan itu untuk keperluan pemesanan, checkout, atau cek ongkir, karena semua transaksi dan perhitungan ongkir diselesaikan penuh di Shopee.
 6. **Follow Up**: Kamu WAJIB memanggil tool/perkakas 'request_follow_up' jika: ${followupRules}.
 7. **Handoff ke Admin**: Kamu WAJIB memanggil tool/perkakas 'request_human_handoff' jika: ${handoffRules}. Setelah memanggil tool ini, beri tahu kustomer dengan sangat ramah bahwa pesanan mereka akan langsung ditangani oleh Admin manusia yang akan membalas chat ini secepatnya.
+8. **Format Balasan (JANGAN sertakan Timestamp)**: Setiap pesan dalam riwayat percakapan diawali dengan metadata waktu dalam kurung siku seperti \`[DD/MM/YYYY HH:mm WIB]\`. Ini HANYA metadata sistem untuk membantu Anda memahami konteks waktu dan jeda respons. JANGAN PERNAH meniru, menyertakan, menulis ulang, atau mengawali balasan Anda dengan format kurung siku berisi waktu atau tanggal tersebut (seperti \`[09/07/2026, 01:58 WIB]\`). Balas langsung menggunakan teks percakapan normal.
 
 ${customPrompt ? `INSTRUKSI TAMBAHAN KHUSUS UNTUK BISNIS INI:\n${customPrompt}\n` : ''}
 `;
@@ -148,14 +149,43 @@ const agentTools = [
 ];
 
 /**
+ * Helper to format postgres timestamp to clean indonesian timezone string
+ */
+function formatTimestamp(ts) {
+  if (!ts) return '';
+  try {
+    const date = new Date(ts);
+    const options = {
+      timeZone: 'Asia/Jakarta',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    };
+    const formatted = new Intl.DateTimeFormat('id-ID', options).format(date);
+    const clean = formatted.replace(/\./g, ':');
+    return `[${clean} WIB]`;
+  } catch (e) {
+    return '';
+  }
+}
+
+/**
  * Helper to format and sanitize chat history rows for Gemini SDK
  */
 function formatHistory(historyRows) {
   const formattedHistory = [];
   for (const row of historyRows) {
     const role = row.role === 'model' ? 'model' : 'user';
-    const text = (row.content || '').trim();
+    let text = (row.content || '').trim();
     if (!text) continue; // Skip empty messages
+
+    const timePrefix = formatTimestamp(row.timestamp);
+    if (timePrefix) {
+      text = `${timePrefix} ${text}`;
+    }
 
     if (formattedHistory.length === 0) {
       // First message MUST be 'user'
@@ -325,14 +355,31 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
       await db.saveChatMessage(jid, 'user', dbText, sessionId);
     }
 
+    // Prepend the current timestamp context to the latest message sent to Gemini
+    const now = new Date();
+    const timeOptions = {
+      timeZone: 'Asia/Jakarta',
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    };
+    const currentTimeStr = new Intl.DateTimeFormat('id-ID', timeOptions).format(now).replace(/\./g, ':');
+    const timePrefixContext = `[Waktu Sekarang: ${currentTimeStr} WIB]\n\n`;
+
     // Send the user message (including image if present) to Gemini
     let result;
     if (imagePart) {
       // If there is an image, we send both the image block and the text/caption
       const promptText = text.trim() ? text : 'Jelaskan foto ini dan cari produk serupa di katalog.';
-      result = await chat.sendMessage([imagePart, promptText]);
+      const timePrefixedPrompt = timePrefixContext + promptText;
+      result = await chat.sendMessage([imagePart, timePrefixedPrompt]);
     } else {
-      result = await chat.sendMessage(text);
+      const timePrefixedText = timePrefixContext + text;
+      result = await chat.sendMessage(timePrefixedText);
     }
     let response = result.response;
 
