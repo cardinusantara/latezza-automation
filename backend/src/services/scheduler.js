@@ -7,6 +7,7 @@ const followupService = require('./followup');
 let adsJob = null;
 let creativeJob = null;
 let followupJob = null;
+let pendingRepliesJob = null;
 
 /**
  * Helper to build standard cron expression for a daily check at a specific time.
@@ -109,6 +110,17 @@ async function setupScheduledJobs(log = console) {
   }, {
     timezone: "Asia/Jakarta"
   });
+
+  // 5. Schedule WhatsApp Pending Replies Retry scan (every minute)
+  log.info('Scheduling Minute Pending AI Replies scan: "*/1 * * * *"');
+  pendingRepliesJob = cron.schedule('*/1 * * * *', () => {
+    log.info('Triggering scheduled pending AI replies retry check...');
+    const whatsappService = require('./whatsapp');
+    whatsappService.processPendingReplies(log)
+      .catch(err => log.error(`Scheduled pending replies retry failed: ${err.message}`));
+  }, {
+    timezone: "Asia/Jakarta"
+  });
   
   log.info('✅ Background scheduler tasks registered successfully.');
 }
@@ -131,6 +143,11 @@ function stopAllJobs(log = console) {
     log.info('Stopping active Follow-up cron job...');
     followupJob.stop();
     followupJob = null;
+  }
+  if (pendingRepliesJob) {
+    log.info('Stopping active Pending AI Replies cron job...');
+    pendingRepliesJob.stop();
+    pendingRepliesJob = null;
   }
 }
 

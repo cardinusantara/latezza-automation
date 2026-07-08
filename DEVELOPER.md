@@ -290,6 +290,24 @@ updated_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 FOREIGN KEY (phone_number, session_id) REFERENCES customers(phone_number, session_id) ON DELETE CASCADE
 ```
 
+### pending_ai_replies
+```sql
+id            SERIAL PRIMARY KEY
+jid           VARCHAR(50) NOT NULL
+session_id    VARCHAR(50) DEFAULT 'default' REFERENCES whatsapp_sessions(id) ON DELETE CASCADE
+combined_text TEXT NOT NULL
+image_part    JSONB
+image_url     TEXT
+voice_url     TEXT
+sender_name   VARCHAR(100)
+message_keys  JSONB DEFAULT '[]'::jsonb  -- Array of Baileys message keys to mark read upon successful retry
+attempts      INT DEFAULT 0
+next_attempt  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+UNIQUE (jid, session_id)
+```
+
 ---
 
 ## SETTINGS SYSTEM
@@ -403,7 +421,7 @@ mode 3 — full template (followup_instruction contains `{history}`):
 
 in all 3 modes, a "INSTRUKSI OUTPUT (WAJIB DIIKUTI)" block is always appended:
   - output must be ONE single ready-to-send WhatsApp message
-  - no markdown, no options, no tips
+  - bold markdown is allowed for product names/details, but no other markdown formatting, options, or tips
   - max 2-3 sentences
   - starts with greeting using customer name
 

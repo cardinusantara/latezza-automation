@@ -40,10 +40,25 @@ interface SettingsState {
   shopee_shop_id: string;
 }
 
+interface Business {
+  id: number;
+  name: string;
+  short_description?: string;
+  contact_phone?: string;
+  address?: string;
+  website?: string;
+  ai_settings?: {
+    tone?: string;
+    custom_prompt?: string;
+    handoff_rules?: string;
+    followup_rules?: string;
+  };
+}
+
 interface SettingsProps {
   showToast: (message: string) => void;
   businessId: number;
-  activeBusiness: any;
+  activeBusiness: Business | null;
   onRefreshBusinesses: () => void;
 }
 
@@ -68,16 +83,18 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
 
   useEffect(() => {
     if (activeBusiness) {
-      setBusinessForm({
-        name: activeBusiness.name || '',
-        shortDescription: activeBusiness.short_description || '',
-        contactPhone: activeBusiness.contact_phone || '',
-        address: activeBusiness.address || '',
-        website: activeBusiness.website || '',
-        tone: activeBusiness.ai_settings?.tone || 'friendly and polite',
-        customPrompt: activeBusiness.ai_settings?.custom_prompt || '',
-        handoffRules: activeBusiness.ai_settings?.handoff_rules || '',
-        followupRules: activeBusiness.ai_settings?.followup_rules || ''
+      Promise.resolve().then(() => {
+        setBusinessForm({
+          name: activeBusiness.name || '',
+          shortDescription: activeBusiness.short_description || '',
+          contactPhone: activeBusiness.contact_phone || '',
+          address: activeBusiness.address || '',
+          website: activeBusiness.website || '',
+          tone: activeBusiness.ai_settings?.tone || 'friendly and polite',
+          customPrompt: activeBusiness.ai_settings?.custom_prompt || '',
+          handoffRules: activeBusiness.ai_settings?.handoff_rules || '',
+          followupRules: activeBusiness.ai_settings?.followup_rules || ''
+        });
       });
     }
   }, [activeBusiness]);
@@ -257,7 +274,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
           <button
             key={cat.id}
             type="button"
-            onClick={() => setActiveCategory(cat.id as any)}
+            onClick={() => setActiveCategory(cat.id as 'api' | 'security' | 'schedules' | 'followup' | 'persona' | 'business')}
             className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border shrink-0 transition-colors snap-center ${
               activeCategory === cat.id
                 ? 'bg-primary text-primary-foreground border-primary'

@@ -70,12 +70,13 @@ describe('Scheduler Service', () => {
     await scheduler.setupScheduledJobs(mockLog);
 
     const jobs = cron._getMockJobs();
-    expect(jobs).toHaveLength(3); // Ads, Creative, Follow-up
+    expect(jobs).toHaveLength(4); // Ads, Creative, Follow-up, Pending AI Replies
     
     // Check cron expressions
     expect(jobs[0].expr).toBe('30 8 * * *'); // Ads
     expect(jobs[1].expr).toBe('15 22 * * *'); // Creative
     expect(jobs[2].expr).toBe('0 * * * *'); // Follow-up
+    expect(jobs[3].expr).toBe('*/1 * * * *'); // Pending AI Replies
   });
 
   test('setupScheduledJobs defaults invalid time formats to 09:00', async () => {
@@ -102,8 +103,9 @@ describe('Scheduler Service', () => {
     await scheduler.setupScheduledJobs(mockLog);
 
     const jobs = cron._getMockJobs();
-    expect(jobs).toHaveLength(1); // Only follow-up (always scheduled)
+    expect(jobs).toHaveLength(2); // Follow-up and Pending AI Replies (both always scheduled)
     expect(jobs[0].expr).toBe('0 * * * *');
+    expect(jobs[1].expr).toBe('*/1 * * * *');
   });
 
   test('Ads Analysis cron job execution logic - run vs skip', async () => {

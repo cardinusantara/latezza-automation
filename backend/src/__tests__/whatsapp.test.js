@@ -28,7 +28,14 @@ jest.mock('../db', () => ({
   updateSessionConnected: jest.fn(() => Promise.resolve()),
   createSession: jest.fn(() => Promise.resolve()),
   saveChatMessage: jest.fn(() => Promise.resolve()),
-  saveUsageLog: jest.fn(() => Promise.resolve())
+  saveUsageLog: jest.fn(() => Promise.resolve()),
+  upsertPendingReply: jest.fn(() => Promise.resolve()),
+  pool: {
+    connect: jest.fn(() => Promise.resolve({
+      query: jest.fn(() => Promise.resolve({ rows: [] })),
+      release: jest.fn()
+    }))
+  }
 }));
 
 // Mock agent
@@ -649,4 +656,83 @@ describe('WhatsApp Service', () => {
       expect(mockLog.warn).toHaveBeenCalledWith(expect.stringContaining('Rate limit triggered'));
     });
   });
+
+  describe('markdownToWhatsApp', () => {
+    test('converts basic markdown bold, italic, and strikethrough', () => {
+      expect(whatsapp.markdownToWhatsApp('Hello **world**!')).toBe('Hello *world*!');
+      expect(whatsapp.markdownToWhatsApp('Hello __world__!')).toBe('Hello *world*!');
+      expect(whatsapp.markdownToWhatsApp('Hello ~~world~~!')).toBe('Hello ~world~!');
+    });
+
+    test('converts bold italic combinations', () => {
+      expect(whatsapp.markdownToWhatsApp('Hello ***world***!')).toBe('Hello *_world_*!');
+      expect(whatsapp.markdownToWhatsApp('Hello ___world___!')).toBe('Hello *_world_*!');
+    });
+
+    test('preserves inline code blocks and fences', () => {
+      expect(whatsapp.markdownToWhatsApp('Here is `**code**` and **bold**.')).toBe('Here is `**code**` and *bold*.');
+      expect(whatsapp.markdownToWhatsApp('```\nconst a = "**bold**";\n```')).toBe('```\nconst a = "**bold**";\n```');
+    });
+
+    test('returns empty or null inputs as-is', () => {
+      expect(whatsapp.markdownToWhatsApp('')).toBe('');
+      expect(whatsapp.markdownToWhatsApp(null)).toBe(null);
+      expect(whatsapp.markdownToWhatsApp(undefined)).toBe(undefined);
+    });
+  });
+
+  describe('processPendingReplies', () => {
+    let mockExecutableReplies;
+    beforeEach(() => {
+      mockExecutableReplies = [
+        {
+          id: 1,
+          jid: '628123456@s.whatsapp.net',
+          session_id: 'default',
+          combined_text: 'Tanya Kue',
+          image_part: null,
+          image_url: null,
+          voice_url: null,
+          sender_name: 'Fardhan',
+          message_keys: [{ remoteJid: '628123456@s.whatsapp.net', fromMe: false, id: '123' }],
+          attempts: 0
+        }
+      ];
+      db.getExecutablePendingReplies = jest.fn(() => Promise.resolve(mockExecutableReplies));
+      db.deletePendingReply = jest.fn(() => Promise.resolve());
+      db.incrementPendingReplyAttempt = jest.fn(() => Promise.resolve());
+      
+      // Ensure default session is ready in sessions Map
+      whatsapp.sessions.set('default', { sock: mockSockObj, ready: true });
+    });
+
+    test('successfully retries a pending reply', async () => {
+      agent.handleIncomingMessage.mockResolvedValue('AI Response for Retry');
+
+      await whatsapp.processPendingReplies(mockLog);
+
+      expect(agent.handleIncomingMessage).toHaveBeenCalledWith(
+        '628123456@s.whatsapp.net',
+        'Tanya Kue',
+        'Fardhan',
+        null,
+        null,
+        'default',
+        null
+      );
+      expect(mockSockObj.readMessages).toHaveBeenCalledWith(mockExecutableReplies[0].message_keys);
+      expect(mockSockObj.sendMessage).toHaveBeenCalledWith('628123456@s.whatsapp.net', { text: 'AI Response for Retry' });
+      expect(db.deletePendingReply).toHaveBeenCalledWith(1);
+    });
+
+    test('increments attempts on retry failure', async () => {
+      agent.handleIncomingMessage.mockRejectedValue(new Error('Gemini API Error'));
+
+      await whatsapp.processPendingReplies(mockLog);
+
+      expect(db.incrementPendingReplyAttempt).toHaveBeenCalledWith(1, 60);
+      expect(db.deletePendingReply).not.toHaveBeenCalled();
+    });
+  });
 });
+

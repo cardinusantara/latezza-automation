@@ -22,6 +22,59 @@ const rateLimitCache = new Map();
 const debounceCache = new Map();
 const DEBOUNCE_DELAY_MS = Number.parseInt(process.env.DEBOUNCE_DELAY_MS || '3000', 10);
 
+// In-Memory lock to prevent concurrent AI processing of the same customer
+const processingCustomers = new Set();
+
+const WHATSAPP_FENCE_PLACEHOLDER = '\x00FENCE';
+const WHATSAPP_INLINE_CODE_PLACEHOLDER = '\x00CODE';
+const WHATSAPP_PLACEHOLDER_TERMINATOR = '\x00';
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function markdownToWhatsApp(text) {
+  if (!text) {
+    return text;
+  }
+
+  const fences = [];
+  let result = text.replace(/```[\s\S]*?```/g, (match) => {
+    fences.push(match);
+    return `${WHATSAPP_FENCE_PLACEHOLDER}${fences.length - 1}${WHATSAPP_PLACEHOLDER_TERMINATOR}`;
+  });
+
+  const inlineCodes = [];
+  result = result.replace(/`[^`\n]+`/g, (match) => {
+    inlineCodes.push(match);
+    return `${WHATSAPP_INLINE_CODE_PLACEHOLDER}${inlineCodes.length - 1}${WHATSAPP_PLACEHOLDER_TERMINATOR}`;
+  });
+
+  // Convert combined GFM strong+emphasis before plain strong so the plain
+  // rules cannot leave literal `**` around the inner emphasis.
+  result = result.replace(/\*\*\*(.+?)\*\*\*/g, '*_$1_*');
+  result = result.replace(/___(.+?)___/g, '*_$1_*');
+  result = result.replace(/\*\*_(.+?)_\*\*/g, '*_$1_*');
+  result = result.replace(/__\*(.+?)\*__/g, '*_$1_*');
+  result = result.replace(/_\*\*(.+?)\*\*_/g, '*_$1_*');
+  result = result.replace(/\*__(.+?)__\*/g, '*_$1_*');
+
+  result = result.replace(/\*\*(.+?)\*\*/g, '*$1*');
+  result = result.replace(/__(.+?)__/g, '*$1*');
+  result = result.replace(/~~(.+?)~~/g, '~$1~');
+
+  const terminator = escapeRegExp(WHATSAPP_PLACEHOLDER_TERMINATOR);
+  result = result.replace(
+    new RegExp(`${escapeRegExp(WHATSAPP_INLINE_CODE_PLACEHOLDER)}(\\d+)${terminator}`, 'g'),
+    (_, idx) => inlineCodes[Number(idx)] ?? ''
+  );
+  result = result.replace(
+    new RegExp(`${escapeRegExp(WHATSAPP_FENCE_PLACEHOLDER)}(\\d+)${terminator}`, 'g'),
+    (_, idx) => fences[Number(idx)] ?? ''
+  );
+  return result;
+}
+
 async function processDebouncedMessage(cacheKey, log = console) {
   const data = debounceCache.get(cacheKey);
   if (!data) return;
@@ -29,7 +82,35 @@ async function processDebouncedMessage(cacheKey, log = console) {
   // Immediately remove from cache so any subsequent messages start a new debounce timer
   debounceCache.delete(cacheKey);
 
-  const { jid, sessionId, senderName, sock, texts, imageParts, imageUrls, voiceUrls } = data;
+  const { jid, sessionId, senderName, sock, texts, imageParts, imageUrls, voiceUrls, messageKeys } = data;
+
+  const lockKey = `${sessionId}:${jid}`;
+  if (processingCustomers.has(lockKey)) {
+    log.info(`[Lock] Customer ${lockKey} is already being processed. Queueing this message for retry...`);
+    try {
+      const finalImagePart = imageParts.length > 0 ? imageParts[imageParts.length - 1] : null;
+      const finalImageUrl = imageUrls.length > 0 ? imageUrls[imageUrls.length - 1] : null;
+      const finalVoiceUrl = voiceUrls.length > 0 ? voiceUrls[voiceUrls.length - 1] : null;
+      const combinedText = texts.map(t => t.trim()).filter(Boolean).join('\n');
+
+      await db.upsertPendingReply(
+        jid,
+        sessionId,
+        combinedText,
+        finalImagePart,
+        finalImageUrl,
+        finalVoiceUrl,
+        senderName,
+        messageKeys
+      );
+    } catch (dbErr) {
+      log.error(`Failed to upsert pending reply in DB: ${dbErr.message}`);
+    }
+    return;
+  }
+
+  // Acquire in-memory lock
+  processingCustomers.add(lockKey);
 
   try {
     // Combine all texts. Filter out empty messages.
@@ -56,9 +137,44 @@ async function processDebouncedMessage(cacheKey, log = console) {
     );
 
     await sock.sendPresenceUpdate('paused', jid);
-    await sock.sendMessage(jid, { text: replyText });
+
+    // Mark messages as read ONLY after successful AI completion
+    if (messageKeys && messageKeys.length > 0) {
+      try {
+        await sock.readMessages(messageKeys);
+      } catch (readErr) {
+        log.warn(`Failed to read messages in processDebouncedMessage: ${readErr.message}`);
+      }
+    }
+
+    await sock.sendMessage(jid, { text: markdownToWhatsApp(replyText) });
   } catch (err) {
     log.error(`❌ Error in processDebouncedMessage for ${jid} on session ${sessionId}: ${err.message}`);
+
+    // Fallback: Queue failed message in pending_ai_replies for background retries
+    try {
+      const finalImagePart = imageParts.length > 0 ? imageParts[imageParts.length - 1] : null;
+      const finalImageUrl = imageUrls.length > 0 ? imageUrls[imageUrls.length - 1] : null;
+      const finalVoiceUrl = voiceUrls.length > 0 ? voiceUrls[voiceUrls.length - 1] : null;
+      const combinedText = texts.map(t => t.trim()).filter(Boolean).join('\n');
+
+      log.info(`Queueing failed message from ${jid} for retry...`);
+      await db.upsertPendingReply(
+        jid,
+        sessionId,
+        combinedText,
+        finalImagePart,
+        finalImageUrl,
+        finalVoiceUrl,
+        senderName,
+        messageKeys
+      );
+    } catch (dbErr) {
+      log.error(`Failed to upsert pending reply in DB: ${dbErr.message}`);
+    }
+  } finally {
+    // Release in-memory lock
+    processingCustomers.delete(lockKey);
   }
 }
 
@@ -362,9 +478,8 @@ async function resolveCustomerAndPresence(jid, senderName, sessionId, sock, msg,
   if (customer.ai_enabled !== false) {
     try {
       await sock.sendPresenceUpdate('composing', jid);
-      await sock.readMessages([msg.key]);
     } catch (err) {
-      log.warn(`Failed initial presence/read update: ${err.message}`);
+      log.warn(`Failed initial presence update: ${err.message}`);
     }
   }
   return customer;
@@ -374,7 +489,7 @@ async function resolveCustomerAndPresence(jid, senderName, sessionId, sock, msg,
  * Helper to push an incoming message to the debounce cache queue
  */
 function addMessageToDebounceBuffer(params) {
-  const { cacheKey, jid, sessionId, senderName, sock, text, imagePart, imageUrl, voiceUrl, log } = params;
+  const { cacheKey, jid, sessionId, senderName, sock, text, imagePart, imageUrl, voiceUrl, log, msg } = params;
   if (debounceCache.has(cacheKey)) {
     const pending = debounceCache.get(cacheKey);
     clearTimeout(pending.timer);
@@ -383,6 +498,7 @@ function addMessageToDebounceBuffer(params) {
     if (imagePart) pending.imageParts.push(imagePart);
     if (imageUrl) pending.imageUrls.push(imageUrl);
     if (voiceUrl) pending.voiceUrls.push(voiceUrl);
+    if (msg?.key) pending.messageKeys.push(msg.key);
 
     pending.timer = setTimeout(() => processDebouncedMessage(cacheKey, log), DEBOUNCE_DELAY_MS);
     log.info(`⏳ Added to existing debounce buffer for ${senderName} (${jid}). Message count: ${pending.texts.length}`);
@@ -395,6 +511,7 @@ function addMessageToDebounceBuffer(params) {
       senderName,
       sock,
       texts: [text],
+      messageKeys: msg?.key ? [msg.key] : [],
       imageParts: imagePart ? [imagePart] : [],
       imageUrls: imageUrl ? [imageUrl] : [],
       voiceUrls: voiceUrl ? [voiceUrl] : []
@@ -446,10 +563,10 @@ async function processIncomingMessage(msg, sessionId, sock, log) {
 
     // 3. Debounce / Buffer the incoming message
     const cacheKey = `${sessionId}:${jid}`;
-    addMessageToDebounceBuffer({ cacheKey, jid, sessionId, senderName, sock, text, imagePart, imageUrl, voiceUrl, log });
+    addMessageToDebounceBuffer({ cacheKey, jid, sessionId, senderName, sock, text, imagePart, imageUrl, voiceUrl, log, msg });
 
   } catch (err) {
-    log.error(`Error in messages.upsert handler for session ${sessionId}: ${err.message}`);
+    log.error(`Error in processIncomingMessage handler for session ${sessionId}: ${err.message}`);
   }
 }
 
@@ -572,6 +689,12 @@ async function sendMessage(jid, content, sessionId = null) {
   if (!s?.sock || !s?.ready) {
     throw new Error(`WhatsApp session "${targetSessionId || 'default'}" is not ready.`);
   }
+
+  // Convert markdown to WhatsApp formatting style
+  if (content && typeof content.text === 'string') {
+    content.text = markdownToWhatsApp(content.text);
+  }
+
   return await s.sock.sendMessage(jid, content);
 }
 
@@ -600,6 +723,83 @@ async function getGroups(sessionId = null) {
   }));
 }
 
+async function processPendingReplies(log = console) {
+  try {
+    const pending = await db.getExecutablePendingReplies();
+    if (pending.length === 0) return;
+
+    log.info(`[Retry Queue] Found ${pending.length} pending AI replies to retry.`);
+
+    for (const row of pending) {
+      const sessionId = row.session_id || 'default';
+      const jid = row.jid;
+
+      if (!isReady(sessionId)) {
+        log.warn(`[Retry Queue] WhatsApp session "${sessionId}" is not ready. Skipping retry for ${jid}.`);
+        continue;
+      }
+
+      const lockKey = `${sessionId}:${jid}`;
+      if (processingCustomers.has(lockKey)) {
+        log.info(`[Retry Queue] Customer ${lockKey} is currently processing in another worker. Skipping retry.`);
+        continue;
+      }
+
+      const s = sessions.get(sessionId);
+      const sock = s.sock;
+
+      // Acquire in-memory lock
+      processingCustomers.add(lockKey);
+
+      try {
+        log.info(`[Retry Queue] Retrying reply for ${row.sender_name} (${jid}) on session ${sessionId} (Attempt ${row.attempts + 1})...`);
+
+        // Send composing presence update
+        await sock.sendPresenceUpdate('composing', jid);
+
+        const replyText = await agent.handleIncomingMessage(
+          jid,
+          row.combined_text,
+          row.sender_name,
+          row.image_part,
+          row.image_url,
+          sessionId,
+          row.voice_url
+        );
+
+        await sock.sendPresenceUpdate('paused', jid);
+
+        // Mark messages as read
+        if (row.message_keys && row.message_keys.length > 0) {
+          try {
+            await sock.readMessages(row.message_keys);
+          } catch (readErr) {
+            log.warn(`Failed to read messages in processPendingReplies: ${readErr.message}`);
+          }
+        }
+
+        // Send the reply
+        await sock.sendMessage(jid, { text: markdownToWhatsApp(replyText) });
+
+        // Remove from pending replies
+        await db.deletePendingReply(row.id);
+        log.info(`[Retry Queue] Successfully processed and sent reply to ${jid}.`);
+      } catch (err) {
+        log.error(`[Retry Queue] Failed retry attempt for ${jid}: ${err.message}`);
+
+        // Increment attempt with linear backoff (60s * attempts, max 300s)
+        const nextAttemptDelay = Math.min(60 * (row.attempts + 1), 300);
+        await db.incrementPendingReplyAttempt(row.id, nextAttemptDelay);
+      } finally {
+        // Release in-memory lock
+        processingCustomers.delete(lockKey);
+      }
+    }
+  } catch (err) {
+    log.error(`[Retry Queue] Error in processPendingReplies worker: ${err.message}`);
+  }
+}
+
 module.exports = {
   connectToWhatsApp,
   connectSession,
@@ -610,5 +810,7 @@ module.exports = {
   sessions,
   transcribeAudio,
   debounceCache,
-  processDebouncedMessage
+  processDebouncedMessage,
+  markdownToWhatsApp,
+  processPendingReplies
 };

@@ -23,7 +23,7 @@ async function processSingleFollowUp(lead, model, activeModel, userInstruction, 
     .join('\n');
 
   // The strict output enforcement block always appended at the end
-  const strictOutputRule = `\nINSTRUKSI OUTPUT (WAJIB DIIKUTI):\n- Tulis HANYA satu pesan WhatsApp siap kirim. TIDAK BOLEH ada opsi, penjelasan, tips, atau teks lain selain pesan itu sendiri.\n- JANGAN gunakan format markdown (tidak ada **, *, >, #). Teks polos saja.\n- Mulai dengan sapaan ke "{name}", contoh: "Halo Kak {name}!"\n- Maksimal 2-3 kalimat. Akhiri dengan kalimat yang mengundang respons.\n\nOutput HANYA teks pesan WhatsApp-nya saja, tidak ada yang lain.`;
+  const strictOutputRule = `\nINSTRUKSI OUTPUT (WAJIB DIIKUTI):\n- Tulis HANYA satu pesan WhatsApp siap kirim. TIDAK BOLEH ada opsi, penjelasan, tips, atau teks lain selain pesan itu sendiri.\n- Boleh gunakan cetak tebal/bold (**teks**) untuk nama produk atau informasi penting. JANGAN gunakan header (# atau ##).\n- Mulai dengan sapaan ke "{name}", contoh: "Halo Kak {name}!"\n- Maksimal 2-3 kalimat. Akhiri dengan kalimat yang mengundang respons.\n\nOutput HANYA teks pesan WhatsApp-nya saja, tidak ada yang lain.`;
 
   let followUpPrompt;
 

@@ -39,6 +39,23 @@ interface Stats {
   recentLeads: Lead[];
 }
 
+interface Business {
+  id: number;
+  name: string;
+  slug: string;
+  short_description?: string;
+  contact_phone?: string;
+  address?: string;
+  website?: string;
+  social_media?: unknown;
+  ai_settings?: {
+    tone?: string;
+    custom_prompt?: string;
+    handoff_rules?: string;
+    followup_rules?: string;
+  };
+}
+
 export default function App() {
   const VALID_TABS = ['overview', 'whatsapp-sessions', 'inbox', 'broadcast', 'products', 'actions', 'settings', 'ads-report', 'creative-ideas'];
   const [activeTab, setActiveTab] = useState(() => {
@@ -47,7 +64,7 @@ export default function App() {
   });
 
   // Multi-tenant businesses state
-  const [businesses, setBusinesses] = useState<{ id: number; name: string; slug: string; short_description?: string; contact_phone?: string; address?: string; website?: string; social_media?: any; ai_settings?: any }[]>([]);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
   const [currentBusinessId, setCurrentBusinessId] = useState<number>(() => {
     const saved = localStorage.getItem('currentBusinessId');
     return saved ? Number.parseInt(saved, 10) : 1;
@@ -296,18 +313,22 @@ export default function App() {
 
   // Initial load: fetch businesses list first
   useEffect(() => {
-    loadBusinesses();
+    Promise.resolve().then(() => {
+      loadBusinesses();
+    });
   }, []);
 
   // Sync state and load initial data when currentBusinessId changes
   useEffect(() => {
-    setOverviewSessionId('all');
-    setSelectedSessionId('default');
-    
-    loadSessions();
-    loadStats();
-    loadCustomers();
-    loadProducts();
+    Promise.resolve().then(() => {
+      setOverviewSessionId('all');
+      setSelectedSessionId('default');
+      
+      loadSessions();
+      loadStats();
+      loadCustomers();
+      loadProducts();
+    });
   }, [currentBusinessId]);
 
   // Reload stats when overview session changes

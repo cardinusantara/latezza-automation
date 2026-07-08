@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   IconBrandWhatsapp, 
   IconPlus, 
@@ -54,7 +54,7 @@ export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessio
   });
 
   // Fetch sessions
-  const fetchSessions = async (silent = false) => {
+  const fetchSessions = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions?business_id=${businessId}`);
@@ -68,15 +68,17 @@ export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessio
     } finally {
       if (!silent) setLoading(false);
     }
-  };
+  }, [businessId]);
 
   useEffect(() => {
-    fetchSessions();
+    Promise.resolve().then(() => {
+      fetchSessions();
+    });
     const interval = setInterval(() => {
       fetchSessions(true);
     }, 3000);
     return () => clearInterval(interval);
-  }, [businessId]);
+  }, [fetchSessions]);
 
   // Handle Add Session
   const handleAddSession = async (e: React.SyntheticEvent<HTMLFormElement>) => {

@@ -277,6 +277,27 @@ async function initDb() {
       ON CONFLICT (id) DO NOTHING;
     `);
 
+    // 9. Pending AI Replies Table for Failures and Retries
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS pending_ai_replies (
+        id SERIAL PRIMARY KEY,
+        jid VARCHAR(50) NOT NULL,
+        session_id VARCHAR(50) NOT NULL,
+        combined_text TEXT,
+        image_part JSON,
+        image_url TEXT,
+        voice_url TEXT,
+        sender_name VARCHAR(100),
+        message_keys JSONB NOT NULL,
+        attempts INT DEFAULT 0,
+        next_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT unique_pending_conversation UNIQUE (jid, session_id)
+      );
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_pending_ai_replies_lookup ON pending_ai_replies(jid, session_id);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_pending_ai_replies_next_attempt ON pending_ai_replies(next_attempt);`);
+
     console.log('✅ PostgreSQL database tables initialized successfully.');
     
     // Load settings from database
@@ -910,6 +931,62 @@ async function updateBusiness(id, updates) {
   return res.rows[0];
 }
 
+/**
+ * Upsert pending AI reply on failure
+ */
+async function upsertPendingReply(jid, sessionId, text, imagePart, imageUrl, voiceUrl, senderName, messageKeys) {
+  const imagePartJson = imagePart ? JSON.stringify(imagePart) : null;
+  const messageKeysJson = JSON.stringify(messageKeys);
+
+  await pool.query(`
+    INSERT INTO pending_ai_replies (
+      jid, session_id, combined_text, image_part, image_url, voice_url, sender_name, message_keys, attempts, next_attempt
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, NOW())
+    ON CONFLICT (jid, session_id) DO UPDATE SET
+      combined_text = CASE 
+        WHEN pending_ai_replies.combined_text IS NULL OR pending_ai_replies.combined_text = '' THEN EXCLUDED.combined_text
+        ELSE pending_ai_replies.combined_text || E'\n' || EXCLUDED.combined_text
+      END,
+      message_keys = pending_ai_replies.message_keys || EXCLUDED.message_keys,
+      image_part = COALESCE(EXCLUDED.image_part, pending_ai_replies.image_part),
+      image_url = COALESCE(EXCLUDED.image_url, pending_ai_replies.image_url),
+      voice_url = COALESCE(EXCLUDED.voice_url, pending_ai_replies.voice_url),
+      attempts = 0,
+      next_attempt = NOW();
+  `, [jid, sessionId, text || '', imagePartJson, imageUrl, voiceUrl, senderName, messageKeysJson]);
+}
+
+/**
+ * Get pending replies that are ready for retry
+ */
+async function getExecutablePendingReplies() {
+  const res = await pool.query(`
+    SELECT * FROM pending_ai_replies 
+    WHERE next_attempt <= NOW() 
+    ORDER BY created_at ASC
+  `);
+  return res.rows;
+}
+
+/**
+ * Delete pending reply on success
+ */
+async function deletePendingReply(id) {
+  await pool.query('DELETE FROM pending_ai_replies WHERE id = $1', [id]);
+}
+
+/**
+ * Increment retry attempt with backoff delay
+ */
+async function incrementPendingReplyAttempt(id, delaySeconds) {
+  await pool.query(`
+    UPDATE pending_ai_replies 
+    SET attempts = attempts + 1,
+        next_attempt = NOW() + ($2 || ' seconds')::INTERVAL
+    WHERE id = $1
+  `, [id, delaySeconds]);
+}
+
 module.exports = {
   pool,
   initDb,
@@ -949,5 +1026,9 @@ module.exports = {
   getBusinesses,
   getBusinessById,
   getBusinessBySlug,
-  updateBusiness
+  updateBusiness,
+  upsertPendingReply,
+  getExecutablePendingReplies,
+  deletePendingReply,
+  incrementPendingReplyAttempt
 };
