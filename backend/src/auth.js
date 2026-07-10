@@ -5,14 +5,6 @@ module.exports = fp(async function (fastify, opts) {
     secret: process.env.AUTH_JWT_SECRET || 'latezza-default-secret-change-me'
   });
 
-  fastify.decorate('authenticate', async function (request, reply) {
-    try {
-      await request.jwtVerify();
-    } catch (err) {
-      reply.status(401).send({ error: 'Unauthorized', message: 'Token tidak valid atau sudah kedaluwarsa.' });
-    }
-  });
-
   fastify.post('/api/auth/login', {
     schema: {
       body: {
@@ -42,7 +34,7 @@ module.exports = fp(async function (fastify, opts) {
   });
 
   fastify.get('/api/auth/verify', {
-    preHandler: [fastify.authenticate]
+    preHandler: [(request, reply) => request.jwtVerify().catch(() => reply.status(401).send({ error: 'Unauthorized', message: 'Token tidak valid atau sudah kedaluwarsa.' }))]
   }, async (request, reply) => {
     return { status: 'success', user: request.user };
   });
