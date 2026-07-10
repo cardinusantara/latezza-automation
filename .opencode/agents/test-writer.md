@@ -1,6 +1,7 @@
 ---
 description: Membuat dan menjalankan unit test untuk fitur baru, perbaikan bug, atau modifikasi kode. Gunakan @test-writer di chat untuk memanggilnya.
 mode: subagent
+model: 9router/combowombo
 permission:
   edit: allow
   bash: allow
