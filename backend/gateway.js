@@ -55,8 +55,26 @@ fastify.register(require('@fastify/static'), {
 
 const PORT = process.env.WHATSAPP_PORT || 3001;
 
+// Register Auth plugin (JWT + login/verify routes)
+fastify.register(require('./src/auth'));
+
 // Register API and redirect routes
 registerRoutes(fastify);
+
+// Protect all /api/* routes except /api/auth/*
+fastify.addHook('onRoute', (routeOptions) => {
+  if (routeOptions.url.startsWith('/api/') && !routeOptions.url.startsWith('/api/auth/')) {
+    if (routeOptions.config?.public) return;
+    const existing = routeOptions.preHandler;
+    if (Array.isArray(existing)) {
+      routeOptions.preHandler = [fastify.authenticate, ...existing];
+    } else if (existing) {
+      routeOptions.preHandler = [fastify.authenticate, existing];
+    } else {
+      routeOptions.preHandler = [fastify.authenticate];
+    }
+  }
+});
 
 // Start fastify server and initialize processes
 async function start() {

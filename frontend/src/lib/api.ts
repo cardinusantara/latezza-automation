@@ -1,5 +1,11 @@
 import { API_BASE_URL } from '@/config';
 
+let authToken: string | null = null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+}
+
 export class ApiError extends Error {
   statusCode?: number;
   endpoint?: string;
@@ -24,15 +30,23 @@ async function request<T>(
   const url = `${API_BASE_URL}${endpoint}`;
   const body = options?.body !== undefined ? JSON.stringify(options.body) : undefined;
   try {
+    const headers: Record<string, string> = {
+      ...(body ? { 'Content-Type': 'application/json' } : {}),
+      ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {}),
+      ...options?.headers,
+    };
     const res = await fetch(url, {
       method,
-      headers: {
-        ...(body ? { 'Content-Type': 'application/json' } : {}),
-        ...options?.headers,
-      },
+      headers,
       body,
       signal: options?.signal,
     });
+
+    if (res.status === 401) {
+      setAuthToken(null);
+      localStorage.removeItem('auth_token');
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+    }
 
     if (!res.ok) {
       let message = `HTTP ${res.status}`;
