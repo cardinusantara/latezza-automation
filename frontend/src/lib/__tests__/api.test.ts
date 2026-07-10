@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { api, ApiError } from '../api';
+import { api, ApiError, setAuthToken } from '../api';
 import { API_BASE_URL } from '@/config';
 
 /** Helper: build a mock Response with JSON headers */
@@ -219,5 +219,52 @@ describe('api service layer', () => {
     const [, options] = (window.fetch as ReturnType<typeof vi.fn>).mock
       .calls[0];
     expect(options.headers['Content-Type']).toBe('application/json');
+  });
+
+  test('setAuthToken adds Authorization Bearer header', async () => {
+    setAuthToken('my-test-token');
+    (window.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockJsonResponse({ ok: true }),
+    );
+
+    await api.get('/api/test');
+
+    const [, options] = (window.fetch as ReturnType<typeof vi.fn>).mock
+      .calls[0];
+    expect(options.headers['Authorization']).toBe('Bearer my-test-token');
+    setAuthToken(null);
+  });
+
+  test('setting auth token to null removes Authorization header', async () => {
+    setAuthToken('temp-token');
+    setAuthToken(null);
+    (window.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockJsonResponse({ ok: true }),
+    );
+
+    await api.get('/api/test');
+
+    const [, options] = (window.fetch as ReturnType<typeof vi.fn>).mock
+      .calls[0];
+    expect(options.headers['Authorization']).toBeUndefined();
+  });
+
+  test('401 response dispatches auth:unauthorized event', async () => {
+    setAuthToken('expired-token');
+    (window.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockJsonResponse({ message: 'Unauthorized' }, false, 401),
+    );
+
+    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+
+    await expect(api.get('/api/test')).rejects.toThrow(ApiError);
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'auth:unauthorized',
+      }),
+    );
+    setAuthToken(null);
+    dispatchSpy.mockRestore();
   });
 });

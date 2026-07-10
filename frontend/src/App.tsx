@@ -1,9 +1,12 @@
 import { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import Sidebar from '@/components/Sidebar';
+import LoginPage from '@/components/LoginPage';
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { api } from '@/lib/api';
 import { usePolling } from '@/hooks/use-polling';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/use-auth';
 import { IconSun, IconMoon, IconMenu2, IconPlus, IconDeviceFloppy, IconLoader2 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -32,6 +35,32 @@ const INITIAL_STATS: Stats = {
 };
 
 export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <IconLoader2 size={32} className="animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  return <Dashboard />;
+}
+
+function Dashboard() {
   const VALID_TABS = ['overview', 'whatsapp-sessions', 'inbox', 'broadcast', 'products', 'actions', 'settings', 'ads-report', 'creative-ideas'];
   const [activeTab, setActiveTab] = useState(() => {
     const saved = localStorage.getItem('activeTab');
