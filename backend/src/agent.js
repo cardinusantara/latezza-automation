@@ -45,6 +45,11 @@ async function buildSystemInstructions(businessId = 1) {
   }
 
   return `
+⚠️ CRITICAL INSTRUCTION - TIMESTAMP FORMAT:
+Riwayat chat BERISI metadata waktu format [DD/MM/YYYY HH:mm WIB] di awal setiap pesan.
+INI HANYA UNTUK INTERNAL CONTEXT — jangan pernah tulis ulang, jangan sertakan di balasan Anda.
+Balas langsung dengan teks normal TANPA timestamp, TANPA kurung siku, TANPA format waktu apapun.
+
 Kamu adalah WhatsApp AI Agent untuk bisnis bernama: ${businessName}.
 Deskripsi Bisnis: ${description}
 Alamat Toko: ${address}
