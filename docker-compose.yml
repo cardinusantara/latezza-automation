@@ -24,6 +24,8 @@ services:
       - "${WHATSAPP_PORT:-3001}:3001"
     depends_on:
       - db
+    env_file:
+      - ./backend/.env
     environment:
       - DB_HOST=db
       - DB_PORT=${DB_PORT:-5432}
@@ -41,6 +43,8 @@ services:
       - WHATSAPP_PORT=${WHATSAPP_PORT:-3001}
       - RATE_LIMIT_MAX_MSG=${RATE_LIMIT_MAX_MSG:-5}
       - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-60000}
+      - AUTH_JWT_SECRET=${AUTH_JWT_SECRET}
+      - DASHBOARD_PASSWORD=${DASHBOARD_PASSWORD}
     volumes:
       # Persist the authenticated WhatsApp sessions across container restarts
       - ./backend/whatsapp-sessions:/usr/src/app/whatsapp-sessions
