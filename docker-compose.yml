@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
     env_file:
-      - ./backend/.env
+      - .env
     environment:
       - DB_HOST=db
       - DB_PORT=${DB_PORT:-5432}
