@@ -1,60 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense, useCallback } from 'react';
 import Sidebar from '@/components/Sidebar';
-import Overview from '@/components/Overview';
-import ChatInbox from '@/components/ChatInbox';
-import Products from '@/components/Products';
-import Actions from '@/components/Actions';
-import Settings from '@/components/Settings';
-import AdsReport from '@/components/AdsReport';
-import CreativeReport from '@/components/CreativeReport';
-import WhatsappSessions from '@/components/WhatsappSessions';
-import Broadcast from '@/components/Broadcast';
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { API_BASE_URL } from '@/config';
-import { IconSun, IconMoon, IconMenu2, IconPlus, IconDeviceFloppy } from '@tabler/icons-react';
+import { api } from '@/lib/api';
+import { usePolling } from '@/hooks/use-polling';
+import { IconSun, IconMoon, IconMenu2, IconPlus, IconDeviceFloppy, IconLoader2 } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import type { Lead, Stats, Business, Session, Product } from '@/types';
 
-interface Lead {
-  phone_number: string;
-  session_id: string;
-  name?: string;
-  contact_phone?: string;
-  status?: string;
-  needs_follow_up?: boolean;
-  needs_admin?: boolean;
-  last_interaction: string;
-}
+const Overview = lazy(() => import('@/components/Overview'));
+const ChatInbox = lazy(() => import('@/components/ChatInbox'));
+const Products = lazy(() => import('@/components/Products'));
+const Actions = lazy(() => import('@/components/Actions'));
+const Settings = lazy(() => import('@/components/Settings'));
+const AdsReport = lazy(() => import('@/components/AdsReport'));
+const CreativeReport = lazy(() => import('@/components/CreativeReport'));
+const WhatsappSessions = lazy(() => import('@/components/WhatsappSessions'));
+const Broadcast = lazy(() => import('@/components/Broadcast'));
 
-interface Stats {
-  status: string;
-  totalLeads: number;
-  totalProducts: number;
-  pendingFollowUps: number;
-  incomingMessages: { last24h: number; last7d: number; last30d: number };
-  newLeads: { last24h: number; last7d: number; last30d: number };
-  recentLeads: Lead[];
-}
-
-interface Business {
-  id: number;
-  name: string;
-  slug: string;
-  short_description?: string;
-  contact_phone?: string;
-  address?: string;
-  website?: string;
-  social_media?: unknown;
-  ai_settings?: {
-    tone?: string;
-    custom_prompt?: string;
-    handoff_rules?: string;
-    followup_rules?: string;
-  };
-}
+const INITIAL_STATS: Stats = {
+  status: 'disconnected',
+  totalLeads: 0,
+  totalProducts: 0,
+  pendingFollowUps: 0,
+  incomingMessages: { last24h: 0, last7d: 0, last30d: 0 },
+  newLeads: { last24h: 0, last7d: 0, last30d: 0 },
+  recentLeads: [],
+};
 
 export default function App() {
   const VALID_TABS = ['overview', 'whatsapp-sessions', 'inbox', 'broadcast', 'products', 'actions', 'settings', 'ads-report', 'creative-ideas'];
@@ -74,15 +49,15 @@ export default function App() {
 
   const activeBusiness = businesses.find(b => b.id === currentBusinessId) || null;
 
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
     localStorage.setItem('activeTab', tab);
-  };
+  }, []);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('theme');
     if (saved === 'light' || saved === 'dark') return saved;
-    return 'dark'; // default
+    return 'dark';
   });
 
   const [sidebarWidth, setSidebarWidth] = useState(() => {
@@ -104,7 +79,7 @@ export default function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleToggleCollapse = () => {
+  const handleToggleCollapse = useCallback(() => {
     if (isSidebarCollapsed) {
       const newWidth = lastExpandedWidth < 180 ? 256 : lastExpandedWidth;
       setSidebarWidth(newWidth);
@@ -119,13 +94,13 @@ export default function App() {
       localStorage.setItem('lastExpandedWidth', String(sidebarWidth));
       localStorage.setItem('sidebarWidth', '72');
     }
-  };
+  }, [isSidebarCollapsed, lastExpandedWidth, sidebarWidth]);
 
-  const startResizing = (mouseDownEvent: React.MouseEvent) => {
+  const startResizing = useCallback((mouseDownEvent: React.MouseEvent) => {
     mouseDownEvent.preventDefault();
     const startWidth = sidebarWidth;
     const startX = mouseDownEvent.clientX;
-    
+
     const doDrag = (mouseMoveEvent: MouseEvent) => {
       const newWidth = startWidth + (mouseMoveEvent.clientX - startX);
       if (newWidth > 180 && newWidth < 450) {
@@ -140,15 +115,15 @@ export default function App() {
         localStorage.setItem('sidebarWidth', '72');
       }
     };
-    
+
     const stopDrag = () => {
       document.removeEventListener('mousemove', doDrag);
       document.removeEventListener('mouseup', stopDrag);
     };
-    
+
     document.addEventListener('mousemove', doDrag);
     document.addEventListener('mouseup', stopDrag);
-  };
+  }, [sidebarWidth]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -161,97 +136,86 @@ export default function App() {
 
   const [selectedSessionId, setSelectedSessionId] = useState('default');
   const [overviewSessionId, setOverviewSessionId] = useState('all');
-  const [sessions, setSessions] = useState<{ id: string; name: string; status: string }[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
 
-  const [stats, setStats] = useState<Stats>({
-    status: 'disconnected',
-    totalLeads: 0,
-    totalProducts: 0,
-    pendingFollowUps: 0,
-    incomingMessages: { last24h: 0, last7d: 0, last30d: 0 },
-    newLeads: { last24h: 0, last7d: 0, last30d: 0 },
-    recentLeads: []
-  });
+  const [stats, setStats] = useState<Stats>(INITIAL_STATS);
+  const [statsLoading, setStatsLoading] = useState(false);
   const [customers, setCustomers] = useState<Lead[]>([]);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [selectedJid, setSelectedJid] = useState('');
   const [selectedCustName, setSelectedCustName] = useState('');
 
-  const showToast = (message: string) => {
+  const showToast = useCallback((message: string) => {
     toast(message);
-  };
+  }, []);
 
-  const loadBusinesses = async () => {
+  const loadBusinesses = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/businesses`);
-      const data = await res.json();
+      const data = await api.get<Business[]>('/api/businesses');
       if (Array.isArray(data)) {
         setBusinesses(data);
       }
     } catch (err) {
       console.error('Failed to load businesses:', err);
     }
-  };
+  }, []);
 
-  const loadSessions = async () => {
+  const loadSessions = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions?business_id=${currentBusinessId}`);
-      const data = await res.json();
+      const data = await api.get<Session[]>(`/api/whatsapp/sessions?business_id=${currentBusinessId}`);
       if (Array.isArray(data)) {
         setSessions(data);
       }
     } catch (err) {
       console.error('Failed to load sessions:', err);
     }
-  };
+  }, [currentBusinessId]);
 
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
+    setStatsLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/stats?session_id=${overviewSessionId}&business_id=${currentBusinessId}`);
-      const data = await res.json();
+      const data = await api.get<Stats>(`/api/stats?session_id=${overviewSessionId}&business_id=${currentBusinessId}`);
       setStats(data);
     } catch (err) {
       console.error('Failed to load stats:', err);
+    } finally {
+      setStatsLoading(false);
     }
-  };
+  }, [overviewSessionId, currentBusinessId]);
 
-  const loadCustomers = async () => {
+  const loadCustomers = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers?session_id=${selectedSessionId}&business_id=${currentBusinessId}`);
-      const data = await res.json();
+      const data = await api.get<Lead[]>(`/api/customers?session_id=${selectedSessionId}&business_id=${currentBusinessId}`);
       setCustomers(data || []);
     } catch (err) {
       console.error('Failed to load customers:', err);
     }
-  };
+  }, [selectedSessionId, currentBusinessId]);
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/products?business_id=${currentBusinessId}`);
-      const data = await res.json();
+      const data = await api.get<Product[]>(`/api/products?business_id=${currentBusinessId}`);
       setProducts(data || []);
     } catch (err) {
       console.error('Failed to load products:', err);
     }
-  };
+  }, [currentBusinessId]);
 
-  const handleCreateBusiness = async (e: React.FormEvent) => {
+  const handleCreateBusiness = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBusinessData.name || !newBusinessData.slug) {
       showToast('Nama dan Slug wajib diisi!');
       return;
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/api/businesses`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const data = await api.post<{ status: string; message?: string; business?: Business }>(
+        '/api/businesses',
+        {
           name: newBusinessData.name.trim(),
           slug: newBusinessData.slug.trim(),
           shortDescription: newBusinessData.shortDescription.trim()
-        })
-      });
-      const data = await res.json();
+        }
+      );
       if (data.status === 'success' && data.business) {
         showToast(`Workspace "${data.business.name}" berhasil dibuat!`);
         setIsNewBusinessModalOpen(false);
@@ -264,16 +228,14 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
-      showToast('Koneksi gagal saat membuat bisnis.');
+      showToast(err instanceof Error ? err.message : 'Koneksi gagal saat membuat bisnis.');
     }
-  };
+  }, [newBusinessData, showToast, loadBusinesses]);
 
-  // Followup command
-  const handleTriggerFollowUps = async () => {
+  const handleTriggerFollowUps = useCallback(async () => {
     showToast('Memulai pengecekan follow-up...');
     try {
-      const res = await fetch(`${API_BASE_URL}/api/trigger-followups`, { method: 'POST' });
-      const data = await res.json();
+      const data = await api.post<{ status: string; message?: string }>('/api/trigger-followups');
       if (data.status === 'success') {
         showToast(data.message || 'Follow-up selesai dijalankan!');
         loadStats();
@@ -281,84 +243,74 @@ export default function App() {
       } else {
         showToast('Gagal memproses follow-up: ' + data.message);
       }
-    } catch {
-      showToast('Koneksi gagal saat memicu follow-up.');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Koneksi gagal saat memicu follow-up.');
     }
-  };
+  }, [showToast, loadStats, loadCustomers]);
 
-  // Creative Analysis command
-  const handleTriggerCreativeAnalysis = async () => {
+  const handleTriggerCreativeAnalysis = useCallback(async () => {
     showToast('Memulai analisis kreatif copywriting...');
     try {
-      const res = await fetch(`${API_BASE_URL}/api/trigger-creative-analysis`, { method: 'POST' });
-      const data = await res.json();
+      const data = await api.post<{ status: string; message?: string }>('/api/trigger-creative-analysis');
       if (data.status === 'success') {
         showToast('Analisis kreatif selesai dijalankan!');
       } else {
         showToast('Gagal memproses analisis kreatif: ' + data.message);
       }
-    } catch {
-      showToast('Koneksi gagal saat memicu analisis kreatif.');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Koneksi gagal saat memicu analisis kreatif.');
     }
-  };
+  }, [showToast]);
 
-  const handleSelectCustomerFromOverview = (phone_number: string, name: string, sessionId?: string) => {
+  const handleSelectCustomerFromOverview = useCallback((phone_number: string, name: string, sessionId?: string) => {
     if (sessionId) {
       setSelectedSessionId(sessionId);
     }
     setSelectedJid(phone_number);
     setSelectedCustName(name);
     handleTabChange('inbox');
-  };
+  }, [handleTabChange]);
 
-  // Initial load: fetch businesses list first
   useEffect(() => {
     Promise.resolve().then(() => {
       loadBusinesses();
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync state and load initial data when currentBusinessId changes
   useEffect(() => {
     Promise.resolve().then(() => {
       setOverviewSessionId('all');
       setSelectedSessionId('default');
-      
+
       loadSessions();
       loadStats();
       loadCustomers();
       loadProducts();
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentBusinessId]);
 
-  // Reload stats when overview session changes
   useEffect(() => {
     const timer = setTimeout(() => {
       loadStats();
     }, 0);
     return () => clearTimeout(timer);
-  }, [overviewSessionId, currentBusinessId]);
+  }, [overviewSessionId, currentBusinessId, loadStats]);
 
-  // Reload customers when selected session changes
   useEffect(() => {
     const timer = setTimeout(() => {
       loadCustomers();
     }, 0);
     return () => clearTimeout(timer);
-  }, [selectedSessionId, currentBusinessId]);
+  }, [selectedSessionId, currentBusinessId, loadCustomers]);
 
-  // Poll stats and customer lists every 8 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      loadStats();
-      loadCustomers();
-      loadSessions();
-    }, 8000);
+  usePolling(() => {
+    loadStats();
+    loadCustomers();
+    loadSessions();
+  }, 8000, [selectedSessionId, overviewSessionId, currentBusinessId, loadStats, loadCustomers, loadSessions]);
 
-    return () => clearInterval(interval);
-  }, [selectedSessionId, overviewSessionId, currentBusinessId]);
-
-  // Sync header metadata based on tab
   const getHeaderInfo = () => {
     switch (activeTab) {
       case 'overview':
@@ -391,9 +343,9 @@ export default function App() {
       {/* Mobile Header Bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b border-sidebar-border z-40 flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setIsMobileSidebarOpen(true)}
             className="h-10 w-10 text-foreground"
           >
@@ -421,7 +373,6 @@ export default function App() {
           </select>
         </div>
         <div className="flex items-center gap-2">
-          {/* Light/Dark Toggle */}
           <Button
             variant="outline"
             size="icon"
@@ -434,9 +385,9 @@ export default function App() {
       </div>
 
       {/* Sidebar */}
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={handleTabChange} 
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={handleTabChange}
         isMobileOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
         sidebarWidth={sidebarWidth}
@@ -446,7 +397,7 @@ export default function App() {
       />
 
       {/* Main Content Pane */}
-      <div 
+      <div
         className="flex-grow flex flex-col w-full min-h-screen pt-16 md:pt-0"
         style={{ paddingLeft: isDesktop ? `${sidebarWidth}px` : undefined }}
       >
@@ -504,69 +455,73 @@ export default function App() {
             </div>
           </header>
 
-          {/* Tabs Views */}
+          {/* Tabs Views with Suspense */}
           <div className="flex-grow">
-            {activeTab === 'overview' && (
-              <Overview 
-                stats={stats} 
-                sessions={sessions}
-                overviewSessionId={overviewSessionId}
-                setOverviewSessionId={setOverviewSessionId}
-                onSelectCustomer={handleSelectCustomerFromOverview} 
-              />
-            )}
+            <Suspense fallback={<div className="flex items-center justify-center py-20"><IconLoader2 size={32} className="animate-spin text-primary" /></div>}>
+              {activeTab === 'overview' && (
+                <Overview
+                  stats={stats}
+                  sessions={sessions}
+                  overviewSessionId={overviewSessionId}
+                  setOverviewSessionId={setOverviewSessionId}
+                  onSelectCustomer={handleSelectCustomerFromOverview}
+                  onTriggerFollowUps={handleTriggerFollowUps}
+                  statsLoading={statsLoading}
+                />
+              )}
 
-            {activeTab === 'whatsapp-sessions' && (
-              <WhatsappSessions businessId={currentBusinessId} />
-            )}
-            
-            {activeTab === 'inbox' && (
-              <ChatInbox 
-                customers={customers} 
-                products={products}
-                onRefreshData={loadCustomers}
-                showToast={showToast}
-                selectedJid={selectedJid}
-                setSelectedJid={setSelectedJid}
-                selectedCustName={selectedCustName}
-                setSelectedCustName={setSelectedCustName}
-                selectedSessionId={selectedSessionId}
-                setSelectedSessionId={setSelectedSessionId}
-                sessions={sessions}
-              />
-            )}
+              {activeTab === 'whatsapp-sessions' && (
+                <WhatsappSessions businessId={currentBusinessId} />
+              )}
 
-            {activeTab === 'broadcast' && (
-              <Broadcast showToast={showToast} sessions={sessions} businessId={currentBusinessId} />
-            )}
-            
-            {activeTab === 'products' && (
-              <Products products={products} onRefreshData={loadProducts} businessId={currentBusinessId} />
-            )}
-            
-            {activeTab === 'actions' && (
-              <Actions 
-                onTriggerFollowUps={handleTriggerFollowUps}
-                onTriggerCreativeAnalysis={handleTriggerCreativeAnalysis}
-              />
-            )}
-            
-            {activeTab === 'settings' && (
-              <Settings 
-                showToast={showToast} 
-                businessId={currentBusinessId}
-                activeBusiness={activeBusiness}
-                onRefreshBusinesses={loadBusinesses}
-              />
-            )}
+              {activeTab === 'inbox' && (
+                <ChatInbox
+                  customers={customers}
+                  products={products}
+                  onRefreshData={loadCustomers}
+                  showToast={showToast}
+                  selectedJid={selectedJid}
+                  setSelectedJid={setSelectedJid}
+                  selectedCustName={selectedCustName}
+                  setSelectedCustName={setSelectedCustName}
+                  selectedSessionId={selectedSessionId}
+                  setSelectedSessionId={setSelectedSessionId}
+                  sessions={sessions}
+                />
+              )}
 
-            {activeTab === 'ads-report' && (
-              <AdsReport />
-            )}
+              {activeTab === 'broadcast' && (
+                <Broadcast showToast={showToast} sessions={sessions} businessId={currentBusinessId} />
+              )}
 
-            {activeTab === 'creative-ideas' && (
-              <CreativeReport />
-            )}
+              {activeTab === 'products' && (
+                <Products products={products} onRefreshData={loadProducts} businessId={currentBusinessId} />
+              )}
+
+              {activeTab === 'actions' && (
+                <Actions
+                  onTriggerFollowUps={handleTriggerFollowUps}
+                  onTriggerCreativeAnalysis={handleTriggerCreativeAnalysis}
+                />
+              )}
+
+              {activeTab === 'settings' && (
+                <Settings
+                  showToast={showToast}
+                  businessId={currentBusinessId}
+                  activeBusiness={activeBusiness}
+                  onRefreshBusinesses={loadBusinesses}
+                />
+              )}
+
+              {activeTab === 'ads-report' && (
+                <AdsReport />
+              )}
+
+              {activeTab === 'creative-ideas' && (
+                <CreativeReport />
+              )}
+            </Suspense>
           </div>
         </div>
       </div>
