@@ -106,6 +106,19 @@ async function handleManualAudioMessage(phone, audioBase64, targetSessionId, fas
 }
 
 function registerRoutes(fastify) {
+  // Auth guard: protect all /api/ routes except /api/auth/
+  // This runs at request time when @fastify/jwt is fully registered
+  const authGuard = async (request, reply) => {
+    if (request.url.startsWith('/api/') && !request.url.startsWith('/api/auth/')) {
+      try {
+        await request.jwtVerify();
+      } catch {
+        reply.status(401).send({ error: 'Unauthorized', message: 'Token tidak valid atau sudah kedaluwarsa.' });
+      }
+    }
+  };
+  fastify.addHook('preHandler', authGuard);
+
   // Routes
   fastify.get('/health', async (request, reply) => {
     return {
