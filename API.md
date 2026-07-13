@@ -31,7 +31,7 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 14 | Catalog | PUT | `/api/products/:id` | Memperbarui data produk (regenerate embedding otomatis). |
 | 15 | Catalog | DELETE | `/api/products/:id` | Menghapus produk dari katalog. |
 | 16 | WhatsApp | GET | `/api/whatsapp/groups` | Mendapatkan daftar grup WhatsApp yang diikuti bot (opsional dengan session_id). |
-| 17 | WhatsApp | GET | `/api/whatsapp/sessions` | Mendapatkan daftar seluruh sesi WhatsApp beserta status & QR. |
+| 17 | WhatsApp | GET | `/api/wa/sessions` atau `/api/whatsapp/sessions` | Mendapatkan daftar seluruh sesi WhatsApp beserta status & QR (gunakan wa/sessions untuk mem-bypass adblocker). |
 | 18 | WhatsApp | POST | `/api/whatsapp/sessions` | Membuat sesi WhatsApp baru (menginisialisasi koneksi). |
 | 19 | WhatsApp | DELETE | `/api/whatsapp/sessions/:id` | Menghapus sesi WhatsApp, menutup koneksi dan folder kredensial. |
 | 20 | WhatsApp | POST | `/api/whatsapp/sessions/:id/regenerate` | Mereset sesi WhatsApp untuk generate QR code baru. |
@@ -481,8 +481,8 @@ Mendapatkan daftar seluruh grup WhatsApp yang diikuti oleh bot (digunakan oleh a
 
 ---
 
-### GET `/api/whatsapp/sessions`
-Mendapatkan daftar seluruh sesi WhatsApp yang terdaftar beserta status koneksi dan QR code (jika statusnya `qr_received`).
+### GET `/api/wa/sessions` atau `/api/whatsapp/sessions`
+Mendapatkan daftar seluruh sesi WhatsApp yang terdaftar beserta status koneksi dan QR code (jika statusnya `qr_received`). Gunakan alias `/api/wa/sessions` jika Anda menemui pemblokiran request/token oleh adblocker di browser.
 
 - **Response (200 OK)**:
   ```json

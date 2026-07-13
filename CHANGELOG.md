@@ -5,10 +5,13 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-07-13
 
-### Fix: 401 Unauthorized on `/api/whatsapp/sessions` in Production
-
-- **Root cause**: `docker-compose.yml` had `env_file: .env` referencing a nonexistent root `.env`. This caused `AUTH_JWT_SECRET` to be empty (`${AUTH_JWT_SECRET}` expands to nothing), making Fastify JWT fall back to the hardcoded default secret `latezza-default-secret-change-me`. Tokens signed with the real secret from `backend/.env` were rejected → 401 on all protected `/api/` routes.
-- **Fix**: Changed `env_file: .env` → `env_file: ./backend/.env` in `docker-compose.yml` so the correct `AUTH_JWT_SECRET` value is loaded into the container's environment.
+### WhatsApp Multi-Session & QR Scanner Dashboard Route Fixes
+- **True Root Cause**: Browser adblockers (e.g. uBlock Origin, Brave Shield, or privacy extensions) contain regex rules targeting URL patterns containing **`whatsapp`** (such as `/api/whatsapp/sessions`). They allowed the request preflight but stripped/omitted the `Authorization: Bearer <token>` header entirely from the request, leading to persistent 401 errors on that specific endpoint while other endpoints like `/api/customers` worked fine.
+- **Fix (Route Alias Bypass)**:
+  - Added a non-sensitive route alias **`/api/wa/sessions`** in [routes.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/src/routes.js) that duplicates the session list retrieval logic without triggering adblocker filters.
+  - Updated the frontend in [App.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/App.tsx) and [WhatsappSessions.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/WhatsappSessions.tsx) to fetch from the `/api/wa/sessions` alias.
+- **Docker Mount Fix**: Changed `env_file: .env` to `env_file: ./backend/.env` in `docker-compose.yml` to ensure correct `AUTH_JWT_SECRET` and container secrets match local developments.
+- **Clean-up**: Removed temporary caching rules (`onSend` hooks), debug endpoints (`/api/debug-headers`), global window debug property assignments, and cache buster query parameters (`_t`) from `api.ts` to preserve standard browser cache hit-rates.
 
 ## 2026-07-08
 
