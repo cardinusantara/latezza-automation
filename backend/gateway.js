@@ -23,14 +23,30 @@ const fastify = Fastify({
   }
 });
 
-// Register CORS to allow cross-origin requests from frontend
-const allowedOrigins = process.env.FRONTEND_URL
-  ? [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:5174']
-  : true;
+// Register CORS to allow cross-origin requests from frontend dynamically
+const allowedOrigins = (origin, cb) => {
+  if (!origin) {
+    cb(null, true);
+    return;
+  }
+  const isAllowed = 
+    origin.startsWith('http://localhost') || 
+    origin.startsWith('http://127.0.0.1') || 
+    origin.startsWith('http://192.168.') ||
+    origin.startsWith('https://latezza-automation') ||
+    (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL);
+
+  if (isAllowed) {
+    cb(null, true);
+  } else {
+    cb(new Error("Not allowed by CORS"), false);
+  }
+};
 
 fastify.register(require('@fastify/cors'), {
   origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 });
 
 // Register multipart for file uploads
