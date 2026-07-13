@@ -128,6 +128,15 @@ function registerRoutes(fastify) {
     }
   });
 
+  // Disable caching for all API endpoints to prevent browser caching unauthenticated states
+  fastify.addHook('onSend', async (request, reply, payload) => {
+    if (request.url.startsWith('/api/')) {
+      reply.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      reply.header('Pragma', 'no-cache');
+      reply.header('Expires', '0');
+    }
+  });
+
   // Routes
   fastify.get('/health', async (request, reply) => {
     return {
