@@ -3,7 +3,15 @@
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
 
+## 2026-07-13
+
+### Fix: 401 Unauthorized on `/api/whatsapp/sessions` in Production
+
+- **Root cause**: `docker-compose.yml` had `env_file: .env` referencing a nonexistent root `.env`. This caused `AUTH_JWT_SECRET` to be empty (`${AUTH_JWT_SECRET}` expands to nothing), making Fastify JWT fall back to the hardcoded default secret `latezza-default-secret-change-me`. Tokens signed with the real secret from `backend/.env` were rejected → 401 on all protected `/api/` routes.
+- **Fix**: Changed `env_file: .env` → `env_file: ./backend/.env` in `docker-compose.yml` so the correct `AUTH_JWT_SECRET` value is loaded into the container's environment.
+
 ## 2026-07-08
+
 
 ### Chat History Timestamps & Real-Time Time Anchoring
 - **Timestamp Context injection**:
