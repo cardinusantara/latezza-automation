@@ -110,7 +110,7 @@ function registerRoutes(fastify) {
   // This runs at request time when @fastify/jwt is fully registered
   fastify.addHook('preHandler', async (request, reply) => {
     // Skip auth for public endpoints
-    const publicPaths = ['/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html', '/api/debug-headers'];
+    const publicPaths = ['/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html'];
     if (publicPaths.some(path => request.url === path || request.url.startsWith(path + '?'))) {
       return;
     }
@@ -118,22 +118,10 @@ function registerRoutes(fastify) {
     // Protect all /api/ routes
     if (request.url.startsWith('/api/')) {
       try {
-        fastify.log.info({ url: request.url, authHeader: request.headers.authorization }, 'JWT Verify starting');
         await request.jwtVerify();
-        fastify.log.info({ url: request.url }, 'JWT Verify success');
       } catch (err) {
-        fastify.log.error({ url: request.url, error: err.message, token: request.headers.authorization }, 'JWT Verify failed');
         reply.status(401).send({ error: 'Unauthorized', message: 'Token tidak valid atau sudah kedaluwarsa.' });
       }
-    }
-  });
-
-  // Disable caching for all API endpoints to prevent browser caching unauthenticated states
-  fastify.addHook('onSend', async (request, reply, payload) => {
-    if (request.url.startsWith('/api/')) {
-      reply.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      reply.header('Pragma', 'no-cache');
-      reply.header('Expires', '0');
     }
   });
 
@@ -142,12 +130,6 @@ function registerRoutes(fastify) {
     return {
       status: whatsappService.isReady() ? 'connected' : 'disconnected',
       timestamp: new Date().toISOString()
-    };
-  });
-
-  fastify.get('/api/debug-headers', async (request, reply) => {
-    return {
-      headers: request.headers
     };
   });
 

@@ -46,16 +46,10 @@ async function request<T>(
     throw new ApiError('Session expired', 401, endpoint);
   }
 
-  let url = `${API_BASE_URL}${endpoint}`;
-  if (method === 'GET') {
-    const separator = url.includes('?') ? '&' : '?';
-    url = `${url}${separator}_t=${Date.now()}`;
-  }
+  const url = `${API_BASE_URL}${endpoint}`;
   const body = options?.body !== undefined ? JSON.stringify(options.body) : undefined;
   try {
     const token = authToken || localStorage.getItem('auth_token');
-    (window as any).__api_token = token;
-    (window as any).__api_session_expired = isSessionExpired;
     const headers: Record<string, string> = {
       ...(body ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
