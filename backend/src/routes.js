@@ -108,16 +108,34 @@ async function handleManualAudioMessage(phone, audioBase64, targetSessionId, fas
 function registerRoutes(fastify) {
   // Auth guard: protect all /api/ routes except /api/auth/
   // This runs at request time when @fastify/jwt is fully registered
-  const authGuard = async (request, reply) => {
-    if (request.url.startsWith('/api/') && !request.url.startsWith('/api/auth/')) {
+  fastify.addHook('preHandler', async (request, reply) => {
+    // Skip auth for public endpoints
+    const publicPaths = ['/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html'];
+    if (publicPaths.some(path => request.url === path || request.url.startsWith(path + '?'))) {
+      return;
+    }
+    
+    // Protect all /api/ routes
+    if (request.url.startsWith('/api/')) {
       try {
+        fastify.log.info({ url: request.url, authHeader: request.headers.authorization }, 'JWT Verify starting');
         await request.jwtVerify();
-      } catch {
+        fastify.log.info({ url: request.url }, 'JWT Verify success');
+      } catch (err) {
+        fastify.log.error({ url: request.url, error: err.message, token: request.headers.authorization }, 'JWT Verify failed');
         reply.status(401).send({ error: 'Unauthorized', message: 'Token tidak valid atau sudah kedaluwarsa.' });
       }
     }
-  };
-  fastify.addHook('preHandler', authGuard);
+  });
+
+  // Disable caching for all API endpoints to prevent browser caching unauthenticated states
+  fastify.addHook('onSend', async (request, reply, payload) => {
+    if (request.url.startsWith('/api/')) {
+      reply.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      reply.header('Pragma', 'no-cache');
+      reply.header('Expires', '0');
+    }
+  });
 
   // Routes
   fastify.get('/health', async (request, reply) => {
@@ -739,16 +757,122 @@ function registerRoutes(fastify) {
         dailyTrend,
         featureBreakdown
       };
-    } catch (err) {
-      fastify.log.error(`GET usage-stats error: ${err.message}`);
-      reply.status(500);
-      return { status: 'error', message: err.message };
-    }
-  });
+     } catch (err) {
+       fastify.log.error(`GET usage-stats error: ${err.message}`);
+       reply.status(500);
+       return { status: 'error', message: err.message };
+     }
+   });
+
+   // API: Get system prompt cache statistics
+   fastify.get('/api/system-prompt/stats', async (request, reply) => {
+     try {
+       const businessId = request.query.businessId || request.user?.businessId || 1;
+       const days = Number.parseInt(request.query.days || '30', 10);
+       
+       const stats = await db.getSystemPromptStats(businessId, days);
+       
+       return {
+         status: 'success',
+         data: stats
+       };
+     } catch (err) {
+       fastify.log.error(`GET system-prompt/stats error: ${err.message}`);
+       reply.status(500);
+       return { status: 'error', message: err.message };
+     }
+   });
+
+   // API: Get full system prompt preview
+   fastify.get('/api/system-prompt/preview', async (request, reply) => {
+     try {
+       const businessId = request.query.businessId || request.user?.businessId || 1;
+       
+       const { prompt, isCached, hash } = await agent.buildAndCacheSystemPrompt(businessId);
+       const cachedInfo = await db.getSystemPromptCache(businessId);
+       
+       return {
+         status: 'success',
+         data: {
+           prompt,
+           isCached,
+           hash,
+           promptLength: prompt.length,
+           cachedAt: cachedInfo?.cached_at,
+           updatedAt: cachedInfo?.updated_at
+         }
+       };
+     } catch (err) {
+       fastify.log.error(`GET system-prompt/preview error: ${err.message}`);
+       reply.status(500);
+       return { status: 'error', message: err.message };
+     }
+   });
+
+   // API: Refresh (invalidate and rebuild) system prompt cache
+   fastify.post('/api/system-prompt/refresh', async (request, reply) => {
+     try {
+       const businessId = request.body?.businessId || request.user?.businessId || 1;
+
+       // Invalidate old cache
+       await db.invalidateSystemPromptCache(businessId);
+
+       // Build and save new cache
+       const { prompt, isCached, hash, cacheTokenCount } = await agent.buildAndCacheSystemPrompt(businessId);
+
+       return {
+         status: 'success',
+         message: 'System prompt cache berhasil di-refresh',
+         data: {
+           hash,
+           isCached,
+           cacheTokenCount,
+           promptLength: prompt.length
+         }
+       };
+     } catch (err) {
+       fastify.log.error(`POST system-prompt/refresh error: ${err.message}`);
+       reply.status(500);
+       return { status: 'error', message: err.message };
+     }
+   });
+
+   // API: Estimate token count from business form data (live preview, no DB write)
+   fastify.post('/api/system-prompt/estimate', async (request, reply) => {
+     try {
+       const body = request.body || {};
+
+       // Build prompt using overrides from form data (don't touch DB)
+       const prompt = await agent.buildSystemInstructions(1, {
+         businessName: body.name,
+         shortDescription: body.shortDescription,
+         contactPhone: body.contactPhone,
+         address: body.address,
+         tone: body.tone,
+         customPrompt: body.customPrompt,
+         handoffRules: body.handoffRules,
+         followupRules: body.followupRules
+       });
+
+       // Estimate tokens: ~4 chars per token (standard English/Indonesian ratio)
+       const estimatedTokens = Math.ceil(prompt.length / 4);
+
+       return {
+         status: 'success',
+         data: {
+           promptLength: prompt.length,
+           estimatedTokens,
+           meetsCacheThreshold: estimatedTokens >= 2000
+         }
+       };
+     } catch (err) {
+       fastify.log.error(`POST system-prompt/estimate error: ${err.message}`);
+       reply.status(500);
+       return { status: 'error', message: err.message };
+     }
+   });
 
 
-
-  // API: Upload CSV for Ads Analysis
   fastify.post('/api/upload-ads-csv', async (request, reply) => {
     try {
       const data = await request.file();
@@ -1531,6 +1655,10 @@ function registerRoutes(fastify) {
       const { id } = request.params;
       try {
         const business = await db.updateBusiness(Number.parseInt(id, 10), request.body);
+        
+        // Invalidate system prompt cache when business profile changes
+        await db.invalidateSystemPromptCache(Number.parseInt(id, 10));
+        
         return { status: 'success', business };
       } catch (err) {
         fastify.log.error(`Failed to update business: ${err.message}`);

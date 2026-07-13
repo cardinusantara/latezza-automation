@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
     env_file:
-      - .env
+      - ./backend/.env
     environment:
       - DB_HOST=db
       - DB_PORT=${DB_PORT:-5432}
@@ -48,8 +48,6 @@ services:
     volumes:
       # Persist the authenticated WhatsApp sessions across container restarts
       - ./backend/whatsapp-sessions:/usr/src/app/whatsapp-sessions
-      # Bind local backend .env as optional overrides
-      - ./backend/.env:/usr/src/app/.env
 
 volumes:
   postgres_data:

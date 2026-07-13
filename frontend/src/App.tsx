@@ -215,7 +215,7 @@ function Dashboard() {
   const loadCustomers = useCallback(async () => {
     try {
       const data = await api.get<Lead[]>(`/api/customers?session_id=${selectedSessionId}&business_id=${currentBusinessId}`);
-      setCustomers(data || []);
+      setCustomers(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load customers:', err);
     }
@@ -224,7 +224,7 @@ function Dashboard() {
   const loadProducts = useCallback(async () => {
     try {
       const data = await api.get<Product[]>(`/api/products?business_id=${currentBusinessId}`);
-      setProducts(data || []);
+      setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load products:', err);
     }

@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { API_BASE_URL } from '@/config';
+import { api } from '@/lib/api';
 
 type MobileViewType = 'list' | 'chat' | 'crm';
 
@@ -126,7 +127,7 @@ export default function ChatInbox({
   const shouldScrollRef = useRef<boolean>(false);
 
   // Filter customers based on search query
-  const filteredCustomers = customers.filter(c => 
+  const filteredCustomers = (Array.isArray(customers) ? customers : []).filter(c => 
     c.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
     c.phone_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.contact_phone?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -135,8 +136,7 @@ export default function ChatInbox({
   // Fetch active customer details and history
   const fetchCustomerDetails = async (jid: string) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}?session_id=${activeSessionId}`);
-      const data = await res.json();
+      const data = await api.get(`/api/customers/${encodeURIComponent(jid)}?session_id=${activeSessionId}`);
       if (data) {
         setAiEnabled(data.ai_enabled !== false);
         setNeedsAdmin(!!data.needs_admin);
@@ -152,9 +152,8 @@ export default function ChatInbox({
   const fetchChatHistory = async (jid: string, isSilent = false) => {
     if (!isSilent) setLoadingChat(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(jid)}/history?session_id=${activeSessionId}`);
-      const data = await res.json();
-      setChatHistory(data || []);
+      const data = await api.get(`/api/customers/${encodeURIComponent(jid)}/history?session_id=${activeSessionId}`);
+      setChatHistory(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching chat history:', err);
     } finally {
@@ -267,12 +266,7 @@ export default function ChatInbox({
     if (!selectedJid) return;
     setSavingDetails(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/update-details`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: custStatus, notes: custNotes, session_id: activeSessionId })
-      });
-      const data = await res.json();
+      const data = await api.post(`/api/customers/${encodeURIComponent(selectedJid)}/update-details`, { status: custStatus, notes: custNotes, session_id: activeSessionId });
       if (data.status === 'success') {
         showToast('Detail kustomer berhasil disimpan.');
         onRefreshData();
@@ -521,6 +515,7 @@ function ConversationBoxPanel({
         </div>
       );
     }
+    if (!Array.isArray(chatHistory)) return null;
     if (chatHistory.length === 0) {
       return (
         <div className="flex-grow flex flex-col items-center justify-center text-muted-foreground gap-2 py-10">
@@ -536,7 +531,7 @@ function ConversationBoxPanel({
 
   return (
     <div className={`${mobileView === 'chat' ? 'flex' : 'hidden md:flex'} flex-1 min-w-0 flex flex-col bg-[#0f172a]/20 dark:bg-slate-950/40 relative`}>
-      {selectedJid ? (
+      {selectedJid && selectedCustName ? (
         <>
           {/* Header */}
           <div className="p-4 border-b border-border bg-card flex justify-between items-center z-10">
@@ -799,15 +794,16 @@ const formatDuration = (seconds: number) => {
 };
 
 // Generate color avatar from initials
-const getInitials = (name: string) => {
+const getInitials = (name: string | null | undefined) => {
   if (!name) return 'CU';
   const parts = name.trim().split(/\s+/);
   if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
   return name.slice(0, 2).toUpperCase();
 };
 
-const getAvatarColor = (name: string) => {
+const getAvatarColor = (name: string | null | undefined) => {
   const colors = ['#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#EC4899'];
+  if (!name) return colors[0];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = (name.codePointAt(i) || 0) + ((hash << 5) - hash);
@@ -851,7 +847,7 @@ function CrmPanel({
 }: Readonly<CrmPanelProps>) {
   const [prodQuery, setProdQuery] = useState('');
 
-  const filteredProducts = products.filter(p => 
+  const filteredProducts = (Array.isArray(products) ? products : []).filter(p => 
     p.product_name?.toLowerCase().includes(prodQuery.toLowerCase()) ||
     p.description?.toLowerCase().includes(prodQuery.toLowerCase())
   );
@@ -1023,16 +1019,11 @@ async function executeAudioUpload({
     
     try {
       showToast('Mengirim & mentranskripsi pesan suara...');
-      const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/send-message`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          audioBase64: base64Content, 
-          mimetype: blob.type || 'audio/webm',
-          session_id: selectedSessionId 
-        })
+      const data = await api.post(`/api/customers/${encodeURIComponent(selectedJid)}/send-message`, {
+        audioBase64: base64Content,
+        mimetype: blob.type || 'audio/webm',
+        session_id: selectedSessionId
       });
-      const data = await res.json();
       if (data.status === 'success') {
         showToast('Pesan suara berhasil terkirim!');
         
@@ -1063,12 +1054,7 @@ async function executeToggleAi(
   onRefreshData: () => void
 ) {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/toggle-ai`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ai_enabled: checked, session_id: selectedSessionId })
-    });
-    const data = await res.json();
+    const data = await api.post(`/api/customers/${encodeURIComponent(selectedJid)}/toggle-ai`, { ai_enabled: checked, session_id: selectedSessionId });
     if (data.status === 'success') {
       setAiEnabled(checked);
       showToast(checked ? 'AI Respon DIAKTIFKAN untuk customer ini' : 'AI Respon DINONAKTIFKAN untuk customer ini');
@@ -1107,12 +1093,7 @@ async function executeSendMessage({
   setMessageText
 }: SendMessageParams) {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/customers/${encodeURIComponent(selectedJid)}/send-message`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: textToSend, session_id: selectedSessionId })
-    });
-    const data = await res.json();
+    const data = await api.post(`/api/customers/${encodeURIComponent(selectedJid)}/send-message`, { text: textToSend, session_id: selectedSessionId });
     if (data.status === 'success') {
       showToast('Pesan terkirim!');
       
