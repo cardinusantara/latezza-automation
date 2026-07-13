@@ -43,7 +43,7 @@ describe('api service layer', () => {
     expect(window.fetch).toHaveBeenCalledTimes(1);
     const [url, options] = (window.fetch as ReturnType<typeof vi.fn>).mock
       .calls[0];
-    expect(url).toBe(`${API_BASE_URL}/api/test`);
+    expect(url).toMatch(new RegExp(`^${API_BASE_URL}/api/test\\?_t=\\d+$`));
     expect(options.method).toBe('GET');
     expect(options.body).toBeUndefined();
     expect(result).toEqual(mockData);
