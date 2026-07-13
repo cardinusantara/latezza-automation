@@ -110,7 +110,7 @@ function registerRoutes(fastify) {
   // This runs at request time when @fastify/jwt is fully registered
   fastify.addHook('preHandler', async (request, reply) => {
     // Skip auth for public endpoints
-    const publicPaths = ['/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html'];
+    const publicPaths = ['/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html', '/api/debug-headers'];
     if (publicPaths.some(path => request.url === path || request.url.startsWith(path + '?'))) {
       return;
     }
@@ -142,6 +142,12 @@ function registerRoutes(fastify) {
     return {
       status: whatsappService.isReady() ? 'connected' : 'disconnected',
       timestamp: new Date().toISOString()
+    };
+  });
+
+  fastify.get('/api/debug-headers', async (request, reply) => {
+    return {
+      headers: request.headers
     };
   });
 
