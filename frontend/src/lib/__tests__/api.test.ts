@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { api, ApiError, setAuthToken } from '../api';
 import { API_BASE_URL } from '@/config';
 
@@ -23,6 +23,13 @@ describe('api service layer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     window.fetch = vi.fn();
+    // Reset module-level isSessionExpired flag by simulating a fresh login
+    setAuthToken('reset-token');
+    setAuthToken(null);
+  });
+
+  afterEach(() => {
+    setAuthToken(null);
   });
 
   test('api.get() makes a GET request and returns parsed JSON', async () => {
@@ -266,5 +273,27 @@ describe('api service layer', () => {
     );
     setAuthToken(null);
     dispatchSpy.mockRestore();
+  });
+
+  test('requests after 401 are blocked without hitting the network', async () => {
+    // First request returns 401
+    setAuthToken('expired-token');
+    (window.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      mockJsonResponse({ message: 'Unauthorized' }, false, 401),
+    );
+    await expect(api.get('/api/test')).rejects.toThrow(ApiError);
+
+    // Second request should be blocked immediately — fetch should NOT be called again
+    vi.clearAllMocks();
+    await expect(api.get('/api/protected')).rejects.toThrow('Session expired');
+    expect(window.fetch).not.toHaveBeenCalled();
+
+    // Login endpoint should still be allowed through
+    (window.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      mockJsonResponse({ token: 'new-token', status: 'success' }),
+    );
+    const result = await api.post('/api/auth/login', { password: 'cardi123' });
+    expect(result).toMatchObject({ status: 'success' });
+    expect(window.fetch).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,9 +1,22 @@
 import { API_BASE_URL } from '@/config';
 
 let authToken: string | null = null;
+// Once a 401 is received, block all subsequent requests until a new token is set.
+// This prevents polling intervals from hammering the server with unauthenticated requests.
+let isSessionExpired = false;
 
 export function setAuthToken(token: string | null) {
   authToken = token;
+  // A new token (login) resets the expired flag; clearing token (logout) keeps it set
+  // so we only reset on actual login (token !== null).
+  if (token !== null) {
+    isSessionExpired = false;
+  }
+}
+
+export function getAuthHeaders(): Record<string, string> {
+  const token = authToken || localStorage.getItem('auth_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 export class ApiError extends Error {
@@ -27,12 +40,19 @@ async function request<T>(
     signal?: AbortSignal;
   },
 ): Promise<T> {
+  // Guard: stop all API calls immediately after a 401, except login itself.
+  // This prevents polling loops from firing unauthenticated requests before React unmounts.
+  if (isSessionExpired && !endpoint.startsWith('/api/auth/')) {
+    throw new ApiError('Session expired', 401, endpoint);
+  }
+
   const url = `${API_BASE_URL}${endpoint}`;
   const body = options?.body !== undefined ? JSON.stringify(options.body) : undefined;
   try {
+    const token = authToken || localStorage.getItem('auth_token');
     const headers: Record<string, string> = {
       ...(body ? { 'Content-Type': 'application/json' } : {}),
-      ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {}),
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...options?.headers,
     };
     const res = await fetch(url, {
@@ -43,6 +63,7 @@ async function request<T>(
     });
 
     if (res.status === 401) {
+      isSessionExpired = true;
       setAuthToken(null);
       localStorage.removeItem('auth_token');
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
@@ -76,19 +97,19 @@ async function request<T>(
 }
 
 export const api = {
-  get<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
+  get<T = any>(endpoint: string, signal?: AbortSignal): Promise<T> {
     return request<T>('GET', endpoint, { signal });
   },
 
-  post<T>(endpoint: string, body?: unknown, signal?: AbortSignal): Promise<T> {
+  post<T = any>(endpoint: string, body?: unknown, signal?: AbortSignal): Promise<T> {
     return request<T>('POST', endpoint, { body, signal });
   },
 
-  put<T>(endpoint: string, body?: unknown, signal?: AbortSignal): Promise<T> {
+  put<T = any>(endpoint: string, body?: unknown, signal?: AbortSignal): Promise<T> {
     return request<T>('PUT', endpoint, { body, signal });
   },
 
-  delete<T>(endpoint: string, signal?: AbortSignal): Promise<T> {
+  delete<T = any>(endpoint: string, signal?: AbortSignal): Promise<T> {
     return request<T>('DELETE', endpoint, { signal });
   },
 };
