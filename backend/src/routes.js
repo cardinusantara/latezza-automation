@@ -1301,6 +1301,30 @@ function registerRoutes(fastify) {
     }
   });
 
+  // API Alias: Get all WhatsApp sessions (bypass browser adblock filter patterns)
+  fastify.get('/api/wa/sessions', async (request, reply) => {
+    try {
+      const { business_id } = request.query;
+      const parsedBusinessId = business_id ? Number.parseInt(business_id, 10) : null;
+      const sessions = await db.getSessions(parsedBusinessId);
+      const pool = whatsappService.sessions;
+      const enriched = sessions.map(s => {
+        const active = pool.get(s.id);
+        return {
+          ...s,
+          status: active ? active.status : s.status,
+          qr_code: active ? active.qr : s.qr_code,
+          ready: active ? active.ready : false
+        };
+      });
+      return enriched;
+    } catch (err) {
+      fastify.log.error(`Failed to fetch sessions: ${err.message}`);
+      reply.status(500);
+      return { status: 'error', message: err.message };
+    }
+  });
+
   // API: Create new WhatsApp session
   fastify.post('/api/whatsapp/sessions', {
     schema: {
