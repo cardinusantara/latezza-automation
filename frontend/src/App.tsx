@@ -191,7 +191,7 @@ function Dashboard() {
 
   const loadSessions = useCallback(async () => {
     try {
-      const data = await api.get<Session[]>(`/api/whatsapp/sessions?business_id=${currentBusinessId}`);
+      const data = await api.get<Session[]>(`/api/wa/sessions?business_id=${currentBusinessId}`);
       if (Array.isArray(data)) {
         setSessions(data);
       }

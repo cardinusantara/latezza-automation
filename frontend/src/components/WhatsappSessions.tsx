@@ -21,7 +21,7 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { API_BASE_URL } from '@/config';
+import { api } from '@/lib/api';
 
 interface WhatsAppSession {
   id: string;
@@ -57,8 +57,7 @@ export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessio
   const fetchSessions = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions?business_id=${businessId}`);
-      const data = await res.json();
+      const data = await api.get(`/api/wa/sessions?business_id=${businessId}`);
       if (Array.isArray(data)) {
         setSessions(data);
       }
@@ -97,12 +96,7 @@ export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessio
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: formattedId, name: form.name.trim(), business_id: businessId })
-      });
-      const data = await res.json();
+      const data = await api.post('/api/whatsapp/sessions', { id: formattedId, name: form.name.trim(), business_id: businessId });
       if (data.status === 'success') {
         toast.success(`Sesi "${form.name}" berhasil dibuat! Memulai koneksi...`);
         setIsAddOpen(false);
@@ -124,10 +118,7 @@ export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessio
     if (!selectedSession) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions/${selectedSession.id}`, {
-        method: 'DELETE'
-      });
-      const data = await res.json();
+      const data = await api.delete(`/api/whatsapp/sessions/${selectedSession.id}`);
       if (data.status === 'success') {
         toast.success(`Sesi "${selectedSession.name}" berhasil dihapus.`);
         setIsDeleteOpen(false);
@@ -148,10 +139,7 @@ export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessio
   const handleRegenerateSession = async (sessionId: string) => {
     setActionLoading(sessionId);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/sessions/${sessionId}/regenerate`, {
-        method: 'POST'
-      });
-      const data = await res.json();
+      const data = await api.post(`/api/whatsapp/sessions/${sessionId}/regenerate`);
       if (data.status === 'success') {
         toast.success('Sesi di-reset. Menyiapkan QR code baru...');
         fetchSessions(true);
