@@ -165,6 +165,33 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
     followupRules: ''
   });
 
+  const [estimatedTokens, setEstimatedTokens] = useState<number | null>(null);
+  const [isEstimating, setIsEstimating] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!businessForm.name) {
+        setEstimatedTokens(0);
+        return;
+      }
+      setIsEstimating(true);
+      try {
+        const res = await api.post<{ status: string; data: { estimatedTokens: number } }>(
+          '/api/system-prompt/estimate',
+          businessForm
+        );
+        if (res.status === 'success' && res.data) {
+          setEstimatedTokens(res.data.estimatedTokens);
+        }
+      } catch (err) {
+        console.error('Failed to estimate tokens:', err);
+      } finally {
+        setIsEstimating(false);
+      }
+    }, 800); // 800ms debounce
+    return () => clearTimeout(timer);
+  }, [businessForm]);
+
   useEffect(() => {
     if (activeBusiness) {
       Promise.resolve().then(() => {
@@ -486,7 +513,19 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
               </span>
             </div>
             
-            <div className="flex justify-end mt-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-2 border-t border-border pt-4">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 border border-border px-3 py-1.5 rounded-xl">
+                <IconSparkles size={14} className="text-primary animate-pulse" />
+                <span>Estimasi Prompt: </span>
+                {isEstimating ? (
+                  <span className="font-mono text-foreground/70 animate-pulse">Menghitung...</span>
+                ) : (
+                  <span className="font-bold text-foreground font-mono">
+                    {estimatedTokens !== null ? `${estimatedTokens.toLocaleString()} tokens` : '0 tokens'}
+                  </span>
+                )}
+              </div>
+
               <Button
                 type="button"
                 onClick={handleSaveBusinessProfile}
