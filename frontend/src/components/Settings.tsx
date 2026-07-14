@@ -16,7 +16,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { API_BASE_URL } from '@/config';
 import { api } from '@/lib/api';
 
 // Tailwind CSS classes matching shadcn ui components exactly
@@ -213,24 +212,19 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
   const handleSaveBusinessProfile = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/businesses/${businessId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: businessForm.name,
-          shortDescription: businessForm.shortDescription,
-          contactPhone: businessForm.contactPhone,
-          address: businessForm.address,
-          website: businessForm.website,
-          aiSettings: {
-            tone: businessForm.tone,
-            custom_prompt: businessForm.customPrompt,
-            handoff_rules: businessForm.handoffRules,
-            followup_rules: businessForm.followupRules
-          }
-        })
+      const data = await api.put<{ status: string; message?: string }>(`/api/businesses/${businessId}`, {
+        name: businessForm.name,
+        shortDescription: businessForm.shortDescription,
+        contactPhone: businessForm.contactPhone,
+        address: businessForm.address,
+        website: businessForm.website,
+        aiSettings: {
+          tone: businessForm.tone,
+          custom_prompt: businessForm.customPrompt,
+          handoff_rules: businessForm.handoffRules,
+          followup_rules: businessForm.followupRules
+        }
       });
-      const data = await res.json();
       if (data.status === 'success') {
         showToast('Profil dan AI settings bisnis berhasil diperbarui!');
         onRefreshBusinesses();
@@ -268,8 +262,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
   // Fetch connected groups list
   const fetchGroups = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/groups`);
-      const data = await res.json();
+      const data = await api.get<any[]>(`/api/whatsapp/groups`);
       if (Array.isArray(data)) {
         setGroups(data);
       }
@@ -283,8 +276,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/settings`);
-      const data = await res.json();
+      const data = await api.get<any>(`/api/settings`);
       if (data && !data.status) {
         setSettings(data);
       } else {
@@ -333,12 +325,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/settings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
-      });
-      const data = await res.json();
+      const data = await api.post<{ status: string; message?: string }>(`/api/settings`, settings);
       if (data.status === 'success') {
         showToast('Pengaturan berhasil disimpan!');
         // Re-fetch to get masked key again if updated
