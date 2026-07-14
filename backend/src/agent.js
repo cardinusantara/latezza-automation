@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const db = require('./db');
 
@@ -9,39 +10,42 @@ const profileKey = process.env.BUSINESS_PROFILE_KEY || 'latezza_cake_hampers_pro
 const defaultModelName = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 const defaultMaxHistory = Number.parseInt(process.env.MAX_HISTORY_MESSAGES || '10', 10);
 
-async function buildSystemInstructions(businessId = 1) {
-  let businessName = 'Latezza Cake Hampers';
-  let description = 'Toko kue Korean cake minimalis dan custom cake.';
-  let phone = '+6281188027702';
-  let address = 'Jakarta';
+async function buildSystemInstructions(businessId = 1, overrides = {}) {
+  let businessName = overrides.businessName || 'Latezza Cake Hampers';
+  let description = overrides.shortDescription ?? 'Toko kue Korean cake minimalis dan custom cake.';
+  let phone = overrides.contactPhone || '+6281188027702';
+  let address = overrides.address || 'Jakarta';
   let socialMediaStr = '';
-  let tone = 'friendly and polite';
-  let customPrompt = '';
-  let handoffRules = 'kustomer ingin memesan custom cake (karena memerlukan detail desain khusus), melakukan komplain, meminta diskon khusus, atau secara eksplisit meminta berbicara dengan admin manusia';
-  let followupRules = 'kustomer menunjukkan minat tinggi (misalnya menanyakan ongkir, menanyakan stock, atau meminta link shopee) tetapi percakapan terhenti atau belum selesai memesan';
+  let tone = overrides.tone || 'friendly and polite';
+  let customPrompt = overrides.customPrompt || '';
+  let handoffRules = overrides.handoffRules || 'kustomer ingin memesan custom cake (karena memerlukan detail desain khusus), melakukan komplain, meminta diskon khusus, atau secara eksplisit meminta berbicara dengan admin manusia';
+  let followupRules = overrides.followupRules || 'kustomer menunjukkan minat tinggi (misalnya menanyakan ongkir, menanyakan stock, atau meminta link shopee) tetapi percakapan terhenti atau belum selesai memesan';
 
-  try {
-    const business = await db.getBusinessById(businessId);
-    if (business) {
-      businessName = business.name || businessName;
-      description = business.short_description || description;
-      phone = business.contact_phone || phone;
-      address = business.address || address;
-      if (Array.isArray(business.social_media)) {
-        socialMediaStr = business.social_media
-          .map(sm => sm.value)
-          .filter(Boolean)
-          .join(', ');
+  // Only load from DB if no overrides were provided
+  if (Object.keys(overrides).length === 0) {
+    try {
+      const business = await db.getBusinessById(businessId);
+      if (business) {
+        businessName = business.name || businessName;
+        description = business.short_description || description;
+        phone = business.contact_phone || phone;
+        address = business.address || address;
+        if (Array.isArray(business.social_media)) {
+          socialMediaStr = business.social_media
+            .map(sm => sm.value)
+            .filter(Boolean)
+            .join(', ');
+        }
+        if (business.ai_settings) {
+          tone = business.ai_settings.tone || tone;
+          customPrompt = business.ai_settings.custom_prompt || '';
+          handoffRules = business.ai_settings.handoff_rules || handoffRules;
+          followupRules = business.ai_settings.followup_rules || followupRules;
+        }
       }
-      if (business.ai_settings) {
-        tone = business.ai_settings.tone || tone;
-        customPrompt = business.ai_settings.custom_prompt || '';
-        handoffRules = business.ai_settings.handoff_rules || handoffRules;
-        followupRules = business.ai_settings.followup_rules || followupRules;
-      }
+    } catch (err) {
+      console.error('⚠️ Failed to load business details for system instructions, using defaults.', err.message);
     }
-  } catch (err) {
-    console.error('⚠️ Failed to load business details for system instructions, using defaults.', err.message);
   }
 
   return `
@@ -80,6 +84,35 @@ ATURAN PENTING & KEAMANAN (GUARDRAILS):
 
 ${customPrompt ? `INSTRUKSI TAMBAHAN KHUSUS UNTUK BISNIS INI:\n${customPrompt}\n` : ''}
 `;
+}
+
+/**
+ * Build system prompt and manage caching
+ */
+async function buildAndCacheSystemPrompt(businessId = 1) {
+  const systemInstruction = await buildSystemInstructions(businessId);
+  const promptHash = crypto.createHash('sha256').update(systemInstruction).digest('hex');
+  
+  // Check if cached prompt is still valid
+  const cachedPrompt = await db.getSystemPromptCache(businessId);
+  let isCached = false;
+  
+  const estimatedTokens = Math.ceil(systemInstruction.length / 4);
+  if (cachedPrompt && cachedPrompt.prompt_hash === promptHash) {
+    isCached = true;
+    console.log(`✅ System prompt cache HIT for business ${businessId}`);
+  } else {
+    // Save new cache
+    await db.saveSystemPromptCache(businessId, systemInstruction, estimatedTokens);
+    console.log(`💾 System prompt cache MISS - saved new cache for business ${businessId}`);
+  }
+  
+  return {
+    prompt: systemInstruction,
+    isCached,
+    hash: promptHash,
+    cacheTokenCount: cachedPrompt ? cachedPrompt.cache_token_count : estimatedTokens
+  };
 }
 
 // Tool definitions for Gemini Function Calling
@@ -337,10 +370,10 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
   // Sanitize and format history to ensure compliance with Gemini SDK rules
   const formattedHistory = formatHistory(historyRows);
 
-  // 3. Build dynamic instructions (system instructions are built dynamically from the business profile)
+  // 3. Build dynamic instructions with caching (system instructions are built dynamically from the business profile)
   const session = await db.getSession(sessionId);
   const businessId = session ? session.business_id : 1;
-  const systemInstruction = await buildSystemInstructions(businessId);
+  const { prompt: systemInstruction, isCached, cacheTokenCount } = await buildAndCacheSystemPrompt(businessId);
 
   // 4. Initialize model with tools and system instruction
   const model = genAI.getGenerativeModel({
@@ -390,12 +423,17 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
 
     // Log initial Gemini token usage
     if (response.usageMetadata) {
+      // If our system prompt cache hit, we count the prompt tokens as cached
+      const finalCachedTokens = isCached 
+        ? Math.min(response.usageMetadata.promptTokenCount, cacheTokenCount || Math.ceil(systemInstruction.length / 4))
+        : (response.usageMetadata.cachedContentTokenCount || 0);
+
       await db.saveUsageLog({
         feature: 'whatsapp_chat',
         modelName: activeModelName,
         inputTokens: response.usageMetadata.promptTokenCount,
         outputTokens: response.usageMetadata.candidatesTokenCount,
-        cachedTokens: response.usageMetadata.cachedContentTokenCount
+        cachedTokens: finalCachedTokens
       });
     }
     
@@ -416,5 +454,6 @@ async function handleIncomingMessage(jid, text, profileName = 'Customer', imageP
 
 module.exports = {
   handleIncomingMessage,
-  buildSystemInstructions
+  buildSystemInstructions,
+  buildAndCacheSystemPrompt
 };
