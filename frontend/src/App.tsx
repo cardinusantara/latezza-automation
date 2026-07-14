@@ -496,6 +496,8 @@ function Dashboard() {
                   onSelectCustomer={handleSelectCustomerFromOverview}
                   onTriggerFollowUps={handleTriggerFollowUps}
                   statsLoading={statsLoading}
+                  businessId={currentBusinessId}
+                  onNavigateToSettings={() => handleTabChange('settings')}
                 />
               )}
 

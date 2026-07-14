@@ -118,6 +118,10 @@ function registerRoutes(fastify) {
     // Protect all /api/ routes
     if (request.url.startsWith('/api/')) {
       try {
+        // Support token in query parameter (for EventSource SSE streams)
+        if (request.query && request.query.token && !request.headers.authorization) {
+          request.headers.authorization = `Bearer ${request.query.token}`;
+        }
         await request.jwtVerify();
       } catch (err) {
         reply.status(401).send({ error: 'Unauthorized', message: 'Token tidak valid atau sudah kedaluwarsa.' });

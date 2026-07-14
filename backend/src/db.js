@@ -113,22 +113,35 @@ async function initDb() {
       );
     `);
 
-    // 6. API Usage Logs Table
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS api_usage_logs (
-        id SERIAL PRIMARY KEY,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        feature VARCHAR(50) NOT NULL,
-        model_name VARCHAR(100) NOT NULL,
-        input_tokens INT DEFAULT 0,
-        output_tokens INT DEFAULT 0,
-        cached_input_tokens INT DEFAULT 0,
-        cost_usd NUMERIC(12, 6) DEFAULT 0,
-        cost_idr NUMERIC(14, 2) DEFAULT 0
-      );
-    `);
+     // 6. API Usage Logs Table
+     await client.query(`
+       CREATE TABLE IF NOT EXISTS api_usage_logs (
+         id SERIAL PRIMARY KEY,
+         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+         feature VARCHAR(50) NOT NULL,
+         model_name VARCHAR(100) NOT NULL,
+         input_tokens INT DEFAULT 0,
+         output_tokens INT DEFAULT 0,
+         cached_input_tokens INT DEFAULT 0,
+         cost_usd NUMERIC(12, 6) DEFAULT 0,
+         cost_idr NUMERIC(14, 2) DEFAULT 0
+       );
+     `);
 
-    // 7. Broadcast Campaigns Table
+     // 6.5. System Prompt Cache Table
+     await client.query(`
+       CREATE TABLE IF NOT EXISTS system_prompt_cache (
+         id SERIAL PRIMARY KEY,
+         business_id INT NOT NULL UNIQUE REFERENCES businesses(id) ON DELETE CASCADE,
+         prompt_hash VARCHAR(64) NOT NULL,
+         prompt_content TEXT NOT NULL,
+         cache_token_count INT DEFAULT 0,
+         cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+       );
+     `);
+
+     // 7. Broadcast Campaigns Table
     await client.query(`
       CREATE TABLE IF NOT EXISTS broadcast_campaigns (
         id SERIAL PRIMARY KEY,
@@ -245,12 +258,13 @@ async function initDb() {
       console.log('✅ Composite primary key migration completed.');
     }
 
-    // Create indexes for optimization
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_chat_histories_phone_session ON chat_histories(phone_number, session_id);`);
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_products_name ON products(product_name);`);
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_broadcast_queue_status ON broadcast_queue(status, created_at);`);
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_products_business ON products(business_id);`);
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_sessions_business ON whatsapp_sessions(business_id);`);
+     // Create indexes for optimization
+     await client.query(`CREATE INDEX IF NOT EXISTS idx_chat_histories_phone_session ON chat_histories(phone_number, session_id);`);
+     await client.query(`CREATE INDEX IF NOT EXISTS idx_products_name ON products(product_name);`);
+     await client.query(`CREATE INDEX IF NOT EXISTS idx_broadcast_queue_status ON broadcast_queue(status, created_at);`);
+     await client.query(`CREATE INDEX IF NOT EXISTS idx_products_business ON products(business_id);`);
+     await client.query(`CREATE INDEX IF NOT EXISTS idx_sessions_business ON whatsapp_sessions(business_id);`);
+     await client.query(`CREATE INDEX IF NOT EXISTS idx_system_prompt_cache_business ON system_prompt_cache(business_id);`);
 
     // --- SEED DEFAULT DATA ---
     // Insert default business if it doesn't exist
@@ -976,7 +990,7 @@ async function deletePendingReply(id) {
 }
 
 /**
- * Increment retry attempt with backoff delay
+ * Increment retry attempts for pending AI reply
  */
 async function incrementPendingReplyAttempt(id, delaySeconds) {
   await pool.query(`
@@ -985,6 +999,126 @@ async function incrementPendingReplyAttempt(id, delaySeconds) {
         next_attempt = NOW() + ($2 || ' seconds')::INTERVAL
     WHERE id = $1
   `, [id, delaySeconds]);
+}
+
+/**
+ * Save or update system prompt cache for a business
+ */
+async function saveSystemPromptCache(businessId, promptContent, cacheTokenCount = 0) {
+  const crypto = require('crypto');
+  const promptHash = crypto.createHash('sha256').update(promptContent).digest('hex');
+  
+  try {
+    const res = await pool.query(
+      `INSERT INTO system_prompt_cache (business_id, prompt_hash, prompt_content, cache_token_count, cached_at, updated_at)
+       VALUES ($1, $2, $3, $4, NOW(), NOW())
+       ON CONFLICT (business_id) DO UPDATE SET
+         prompt_hash = EXCLUDED.prompt_hash,
+         prompt_content = EXCLUDED.prompt_content,
+         cache_token_count = EXCLUDED.cache_token_count,
+         updated_at = NOW()
+       RETURNING *`,
+      [businessId, promptHash, promptContent, cacheTokenCount]
+    );
+    return res.rows[0];
+  } catch (err) {
+    console.error('❌ Failed to save system prompt cache:', err.message);
+    throw err;
+  }
+}
+
+/**
+ * Get cached system prompt for a business
+ */
+async function getSystemPromptCache(businessId) {
+  try {
+    const res = await pool.query(
+      `SELECT * FROM system_prompt_cache WHERE business_id = $1`,
+      [businessId]
+    );
+    return res.rows[0] || null;
+  } catch (err) {
+    console.error('❌ Failed to get system prompt cache:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Invalidate (delete) system prompt cache for a business
+ */
+async function invalidateSystemPromptCache(businessId) {
+  try {
+    await pool.query(
+      `DELETE FROM system_prompt_cache WHERE business_id = $1`,
+      [businessId]
+    );
+    console.log(`✅ System prompt cache invalidated for business ${businessId}`);
+  } catch (err) {
+    console.error('❌ Failed to invalidate system prompt cache:', err.message);
+  }
+}
+
+/**
+ * Get system prompt cache statistics (hit rate, token count, savings)
+ */
+async function getSystemPromptStats(businessId, days = 30) {
+  try {
+    // Get total cached tokens from api_usage_logs (cache hits)
+    const cacheRes = await pool.query(
+      `SELECT 
+         SUM(cached_input_tokens) as total_cached_tokens,
+         COUNT(*) as total_requests,
+         SUM(CASE WHEN cached_input_tokens > 0 THEN 1 ELSE 0 END) as cache_hits
+       FROM api_usage_logs
+       WHERE feature = 'whatsapp_chat' 
+         AND timestamp > NOW() - INTERVAL '1 day' * $2
+         AND model_name LIKE '%flash%'`,
+      [businessId, days]
+    );
+
+    const cacheStats = cacheRes.rows[0] || {};
+    const totalCachedTokens = Number(cacheStats.total_cached_tokens) || 0;
+    const totalRequests = Number(cacheStats.total_requests) || 0;
+    const cacheHits = Number(cacheStats.cache_hits) || 0;
+    const hitRate = totalRequests > 0 ? ((cacheHits / totalRequests) * 100).toFixed(2) : 0;
+
+    // Calculate savings: cached tokens cost 90% less
+    // Standard: $0.00000025 per token
+    // Cached: $0.000000025 per token (90% cheaper)
+    const savingsPerToken = 0.00000025 - 0.000000025; // $0.000000225
+    const savingsUsd = Number((totalCachedTokens * savingsPerToken).toFixed(6));
+    const savingsIdr = Number((savingsUsd * 17500).toFixed(2));
+
+    // Get last cache update time
+    const cacheInfoRes = await pool.query(
+      `SELECT cached_at, updated_at, cache_token_count FROM system_prompt_cache WHERE business_id = $1`,
+      [businessId]
+    );
+    const cacheInfo = cacheInfoRes.rows[0];
+
+    return {
+      totalCachedTokens,
+      cacheHits,
+      totalRequests,
+      hitRate: Number(hitRate),
+      savingsUsd,
+      savingsIdr,
+      lastCacheUpdate: cacheInfo ? cacheInfo.updated_at : null,
+      promptCacheTokenCount: cacheInfo ? cacheInfo.cache_token_count : 0
+    };
+  } catch (err) {
+    console.error('❌ Failed to get system prompt stats:', err.message);
+    return {
+      totalCachedTokens: 0,
+      cacheHits: 0,
+      totalRequests: 0,
+      hitRate: 0,
+      savingsUsd: 0,
+      savingsIdr: 0,
+      lastCacheUpdate: null,
+      promptCacheTokenCount: 0
+    };
+  }
 }
 
 module.exports = {
@@ -1027,8 +1161,12 @@ module.exports = {
   getBusinessById,
   getBusinessBySlug,
   updateBusiness,
-  upsertPendingReply,
-  getExecutablePendingReplies,
-  deletePendingReply,
-  incrementPendingReplyAttempt
+   upsertPendingReply,
+   getExecutablePendingReplies,
+   deletePendingReply,
+   incrementPendingReplyAttempt,
+   saveSystemPromptCache,
+   getSystemPromptCache,
+   invalidateSystemPromptCache,
+   getSystemPromptStats
 };

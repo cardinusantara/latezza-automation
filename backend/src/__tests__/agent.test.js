@@ -10,7 +10,11 @@ jest.mock('../db', () => ({
   createOrUpdateCustomer: jest.fn(),
   getCustomer: jest.fn(),
   getBusinessById: jest.fn(() => Promise.resolve({ id: 1, name: 'Latezza Cake Hampers' })),
-  getSession: jest.fn(() => Promise.resolve({ id: 'default', business_id: 1 }))
+  getSession: jest.fn(() => Promise.resolve({ id: 'default', business_id: 1 })),
+  saveSystemPromptCache: jest.fn(),
+  getSystemPromptCache: jest.fn(() => Promise.resolve(null)),
+  invalidateSystemPromptCache: jest.fn(),
+  getSystemPromptStats: jest.fn()
 }));
 
 // Mock generative AI SDK

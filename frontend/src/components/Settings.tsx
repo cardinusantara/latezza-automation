@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { ChangeEvent } from 'react';
 import { 
   IconDeviceFloppy, 
@@ -9,12 +9,14 @@ import {
   IconLoader, 
   IconClockHour4, 
   IconSparkles, 
-  IconInfoCircle
+  IconInfoCircle,
+  IconFlame,
+  IconCopy
 } from '@tabler/icons-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { API_BASE_URL } from '@/config';
+import { api } from '@/lib/api';
 
 // Tailwind CSS classes matching shadcn ui components exactly
 const inputClasses = "h-9 w-full min-w-0 rounded-4xl border border-input bg-input/30 px-3 py-1 text-xs transition-colors outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-card/30 border-border text-foreground";
@@ -65,9 +67,90 @@ interface SettingsProps {
 export default function Settings({ showToast, businessId, activeBusiness, onRefreshBusinesses }: Readonly<SettingsProps>) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<'api' | 'security' | 'schedules' | 'followup' | 'persona' | 'business'>('business');
+  const [activeCategory, setActiveCategory] = useState<'api' | 'security' | 'schedules' | 'followup' | 'persona' | 'business' | 'cache'>('business');
   const [groups, setGroups] = useState<{ jid: string; subject: string }[]>([]);
   const [isManualGroup, setIsManualGroup] = useState(false);
+
+  // Caching states
+  const [cacheStats, setCacheStats] = useState<{
+    totalCachedTokens: number;
+    cacheHits: number;
+    totalRequests: number;
+    hitRate: number;
+    savingsUsd: number;
+    savingsIdr: number;
+    lastCacheUpdate: string | null;
+    promptCacheTokenCount: number;
+  }>({
+    totalCachedTokens: 0,
+    cacheHits: 0,
+    totalRequests: 0,
+    hitRate: 0,
+    savingsUsd: 0,
+    savingsIdr: 0,
+    lastCacheUpdate: null,
+    promptCacheTokenCount: 0
+  });
+
+  const [promptPreview, setPromptPreview] = useState<{
+    prompt: string;
+    isCached: boolean;
+    hash: string;
+    promptLength: number;
+    cachedAt: string | null;
+    updatedAt: string | null;
+  }>({
+    prompt: '',
+    isCached: false,
+    hash: '',
+    promptLength: 0,
+    cachedAt: null,
+    updatedAt: null
+  });
+
+  const [cacheLoading, setCacheLoading] = useState(false);
+  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
+
+  const fetchCacheData = useCallback(async (silent = false) => {
+    if (!silent) setCacheLoading(true);
+    try {
+      const statsRes = await api.get<{ status: string; data: typeof cacheStats }>(`/api/system-prompt/stats?businessId=${businessId}`);
+      if (statsRes.status === 'success' && statsRes.data) {
+        setCacheStats(statsRes.data);
+      }
+      
+      const previewRes = await api.get<{ status: string; data: typeof promptPreview }>(`/api/system-prompt/preview?businessId=${businessId}`);
+      if (previewRes.status === 'success' && previewRes.data) {
+        setPromptPreview(previewRes.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch cache data:', err);
+    } finally {
+      if (!silent) setCacheLoading(false);
+    }
+  }, [businessId]);
+
+  const handleRefreshCache = async () => {
+    setCacheLoading(true);
+    try {
+      const res = await api.post<{ status: string; message: string; data: any }>(`/api/system-prompt/refresh`, { businessId });
+      if (res.status === 'success') {
+        showToast('System prompt cache berhasil di-refresh!');
+        await fetchCacheData(true);
+      }
+    } catch (err) {
+      console.error('Failed to refresh cache:', err);
+      showToast('Gagal me-refresh prompt cache.');
+    } finally {
+      setCacheLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeCategory === 'cache') {
+      fetchCacheData();
+    }
+  }, [activeCategory, fetchCacheData]);
   
   const [businessForm, setBusinessForm] = useState({
     name: '',
@@ -80,6 +163,33 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
     handoffRules: '',
     followupRules: ''
   });
+
+  const [estimatedTokens, setEstimatedTokens] = useState<number | null>(null);
+  const [isEstimating, setIsEstimating] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!businessForm.name) {
+        setEstimatedTokens(0);
+        return;
+      }
+      setIsEstimating(true);
+      try {
+        const res = await api.post<{ status: string; data: { estimatedTokens: number } }>(
+          '/api/system-prompt/estimate',
+          businessForm
+        );
+        if (res.status === 'success' && res.data) {
+          setEstimatedTokens(res.data.estimatedTokens);
+        }
+      } catch (err) {
+        console.error('Failed to estimate tokens:', err);
+      } finally {
+        setIsEstimating(false);
+      }
+    }, 800); // 800ms debounce
+    return () => clearTimeout(timer);
+  }, [businessForm]);
 
   useEffect(() => {
     if (activeBusiness) {
@@ -102,24 +212,19 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
   const handleSaveBusinessProfile = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/businesses/${businessId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: businessForm.name,
-          shortDescription: businessForm.shortDescription,
-          contactPhone: businessForm.contactPhone,
-          address: businessForm.address,
-          website: businessForm.website,
-          aiSettings: {
-            tone: businessForm.tone,
-            custom_prompt: businessForm.customPrompt,
-            handoff_rules: businessForm.handoffRules,
-            followup_rules: businessForm.followupRules
-          }
-        })
+      const data = await api.put<{ status: string; message?: string }>(`/api/businesses/${businessId}`, {
+        name: businessForm.name,
+        shortDescription: businessForm.shortDescription,
+        contactPhone: businessForm.contactPhone,
+        address: businessForm.address,
+        website: businessForm.website,
+        aiSettings: {
+          tone: businessForm.tone,
+          custom_prompt: businessForm.customPrompt,
+          handoff_rules: businessForm.handoffRules,
+          followup_rules: businessForm.followupRules
+        }
       });
-      const data = await res.json();
       if (data.status === 'success') {
         showToast('Profil dan AI settings bisnis berhasil diperbarui!');
         onRefreshBusinesses();
@@ -157,8 +262,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
   // Fetch connected groups list
   const fetchGroups = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/whatsapp/groups`);
-      const data = await res.json();
+      const data = await api.get<any[]>(`/api/whatsapp/groups`);
       if (Array.isArray(data)) {
         setGroups(data);
       }
@@ -172,8 +276,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/settings`);
-      const data = await res.json();
+      const data = await api.get<any>(`/api/settings`);
       if (data && !data.status) {
         setSettings(data);
       } else {
@@ -222,12 +325,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/settings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
-      });
-      const data = await res.json();
+      const data = await api.post<{ status: string; message?: string }>(`/api/settings`, settings);
       if (data.status === 'success') {
         showToast('Pengaturan berhasil disimpan!');
         // Re-fetch to get masked key again if updated
@@ -269,12 +367,13 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
           { id: 'api', label: 'API Keys' },
           { id: 'security', label: 'Security' },
           { id: 'schedules', label: 'Schedules' },
-          { id: 'followup', label: 'Follow-ups' }
+          { id: 'followup', label: 'Follow-ups' },
+          { id: 'cache', label: 'Prompt Cache' }
         ].map(cat => (
           <button
             key={cat.id}
             type="button"
-            onClick={() => setActiveCategory(cat.id as 'api' | 'security' | 'schedules' | 'followup' | 'persona' | 'business')}
+            onClick={() => setActiveCategory(cat.id as 'api' | 'security' | 'schedules' | 'followup' | 'persona' | 'business' | 'cache')}
             className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border shrink-0 transition-colors snap-center ${
               activeCategory === cat.id
                 ? 'bg-primary text-primary-foreground border-primary'
@@ -401,7 +500,19 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
               </span>
             </div>
             
-            <div className="flex justify-end mt-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-2 border-t border-border pt-4">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 border border-border px-3 py-1.5 rounded-xl">
+                <IconSparkles size={14} className="text-primary animate-pulse" />
+                <span>Estimasi Prompt: </span>
+                {isEstimating ? (
+                  <span className="font-mono text-foreground/70 animate-pulse">Menghitung...</span>
+                ) : (
+                  <span className="font-bold text-foreground font-mono">
+                    {estimatedTokens !== null ? `${estimatedTokens.toLocaleString()} tokens` : '0 tokens'}
+                  </span>
+                )}
+              </div>
+
               <Button
                 type="button"
                 onClick={handleSaveBusinessProfile}
@@ -850,6 +961,168 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
           </CardContent>
         </Card>
       </div>
+
+      {/* Row: Prompt Cache */}
+      <div className={`${activeCategory === 'cache' ? 'block' : 'hidden md:block'} w-full`}>
+        <Card className="bg-card border-border shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
+              <IconFlame size={18} className="text-orange-400" />
+              <span>System Prompt Caching & Token Optimization</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-6">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div className="bg-muted/30 rounded-xl p-3 border border-border">
+                <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Cached Tokens</div>
+                <div className="text-xl font-bold text-primary">{cacheStats.totalCachedTokens.toLocaleString()}</div>
+              </div>
+
+              <div className="bg-muted/30 rounded-xl p-3 border border-border">
+                <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Cache Hit Rate</div>
+                <div className="text-xl font-bold text-primary">{cacheStats.hitRate.toFixed(1)}%</div>
+              </div>
+
+              <div className="bg-muted/30 rounded-xl p-3 border border-border">
+                <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Savings (USD)</div>
+                <div className="text-xl font-bold text-emerald-400">${cacheStats.savingsUsd.toFixed(3)}</div>
+              </div>
+
+              <div className="bg-muted/30 rounded-xl p-3 border border-border">
+                <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Savings (IDR)</div>
+                <div className="text-xl font-bold text-emerald-400">Rp {cacheStats.savingsIdr.toLocaleString('id-ID')}</div>
+              </div>
+            </div>
+
+            {/* Info Box */}
+            <div className="bg-muted/30 border border-border rounded-xl p-4 flex gap-3 items-start">
+              <IconInfoCircle size={18} className="text-primary shrink-0 mt-0.5" />
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-semibold text-foreground">Bagaimana cara kerja Caching?</span>
+                <span className="text-[11px] text-muted-foreground leading-relaxed">
+                  System prompt Anda berisi profil bisnis dan daftar produk ter-embedding. Saat kustomer mengirim pesan baru, Gemini akan memproses prompt tersebut. Jika prompt identik dengan sebelumnya, server akan membaca dari cache (90% lebih murah dibanding biaya input token standar).
+                </span>
+              </div>
+            </div>
+
+            {/* Preview Box */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-muted-foreground">Preview System Prompt</span>
+                <span className="text-[10px] text-muted-foreground">
+                  Status: {promptPreview.isCached ? <span className="text-emerald-500 font-semibold">🟢 Cached</span> : <span className="text-orange-400 font-semibold">🟡 Not Cached</span>}
+                </span>
+              </div>
+              <div className="bg-muted/40 border border-border rounded-xl p-3 relative max-h-[160px] overflow-hidden">
+                <pre className="text-[11px] font-mono text-muted-foreground leading-relaxed whitespace-pre-wrap select-none">
+                  {promptPreview.prompt ? promptPreview.prompt.substring(0, 400) + '...' : 'Loading prompt preview...'}
+                </pre>
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-card to-transparent h-10 flex items-end justify-center pb-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsPromptModalOpen(true)}
+                    className="text-xs text-primary font-semibold hover:bg-transparent"
+                  >
+                    View Full Prompt
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap gap-2 items-center justify-between border-t border-border pt-4">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Last Rebuild</span>
+                <span className="text-xs text-foreground font-mono">
+                  {promptPreview.updatedAt 
+                    ? new Date(promptPreview.updatedAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+                    : 'N/A'}
+                </span>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText(promptPreview.prompt);
+                    showToast('Prompt disalin ke clipboard!');
+                  }}
+                  className="h-8 text-xs font-semibold gap-1.5"
+                  disabled={!promptPreview.prompt}
+                >
+                  <IconCopy size={14} />
+                  <span>Copy Prompt</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRefreshCache}
+                  className="h-8 text-xs font-semibold gap-1.5"
+                  disabled={cacheLoading}
+                >
+                  {cacheLoading ? <IconLoader size={14} className="animate-spin" /> : <IconRefresh size={14} />}
+                  <span>Refresh Cache</span>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Full Prompt Modal */}
+      {isPromptModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-20">
+          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-3xl flex flex-col max-h-[85vh]">
+            <div className="p-4 border-b border-border flex items-center justify-between bg-muted/20">
+              <div className="flex flex-col gap-0.5">
+                <h3 className="font-semibold text-foreground text-sm">Full System Prompt Preview</h3>
+                <p className="text-[10px] text-muted-foreground font-mono">Hash: {promptPreview.hash}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPromptModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground text-sm font-semibold p-1"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto flex-grow bg-background/50">
+              <pre className="text-xs font-mono text-foreground whitespace-pre-wrap bg-muted/40 p-3 rounded-lg border border-border leading-relaxed select-all">
+                {promptPreview.prompt}
+              </pre>
+            </div>
+            <div className="p-4 border-t border-border flex justify-end gap-2 bg-muted/20">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  navigator.clipboard.writeText(promptPreview.prompt);
+                  showToast('Prompt berhasil disalin ke clipboard!');
+                }}
+                className="text-xs font-semibold gap-1.5"
+              >
+                <IconCopy size={14} />
+                <span>Copy Prompt</span>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsPromptModalOpen(false)}
+                className="text-xs font-semibold"
+              >
+                Tutup
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
 

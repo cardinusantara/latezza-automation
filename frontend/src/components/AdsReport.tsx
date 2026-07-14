@@ -15,6 +15,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_BASE_URL } from '@/config';
+import { api, getAuthHeaders } from '@/lib/api';
 
 interface CsvMetadata {
   filename: string;
@@ -105,12 +106,7 @@ async function switchDataSource(
   }
 
   try {
-    const res = await fetch(`${API_BASE_URL}/api/ads-data-source`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ source })
-    });
-    const data = await res.json();
+    const data = await api.post('/api/ads-data-source', { source });
     if (data.status === 'success') {
       toast.success(`Sumber data diubah ke: ${source === 'api' ? 'Meta API' : 'CSV Upload'}`);
       await checkCsvStatus();
@@ -125,12 +121,7 @@ async function switchDataSource(
 async function sendReportToWhatsApp(dateFrom: string, dateTo: string) {
   toast.info(`Sedang mengirim ringkasan laporan (${dateFrom} s/d ${dateTo}) ke grup WhatsApp...`);
   try {
-    const res = await fetch(`${API_BASE_URL}/trigger-analysis`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date_from: dateFrom, date_to: dateTo })
-    });
-    const data = await res.json();
+    const data = await api.post('/trigger-analysis', { date_from: dateFrom, date_to: dateTo });
     if (data.status === 'success') {
       toast.success('Pesan ringkasan laporan berhasil dipicu ke grup WhatsApp target.');
     } else {
@@ -191,8 +182,9 @@ function useAdsAnalysis(
     const sourceLabel = csvStatus?.dataSource === 'csv' ? 'CSV' : 'Meta Ads API';
     toast.info(`Sedang menganalisis data dari ${sourceLabel} (${dateFrom} s/d ${dateTo})...`);
     
+    const token = localStorage.getItem('auth_token') || '';
     const eventSource = new EventSource(
-      `${API_BASE_URL}/api/run-analysis-stream?date_from=${dateFrom}&date_to=${dateTo}`
+      `${API_BASE_URL}/api/run-analysis-stream?token=${encodeURIComponent(token)}&date_from=${dateFrom}&date_to=${dateTo}`
     );
 
     eventSource.onmessage = (event) => {
@@ -701,7 +693,7 @@ export default function AdsReport() {
   // Check if report.html exists on server
   const checkReportStatus = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/report-html`, { method: 'HEAD' });
+      const res = await fetch(`${API_BASE_URL}/report-html`, { method: 'HEAD', headers: { ...getAuthHeaders() } });
       if (res.status === 200) {
         setReportExists(true);
       } else {
@@ -717,8 +709,7 @@ export default function AdsReport() {
   // Check CSV upload status
   const checkCsvStatus = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/ads-csv-status`);
-      const data = await res.json();
+      const data = await api.get('/api/ads-csv-status');
       if (data.status === 'success') {
         setCsvStatus(data);
       }
@@ -749,6 +740,7 @@ export default function AdsReport() {
     try {
       const res = await fetch(`${API_BASE_URL}/api/upload-ads-csv`, {
         method: 'POST',
+        headers: { ...getAuthHeaders() },
         body: formData
       });
       const data = await res.json();

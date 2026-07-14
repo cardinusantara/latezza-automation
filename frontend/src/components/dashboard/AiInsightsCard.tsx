@@ -66,7 +66,8 @@ function AiInsightsCardInner({ overviewSessionId }: Readonly<AiInsightsCardProps
   const connectSSE = () => {
     cleanupEventSource();
 
-    const url = `${API_BASE_URL}/api/trigger-message-summary-stream?session_id=${overviewSessionId}&date_range=${selectedRange}`;
+    const token = localStorage.getItem('auth_token') || '';
+    const url = `${API_BASE_URL}/api/trigger-message-summary-stream?token=${encodeURIComponent(token)}&session_id=${overviewSessionId}&date_range=${selectedRange}`;
     const eventSource = new EventSource(url);
     eventSourceRef.current = eventSource;
 
