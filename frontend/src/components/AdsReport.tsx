@@ -182,8 +182,9 @@ function useAdsAnalysis(
     const sourceLabel = csvStatus?.dataSource === 'csv' ? 'CSV' : 'Meta Ads API';
     toast.info(`Sedang menganalisis data dari ${sourceLabel} (${dateFrom} s/d ${dateTo})...`);
     
+    const token = localStorage.getItem('auth_token') || '';
     const eventSource = new EventSource(
-      `${API_BASE_URL}/api/run-analysis-stream?date_from=${dateFrom}&date_to=${dateTo}`
+      `${API_BASE_URL}/api/run-analysis-stream?token=${encodeURIComponent(token)}&date_from=${dateFrom}&date_to=${dateTo}`
     );
 
     eventSource.onmessage = (event) => {

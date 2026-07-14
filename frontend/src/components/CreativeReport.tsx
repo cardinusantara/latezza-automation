@@ -75,8 +75,9 @@ export default function CreativeReport() {
     setLoading(true);
     setStreamMessages([]);
     setStreamChunks('');
-    const promptParam = userPrompt.trim() ? `?prompt=${encodeURIComponent(userPrompt.trim())}` : '';
-    const eventSource = new EventSource(`${API_BASE_URL}/api/trigger-creative-analysis-stream${promptParam}`);
+    const promptParam = userPrompt.trim() ? `&prompt=${encodeURIComponent(userPrompt.trim())}` : '';
+    const token = localStorage.getItem('auth_token') || '';
+    const eventSource = new EventSource(`${API_BASE_URL}/api/trigger-creative-analysis-stream?token=${encodeURIComponent(token)}${promptParam}`);
 
     eventSource.onmessage = (event) => {
       try {
