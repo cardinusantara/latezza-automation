@@ -10,6 +10,7 @@ import { KpiCards } from '@/components/dashboard/KpiCards';
 import { AiInsightsCard } from '@/components/dashboard/AiInsightsCard';
 import { GeminiAnalyticsPanel } from '@/components/dashboard/GeminiAnalyticsPanel';
 import { RecentActivityTable } from '@/components/dashboard/RecentActivityTable';
+import { SystemPromptCacheWidget } from '@/components/dashboard/SystemPromptCacheWidget';
 import type { Stats, UsageStatsData, Session } from '@/types';
 
 interface OverviewProps {
@@ -20,6 +21,8 @@ interface OverviewProps {
   onSelectCustomer: (phone_number: string, name: string, sessionId: string) => void;
   onTriggerFollowUps?: () => void;
   statsLoading?: boolean;
+  businessId?: number;
+  onNavigateToSettings?: () => void;
 }
 
 export default function Overview({
@@ -30,6 +33,8 @@ export default function Overview({
   onSelectCustomer,
   onTriggerFollowUps,
   statsLoading,
+  businessId = 1,
+  onNavigateToSettings,
 }: Readonly<OverviewProps>) {
   const [usageStats, setUsageStats] = useState<UsageStatsData | null>(null);
   const [usageLoading, setUsageLoading] = useState(false);
@@ -128,6 +133,12 @@ export default function Overview({
 
       {/* AI Summary Section */}
       <AiInsightsCard overviewSessionId={overviewSessionId} />
+
+      {/* System Prompt Cache Widget */}
+      <SystemPromptCacheWidget
+        businessId={businessId}
+        onNavigateToSettings={onNavigateToSettings}
+      />
 
       {/* Gemini API Usage & Cost Analytics */}
       <GeminiAnalyticsPanel

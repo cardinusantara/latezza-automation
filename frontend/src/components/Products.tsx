@@ -27,7 +27,7 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { API_BASE_URL } from '@/config';
+import { api } from '@/lib/api';
 
 // Tailwind CSS classes matching shadcn ui components exactly
 const inputClasses = "h-9 w-full min-w-0 rounded-4xl border border-input bg-input/30 px-3 py-1 text-xs transition-colors outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-card/30 border-border text-foreground";
@@ -114,19 +114,14 @@ export default function Products({ products, onRefreshData, businessId }: Readon
     
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/products`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          product_name: form.product_name,
-          price: Number.parseFloat(form.price),
-          description: form.description,
-          image_url: form.image_url,
-          shopee_link: form.shopee_link,
-          business_id: businessId
-        })
+      const data = await api.post('/api/products', {
+        product_name: form.product_name,
+        price: Number.parseFloat(form.price),
+        description: form.description,
+        image_url: form.image_url,
+        shopee_link: form.shopee_link,
+        business_id: businessId
       });
-      const data = await res.json();
       if (data.id) {
         toast.success('Produk berhasil ditambahkan.');
         setIsAddOpen(false);
@@ -155,18 +150,13 @@ export default function Products({ products, onRefreshData, businessId }: Readon
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/products/${selectedProduct.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          product_name: form.product_name,
-          price: Number.parseFloat(form.price),
-          description: form.description,
-          image_url: form.image_url,
-          shopee_link: form.shopee_link
-        })
+      const data = await api.put(`/api/products/${selectedProduct.id}`, {
+        product_name: form.product_name,
+        price: Number.parseFloat(form.price),
+        description: form.description,
+        image_url: form.image_url,
+        shopee_link: form.shopee_link
       });
-      const data = await res.json();
       if (data.id) {
         toast.success('Produk berhasil diperbarui.');
         setIsEditOpen(false);
@@ -190,10 +180,7 @@ export default function Products({ products, onRefreshData, businessId }: Readon
     if (!selectedProduct) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/products/${selectedProduct.id}`, {
-        method: 'DELETE'
-      });
-      const data = await res.json();
+      const data = await api.delete(`/api/products/${selectedProduct.id}`);
       if (data.status === 'success') {
         toast.success('Produk berhasil dihapus.');
         setIsDeleteOpen(false);

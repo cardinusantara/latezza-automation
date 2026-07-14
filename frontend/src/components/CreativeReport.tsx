@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_BASE_URL } from '@/config';
+import { api } from '@/lib/api';
 
 interface CreativeIdea {
   title: string;
@@ -54,13 +55,8 @@ export default function CreativeReport() {
   const fetchReport = async (silent = false) => {
     if (!silent) setChecking(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/creative-report`);
-      if (res.status === 200) {
-        const json = await res.json();
-        setData(json);
-      } else {
-        setData(null);
-      }
+      const data = await api.get<CreativeReportData>('/api/creative-report');
+      setData(data);
     } catch (err) {
       console.error('Failed to load creative report:', err);
     } finally {

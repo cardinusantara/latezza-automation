@@ -23,6 +23,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { API_BASE_URL } from '@/config';
+import { api, getAuthHeaders } from '@/lib/api';
 
 interface Campaign {
   id: number;
@@ -96,8 +97,7 @@ export default function Broadcast({ showToast, sessions, businessId }: Readonly<
   const fetchCampaigns = async (silent = false) => {
     if (!silent && !isLoading) setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/broadcasts/campaigns?business_id=${businessId}`);
-      const data = await res.json();
+      const data = await api.get(`/api/broadcasts/campaigns?business_id=${businessId}`);
       if (Array.isArray(data)) {
         setCampaigns(data);
       }
@@ -113,8 +113,7 @@ export default function Broadcast({ showToast, sessions, businessId }: Readonly<
   const fetchCampaignDetail = async (campaignId: number, silent = false) => {
     if (!silent) setIsDetailLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/broadcasts/campaigns/${campaignId}`);
-      const data = await res.json();
+      const data = await api.get(`/api/broadcasts/campaigns/${campaignId}`);
       if (data.campaign) {
         setCampaignQueue(data.queue || []);
         // Sync selected campaign status updates
@@ -132,8 +131,7 @@ export default function Broadcast({ showToast, sessions, businessId }: Readonly<
   const fetchAllCustomers = async () => {
     setIsCustomersLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/customers`);
-      const data = await res.json();
+      const data = await api.get('/api/customers');
       if (Array.isArray(data)) {
         setAllCustomers(data);
       }
@@ -200,6 +198,7 @@ export default function Broadcast({ showToast, sessions, businessId }: Readonly<
     try {
       const res = await fetch(`${API_BASE_URL}/api/broadcasts/upload`, {
         method: 'POST',
+        headers: { ...getAuthHeaders() },
         body: formData
       });
       const data = await res.json();
@@ -226,15 +225,10 @@ export default function Broadcast({ showToast, sessions, businessId }: Readonly<
 
     setIsGeneratingAi(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/broadcasts/generate-content`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: formTemplate,
-          customerContext: 'Latezza Cake, premium, sapa pelanggan dengan ramah'
-        })
+      const data = await api.post('/api/broadcasts/generate-content', {
+        prompt: formTemplate,
+        customerContext: 'Latezza Cake, premium, sapa pelanggan dengan ramah'
       });
-      const data = await res.json();
       if (data.status === 'success' && Array.isArray(data.variations) && data.variations.length > 0) {
         setFormTemplate(data.variations[0]);
         showToast('Pesan berhasil diperbaiki oleh Gemini!');
@@ -265,21 +259,16 @@ export default function Broadcast({ showToast, sessions, businessId }: Readonly<
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/broadcasts/campaigns`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formName,
-          sessionId: formSessionId,
-          template: formTemplate,
-          mediaType: formMediaType,
-          mediaUrl: formMediaUrl || null,
-          targetFilter: formTargetFilter,
-          selectedPhones: formTargetFilter === 'manual' ? selectedCustomers : [],
-          business_id: businessId
-        })
+      const data = await api.post('/api/broadcasts/campaigns', {
+        name: formName,
+        sessionId: formSessionId,
+        template: formTemplate,
+        mediaType: formMediaType,
+        mediaUrl: formMediaUrl || null,
+        targetFilter: formTargetFilter,
+        selectedPhones: formTargetFilter === 'manual' ? selectedCustomers : [],
+        business_id: businessId
       });
-      const data = await res.json();
       if (data.status === 'success') {
         showToast(`Kampanye "${formName}" berhasil dibuat dalam antrean!`);
         setIsComposerOpen(false);
@@ -304,12 +293,7 @@ export default function Broadcast({ showToast, sessions, businessId }: Readonly<
   const handleControlCampaign = async (campaignId: number, action: 'start' | 'pause' | 'cancel') => {
     const actionLabel = action === 'start' ? 'memulai' : action === 'pause' ? 'menjeda' : 'membatalkan';
     try {
-      const res = await fetch(`${API_BASE_URL}/api/broadcasts/campaigns/${campaignId}/control`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action })
-      });
-      const data = await res.json();
+      const data = await api.post(`/api/broadcasts/campaigns/${campaignId}/control`, { action });
       if (data.status === 'success') {
         showToast(`Berhasil ${actionLabel} kampanye siaran.`);
         fetchCampaigns(true);
