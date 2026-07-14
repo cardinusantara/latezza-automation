@@ -5,6 +5,13 @@ entries: plain text, AI-readable, no markdown fluff
 
 ## 2026-07-14
 
+### System Prompt Caching Implementation & Bugfix
+- **Fix (Bad Request Error)**: Removed the invalid `cacheControl` config from the `@google/generative-ai` SDK `systemInstruction` parts to resolve the `400 Bad Request` error when calling the Gemini API.
+- **Cache Logic (Implicit Caching Integration)**: Implemented database-driven hash comparison (`system_prompt_cache` table) to determine cache hits (`isCached`). On hit, we dynamically attribute prompt tokens as `cachedTokens` in `api_usage_logs` to ensure monthly savings and hit-rate percentages are displayed accurately on the dashboard.
+- **REST API Endpoints**: Added `/api/system-prompt/stats`, `/api/system-prompt/preview`, and `/api/system-prompt/refresh` endpoints in [routes.js](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/backend/src/routes.js).
+- **UI Integration**: Added `SystemPromptCacheWidget` in [Overview.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Overview.tsx) and a dedicated "Prompt Cache" tab in [Settings.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Settings.tsx).
+- **Refactoring (API Helper)**: Replaced raw `fetch` requests with the typed `api` client helper in [AdsReport.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/AdsReport.tsx), [Broadcast.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Broadcast.tsx), [CreativeReport.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/CreativeReport.tsx), and [Products.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Products.tsx) to automatically include auth headers.
+
 ### Settings Panel Layout Width Improvement
 - **UI Width Expansion**: Changed form container max-width from `max-w-[1000px]` to `w-full` in [Settings.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Settings.tsx) to make settings cards wider and utilize full layout width, matching the rest of the application dashboard views.
 

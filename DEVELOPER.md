@@ -257,6 +257,17 @@ cost_usd            NUMERIC(12, 6) DEFAULT 0     -- Calculated using standard ($
 cost_idr            NUMERIC(14, 2) DEFAULT 0     -- Converted using fixed exchange rate (Rp 17.500)
 ```
 
+### system_prompt_cache
+```sql
+id                  SERIAL PRIMARY KEY
+business_id         INT NOT NULL UNIQUE REFERENCES businesses(id) ON DELETE CASCADE
+prompt_hash         VARCHAR(64) NOT NULL         -- SHA-256 hash of system_instruction
+prompt_content      TEXT NOT NULL                -- Full text of generated system instruction
+cache_token_count   INT DEFAULT 0                -- Estimated token count of the system prompt
+cached_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
 ### broadcast_campaigns
 ```sql
 id               SERIAL PRIMARY KEY
