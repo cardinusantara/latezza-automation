@@ -40,6 +40,10 @@ Dokumentasi ini menjelaskan seluruh endpoint HTTP/REST API yang tersedia pada ba
 | 23 | Pengaturan | POST | `/api/settings` | Menyimpan konfigurasi sistem (otomatis memuat ulang scheduler). |
 | 24 | Pengaturan | GET | `/api/settings/default-system-prompt` | Melihat draf default prompt sistem agen AI. |
 | 25 | Pengaturan | GET | `/api/settings/usage-stats` | Mengambil statistik penggunaan token Gemini dan log biaya billing. |
+| 25.1 | Prompt Cache | GET | `/api/system-prompt/stats` | Mengambil statistik hit rate, token count, dan monthly savings. |
+| 25.2 | Prompt Cache | GET | `/api/system-prompt/preview` | Mengambil teks prompt sistem secara penuh beserta isCached flag. |
+| 25.3 | Prompt Cache | POST | `/api/system-prompt/refresh` | Memaksa invalidate dan rebuild cache system prompt secara manual. |
+| 25.4 | Prompt Cache | POST | `/api/system-prompt/estimate` | Mengestimasi jumlah token dari draft form profile business baru. |
 | 26 | Ads & Creative | POST | `/run-analysis` | Menjalankan skrip analisis Meta Ads secara sinkron. |
 | 27 | Ads & Creative | POST | `/trigger-analysis` | Memicu analisis Meta Ads dan siaran laporan di latar belakang. |
 | 28 | Ads & Creative | GET | `/api/run-analysis-stream` | Memicu analisis Meta Ads manual dengan Server-Sent Events (SSE) progress stream. |
@@ -727,6 +731,100 @@ Mengambil data akumulasi penggunaan token (input, output, cached) dan perhitunga
         "request_count": 12
       }
     ]
+  }
+  ```
+
+---
+
+### GET `/api/system-prompt/stats`
+Mengambil statistik performa caching untuk prompt sistem bisnis, termasuk total cached tokens, hits, total request, hit rate (%), serta akumulasi penghematan biaya dalam USD & IDR.
+
+- **Query Parameters**:
+  - `businessId` (opsional, default: `1`): ID entitas bisnis yang ingin dilihat statistiknya.
+  - `days` (opsional, default: `30`): Rentang waktu statistik dalam hari.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "totalCachedTokens": 184500,
+      "cacheHits": 74,
+      "totalRequests": 82,
+      "hitRate": 90.24,
+      "savingsUsd": 0.041512,
+      "savingsIdr": 726.47,
+      "lastCacheUpdate": "2026-07-14T15:30:10.123Z",
+      "promptCacheTokenCount": 2490
+    }
+  }
+  ```
+
+---
+
+### GET `/api/system-prompt/preview`
+Mengambil pratinjau teks prompt sistem secara lengkap dan status cache yang aktif saat ini di database.
+
+- **Query Parameters**:
+  - `businessId` (opsional, default: `1`): ID entitas bisnis.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "prompt": "Anda adalah asisten penjualan Latezza Cake...",
+      "isCached": true,
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "promptLength": 16510,
+      "cachedAt": "2026-07-14T15:30:10.123Z",
+      "updatedAt": "2026-07-14T15:30:10.123Z"
+    }
+  }
+  ```
+
+---
+
+### POST `/api/system-prompt/refresh`
+Memaksa sistem untuk menghapus cache yang tersimpan di database dan langsung membangun ulang prompt sistem yang baru (biasanya dipicu ketika profil bisnis atau instruksi diubah).
+
+- **Request Body**:
+  - `businessId` (opsional, default: `1`): ID entitas bisnis.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "System prompt cache berhasil di-refresh",
+    "data": {
+      "hash": "7f83b1657ff1fc53b92c48d42d3e124c7ae291a82649b924ca495991a7852b85",
+      "isCached": false,
+      "cacheTokenCount": 2490,
+      "promptLength": 16510
+    }
+  }
+  ```
+
+---
+
+### POST `/api/system-prompt/estimate`
+Mengestimasi ukuran panjang karakter dan jumlah token dari data masukan profil bisnis sebelum disimpan ke database (biasanya digunakan untuk visualisasi live preview di UI).
+
+- **Request Body (JSON)**:
+  - `name` (string): Nama bisnis.
+  - `shortDescription` (string): Deskripsi singkat.
+  - `contactPhone` (string): Nomor telepon.
+  - `address` (string): Alamat.
+  - `tone` (string): Nada bahasa.
+  - `customPrompt` (string): Instruksi tambahan.
+  - `handoffRules` (string): Aturan handoff ke manusia.
+  - `followupRules` (string): Aturan follow-up otomatis.
+- **Response (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "promptLength": 16510,
+      "estimatedTokens": 4128,
+      "meetsCacheThreshold": true
+    }
   }
   ```
 
