@@ -3,6 +3,11 @@
 format: date descending, grouped by session/sprint
 entries: plain text, AI-readable, no markdown fluff
 
+## 2026-07-14
+
+### Settings Panel Layout Width Improvement
+- **UI Width Expansion**: Changed form container max-width from `max-w-[1000px]` to `w-full` in [Settings.tsx](file:///C:/Users/Fardhan%20Rasya/Documents/kerja/inhands/cardi-automation/latezza-automation/frontend/src/components/Settings.tsx) to make settings cards wider and utilize full layout width, matching the rest of the application dashboard views.
+
 ## 2026-07-13
 
 ### WhatsApp Multi-Session & QR Scanner Dashboard Route Fixes

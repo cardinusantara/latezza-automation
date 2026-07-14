@@ -261,7 +261,7 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
   }
 
   return (
-    <form onSubmit={handleSave} className="flex flex-col gap-6 max-w-[1000px] mx-auto pb-10">
+    <form onSubmit={handleSave} className="flex flex-col gap-6 w-full mx-auto pb-10">
       {/* Mobile Tab Selector */}
       <div className="flex md:hidden overflow-x-auto gap-2 pb-2 -mx-4 px-4 scrollbar-none snap-x shrink-0">
         {[
