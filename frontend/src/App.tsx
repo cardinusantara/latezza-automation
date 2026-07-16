@@ -334,11 +334,13 @@ function Dashboard() {
     return () => clearTimeout(timer);
   }, [selectedSessionId, currentBusinessId, loadCustomers]);
 
+  // Reduced polling frequency (was 8s). Lower load on backend helps stability and reduces CORS-flakiness symptoms
+  // when the server is under pressure or restarting.
   usePolling(() => {
     loadStats();
     loadCustomers();
     loadSessions();
-  }, 8000, [selectedSessionId, overviewSessionId, currentBusinessId, loadStats, loadCustomers, loadSessions]);
+  }, 18000, [selectedSessionId, overviewSessionId, currentBusinessId, loadStats, loadCustomers, loadSessions]);
 
   const getHeaderInfo = () => {
     switch (activeTab) {

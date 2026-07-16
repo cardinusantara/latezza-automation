@@ -8,10 +8,36 @@ const dbConfig = {
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || (process.env.NODE_ENV === 'production' ? undefined : 'fardhan123'), // Development fallback
   database: process.env.DB_NAME || 'latezzacake',
+
+  // === Connection pool tuning to reduce "kadang-kadang" failures under load ===
+  // The /api/stats endpoint + polling can generate many concurrent queries.
+  max: Number.parseInt(process.env.DB_POOL_MAX || '25', 10),           // allow more concurrent connections
+  min: Number.parseInt(process.env.DB_POOL_MIN || '2', 10),
+  idleTimeoutMillis: Number.parseInt(process.env.DB_IDLE_TIMEOUT || '30000', 10),
+  connectionTimeoutMillis: Number.parseInt(process.env.DB_CONN_TIMEOUT || '5000', 10),
+
+  // Helps kill runaway queries (e.g. during heavy stats or analytics)
+  statement_timeout: Number.parseInt(process.env.DB_STATEMENT_TIMEOUT || '15000', 10), // 15s
+  query_timeout: Number.parseInt(process.env.DB_QUERY_TIMEOUT || '15000', 10),
 };
 
 // Create a new pool
 const pool = new Pool(dbConfig);
+
+// Log and handle pool errors so they don't crash the process silently
+pool.on('error', (err, client) => {
+  console.error('❌ Unexpected PostgreSQL pool error:', err.message);
+  // We do NOT re-throw — the individual query will fail and be handled by route try/catch.
+});
+
+pool.on('connect', () => {
+  // Optional: can be noisy, only enable if debugging
+  // console.log('DB pool: new client connected');
+});
+
+pool.on('remove', () => {
+  // console.log('DB pool: client removed');
+});
 
 // Settings Cache
 const settingsCache = new Map();

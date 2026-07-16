@@ -73,9 +73,11 @@ export default function WhatsappSessions({ businessId }: Readonly<WhatsappSessio
     Promise.resolve().then(() => {
       fetchSessions();
     });
+    // Reduced from 3s to 12s. Extremely frequent polling was contributing to backend load
+    // and intermittent "CORS" failures (caused by backend being overwhelmed or restarting).
     const interval = setInterval(() => {
       fetchSessions(true);
-    }, 3000);
+    }, 12000);
     return () => clearInterval(interval);
   }, [fetchSessions]);
 
