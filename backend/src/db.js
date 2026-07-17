@@ -43,6 +43,94 @@ pool.on('remove', () => {
 const settingsCache = new Map();
 
 /**
+ * Align system_prompt_cache with the schema expected by saveSystemPromptCache().
+ * CREATE TABLE IF NOT EXISTS does not upgrade columns when an older table already exists.
+ */
+async function migrateSystemPromptCacheSchema(client) {
+  const colRes = await client.query(`
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'system_prompt_cache'
+  `);
+  if (colRes.rows.length === 0) return; // table missing — CREATE TABLE handles it
+
+  const cols = new Set(colRes.rows.map((r) => r.column_name));
+
+  // prompt → prompt_content
+  if (!cols.has('prompt_content')) {
+    if (cols.has('prompt')) {
+      await client.query(
+        `ALTER TABLE system_prompt_cache RENAME COLUMN prompt TO prompt_content`,
+      );
+      console.log('✅ Migrated system_prompt_cache.prompt → prompt_content');
+    } else {
+      await client.query(
+        `ALTER TABLE system_prompt_cache ADD COLUMN prompt_content TEXT NOT NULL DEFAULT ''`,
+      );
+      await client.query(
+        `ALTER TABLE system_prompt_cache ALTER COLUMN prompt_content DROP DEFAULT`,
+      );
+      console.log('✅ Added system_prompt_cache.prompt_content');
+    }
+  }
+
+  // token_count → cache_token_count
+  if (!cols.has('cache_token_count')) {
+    if (cols.has('token_count')) {
+      await client.query(
+        `ALTER TABLE system_prompt_cache RENAME COLUMN token_count TO cache_token_count`,
+      );
+      console.log('✅ Migrated system_prompt_cache.token_count → cache_token_count');
+    } else {
+      await client.query(
+        `ALTER TABLE system_prompt_cache ADD COLUMN cache_token_count INT DEFAULT 0`,
+      );
+      console.log('✅ Added system_prompt_cache.cache_token_count');
+    }
+  }
+
+  // Ensure prompt_hash exists
+  if (!cols.has('prompt_hash')) {
+    await client.query(
+      `ALTER TABLE system_prompt_cache ADD COLUMN prompt_hash VARCHAR(64) NOT NULL DEFAULT ''`,
+    );
+    await client.query(
+      `ALTER TABLE system_prompt_cache ALTER COLUMN prompt_hash DROP DEFAULT`,
+    );
+    console.log('✅ Added system_prompt_cache.prompt_hash');
+  }
+
+  // Ensure timestamps
+  if (!cols.has('cached_at')) {
+    await client.query(
+      `ALTER TABLE system_prompt_cache ADD COLUMN cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`,
+    );
+  }
+  if (!cols.has('updated_at')) {
+    await client.query(
+      `ALTER TABLE system_prompt_cache ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`,
+    );
+  }
+
+  // Ensure business_id uniqueness for ON CONFLICT (business_id)
+  const uniq = await client.query(`
+    SELECT 1
+    FROM pg_constraint
+    WHERE conrelid = 'system_prompt_cache'::regclass
+      AND contype IN ('u', 'p')
+      AND pg_get_constraintdef(oid) ILIKE '%business_id%'
+    LIMIT 1
+  `);
+  if (uniq.rows.length === 0) {
+    await client.query(`
+      ALTER TABLE system_prompt_cache
+      ADD CONSTRAINT system_prompt_cache_business_id_key UNIQUE (business_id)
+    `);
+    console.log('✅ Added UNIQUE(business_id) on system_prompt_cache');
+  }
+}
+
+/**
  * Initialize Database Tables
  */
 async function initDb() {
@@ -166,6 +254,11 @@ async function initDb() {
          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
        );
      `);
+
+     // 6.5b. Migrate older system_prompt_cache schemas
+     // Early cache feature used: business_id PK, prompt, token_count
+     // Current code expects: prompt_content, cache_token_count
+     await migrateSystemPromptCacheSchema(client);
 
      // 7. Broadcast Campaigns Table
     await client.query(`

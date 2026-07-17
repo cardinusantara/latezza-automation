@@ -102,16 +102,25 @@ async function buildAndCacheSystemPrompt(businessId = 1) {
     isCached = true;
     console.log(`✅ System prompt cache HIT for business ${businessId}`);
   } else {
-    // Save new cache
-    await db.saveSystemPromptCache(businessId, systemInstruction, estimatedTokens);
-    console.log(`💾 System prompt cache MISS - saved new cache for business ${businessId}`);
+    // Save new cache — never fail the WhatsApp reply path if cache write breaks
+    try {
+      await db.saveSystemPromptCache(businessId, systemInstruction, estimatedTokens);
+      console.log(`💾 System prompt cache MISS - saved new cache for business ${businessId}`);
+    } catch (cacheErr) {
+      console.error(
+        `⚠️ System prompt cache save failed for business ${businessId} (chat continues):`,
+        cacheErr.message,
+      );
+    }
   }
   
   return {
     prompt: systemInstruction,
     isCached,
     hash: promptHash,
-    cacheTokenCount: cachedPrompt ? cachedPrompt.cache_token_count : estimatedTokens
+    cacheTokenCount: cachedPrompt
+      ? (cachedPrompt.cache_token_count ?? cachedPrompt.token_count ?? estimatedTokens)
+      : estimatedTokens,
   };
 }
 
