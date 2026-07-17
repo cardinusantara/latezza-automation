@@ -48,6 +48,8 @@ services:
     volumes:
       # Persist the authenticated WhatsApp sessions across container restarts
       - ./backend/whatsapp-sessions:/usr/src/app/whatsapp-sessions
+      # Persist uploaded ads CSV + generated reports across rebuilds
+      - ./backend/ads-analysis:/usr/src/app/ads-analysis
 
 volumes:
   postgres_data:

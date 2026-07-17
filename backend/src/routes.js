@@ -989,25 +989,43 @@ function registerRoutes(fastify) {
       const csvPath = path.join(adsDir, 'uploaded-ads.csv');
       fs.writeFileSync(csvPath, buffer);
 
-      // Parse row count (skip header)
-      const dataLines = lines.slice(1).filter(l => l.trim());
-      const rowCount = dataLines.length;
+      // Detect reporting date range inside the CSV so the UI can auto-align filters
+      let dateFrom = null;
+      let dateTo = null;
+      let rowCount = lines.slice(1).filter((l) => l.trim()).length;
+      try {
+        const { getCsvDateRange } = require('../ads-analysis/automation');
+        const range = getCsvDateRange(content);
+        dateFrom = range.dateFrom;
+        dateTo = range.dateTo;
+        if (range.rowCount > 0) rowCount = range.rowCount;
+      } catch (rangeErr) {
+        fastify.log.warn(`CSV date-range detection failed: ${rangeErr.message}`);
+      }
 
       // Save metadata
-      const metadata = JSON.stringify({
+      const metadata = {
         filename: filename,
         rows: rowCount,
         uploadedAt: new Date().toISOString(),
-        size: buffer.length
-      });
-      await db.setSetting('ads_csv_metadata', metadata);
+        size: buffer.length,
+        dateFrom,
+        dateTo,
+      };
+      await db.setSetting('ads_csv_metadata', JSON.stringify(metadata));
       await db.setSetting('ads_data_source', 'csv');
 
-      fastify.log.info(`CSV uploaded: ${filename} (${rowCount} rows, ${buffer.length} bytes)`);
+      const rangeHint =
+        dateFrom && dateTo
+          ? ` Rentang data CSV: ${dateFrom} s/d ${dateTo}.`
+          : '';
+      fastify.log.info(
+        `CSV uploaded: ${filename} (${rowCount} rows, ${buffer.length} bytes, range ${dateFrom || '?'}–${dateTo || '?'})`,
+      );
       return {
         status: 'success',
-        message: `File "${filename}" berhasil diupload (${rowCount} baris data).`,
-        metadata: JSON.parse(metadata)
+        message: `File "${filename}" berhasil diupload (${rowCount} baris data).${rangeHint}`,
+        metadata,
       };
     } catch (err) {
       fastify.log.error(`CSV upload error: ${err.message}`);
@@ -1033,17 +1051,40 @@ function registerRoutes(fastify) {
 
       const stat = fs.statSync(csvPath);
       const storedMetadata = await db.getSetting('ads_csv_metadata');
+      let metadata = storedMetadata
+        ? JSON.parse(storedMetadata)
+        : {
+            filename: 'uploaded-ads.csv',
+            rows: 0,
+            uploadedAt: stat.mtime.toISOString(),
+            size: stat.size,
+            dateFrom: null,
+            dateTo: null,
+          };
+
+      // Re-scan file if date range was never stored (older uploads)
+      if (!metadata.dateFrom || !metadata.dateTo) {
+        try {
+          const { getCsvDateRange } = require('../ads-analysis/automation');
+          const range = getCsvDateRange(fs.readFileSync(csvPath, 'utf8'));
+          metadata = {
+            ...metadata,
+            dateFrom: range.dateFrom,
+            dateTo: range.dateTo,
+            rows: range.rowCount || metadata.rows,
+            size: stat.size,
+          };
+          await db.setSetting('ads_csv_metadata', JSON.stringify(metadata));
+        } catch (rangeErr) {
+          fastify.log.warn(`CSV status date-range scan failed: ${rangeErr.message}`);
+        }
+      }
       
       return {
         status: 'success',
         exists: true,
         dataSource: await db.getSetting('ads_data_source') || 'api',
-        metadata: storedMetadata ? JSON.parse(storedMetadata) : {
-          filename: 'uploaded-ads.csv',
-          rows: 0,
-          uploadedAt: stat.mtime.toISOString(),
-          size: stat.size
-        }
+        metadata,
       };
     } catch (err) {
       fastify.log.error(`CSV status check error: ${err.message}`);

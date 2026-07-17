@@ -113,6 +113,62 @@ function splitCSVLine(line) {
 /**
  * Flexible CSV Parser
  */
+/**
+ * Detect min/max reporting dates in a Meta Ads export CSV.
+ * Used so the dashboard can auto-align the analysis date range to the file.
+ * @returns {{ dateFrom: string|null, dateTo: string|null, rowCount: number }}
+ */
+function getCsvDateRange(csvText) {
+  const lines = csvText.split(/\r?\n/).filter((line) => line.trim() !== '');
+  if (lines.length < 2) {
+    return { dateFrom: null, dateTo: null, rowCount: 0 };
+  }
+
+  const headers = splitCSVLine(lines[0]).map((h) => h.replace(/^"|"$/g, '').trim().toLowerCase());
+  const startIdx = headers.findIndex(
+    (h) => h.includes('awal') || h.includes('start') || h.includes('mulai'),
+  );
+  const endIdx = headers.findIndex(
+    (h) => h.includes('akhir') || h.includes('end') || h.includes('selesai'),
+  );
+
+  let minStart = null;
+  let maxEnd = null;
+  let rowCount = 0;
+
+  for (let i = 1; i < lines.length; i++) {
+    const cells = splitCSVLine(lines[i]).map((c) => c.replace(/^"|"$/g, '').trim());
+    if (!cells[0]) continue;
+    rowCount++;
+
+    const startRaw = startIdx >= 0 ? cells[startIdx] : cells[0];
+    const endRaw = endIdx >= 0 ? cells[endIdx] : startRaw;
+    const start = startRaw ? new Date(startRaw) : null;
+    const end = endRaw ? new Date(endRaw) : null;
+
+    if (start && !Number.isNaN(start.getTime())) {
+      if (!minStart || start < minStart) minStart = start;
+    }
+    if (end && !Number.isNaN(end.getTime())) {
+      if (!maxEnd || end > maxEnd) maxEnd = end;
+    }
+  }
+
+  const toIsoDate = (d) => {
+    if (!d) return null;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
+  return {
+    dateFrom: toIsoDate(minStart),
+    dateTo: toIsoDate(maxEnd || minStart),
+    rowCount,
+  };
+}
+
 function parseCSV(csvText, dateFromStr = null, dateToStr = null) {
   const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
   if (lines.length === 0) return [];
@@ -808,6 +864,33 @@ async function main() {
   // 3. Zero-Data check
   if (ads.length === 0) {
     console.warn("WARNING: Empty dataset. Writing empty-state dashboard report...");
+    let emptyBody =
+      'Sistem tidak mendeteksi baris iklan valid di rentang tanggal yang dipilih.';
+    if (useCsvSource) {
+      try {
+        const csvPath = process.env.ADS_CSV_PATH || path.join(__dirname, 'uploaded-ads.csv');
+        const range = getCsvDateRange(fs.readFileSync(csvPath, 'utf8'));
+        if (range.dateFrom && range.dateTo) {
+          emptyBody =
+            `File CSV terupload memiliki data untuk ${range.dateFrom} s/d ${range.dateTo} ` +
+            `(${range.rowCount} baris), tetapi tidak ada baris yang overlap dengan filter ` +
+            `${dateFrom} s/d ${dateTo}. Ubah rentang tanggal di dashboard agar sesuai dengan CSV.`;
+          console.log(`::STATUS::${emptyBody}`);
+        } else {
+          emptyBody =
+            'File CSV terupload tidak berisi tanggal pelaporan yang valid, atau format kolom tidak dikenali.';
+          console.log(`::STATUS::${emptyBody}`);
+        }
+      } catch (rangeErr) {
+        emptyBody =
+          'Tidak ada baris iklan dari CSV di rentang tanggal yang dipilih. Periksa rentang tanggal dan format CSV.';
+        console.log(`::STATUS::${emptyBody}`);
+      }
+    } else {
+      emptyBody +=
+        ' Silakan periksa apakah akun iklan Meta Anda aktif atau coba sumber data CSV.';
+    }
+
     const emptyStateJson = {
       title: "Laporan Performa Iklan Digital",
       subtitle: "Tidak Ada Data Ditemukan",
@@ -815,13 +898,13 @@ async function main() {
         custom: {
           label: "Dashboard",
           dateRange: displayDateRange,
-          whatsAppSummary: "⚠️ *Pemberitahuan*: Tidak ditemukan data kampanye aktif.",
+          whatsAppSummary: "⚠️ *Pemberitahuan*: Tidak ditemukan data kampanye aktif di rentang tanggal terpilih.",
           widgets: [
             {
               type: "text_card",
               gridSpan: 12,
-              title: "Tidak Ada Data Kampanye Aktif",
-              body: "Sistem tidak mendeteksi baris iklan valid. Silakan periksa apakah akun iklan Meta Anda aktif atau sinkronisasikan kembali data."
+              title: "Tidak Ada Data di Rentang Tanggal Ini",
+              body: emptyBody
             }
           ]
         }
@@ -1041,6 +1124,7 @@ if (isMain) {
     normalizeMetaInsights,
     splitCSVLine,
     parseCSV,
+    getCsvDateRange,
     groupBrands,
     buildDashboardLayout
   };

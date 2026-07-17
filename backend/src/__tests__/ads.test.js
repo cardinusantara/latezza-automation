@@ -1,6 +1,31 @@
-const { splitCSVLine, normalizeMetaInsights } = require('../../ads-analysis/automation');
+const { splitCSVLine, normalizeMetaInsights, getCsvDateRange, parseCSV } = require('../../ads-analysis/automation');
 
 describe('Meta Ads Analysis Utilities (automation.js)', () => {
+  describe('getCsvDateRange', () => {
+    test('detects min/max reporting dates from Indonesian Meta export headers', () => {
+      const csv = [
+        'Awal pelaporan,Akhir pelaporan,Nama iklan,Jumlah yang dibelanjakan (IDR),Impresi,Jangkauan,Hasil',
+        '2026-05-14,2026-05-21,Ad A,10000,100,90,2',
+        '2026-05-10,2026-05-18,Ad B,20000,200,180,4',
+        '2026-05-16,2026-05-25,Ad C,5000,50,40,1',
+      ].join('\n');
+
+      const range = getCsvDateRange(csv);
+      expect(range.rowCount).toBe(3);
+      expect(range.dateFrom).toBe('2026-05-10');
+      expect(range.dateTo).toBe('2026-05-25');
+    });
+
+    test('parseCSV returns 0 rows when filter has no overlap with CSV dates', () => {
+      const csv = [
+        'Awal pelaporan,Akhir pelaporan,Nama iklan,Jumlah yang dibelanjakan (IDR),Impresi,Jangkauan,Hasil',
+        '2026-05-14,2026-05-21,Ad A,10000,100,90,2',
+      ].join('\n');
+      expect(parseCSV(csv, '2026-07-01', '2026-07-17')).toHaveLength(0);
+      expect(parseCSV(csv, '2026-05-14', '2026-05-21').length).toBeGreaterThan(0);
+    });
+  });
+
   describe('splitCSVLine', () => {
     test('splits basic comma-separated values', () => {
       const line = 'value1,value2,value3';

@@ -22,12 +22,26 @@ interface CsvMetadata {
   rows: number;
   uploadedAt: string;
   size: number;
+  /** First reporting start date found in the CSV (YYYY-MM-DD) */
+  dateFrom?: string | null;
+  /** Last reporting end date found in the CSV (YYYY-MM-DD) */
+  dateTo?: string | null;
 }
 
 interface CsvStatus {
   exists: boolean;
   dataSource: string;
   metadata: CsvMetadata | null;
+}
+
+/** True if [aFrom,aTo] overlaps [bFrom,bTo] (inclusive ISO dates). */
+function dateRangesOverlap(
+  aFrom: string,
+  aTo: string,
+  bFrom: string,
+  bTo: string,
+): boolean {
+  return aFrom <= bTo && bFrom <= aTo;
 }
 
 // Static configurations and pure helper functions defined outside the component
@@ -175,6 +189,26 @@ function useAdsAnalysis(
   const [streamLogs, setStreamLogs] = useState<string>('');
 
   const handleRunAnalysis = () => {
+    // CSV mode: warn early when selected range cannot match any rows
+    if (
+      csvStatus?.dataSource === 'csv' &&
+      csvStatus.metadata?.dateFrom &&
+      csvStatus.metadata?.dateTo &&
+      !dateRangesOverlap(
+        dateFrom,
+        dateTo,
+        csvStatus.metadata.dateFrom,
+        csvStatus.metadata.dateTo,
+      )
+    ) {
+      toast.error(
+        `Rentang filter (${dateFrom} s/d ${dateTo}) tidak overlap dengan data CSV ` +
+          `(${csvStatus.metadata.dateFrom} s/d ${csvStatus.metadata.dateTo}). ` +
+          'Sesuaikan tanggal dulu, atau klik "Pakai rentang CSV".',
+      );
+      return;
+    }
+
     setLoading(true);
     setStreamMessages([]);
     setStreamLogs('');
@@ -354,6 +388,7 @@ interface AdsReportControlsProps {
   onApplyPreset: (presetName: string, days?: number) => void;
   onSwitchDataSource: (source: 'api' | 'csv') => void;
   onUploadCsv: () => void;
+  onUseCsvDateRange?: (from: string, to: string) => void;
 }
 
 function AdsReportControls({
@@ -369,7 +404,8 @@ function AdsReportControls({
   onDateChange,
   onApplyPreset,
   onSwitchDataSource,
-  onUploadCsv
+  onUploadCsv,
+  onUseCsvDateRange,
 }: Readonly<AdsReportControlsProps>) {
   return (
     <>
@@ -520,16 +556,45 @@ function AdsReportControls({
 
         {/* Uploaded File Status */}
         {csvStatus?.exists && csvStatus.metadata && (
-          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground bg-emerald-500/5 border border-emerald-500/10 rounded-md px-2.5 py-1">
-            <IconCheck size={11} className="text-emerald-400" />
-            <span className="font-medium text-emerald-400/90">{csvStatus.metadata.filename}</span>
-            <span className="text-muted-foreground/60">·</span>
-            <span>{csvStatus.metadata.rows} baris</span>
-            <span className="text-muted-foreground/60">·</span>
-            <span>{new Date(csvStatus.metadata.uploadedAt).toLocaleDateString('id-ID')}</span>
-            {csvStatus.dataSource !== 'csv' && (
-              <span className="text-amber-400/70 ml-1">(tidak aktif)</span>
-            )}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted-foreground bg-emerald-500/5 border border-emerald-500/10 rounded-md px-2.5 py-1">
+              <IconCheck size={11} className="text-emerald-400" />
+              <span className="font-medium text-emerald-400/90">{csvStatus.metadata.filename}</span>
+              <span className="text-muted-foreground/60">·</span>
+              <span>{csvStatus.metadata.rows} baris</span>
+              <span className="text-muted-foreground/60">·</span>
+              <span>{new Date(csvStatus.metadata.uploadedAt).toLocaleDateString('id-ID')}</span>
+              {csvStatus.metadata.dateFrom && csvStatus.metadata.dateTo && (
+                <>
+                  <span className="text-muted-foreground/60">·</span>
+                  <span className="text-cyan-400/90">
+                    Data: {csvStatus.metadata.dateFrom} s/d {csvStatus.metadata.dateTo}
+                  </span>
+                </>
+              )}
+              {csvStatus.dataSource !== 'csv' && (
+                <span className="text-amber-400/70 ml-1">(tidak aktif)</span>
+              )}
+            </div>
+            {csvStatus.dataSource === 'csv' &&
+              csvStatus.metadata.dateFrom &&
+              csvStatus.metadata.dateTo &&
+              onUseCsvDateRange && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    onUseCsvDateRange(
+                      csvStatus.metadata!.dateFrom!,
+                      csvStatus.metadata!.dateTo!,
+                    )
+                  }
+                  className="text-[10px] h-7 self-start border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                >
+                  Pakai rentang CSV
+                </Button>
+              )}
           </div>
         )}
       </div>
@@ -714,12 +779,33 @@ export default function AdsReport() {
     }
   };
 
+  const applyCsvDateRange = (from: string, to: string, announce = true) => {
+    setDateFrom(from);
+    setDateTo(to);
+    setActivePreset('custom');
+    if (announce) {
+      toast.info(`Rentang analisis disetel ke data CSV: ${from} s/d ${to}`);
+    }
+  };
+
   // Check CSV upload status
-  const checkCsvStatus = async () => {
+  const checkCsvStatus = async (opts?: { alignDates?: boolean }) => {
     try {
       const data = await api.get('/api/ads-csv-status');
       if (data.status === 'success') {
         setCsvStatus(data);
+        // Auto-align date pickers to CSV range when CSV is the active source
+        // and the current filter would yield zero rows (or on explicit align).
+        const meta = data.metadata as CsvMetadata | null | undefined;
+        if (
+          data.dataSource === 'csv' &&
+          meta?.dateFrom &&
+          meta?.dateTo &&
+          (opts?.alignDates ||
+            !dateRangesOverlap(dateFrom, dateTo, meta.dateFrom, meta.dateTo))
+        ) {
+          applyCsvDateRange(meta.dateFrom, meta.dateTo, !!opts?.alignDates);
+        }
       }
     } catch {
       // ignore
@@ -729,9 +815,10 @@ export default function AdsReport() {
   useEffect(() => {
     const init = async () => {
       await checkReportStatus();
-      await checkCsvStatus();
+      await checkCsvStatus({ alignDates: true });
     };
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Upload CSV file
@@ -756,6 +843,10 @@ export default function AdsReport() {
         toast.success(data.message);
         setSelectedFile(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
+        // Align filter to the uploaded file's reporting period
+        if (data.metadata?.dateFrom && data.metadata?.dateTo) {
+          applyCsvDateRange(data.metadata.dateFrom, data.metadata.dateTo, true);
+        }
         await checkCsvStatus();
       } else {
         toast.error('Gagal upload: ' + (data.message || 'unknown error'));
@@ -769,7 +860,9 @@ export default function AdsReport() {
 
   // Switch data source (api/csv)
   const handleSwitchDataSource = async (source: 'api' | 'csv') => {
-    await switchDataSource(source, !!csvStatus?.exists, checkCsvStatus);
+    await switchDataSource(source, !!csvStatus?.exists, async () => {
+      await checkCsvStatus({ alignDates: source === 'csv' });
+    });
   };
 
   // Broadcast report to WA group JID
@@ -810,6 +903,7 @@ export default function AdsReport() {
           onApplyPreset={handleApplyPreset}
           onSwitchDataSource={handleSwitchDataSource}
           onUploadCsv={handleUploadCsv}
+          onUseCsvDateRange={(from, to) => applyCsvDateRange(from, to, true)}
         />
       </Card>
 
