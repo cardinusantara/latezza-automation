@@ -717,10 +717,17 @@ async function getGroups(sessionId = null) {
     throw new Error(`WhatsApp session "${targetSessionId || 'default'}" is not ready.`);
   }
   const groups = await s.sock.groupFetchAllParticipating();
-  return Object.keys(groups).map(jid => ({
-    jid,
-    subject: groups[jid].subject
-  }));
+  return Object.keys(groups).map(jid => {
+    const g = groups[jid] || {};
+    return {
+      jid,
+      subject: g.subject || '',
+      creation: g.creation || null,
+      desc: g.desc || '',
+      owner: g.owner || g.ownerJid || null,
+      size: Array.isArray(g.participants) ? g.participants.length : (g.size || null),
+    };
+  });
 }
 
 async function processPendingReplies(log = console) {
