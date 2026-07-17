@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { api } from '@/lib/api';
+import { formatLocaleNumber, formatRpId, normalizeCacheStats, toFiniteNumber } from '@/lib/utils';
 
 // Tailwind CSS classes matching shadcn ui components exactly
 const inputClasses = "h-9 w-full min-w-0 rounded-4xl border border-input bg-input/30 px-3 py-1 text-xs transition-colors outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-card/30 border-border text-foreground";
@@ -115,8 +116,8 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
     if (!silent) setCacheLoading(true);
     try {
       const statsRes = await api.get<{ status: string; data: typeof cacheStats }>(`/api/system-prompt/stats?businessId=${businessId}`);
-      if (statsRes.status === 'success' && statsRes.data) {
-        setCacheStats(statsRes.data);
+      if (statsRes?.status === 'success' && statsRes.data) {
+        setCacheStats(normalizeCacheStats(statsRes.data));
       }
       
       const previewRes = await api.get<{ status: string; data: typeof promptPreview }>(`/api/system-prompt/preview?businessId=${businessId}`);
@@ -976,22 +977,22 @@ export default function Settings({ showToast, businessId, activeBusiness, onRefr
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div className="bg-muted/30 rounded-xl p-3 border border-border">
                 <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Cached Tokens</div>
-                <div className="text-xl font-bold text-primary">{cacheStats.totalCachedTokens.toLocaleString()}</div>
+                <div className="text-xl font-bold text-primary">{formatLocaleNumber(cacheStats.totalCachedTokens)}</div>
               </div>
 
               <div className="bg-muted/30 rounded-xl p-3 border border-border">
                 <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Cache Hit Rate</div>
-                <div className="text-xl font-bold text-primary">{cacheStats.hitRate.toFixed(1)}%</div>
+                <div className="text-xl font-bold text-primary">{toFiniteNumber(cacheStats.hitRate).toFixed(1)}%</div>
               </div>
 
               <div className="bg-muted/30 rounded-xl p-3 border border-border">
                 <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Savings (USD)</div>
-                <div className="text-xl font-bold text-emerald-400">${cacheStats.savingsUsd.toFixed(3)}</div>
+                <div className="text-xl font-bold text-emerald-400">${toFiniteNumber(cacheStats.savingsUsd).toFixed(3)}</div>
               </div>
 
               <div className="bg-muted/30 rounded-xl p-3 border border-border">
                 <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Savings (IDR)</div>
-                <div className="text-xl font-bold text-emerald-400">Rp {cacheStats.savingsIdr.toLocaleString('id-ID')}</div>
+                <div className="text-xl font-bold text-emerald-400">{formatRpId(cacheStats.savingsIdr)}</div>
               </div>
             </div>
 

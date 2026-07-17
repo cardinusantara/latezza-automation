@@ -2,17 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { IconFlame, IconLoader, IconRefresh } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
+import {
+  formatLocaleNumber,
+  normalizeCacheStats,
+  toFiniteNumber,
+  type CacheStatsNormalized,
+} from '@/lib/utils';
 
-interface CacheStats {
-  totalCachedTokens: number;
-  cacheHits: number;
-  totalRequests: number;
-  hitRate: number;
-  savingsUsd: number;
-  savingsIdr: number;
-  lastCacheUpdate: string | null;
-  promptCacheTokenCount: number;
-}
+const EMPTY_CACHE_STATS: CacheStatsNormalized = normalizeCacheStats({});
 
 interface SystemPromptCacheWidgetProps {
   businessId: number;
@@ -20,24 +17,15 @@ interface SystemPromptCacheWidgetProps {
 }
 
 export function SystemPromptCacheWidget({ businessId, onNavigateToSettings }: Readonly<SystemPromptCacheWidgetProps>) {
-  const [cacheStats, setCacheStats] = useState<CacheStats>({
-    totalCachedTokens: 0,
-    cacheHits: 0,
-    totalRequests: 0,
-    hitRate: 0,
-    savingsUsd: 0,
-    savingsIdr: 0,
-    lastCacheUpdate: null,
-    promptCacheTokenCount: 0
-  });
+  const [cacheStats, setCacheStats] = useState<CacheStatsNormalized>(EMPTY_CACHE_STATS);
   const [loading, setLoading] = useState(false);
 
   const fetchCacheStats = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await api.get<{ status: string; data: CacheStats }>(`/api/system-prompt/stats?businessId=${businessId}`);
-      if (data.status === 'success' && data.data) {
-        setCacheStats(data.data);
+      const data = await api.get<{ status: string; data: CacheStatsNormalized }>(`/api/system-prompt/stats?businessId=${businessId}`);
+      if (data?.status === 'success' && data.data) {
+        setCacheStats(normalizeCacheStats(data.data));
       }
     } catch (err) {
       console.error('Failed to fetch cache stats:', err);
@@ -78,23 +66,23 @@ export function SystemPromptCacheWidget({ businessId, onNavigateToSettings }: Re
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
         <div className="bg-muted/30 rounded-lg p-2.5 border border-border">
           <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Cached Tokens</div>
-          <div className="text-lg font-bold text-primary">{cacheStats.totalCachedTokens.toLocaleString()}</div>
+          <div className="text-lg font-bold text-primary">{formatLocaleNumber(cacheStats.totalCachedTokens)}</div>
         </div>
 
         <div className="bg-muted/30 rounded-lg p-2.5 border border-border">
           <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Hit Rate</div>
-          <div className="text-lg font-bold text-primary">{cacheStats.hitRate.toFixed(0)}%</div>
+          <div className="text-lg font-bold text-primary">{toFiniteNumber(cacheStats.hitRate).toFixed(0)}%</div>
         </div>
 
         <div className="bg-muted/30 rounded-lg p-2.5 border border-border">
           <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Savings</div>
-          <div className="text-lg font-bold text-emerald-400">${cacheStats.savingsUsd.toFixed(2)}</div>
+          <div className="text-lg font-bold text-emerald-400">${toFiniteNumber(cacheStats.savingsUsd).toFixed(2)}</div>
         </div>
 
         <div className="bg-muted/30 rounded-lg p-2.5 border border-border">
           <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Updated</div>
           <div className="text-xs font-mono text-foreground">
-            {cacheStats.lastCacheUpdate 
+            {cacheStats.lastCacheUpdate
               ? new Date(cacheStats.lastCacheUpdate).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
               : 'N/A'}
           </div>

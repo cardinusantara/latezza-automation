@@ -1,5 +1,11 @@
 import { describe, expect, test } from 'vitest';
-import { cn, toFiniteNumber, formatLocaleNumber, formatRpId } from '../utils';
+import {
+  cn,
+  toFiniteNumber,
+  formatLocaleNumber,
+  formatRpId,
+  normalizeCacheStats,
+} from '../utils';
 
 describe('cn utility', () => {
   test('merges class names correctly', () => {
@@ -51,5 +57,13 @@ describe('formatLocaleNumber / formatRpId', () => {
     expect(formatRpId(undefined)).toBe('Rp 0');
     expect(formatRpId(null)).toBe('Rp 0');
     expect(formatRpId('1500.9')).toBe(`Rp ${(1501).toLocaleString('id-ID')}`);
+  });
+});
+
+describe('normalizeCacheStats', () => {
+  test('defaults and snake_case mapping', () => {
+    expect(normalizeCacheStats(null).totalCachedTokens).toBe(0);
+    expect(normalizeCacheStats({ total_cached_tokens: 99 }).totalCachedTokens).toBe(99);
+    expect(normalizeCacheStats({ totalCachedTokens: null }).totalCachedTokens).toBe(0);
   });
 });
