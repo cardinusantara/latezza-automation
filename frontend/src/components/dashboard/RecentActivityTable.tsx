@@ -139,12 +139,14 @@ function RecentActivityTableInner({ leads, sessions, onSelectCustomer }: Readonl
               </TableHeader>
               <TableBody>
                 {paginatedLeads.map((lead) => {
-                  const timeStr = new Date(lead.last_interaction).toLocaleString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    day: 'numeric',
-                    month: 'short',
-                  });
+                  const timeStr = lead.last_interaction
+                    ? new Date(lead.last_interaction).toLocaleString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: 'numeric',
+                        month: 'short',
+                      })
+                    : '-';
                   return (
                     <TableRow
                       key={`${lead.phone_number}-${lead.session_id}`}

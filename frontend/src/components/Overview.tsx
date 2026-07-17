@@ -10,7 +10,15 @@ import { KpiCards } from '@/components/dashboard/KpiCards';
 import { AiInsightsCard } from '@/components/dashboard/AiInsightsCard';
 import { GeminiAnalyticsPanel } from '@/components/dashboard/GeminiAnalyticsPanel';
 import { RecentActivityTable } from '@/components/dashboard/RecentActivityTable';
-import type { Stats, UsageStatsData, Session } from '@/types';
+import { toFiniteNumber } from '@/lib/utils';
+import type {
+  Stats,
+  UsageStatsData,
+  Session,
+  MtdStats,
+  DailyTrendItem,
+  FeatureBreakdownItem,
+} from '@/types';
 
 interface OverviewProps {
   stats: Stats;
@@ -20,6 +28,54 @@ interface OverviewProps {
   onSelectCustomer: (phone_number: string, name: string, sessionId: string) => void;
   onTriggerFollowUps?: () => void;
   statsLoading?: boolean;
+}
+
+/** Normalize usage-stats payloads so missing / snake_case / null fields never crash the UI. */
+function normalizeUsageStats(data: UsageStatsData & Record<string, unknown>): UsageStatsData {
+  const rawMtd = (data.mtd ?? {}) as Partial<MtdStats> & Record<string, unknown>;
+  const mtd: MtdStats = {
+    inputTokens: toFiniteNumber(rawMtd.inputTokens ?? rawMtd.input_tokens),
+    outputTokens: toFiniteNumber(rawMtd.outputTokens ?? rawMtd.output_tokens),
+    cachedTokens: toFiniteNumber(rawMtd.cachedTokens ?? rawMtd.cached_tokens),
+    costUsd: toFiniteNumber(rawMtd.costUsd ?? rawMtd.cost_usd),
+    costIdr: toFiniteNumber(rawMtd.costIdr ?? rawMtd.cost_idr),
+    totalRequests: toFiniteNumber(rawMtd.totalRequests ?? rawMtd.total_requests),
+  };
+
+  const dailyTrend: DailyTrendItem[] = Array.isArray(data.dailyTrend)
+    ? data.dailyTrend.map((item) => {
+        const row = (item ?? {}) as DailyTrendItem & Record<string, unknown>;
+        return {
+          date: String(row.date ?? ''),
+          input_tokens: toFiniteNumber(row.input_tokens),
+          output_tokens: toFiniteNumber(row.output_tokens),
+          cached_tokens: toFiniteNumber(row.cached_tokens),
+          cost_idr: toFiniteNumber(row.cost_idr),
+          request_count: toFiniteNumber(row.request_count),
+        };
+      })
+    : [];
+
+  const featureBreakdown: FeatureBreakdownItem[] = Array.isArray(data.featureBreakdown)
+    ? data.featureBreakdown.map((item) => {
+        const row = (item ?? {}) as FeatureBreakdownItem & Record<string, unknown>;
+        return {
+          feature: String(row.feature ?? 'unknown'),
+          input_tokens: toFiniteNumber(row.input_tokens),
+          output_tokens: toFiniteNumber(row.output_tokens),
+          cached_tokens: toFiniteNumber(row.cached_tokens),
+          cost_idr: toFiniteNumber(row.cost_idr),
+          request_count: toFiniteNumber(row.request_count),
+        };
+      })
+    : [];
+
+  return {
+    status: data.status,
+    mtd,
+    dailyTrend,
+    featureBreakdown,
+  };
 }
 
 export default function Overview({
@@ -38,8 +94,8 @@ export default function Overview({
     setUsageLoading(true);
     try {
       const data = await api.get<UsageStatsData>('/api/settings/usage-stats');
-      if (data.status === 'success') {
-        setUsageStats(data);
+      if (data?.status === 'success') {
+        setUsageStats(normalizeUsageStats(data as UsageStatsData & Record<string, unknown>));
       }
     } catch (err) {
       console.error('Failed to load Gemini usage stats:', err);

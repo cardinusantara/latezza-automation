@@ -174,4 +174,27 @@ describe('KpiCards component', () => {
 
     expect(screen.getByText('Rp 0')).toBeInTheDocument();
   });
+
+  test('does not crash when mtd numeric fields are missing or null', () => {
+    const incompleteUsage = {
+      status: 'success',
+      mtd: {} as UsageStatsData['mtd'],
+      dailyTrend: [],
+      featureBreakdown: [],
+    };
+
+    render(
+      <KpiCards
+        stats={mockStats}
+        usageStats={incompleteUsage}
+        loading={false}
+        error={null}
+        onRetry={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Gemini Cost MTD')).toBeInTheDocument();
+    expect(screen.getByText('Rp 0')).toBeInTheDocument();
+    expect(screen.getByText('Calls: 0')).toBeInTheDocument();
+  });
 });
