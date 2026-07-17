@@ -15,7 +15,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_BASE_URL } from '@/config';
-import { api, getAuthHeaders } from '@/lib/api';
+import { api, getAuthHeaders, buildAuthenticatedSseUrl } from '@/lib/api';
 
 interface CsvMetadata {
   filename: string;
@@ -182,10 +182,18 @@ function useAdsAnalysis(
     const sourceLabel = csvStatus?.dataSource === 'csv' ? 'CSV' : 'Meta Ads API';
     toast.info(`Sedang menganalisis data dari ${sourceLabel} (${dateFrom} s/d ${dateTo})...`);
     
-    const token = localStorage.getItem('auth_token') || '';
-    const eventSource = new EventSource(
-      `${API_BASE_URL}/api/run-analysis-stream?token=${encodeURIComponent(token)}&date_from=${dateFrom}&date_to=${dateTo}`
-    );
+    const sseUrl = buildAuthenticatedSseUrl('/api/run-analysis-stream', {
+      date_from: dateFrom,
+      date_to: dateTo,
+    });
+    if (!sseUrl) {
+      toast.error('Sesi login habis. Silakan login ulang, lalu coba lagi.');
+      setLoading(false);
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+      return;
+    }
+
+    const eventSource = new EventSource(sseUrl);
 
     eventSource.onmessage = (event) => {
       try {
@@ -206,7 +214,7 @@ function useAdsAnalysis(
 
     eventSource.onerror = (err) => {
       console.error('EventSource connection error:', err);
-      toast.error('Koneksi terputus saat memproses analisis iklan.');
+      toast.error('Koneksi analisis gagal (401/network). Coba login ulang atau refresh halaman.');
       eventSource.close();
       setLoading(false);
     };

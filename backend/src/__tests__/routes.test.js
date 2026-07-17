@@ -365,4 +365,45 @@ describe('routes.js endpoint registration', () => {
 
     expect(response.statusCode).toBe(401);
   });
+
+  test('GET /api/settings accepts JWT via ?token= query (EventSource/SSE path)', async () => {
+    // Ensure login token is available even if tests run reordered
+    if (!authToken) {
+      const loginRes = await fastify.inject({
+        method: 'POST',
+        url: '/api/auth/login',
+        payload: { password: 'test-password' },
+      });
+      authToken = JSON.parse(loginRes.payload).token;
+    }
+
+    db.getSetting.mockImplementation(async (key) => {
+      if (key === 'gemini_api_key') return 'key-12345678-long-secret-key';
+      if (key === 'system_instruction') return 'some prompt';
+      return '';
+    });
+
+    const response = await fastify.inject({
+      method: 'GET',
+      url: `/api/settings?token=${encodeURIComponent(authToken)}`,
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = JSON.parse(response.payload);
+    expect(body.system_instruction).toBe('some prompt');
+  });
+
+  test('GET /api/settings rejects empty/invalid ?token=', async () => {
+    const empty = await fastify.inject({
+      method: 'GET',
+      url: '/api/settings?token=',
+    });
+    expect(empty.statusCode).toBe(401);
+
+    const invalid = await fastify.inject({
+      method: 'GET',
+      url: '/api/settings?token=not-a-real-jwt',
+    });
+    expect(invalid.statusCode).toBe(401);
+  });
 });

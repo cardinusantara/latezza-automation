@@ -105,26 +105,67 @@ async function handleManualAudioMessage(phone, audioBase64, targetSessionId, fas
   };
 }
 
+/**
+ * Extract JWT from Authorization header OR ?token= query (EventSource cannot set headers).
+ * Returns null when no token is present.
+ */
+function extractRequestToken(request) {
+  const authHeader = request.headers?.authorization || request.headers?.Authorization;
+  if (typeof authHeader === 'string' && authHeader.length > 0) {
+    const parts = authHeader.split(' ');
+    if (parts.length === 2 && /^Bearer$/i.test(parts[0]) && parts[1]) {
+      return parts[1];
+    }
+  }
+  const queryToken = request.query?.token;
+  if (typeof queryToken === 'string' && queryToken.length > 0) {
+    return queryToken;
+  }
+  return null;
+}
+
 function registerRoutes(fastify) {
-  // Auth guard: protect all /api/ routes except /api/auth/
-  // This runs at request time when @fastify/jwt is fully registered
+  // Auth guard: protect all /api/ routes except public auth/health endpoints.
+  // Runs at request time when @fastify/jwt is fully registered.
   fastify.addHook('preHandler', async (request, reply) => {
-    // Skip auth for public endpoints
-    const publicPaths = ['/health', '/api/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html'];
-    if (publicPaths.some(path => request.url === path || request.url.startsWith(path + '?'))) {
+    // Skip auth for public endpoints (path only — ignore query string)
+    const pathname = (request.url || '').split('?')[0];
+    const publicPaths = new Set([
+      '/health',
+      '/api/health',
+      '/',
+      '/api/auth/login',
+      '/api/auth/verify',
+      '/send-message',
+      '/report-html',
+    ]);
+    if (publicPaths.has(pathname)) {
       return;
     }
-    
-    // Protect all /api/ routes
-    if (request.url.startsWith('/api/')) {
+
+    // Protect all /api/ routes (including SSE streams)
+    if (pathname.startsWith('/api/')) {
       try {
-        // Support token in query parameter (for EventSource SSE streams)
-        if (request.query && request.query.token && !request.headers.authorization) {
-          request.headers.authorization = `Bearer ${request.query.token}`;
+        const token = extractRequestToken(request);
+        if (!token) {
+          return reply.status(401).send({
+            error: 'Unauthorized',
+            message: 'Token tidak ditemukan. Silakan login ulang.',
+          });
         }
-        await request.jwtVerify();
+        // Verify explicitly — do NOT rely on mutating request.headers (unreliable
+        // across proxies / Fastify versions). Supports EventSource ?token=.
+        const decoded = await fastify.jwt.verify(token);
+        request.user = decoded;
       } catch (err) {
-        reply.status(401).send({ error: 'Unauthorized', message: 'Token tidak valid atau sudah kedaluwarsa.' });
+        request.log?.warn?.(
+          { err: err?.message || String(err) },
+          'JWT verification failed',
+        );
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Token tidak valid atau sudah kedaluwarsa.',
+        });
       }
     }
   });

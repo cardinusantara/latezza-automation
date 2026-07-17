@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { api, ApiError, setAuthToken } from '../api';
+import { api, ApiError, setAuthToken, getAuthToken, buildAuthenticatedSseUrl } from '../api';
 import { API_BASE_URL } from '@/config';
 
 /** Helper: build a mock Response with JSON headers */
@@ -240,6 +240,33 @@ describe('api service layer', () => {
       .calls[0];
     expect(options.headers['Authorization']).toBe('Bearer my-test-token');
     setAuthToken(null);
+  });
+
+  test('getAuthToken returns memory token then localStorage', () => {
+    setAuthToken('mem-token');
+    expect(getAuthToken()).toBe('mem-token');
+    setAuthToken(null);
+    localStorage.setItem('auth_token', 'ls-token');
+    expect(getAuthToken()).toBe('ls-token');
+    localStorage.removeItem('auth_token');
+    expect(getAuthToken()).toBeNull();
+  });
+
+  test('buildAuthenticatedSseUrl embeds token and extra params', () => {
+    setAuthToken('sse-jwt-token');
+    const url = buildAuthenticatedSseUrl('/api/run-analysis-stream', {
+      date_from: '2026-07-01',
+      date_to: '2026-07-17',
+      empty: '',
+      skip: undefined,
+    });
+    expect(url).toContain('/api/run-analysis-stream?');
+    expect(url).toContain('token=sse-jwt-token');
+    expect(url).toContain('date_from=2026-07-01');
+    expect(url).toContain('date_to=2026-07-17');
+    expect(url).not.toContain('empty=');
+    setAuthToken(null);
+    expect(buildAuthenticatedSseUrl('/api/run-analysis-stream')).toBeNull();
   });
 
   test('setting auth token to null removes Authorization header', async () => {

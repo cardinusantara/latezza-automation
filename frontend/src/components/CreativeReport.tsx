@@ -13,8 +13,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { API_BASE_URL } from '@/config';
-import { api } from '@/lib/api';
+import { api, buildAuthenticatedSseUrl } from '@/lib/api';
 
 interface CreativeIdea {
   title: string;
@@ -75,9 +74,17 @@ export default function CreativeReport() {
     setLoading(true);
     setStreamMessages([]);
     setStreamChunks('');
-    const promptParam = userPrompt.trim() ? `&prompt=${encodeURIComponent(userPrompt.trim())}` : '';
-    const token = localStorage.getItem('auth_token') || '';
-    const eventSource = new EventSource(`${API_BASE_URL}/api/trigger-creative-analysis-stream?token=${encodeURIComponent(token)}${promptParam}`);
+    const sseUrl = buildAuthenticatedSseUrl('/api/trigger-creative-analysis-stream', {
+      prompt: userPrompt.trim() || undefined,
+    });
+    if (!sseUrl) {
+      toast.error('Sesi login habis. Silakan login ulang, lalu coba lagi.');
+      setLoading(false);
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+      return;
+    }
+
+    const eventSource = new EventSource(sseUrl);
 
     eventSource.onmessage = (event) => {
       try {
@@ -108,7 +115,7 @@ export default function CreativeReport() {
 
     eventSource.onerror = (err) => {
       console.error('EventSource connection error:', err);
-      toast.error('Koneksi terputus saat memproses analisis kreatif.');
+      toast.error('Koneksi analisis kreatif gagal (401/network). Coba login ulang.');
       eventSource.close();
       setLoading(false);
     };

@@ -14,9 +14,37 @@ export function setAuthToken(token: string | null) {
   }
 }
 
+/** Current JWT from memory, falling back to localStorage. */
+export function getAuthToken(): string | null {
+  return authToken || localStorage.getItem('auth_token');
+}
+
 export function getAuthHeaders(): Record<string, string> {
-  const token = authToken || localStorage.getItem('auth_token');
+  const token = getAuthToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+/**
+ * Build an authenticated SSE (EventSource) URL.
+ * EventSource cannot set Authorization headers, so the JWT is passed as ?token=.
+ * Returns null when no token is available (caller should prompt re-login).
+ */
+export function buildAuthenticatedSseUrl(
+  path: string,
+  params: Record<string, string | number | undefined | null> = {},
+): string | null {
+  const token = getAuthToken();
+  if (!token) return null;
+
+  const search = new URLSearchParams();
+  search.set('token', token);
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === '') continue;
+    search.set(key, String(value));
+  }
+
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${API_BASE_URL}${normalizedPath}?${search.toString()}`;
 }
 
 export class ApiError extends Error {

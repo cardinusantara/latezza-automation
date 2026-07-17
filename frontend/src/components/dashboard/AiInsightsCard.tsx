@@ -8,8 +8,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { API_BASE_URL } from '@/config';
-import { api } from '@/lib/api';
+import { api, buildAuthenticatedSseUrl } from '@/lib/api';
 import type { MessageSummaryData } from '@/types';
 
 interface AiInsightsCardProps {
@@ -66,8 +65,16 @@ function AiInsightsCardInner({ overviewSessionId }: Readonly<AiInsightsCardProps
   const connectSSE = () => {
     cleanupEventSource();
 
-    const token = localStorage.getItem('auth_token') || '';
-    const url = `${API_BASE_URL}/api/trigger-message-summary-stream?token=${encodeURIComponent(token)}&session_id=${overviewSessionId}&date_range=${selectedRange}`;
+    const url = buildAuthenticatedSseUrl('/api/trigger-message-summary-stream', {
+      session_id: overviewSessionId,
+      date_range: selectedRange,
+    });
+    if (!url) {
+      setStreamProgress(prev => [...prev, '❌ Sesi login habis. Silakan login ulang.']);
+      setSummaryLoading(false);
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+      return;
+    }
     const eventSource = new EventSource(url);
     eventSourceRef.current = eventSource;
 

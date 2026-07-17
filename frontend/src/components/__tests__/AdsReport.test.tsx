@@ -2,6 +2,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import AdsReport from '../AdsReport';
 import { toast } from 'sonner';
+import { setAuthToken } from '@/lib/api';
 
 // Mock sonner toast
 vi.mock('sonner', () => ({
@@ -36,6 +37,14 @@ describe('AdsReport Component', () => {
     MockEventSource.clear();
     const win = window as unknown as Record<string, unknown>;
     win.EventSource = MockEventSource;
+    // SSE + api client require an auth token; also clears isSessionExpired from prior tests
+    localStorage.setItem('auth_token', 'test-jwt-token');
+    setAuthToken('test-jwt-token');
+
+    const jsonHeaders = {
+      get: (name: string) =>
+        name.toLowerCase() === 'content-type' ? 'application/json' : null,
+    };
 
     // Mock fetch
     window.fetch = vi.fn().mockImplementation((url: string, options?: RequestInit) => {
@@ -43,13 +52,16 @@ describe('AdsReport Component', () => {
         if (options?.method === 'HEAD') {
           return Promise.resolve({
             status: 200,
-            ok: true
+            ok: true,
+            headers: { get: () => null },
           } as unknown as Response);
         }
       }
       if (url.includes('/api/ads-csv-status')) {
         return Promise.resolve({
           ok: true,
+          status: 200,
+          headers: jsonHeaders,
           json: () => Promise.resolve({
             status: 'success',
             exists: true,
@@ -66,18 +78,24 @@ describe('AdsReport Component', () => {
       if (url.includes('/api/ads-data-source')) {
         return Promise.resolve({
           ok: true,
+          status: 200,
+          headers: jsonHeaders,
           json: () => Promise.resolve({ status: 'success' })
         } as unknown as Response);
       }
       if (url.includes('/trigger-analysis')) {
         return Promise.resolve({
           ok: true,
+          status: 200,
+          headers: jsonHeaders,
           json: () => Promise.resolve({ status: 'success' })
         } as unknown as Response);
       }
       if (url.includes('/api/upload-ads-csv')) {
         return Promise.resolve({
           ok: true,
+          status: 200,
+          headers: jsonHeaders,
           json: () => Promise.resolve({ status: 'success', message: 'Upload sukses!' })
         } as unknown as Response);
       }
