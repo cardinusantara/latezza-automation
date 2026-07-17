@@ -8,6 +8,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { formatLocaleNumber, formatRpId, toFiniteNumber } from '@/lib/utils';
 import type { UsageStatsData, DailyTrendItem, FeatureBreakdownItem } from '@/types';
 
 interface GeminiAnalyticsPanelProps {
@@ -51,11 +52,13 @@ const getFeatureLabel = (name: string) => {
 function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }: Readonly<GeminiAnalyticsPanelProps>) {
   const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
 
+  const mtd = usageStats?.mtd;
+
   const trendData = useMemo<TrendDataPoint[]>(() => {
     const dailyMap = new Map<string, DailyTrendItem>();
     if (usageStats?.dailyTrend) {
       usageStats.dailyTrend.forEach((item) => {
-        dailyMap.set(item.date, item);
+        if (item?.date) dailyMap.set(item.date, item);
       });
     }
 
@@ -67,11 +70,11 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
       const match = dailyMap.get(dateStr);
       result.push({
         date: dateStr,
-        costIdr: match ? Number.parseFloat(String(match.cost_idr)) : 0,
-        requestCount: match ? Number.parseInt(String(match.request_count), 10) : 0,
-        inputTokens: match ? Number.parseInt(String(match.input_tokens), 10) : 0,
-        outputTokens: match ? Number.parseInt(String(match.output_tokens), 10) : 0,
-        cachedTokens: match ? Number.parseInt(String(match.cached_tokens), 10) : 0,
+        costIdr: match ? toFiniteNumber(match.cost_idr) : 0,
+        requestCount: match ? toFiniteNumber(match.request_count) : 0,
+        inputTokens: match ? toFiniteNumber(match.input_tokens) : 0,
+        outputTokens: match ? toFiniteNumber(match.output_tokens) : 0,
+        cachedTokens: match ? toFiniteNumber(match.cached_tokens) : 0,
       });
     }
     return result;
@@ -87,13 +90,25 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
 
   const featureBreakdown = useMemo(() => {
     if (!usageStats?.featureBreakdown || usageStats.featureBreakdown.length === 0) return null;
-    const totalCost = usageStats.featureBreakdown.reduce(
-      (sum: number, f: FeatureBreakdownItem) => sum + Number.parseFloat(String(f.cost_idr)),
-      0,
-    ) || 1;
+    const totalCost =
+      usageStats.featureBreakdown.reduce(
+        (sum: number, f: FeatureBreakdownItem) => sum + toFiniteNumber(f.cost_idr),
+        0,
+      ) || 1;
     return usageStats.featureBreakdown.map((f: FeatureBreakdownItem) => {
-      const share = (Number.parseFloat(String(f.cost_idr)) / totalCost) * 100;
-      return { f, share };
+      const costIdr = toFiniteNumber(f.cost_idr);
+      const share = (costIdr / totalCost) * 100;
+      return {
+        f: {
+          feature: f.feature ?? 'unknown',
+          input_tokens: toFiniteNumber(f.input_tokens),
+          output_tokens: toFiniteNumber(f.output_tokens),
+          cached_tokens: toFiniteNumber(f.cached_tokens),
+          cost_idr: costIdr,
+          request_count: toFiniteNumber(f.request_count),
+        },
+        share,
+      };
     });
   }, [usageStats]);
 
@@ -140,39 +155,39 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
           <div className="flex flex-col gap-1 bg-[#1e293b]/10 border border-border/40 rounded-xl p-4">
             <span className="text-xs text-muted-foreground font-medium">Estimasi Biaya MTD</span>
             <span className="text-2xl font-extrabold text-cyan-400 leading-tight">
-              Rp {usageStats?.mtd ? Math.round(usageStats.mtd.costIdr).toLocaleString('id-ID') : '0'}
+              {formatRpId(mtd?.costIdr)}
             </span>
             <span className="text-[10px] text-muted-foreground">
-              ${usageStats?.mtd ? usageStats.mtd.costUsd.toFixed(4) : '0.0000'} USD
+              ${toFiniteNumber(mtd?.costUsd).toFixed(4)} USD
             </span>
           </div>
 
           <div className="flex flex-col gap-1 bg-[#1e293b]/10 border border-border/40 rounded-xl p-4">
             <span className="text-xs text-muted-foreground font-medium">Total Token Dikonsumsi</span>
             <span className="text-2xl font-extrabold text-indigo-400 leading-tight">
-              {usageStats?.mtd ? (usageStats.mtd.inputTokens + usageStats.mtd.outputTokens).toLocaleString('id-ID') : '0'}
+              {formatLocaleNumber(toFiniteNumber(mtd?.inputTokens) + toFiniteNumber(mtd?.outputTokens))}
             </span>
             <span className="text-[10px] text-muted-foreground">
-              In: {usageStats?.mtd ? usageStats.mtd.inputTokens.toLocaleString('id-ID') : '0'} | Out: {usageStats?.mtd ? usageStats.mtd.outputTokens.toLocaleString('id-ID') : '0'}
+              In: {formatLocaleNumber(mtd?.inputTokens)} | Out: {formatLocaleNumber(mtd?.outputTokens)}
             </span>
           </div>
 
           <div className="flex flex-col gap-1 bg-[#1e293b]/10 border border-border/40 rounded-xl p-4">
             <span className="text-xs text-muted-foreground font-medium">Efisiensi Caching</span>
             <span className="text-2xl font-extrabold text-emerald-400 leading-tight">
-              {usageStats?.mtd && usageStats.mtd.inputTokens > 0
-                ? ((usageStats.mtd.cachedTokens / usageStats.mtd.inputTokens) * 100).toFixed(1)
+              {toFiniteNumber(mtd?.inputTokens) > 0
+                ? ((toFiniteNumber(mtd?.cachedTokens) / toFiniteNumber(mtd?.inputTokens)) * 100).toFixed(1)
                 : '0.0'}%
             </span>
             <span className="text-[10px] text-muted-foreground">
-              {usageStats?.mtd ? usageStats.mtd.cachedTokens.toLocaleString('id-ID') : '0'} token tersimpan
+              {formatLocaleNumber(mtd?.cachedTokens)} token tersimpan
             </span>
           </div>
 
           <div className="flex flex-col gap-1 bg-[#1e293b]/10 border border-border/40 rounded-xl p-4">
             <span className="text-xs text-muted-foreground font-medium">Jumlah API Calls</span>
             <span className="text-2xl font-extrabold text-amber-400 leading-tight">
-              {usageStats?.mtd ? usageStats.mtd.totalRequests : '0'}
+              {formatLocaleNumber(mtd?.totalRequests)}
             </span>
             <span className="text-[10px] text-muted-foreground">
               Base Model: Gemini 3.1 Flash-Lite
@@ -191,7 +206,7 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
                 Tren Biaya Harian (30 Hari Terakhir)
               </span>
               <span className="text-[10px] text-muted-foreground font-mono">
-                Scale: max Rp {Math.round(maxCost).toLocaleString('id-ID')} / day
+                Scale: max {formatRpId(maxCost)} / day
               </span>
             </div>
 
@@ -204,7 +219,7 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
                   <button
                     key={day.date}
                     type="button"
-                    aria-label={`Biaya ${day.date}: Rp ${Math.round(day.costIdr).toLocaleString('id-ID')}`}
+                    aria-label={`Biaya ${day.date}: ${formatRpId(day.costIdr)}`}
                     className="flex-grow flex flex-col justify-end h-full group outline-none border-none p-0 bg-transparent text-left cursor-pointer appearance-none"
                     onMouseEnter={() => setHoveredBarIndex(idx)}
                     onMouseLeave={() => setHoveredBarIndex(null)}
@@ -239,20 +254,20 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
                   </div>
                   <div className="flex justify-between font-semibold text-foreground">
                     <span>Biaya:</span>
-                    <span className="text-emerald-400">Rp {Math.round(trendData[hoveredBarIndex].costIdr).toLocaleString('id-ID')}</span>
+                    <span className="text-emerald-400">{formatRpId(trendData[hoveredBarIndex].costIdr)}</span>
                   </div>
                   <div className="text-[10px] text-muted-foreground flex flex-col gap-0.5 mt-0.5">
                     <div className="flex justify-between">
                       <span>Input Tokens:</span>
-                      <span>{trendData[hoveredBarIndex].inputTokens.toLocaleString('id-ID')}</span>
+                      <span>{formatLocaleNumber(trendData[hoveredBarIndex].inputTokens)}</span>
                     </div>
                     <div className="flex justify-between text-emerald-400/80">
                       <span>Cached Input:</span>
-                      <span>{trendData[hoveredBarIndex].cachedTokens.toLocaleString('id-ID')}</span>
+                      <span>{formatLocaleNumber(trendData[hoveredBarIndex].cachedTokens)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Output Tokens:</span>
-                      <span>{trendData[hoveredBarIndex].outputTokens.toLocaleString('id-ID')}</span>
+                      <span>{formatLocaleNumber(trendData[hoveredBarIndex].outputTokens)}</span>
                     </div>
                   </div>
                 </div>
@@ -286,7 +301,7 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
                       <span className="font-semibold text-foreground">{getFeatureLabel(f.feature)}</span>
                       <div className="flex gap-2 font-semibold">
                         <span className="text-muted-foreground">{share.toFixed(0)}%</span>
-                        <span className="text-foreground">Rp {Math.round(Number(f.cost_idr)).toLocaleString('id-ID')}</span>
+                        <span className="text-foreground">{formatRpId(f.cost_idr)}</span>
                       </div>
                     </div>
                     <div className="h-2 w-full bg-[#1e293b]/40 rounded-full overflow-hidden border border-border/20">
@@ -296,8 +311,11 @@ function GeminiAnalyticsPanelInner({ usageStats, usageLoading, loadUsageStats }:
                       />
                     </div>
                     <div className="text-[9px] text-muted-foreground flex justify-between">
-                      <span>{f.request_count} calls</span>
-                      <span>Tokens: In {(f.input_tokens).toLocaleString('id-ID')} (Cached {(f.cached_tokens).toLocaleString('id-ID')}) | Out {(f.output_tokens).toLocaleString('id-ID')}</span>
+                      <span>{formatLocaleNumber(f.request_count)} calls</span>
+                      <span>
+                        Tokens: In {formatLocaleNumber(f.input_tokens)} (Cached{' '}
+                        {formatLocaleNumber(f.cached_tokens)}) | Out {formatLocaleNumber(f.output_tokens)}
+                      </span>
                     </div>
                   </div>
                 ))

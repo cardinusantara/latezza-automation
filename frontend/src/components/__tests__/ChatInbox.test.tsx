@@ -303,8 +303,8 @@ describe('ChatInbox Component', () => {
     // Clear mock calls to focus on polling
     vi.mocked(window.fetch).mockClear();
 
-    // Advance time by 4 seconds (4000ms) to trigger polling and resolve fetch promise
-    await vi.advanceTimersByTimeAsync(4000);
+    // Advance time by 10s (new reduced polling interval) to trigger polling
+    await vi.advanceTimersByTimeAsync(10000);
 
     // Verify polling fetch was called
     expect(window.fetch).toHaveBeenCalledWith(expect.stringContaining('/history'));

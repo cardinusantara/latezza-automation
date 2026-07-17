@@ -198,13 +198,14 @@ export default function ChatInbox({
     lastHistoryLengthRef.current = chatHistory.length;
   }, [chatHistory, selectedJid]);
 
-  // Polling for selected chat history refresh (every 4 seconds)
+  // Polling for selected chat history refresh.
+  // Reduced from 4s to reduce load (contributes to backend pressure & intermittent reachability issues).
   useEffect(() => {
     if (!selectedJid) return;
     const interval = setInterval(() => {
       fetchChatHistory(selectedJid, true);
       fetchCustomerDetails(selectedJid);
-    }, 4000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [selectedJid, activeSessionId]);
 

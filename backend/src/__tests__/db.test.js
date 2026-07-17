@@ -8,6 +8,9 @@ jest.mock('pg', () => {
   const mPool = {
     connect: jest.fn(() => Promise.resolve(mClient)),
     query: jest.fn(),
+    on: jest.fn(),   // support pool.on('error'), pool.on('connect'), pool.on('remove') at module load
+    once: jest.fn(),
+    end: jest.fn(),
   };
   return { Pool: jest.fn(() => mPool) };
 });

@@ -97,18 +97,22 @@ async function request<T>(
 }
 
 export const api = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get<T = any>(endpoint: string, signal?: AbortSignal): Promise<T> {
     return request<T>('GET', endpoint, { signal });
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   post<T = any>(endpoint: string, body?: unknown, signal?: AbortSignal): Promise<T> {
     return request<T>('POST', endpoint, { body, signal });
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   put<T = any>(endpoint: string, body?: unknown, signal?: AbortSignal): Promise<T> {
     return request<T>('PUT', endpoint, { body, signal });
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   delete<T = any>(endpoint: string, signal?: AbortSignal): Promise<T> {
     return request<T>('DELETE', endpoint, { signal });
   },

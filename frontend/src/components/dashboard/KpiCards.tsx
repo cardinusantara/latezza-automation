@@ -12,6 +12,7 @@ import {
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { formatRpId, toFiniteNumber } from '@/lib/utils';
 import type { Stats, UsageStatsData } from '@/types';
 
 interface KpiCardsProps {
@@ -71,16 +72,17 @@ function buildKpis(stats: Stats, usageStats: UsageStatsData | null): KpiItem[] {
     },
     {
       title: 'Gemini Cost MTD',
-      value:
-        typeof usageStats?.mtd?.costIdr === 'number'
-          ? `Rp ${Math.round(usageStats.mtd.costIdr).toLocaleString('id-ID')}`
-          : 'Rp 0',
+      value: usageStats?.mtd ? formatRpId(usageStats.mtd.costIdr) : 'Rp 0',
       subStats: usageStats?.mtd
         ? {
             label1: 'Calls',
-            val1: usageStats.mtd.totalRequests,
+            val1: toFiniteNumber(usageStats.mtd.totalRequests),
             label2: 'Cache',
-            val2: `${((usageStats.mtd.cachedTokens / Math.max(1, usageStats.mtd.inputTokens)) * 100).toFixed(0)}%`,
+            val2: `${(
+              (toFiniteNumber(usageStats.mtd.cachedTokens) /
+                Math.max(1, toFiniteNumber(usageStats.mtd.inputTokens))) *
+              100
+            ).toFixed(0)}%`,
           }
         : null,
       icon: <IconCreditCard size={20} />,

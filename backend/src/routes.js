@@ -110,7 +110,7 @@ function registerRoutes(fastify) {
   // This runs at request time when @fastify/jwt is fully registered
   fastify.addHook('preHandler', async (request, reply) => {
     // Skip auth for public endpoints
-    const publicPaths = ['/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html'];
+    const publicPaths = ['/health', '/api/health', '/', '/api/auth/login', '/api/auth/verify', '/send-message', '/report-html'];
     if (publicPaths.some(path => request.url === path || request.url.startsWith(path + '?'))) {
       return;
     }
@@ -147,87 +147,133 @@ function registerRoutes(fastify) {
     reply.redirect(frontendUrl);
   });
 
-  // API: Stats Endpoint
+  // API: Stats Endpoint (optimized — reduced from 12-15 queries down to ~4)
   fastify.get('/api/stats', async (request, reply) => {
     try {
       const { session_id, business_id } = request.query;
       const parsedBusinessId = business_id ? Number.parseInt(business_id, 10) : null;
-      
-      let leadsCountRes, followupsCountRes, recentLeadsRes;
-      let incomingLast24h, incomingLast7d, incomingLast30d;
-      let newLeadsLast24h, newLeadsLast7d, newLeadsLast30d;
-      let status;
+      const isAll = session_id === 'all';
+      const targetSessionId = isAll ? null : (session_id || 'default');
 
-      if (session_id === 'all') {
+      // 1. WhatsApp connection status (cheap)
+      let status = 'disconnected';
+      if (isAll) {
         const sessions = await db.getSessions(parsedBusinessId);
         const anyReady = sessions.some(s => whatsappService.isReady(s.id));
         status = anyReady ? 'connected' : 'disconnected';
+      } else {
+        status = whatsappService.isReady(targetSessionId) ? 'connected' : 'disconnected';
+      }
 
+      // 2. Combined aggregates for customers (biggest win)
+      let customersAgg;
+      if (isAll) {
         if (parsedBusinessId) {
-          leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE business_id = $1', [parsedBusinessId]);
-          followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE AND business_id = $1', [parsedBusinessId]);
-          recentLeadsRes = await db.pool.query('SELECT * FROM customers WHERE business_id = $1 ORDER BY last_interaction DESC LIMIT 5', [parsedBusinessId]);
-
-          incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND business_id = $1 AND timestamp >= NOW() - INTERVAL '24 hours'", [parsedBusinessId]);
-          incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND business_id = $1 AND timestamp >= NOW() - INTERVAL '7 days'", [parsedBusinessId]);
-          incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND business_id = $1 AND timestamp >= NOW() - INTERVAL '30 days'", [parsedBusinessId]);
-
-          newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE business_id = $1 AND created_at >= NOW() - INTERVAL '24 hours'", [parsedBusinessId]);
-          newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE business_id = $1 AND created_at >= NOW() - INTERVAL '7 days'", [parsedBusinessId]);
-          newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE business_id = $1 AND created_at >= NOW() - INTERVAL '30 days'", [parsedBusinessId]);
+          customersAgg = await db.pool.query(`
+            SELECT
+              COUNT(*)::int AS total_leads,
+              COUNT(*) FILTER (WHERE needs_follow_up = TRUE)::int AS pending_followups,
+              COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours')::int AS new_24h,
+              COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '7 days')::int AS new_7d,
+              COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '30 days')::int AS new_30d
+            FROM customers
+            WHERE business_id = $1
+          `, [parsedBusinessId]);
         } else {
-          leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers');
-          followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE');
-          recentLeadsRes = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC LIMIT 5');
-
-          incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '24 hours'");
-          incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '7 days'");
-          incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND timestamp >= NOW() - INTERVAL '30 days'");
-
-          newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '24 hours'");
-          newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '7 days'");
-          newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE created_at >= NOW() - INTERVAL '30 days'");
+          customersAgg = await db.pool.query(`
+            SELECT
+              COUNT(*)::int AS total_leads,
+              COUNT(*) FILTER (WHERE needs_follow_up = TRUE)::int AS pending_followups,
+              COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours')::int AS new_24h,
+              COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '7 days')::int AS new_7d,
+              COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '30 days')::int AS new_30d
+            FROM customers
+          `);
         }
       } else {
-        const targetSessionId = session_id || 'default';
-        status = whatsappService.isReady(targetSessionId) ? 'connected' : 'disconnected';
-
-        leadsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE session_id = $1', [targetSessionId]);
-        followupsCountRes = await db.pool.query('SELECT COUNT(*) FROM customers WHERE needs_follow_up = TRUE AND session_id = $1', [targetSessionId]);
-        recentLeadsRes = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC LIMIT 5', [targetSessionId]);
-
-        incomingLast24h = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND session_id = $1 AND timestamp >= NOW() - INTERVAL '24 hours'", [targetSessionId]);
-        incomingLast7d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND session_id = $1 AND timestamp >= NOW() - INTERVAL '7 days'", [targetSessionId]);
-        incomingLast30d = await db.pool.query("SELECT COUNT(*) FROM chat_histories WHERE role = 'user' AND session_id = $1 AND timestamp >= NOW() - INTERVAL '30 days'", [targetSessionId]);
-
-        newLeadsLast24h = await db.pool.query("SELECT COUNT(*) FROM customers WHERE session_id = $1 AND created_at >= NOW() - INTERVAL '24 hours'", [targetSessionId]);
-        newLeadsLast7d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE session_id = $1 AND created_at >= NOW() - INTERVAL '7 days'", [targetSessionId]);
-        newLeadsLast30d = await db.pool.query("SELECT COUNT(*) FROM customers WHERE session_id = $1 AND created_at >= NOW() - INTERVAL '30 days'", [targetSessionId]);
+        customersAgg = await db.pool.query(`
+          SELECT
+            COUNT(*)::int AS total_leads,
+            COUNT(*) FILTER (WHERE needs_follow_up = TRUE)::int AS pending_followups,
+            COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours')::int AS new_24h,
+            COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '7 days')::int AS new_7d,
+            COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '30 days')::int AS new_30d
+          FROM customers
+          WHERE session_id = $1
+        `, [targetSessionId]);
       }
-      
-      let productsCountRes;
-      if (parsedBusinessId) {
-        productsCountRes = await db.pool.query('SELECT COUNT(*) FROM products WHERE business_id = $1', [parsedBusinessId]);
+      const c = customersAgg.rows[0];
+
+      // 3. Combined aggregates for incoming messages (chat_histories)
+      let incomingAgg;
+      if (isAll) {
+        if (parsedBusinessId) {
+          incomingAgg = await db.pool.query(`
+            SELECT
+              COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours')::int AS inc_24h,
+              COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days')::int AS inc_7d,
+              COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days')::int AS inc_30d
+            FROM chat_histories
+            WHERE role = 'user' AND business_id = $1
+          `, [parsedBusinessId]);
+        } else {
+          incomingAgg = await db.pool.query(`
+            SELECT
+              COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours')::int AS inc_24h,
+              COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days')::int AS inc_7d,
+              COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days')::int AS inc_30d
+            FROM chat_histories
+            WHERE role = 'user'
+          `);
+        }
       } else {
-        productsCountRes = await db.pool.query('SELECT COUNT(*) FROM products');
+        incomingAgg = await db.pool.query(`
+          SELECT
+            COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours')::int AS inc_24h,
+            COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days')::int AS inc_7d,
+            COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days')::int AS inc_30d
+          FROM chat_histories
+          WHERE role = 'user' AND session_id = $1
+        `, [targetSessionId]);
       }
-      
+      const i = incomingAgg.rows[0];
+
+      // 4. Products count
+      let productsRes;
+      if (parsedBusinessId) {
+        productsRes = await db.pool.query('SELECT COUNT(*)::int AS count FROM products WHERE business_id = $1', [parsedBusinessId]);
+      } else {
+        productsRes = await db.pool.query('SELECT COUNT(*)::int AS count FROM products');
+      }
+
+      // 5. Recent leads (still needed as raw rows)
+      let recentRes;
+      if (isAll) {
+        if (parsedBusinessId) {
+          recentRes = await db.pool.query('SELECT * FROM customers WHERE business_id = $1 ORDER BY last_interaction DESC LIMIT 5', [parsedBusinessId]);
+        } else {
+          recentRes = await db.pool.query('SELECT * FROM customers ORDER BY last_interaction DESC LIMIT 5');
+        }
+      } else {
+        recentRes = await db.pool.query('SELECT * FROM customers WHERE session_id = $1 ORDER BY last_interaction DESC LIMIT 5', [targetSessionId]);
+      }
+
       return {
         status,
-        totalLeads: Number.parseInt(leadsCountRes.rows[0].count, 10),
-        totalProducts: Number.parseInt(productsCountRes.rows[0].count, 10),
-        pendingFollowUps: Number.parseInt(followupsCountRes.rows[0].count, 10),
+        totalLeads: c.total_leads,
+        totalProducts: productsRes.rows[0].count,
+        pendingFollowUps: c.pending_followups,
         incomingMessages: {
-          last24h: Number.parseInt(incomingLast24h.rows[0].count, 10),
-          last7d: Number.parseInt(incomingLast7d.rows[0].count, 10),
-          last30d: Number.parseInt(incomingLast30d.rows[0].count, 10),
+          last24h: i.inc_24h,
+          last7d: i.inc_7d,
+          last30d: i.inc_30d,
         },
         newLeads: {
-          last24h: Number.parseInt(newLeadsLast24h.rows[0].count, 10),
-          last7d: Number.parseInt(newLeadsLast7d.rows[0].count, 10),
-          last30d: Number.parseInt(newLeadsLast30d.rows[0].count, 10),
+          last24h: c.new_24h,
+          last7d: c.new_7d,
+          last30d: c.new_30d,
         },
-        recentLeads: recentLeadsRes.rows
+        recentLeads: recentRes.rows
       };
     } catch (err) {
       fastify.log.error(`API stats error: ${err.message}`);

@@ -231,4 +231,99 @@ describe('Overview component', () => {
       screen.getByRole('option', { name: /Default Agent/i }),
     ).toBeInTheDocument();
   });
+
+  test('does not crash when usage-stats mtd fields are missing or null', async () => {
+    window.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes('/api/message-summary')) {
+        return Promise.resolve(mockJsonResponse(mockMessageSummary));
+      }
+      if (url.includes('/api/settings/usage-stats')) {
+        // Incomplete payload: mtd present but numeric fields missing/null,
+        // feature breakdown with null token counts (previous crash source).
+        return Promise.resolve(
+          mockJsonResponse({
+            status: 'success',
+            mtd: {},
+            dailyTrend: [{ date: '2026-07-01', cost_idr: null }],
+            featureBreakdown: [
+              {
+                feature: 'whatsapp_chat',
+                input_tokens: null,
+                output_tokens: null,
+                cached_tokens: null,
+                cost_idr: null,
+                request_count: null,
+              },
+            ],
+          }),
+        );
+      }
+      return Promise.reject(new Error('Unknown url: ' + url));
+    });
+
+    render(
+      <Overview
+        stats={mockStats}
+        sessions={mockSessions}
+        overviewSessionId="all"
+        setOverviewSessionId={vi.fn()}
+        onSelectCustomer={vi.fn()}
+      />,
+    );
+
+    // KPI shell still renders
+    expect(screen.getByText('Total Leads')).toBeInTheDocument();
+    expect(screen.getByText('Gemini Cost MTD')).toBeInTheDocument();
+
+    // Analytics panel loads without throwing toLocaleString on undefined/null
+    await waitFor(() => {
+      expect(screen.getByText(/Gemini API Usage/i)).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.getByText(/Chatbot WhatsApp/i)).toBeInTheDocument();
+    });
+    // Safe zero formatting for missing cost
+    expect(screen.getAllByText(/Rp 0/).length).toBeGreaterThanOrEqual(1);
+  });
+
+  test('accepts snake_case mtd keys from usage-stats without crashing', async () => {
+    window.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes('/api/message-summary')) {
+        return Promise.resolve(mockJsonResponse(mockMessageSummary));
+      }
+      if (url.includes('/api/settings/usage-stats')) {
+        return Promise.resolve(
+          mockJsonResponse({
+            status: 'success',
+            mtd: {
+              input_tokens: 1000,
+              output_tokens: 200,
+              cached_tokens: 100,
+              cost_usd: 0.01,
+              cost_idr: 175,
+              total_requests: 5,
+            },
+            dailyTrend: [],
+            featureBreakdown: [],
+          }),
+        );
+      }
+      return Promise.reject(new Error('Unknown url: ' + url));
+    });
+
+    render(
+      <Overview
+        stats={mockStats}
+        sessions={mockSessions}
+        overviewSessionId="all"
+        setOverviewSessionId={vi.fn()}
+        onSelectCustomer={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      // Appears in both KPI card and Gemini analytics summary
+      expect(screen.getAllByText(`Rp ${(175).toLocaleString('id-ID')}`).length).toBeGreaterThanOrEqual(1);
+    });
+  });
 });
